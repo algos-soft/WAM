@@ -1,0 +1,109 @@
+// Global variable overrides. Must be declared before importing Valo.
+
+// Defines the plaintext font size, weight and family. Font size affects general component sizing.
+$v-font-size: 18px;
+$v-font-weight: 400;
+//$v-font-family: "Open Sans", sans-serif;
+//$v-background-color: #EEE;
+
+/* Import the base theme.*/
+// @import "../reindeer/reindeer.scss";
+//noinspection CssUnknownTarget
+@import "../valo/valo.scss";
+
+/* This contains all of your theme.*/
+/* If somebody wants to extend the theme she will include this mixin. */
+@mixin algos {
+
+  /* Include all the styles from the imported theme */
+  @include valo;
+
+  /* Insert your theme rules here */
+  .v-menubar-mainmenu {
+    background: yellow;
+    font-family: "Lucida Sans", Georgia, Serif;
+    font-size: large;
+    border: 5px solid white;
+  }
+  .mymenubar {
+    color: white;
+    background: #0B6CFF;
+    font-family: Arial;
+    font-size: 24px;
+    font-heith: 80px;
+    font-weight: bold;
+    border: 5px solid white;
+    height: 44px;
+  }
+  .mybutton {
+    color: white;
+    background: #0B6CFF;
+    font-family: Arial;
+    font-size: 24px;
+    font-weight: bold;
+    height: 44px;
+  }
+  .toolbar {
+    background: #D8D8D8;
+  }
+
+  .yellowBg {
+    background: #FFFF99;
+  }
+
+  .greenBg {
+    background: #7FCA9F;
+  }
+
+  .blueBg {
+    background: #94DAF0;
+  }
+
+  .pinkBg {
+    background: #FF9999;
+  }
+
+  .redBg {
+    background: #F0311E;
+  }
+
+  .red {
+    color: red;
+  }
+
+  .darkGrayBg {
+    background: #5d5d5d;
+  }
+
+  .v-textfield-align-left {
+    text-align: left;
+  }
+
+  .v-textfield-align-center {
+    text-align: center;
+  }
+
+  .v-textfield-align-right {
+    text-align: right;
+  }
+
+  .error-screen-msg {
+    font-size: 18px;
+    color: red
+  }
+
+  .v-menubar .v-menubar-menuitem-highlight {
+    color: white;
+    background: #6282A3;
+  }
+
+  .v-menubar-submenu .v-menubar-menuitem-highlight {
+    color: white;
+    background: #6282A3;
+  }
+
+  .v-icon {
+    color:blue;
+  }
+
+}

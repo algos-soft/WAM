@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="webbase">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../webbase/out/artifacts/webbase" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../webbase/out/artifacts/webbase" />
+      <root url="file://$PROJECT_DIR$/../webbase/src" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../webbase/out/artifacts/webbase" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../webbase/out/artifacts/webbase" recursive="false" type="SOURCES" />
+  </library>
+</component>
