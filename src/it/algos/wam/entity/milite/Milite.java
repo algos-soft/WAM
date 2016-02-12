@@ -1,5 +1,7 @@
 package it.algos.wam.entity.milite;
 
+import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.SingleComponentContainer;
 import it.algos.webbase.multiazienda.CompanyEntity;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;

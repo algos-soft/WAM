@@ -8,32 +8,37 @@ import it.algos.wam.entity.company.Company_;
 import it.algos.wam.entity.milite.Milite;
 import it.algos.webbase.web.AlgosApp;
 import it.algos.webbase.web.bootstrap.ABootStrap;
+import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.query.AQuery;
 import it.algos.webbase.web.toolbar.Toolbar;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import java.util.List;
 
 /**
-  * Bootstrap dell'applicazione
-  * Executed on container startup
-  * Setup non-UI logic here
-  * <p/>
-  * Classe eseguita solo quando l'applicazione viene caricata/parte nel server (Tomcat od altri) <br>
-  * Eseguita quindi ad ogni avvio/riavvio del server e NON ad ogni sessione <br>
-  * È OBBLIGATORIO aggiungere questa classe nei listeners del file web.WEB-INF.web.xml
-  */
+ * Bootstrap dell'applicazione
+ * Executed on container startup
+ * Setup non-UI logic here
+ * <p>
+ * Classe eseguita solo quando l'applicazione viene caricata/parte nel server (Tomcat od altri) <br>
+ * Eseguita quindi ad ogni avvio/riavvio del server e NON ad ogni sessione <br>
+ * È OBBLIGATORIO aggiungere questa classe nei listeners del file web.WEB-INF.web.xml
+ */
 public class WAMBootStrap extends ABootStrap {
 
     /**
      * Executed on container startup
      * Setup non-UI logic here
-     * <p/>
+     * <p>
      * This method is called prior to the servlet context being
      * initialized (when the Web application is deployed).
      * You can initialize servlet context related data here.
-     * <p/>
+     * <p>
      * Viene normalmente sovrascritta dalla sottoclasse per regolare alcuni flag dell'applicazione <br>
      * Deve (DEVE) richiamare anche il metodo della superclasse (questo)
      * prima (PRIMA) di eseguire le regolazioni specifiche <br>
@@ -56,13 +61,15 @@ public class WAMBootStrap extends ABootStrap {
 //        AlgosApp.USE_VERS = false;
 //        AlgosApp.USE_PREF = false;
 
-        if(Company.getDemoCompany()==null){
+        if (Company.getDemoCompany() == null) {
             creaDemoCompany();
         }
 
     }// end of method
 
-    private void creaDemoCompany(){
+
+
+    private void creaDemoCompany() {
         Company company = new Company();
         company.setCompanyCode(Company.DEMO_COMPANY_CODE);
         company.setName("Croce demo");
@@ -80,7 +87,7 @@ public class WAMBootStrap extends ABootStrap {
      */
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-         super.contextDestroyed(servletContextEvent);
-   }// end of method
+        super.contextDestroyed(servletContextEvent);
+    }// end of method
 
 }// end of bootstrap class

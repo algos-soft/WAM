@@ -2,12 +2,16 @@ package it.algos.wam.entity.company;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
+import it.algos.wam.entity.milite.Milite;
+import it.algos.wam.entity.milite.Milite_;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.query.AQuery;
 import it.algos.webbase.web.query.EntityQuery;
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.List;
 
 
@@ -18,10 +22,14 @@ public class Company extends BaseCompany {
 	private static final long serialVersionUID = 8238775575826490450L;
 	public static final String DEMO_COMPANY_CODE="demo";
 
-//    @OneToMany(mappedBy = "company")
-//    @CascadeOnDelete
-//    private List<Comune> comuni;
-//
+	// elenco delle relazioni OneToMany
+	// servono per creare le foreign key sul db
+	// che consentono la cancellazione a cascata
+
+    @OneToMany(mappedBy = "company")
+    @CascadeOnDelete
+    private List<Milite> militi;
+
 //    @OneToMany(mappedBy = "company", targetEntity=Evento.class)
 //    @CascadeOnDelete
 //    private List<Evento> eventi;
@@ -67,15 +75,16 @@ public class Company extends BaseCompany {
 //		DemoDataGenerator.createDemoData(this);
 //	};
 	
-//	/**
-//	 * Elimina tutti i dati di questa azienda.
-//	 * <p>
-//	 * L'ordine di cancellazione è critico per l'integrità referenziale
-//	 */
-//	public void deleteAllData(){
-//
-//		// elimina le tabelle
-//		AQuery.delete(Spedizione.class, CompanyEntity_.company, this);
+	/**
+	 * Elimina tutti i dati di questa azienda.
+	 * <p>
+	 * L'ordine di cancellazione è critico per l'integrità referenziale
+	 */
+	public void deleteAllData(){
+
+        // elimina le tabelle
+		AQuery.delete(Milite.class, Milite_.company, this);
+
 //		AQuery.delete(Lettera.class, CompanyEntity_.company, this);
 //		AQuery.delete(EventoPren.class, CompanyEntity_.company, this);
 //		AQuery.delete(Prenotazione.class, CompanyEntity_.company, this);
@@ -101,8 +110,8 @@ public class Company extends BaseCompany {
 //
 //		// elimina le preferenze
 //		AQuery.delete(PrefEventoEntity.class, CompanyEntity_.company, this);
-//
-//	}
+
+	}
 
 	/**
 	 * Ritorna la Demo Company
