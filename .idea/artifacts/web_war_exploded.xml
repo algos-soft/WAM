@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" name="web:war exploded">
-    <output-path>$PROJECT_DIR$/out/artifacts/web_war_exploded</output-path>
+    <output-path>$PROJECT_DIR$/out/artifacts/wam</output-path>
     <root id="root">
       <element id="javaee-facet-resources" facet="WAM/web/Web" />
       <element id="directory" name="WEB-INF">
@@ -10,6 +10,9 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="webbase" />
         </element>
+      </element>
+      <element id="directory" name="VAADIN">
+        <element id="dir-copy" path="$PROJECT_DIR$/vaadin" />
       </element>
     </root>
   </artifact>
