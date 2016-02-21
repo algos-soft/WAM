@@ -33,12 +33,12 @@ public class TestUI extends UI {
         CTurno[] cTurni;
 
         cServ = new CServizio("Ambulanza mattino");
-        cRuoli = new CRuoli("Autista", "Primo", "Secondo");
+        cRuoli = new CRuoli("Autista", "Primo", "Secondo", "Terzo");
         cTurni = creaTurniDemo();
         lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
 
-        cServ = new CServizio("Ambulanza mattino");
-        cRuoli = new CRuoli("Autista", "Primo", "Secondo");
+        cServ = new CServizio("Ambulanza pom.");
+        cRuoli = new CRuoli("Autista", "Primo", "Aiutante","Apprendista");
         cTurni = creaTurniDemo();
         lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
 
@@ -48,15 +48,27 @@ public class TestUI extends UI {
     private CTurno[] creaTurniDemo() {
         List<CTurno> lTurni = new ArrayList();
 
-        lTurni.add(new CTurno());
-        lTurni.add(new CTurno());
-        lTurni.add(new CTurno());
-        lTurni.add(new CTurno());
-        lTurni.add(new CTurno());
-        lTurni.add(new CTurno());
-        lTurni.add(new CTurno());
+        lTurni.add(new CTurno(creaIscrizioni()));
+        lTurni.add(new CTurno(creaIscrizioni()));
+        lTurni.add(new CTurno(creaIscrizioni()));
+        lTurni.add(new CTurno(creaIscrizioni()));
+        lTurni.add(new CTurno(creaIscrizioni()));
+        lTurni.add(new CTurno(creaIscrizioni()));
+        lTurni.add(new CTurno(creaIscrizioni()));
 
         return lTurni.toArray(new CTurno[0]);
+    }
+
+    private CIscrizione[] creaIscrizioni(){
+        List<CIscrizione> lIscrizioni = new ArrayList();
+
+        lIscrizioni.add(new CIscrizione("Bianchini F."));
+        lIscrizioni.add(new CIscrizione("Madella C."));
+        lIscrizioni.add(new CIscrizione("---"));
+        lIscrizioni.add(new CIscrizione("Rossi G."));
+
+        return lIscrizioni.toArray(new CIscrizione[0]);
+
     }
 
 }

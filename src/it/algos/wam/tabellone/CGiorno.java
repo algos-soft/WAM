@@ -11,6 +11,6 @@ public class CGiorno extends Label {
     public CGiorno(LocalDate date) {
         super();
         setValue(date.toString());
-        addStyleName("redBg");
+        addStyleName("cgiorno");
     }
 }

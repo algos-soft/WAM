@@ -14,7 +14,9 @@ public class CRuoli extends VerticalLayout {
     public CRuoli(String... ruoli) {
 
         for(String s : ruoli){
-            addComponent(new Label(s));
+            Label label = new Label(s);
+            label.addStyleName("cruolo");
+            addComponent(label);
         }
 
     }
