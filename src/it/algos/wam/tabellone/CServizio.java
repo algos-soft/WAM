@@ -14,14 +14,17 @@ public class CServizio extends HorizontalLayout {
     public CServizio(String nome) {
         super();
         setHeight("100%");
-        setWidth("8em");
+        //setWidth("11em");
+//        setWidthUndefined();
+
         addStyleName("cservizio");
 
 
         Label labelOra=new Label("<strong>14-20</strong>", ContentMode.HTML);
-        labelOra.setWidth("3em");
+//        labelOra.setWidth("3em");
 
         Label labelNome = new Label(nome, ContentMode.HTML);
+//        labelNome.setWidthUndefined();
 
         addComponent(labelOra);
         setComponentAlignment(labelOra, Alignment.MIDDLE_CENTER);

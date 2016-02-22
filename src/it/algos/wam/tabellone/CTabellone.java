@@ -19,6 +19,8 @@ public class CTabellone extends GridLayout {
 
     public CTabellone(RTabellone... righe) {
 
+        addStyleName("yellowBg");
+        setSizeFull();
         setMargin(true);
 
         // determina il numero di colonne turni (giorni)
@@ -46,7 +48,10 @@ public class CTabellone extends GridLayout {
         int row=0;
         for(RTabellone riga : righe){
             row++;
-            addComponent(riga.getServizio(), 0, row);
+//            addComponent(riga.getServizio(), 0, row);
+            Label label = new Label("ciao");
+            label.addStyleName("redBg");
+            addComponent(label, 0, row);
             addComponent(riga.getRuoli(), 1, row);
             col=2;
             for (CTurno t : riga.getTurni()){
