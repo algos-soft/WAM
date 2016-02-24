@@ -72,7 +72,7 @@ public class WAMBootStrap extends ABootStrap {
     private void creaDemoCompany() {
         Company company = new Company();
         company.setCompanyCode(Company.DEMO_COMPANY_CODE);
-        company.setName("Croce demo");
+        company.setName("Demo");
         company.setAddress1("Via Turati 12");
         company.setAddress1("20199 Garbagnate Milanese");
         company.setContact("Mario Bianchi");

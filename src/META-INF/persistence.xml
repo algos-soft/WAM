@@ -8,6 +8,7 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
         <class>it.algos.webbase.web.entity.BaseEntity</class>
+		<class>it.algos.wam.funzione.Funzione</class>
         <class>it.algos.webbase.domain.company.BaseCompany</class>
         <class>it.algos.wam.entity.company.Company</class>
         <class>it.algos.wam.entity.milite.Milite</class>

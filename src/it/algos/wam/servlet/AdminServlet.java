@@ -33,7 +33,6 @@ public class AdminServlet extends AlgosServlet {
 
         // provvisorio!! fino a quando non gestiamo il login
         CompanySessionLib.setCompany(Company.getDemoCompany());
-
-    }
+    }// end of method
 
 }// end of servlet class

@@ -19,7 +19,7 @@ public class MiliteModulo extends ModulePop {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public MiliteModulo() {
-        super(Milite.class, "Milite", FontAwesome.GEAR);
+        super(Milite.class, FontAwesome.GEAR);
     }// end of constructor
 
 }// end of class

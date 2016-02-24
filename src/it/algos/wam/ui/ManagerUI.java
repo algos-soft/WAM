@@ -7,9 +7,10 @@ import it.algos.webbase.web.ui.AlgosUI;
 
 /**
  * La UI del manager.
- * Il manager amministra le aziende, crea e cancella aziende, opera sui contratti,
- * accede alle preferenze globali ecc...
- * Il manager siamo noi.
+ * Il manager amministra alcune preferenze di una singola azienda (non tutte)
+ * Il manager amministra gli utenti, crea i turni, controlla le statistiche
+ * Il manager NON accede alle altre aziende
+ * Il manager NON siamo noi.
  */
 @Theme("valo")
 public class ManagerUI extends AlgosUI {

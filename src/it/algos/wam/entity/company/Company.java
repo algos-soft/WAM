@@ -26,9 +26,9 @@ public class Company extends BaseCompany {
 	// servono per creare le foreign key sul db
 	// che consentono la cancellazione a cascata
 
-    @OneToMany(mappedBy = "company")
-    @CascadeOnDelete
-    private List<Milite> militi;
+//    @OneToMany(mappedBy = "company")
+//    @CascadeOnDelete
+//    private List<Milite> militi;
 
 //    @OneToMany(mappedBy = "company", targetEntity=Evento.class)
 //    @CascadeOnDelete

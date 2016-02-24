@@ -3,11 +3,14 @@ package it.algos.wam.ui;
 import com.vaadin.annotations.Theme;
 import it.algos.wam.entity.company.CompanyModulo;
 import it.algos.wam.entity.milite.MiliteModulo;
+import it.algos.wam.funzione.FunzioneMod;
 import it.algos.webbase.web.ui.AlgosUI;
 
 /**
- * La UI dell'Admin
- * L'Admin amministra gli utenti, crea i turni, esegue le statistiche, configura l'applicazione...
+ * La UI dell'admin
+ * L'admin amministra tutte le preferenze dell'azienda
+ * L'admin accede a tutte le aziende
+ * L'admin siamo noi
  */
 @Theme("valo")
 public class AdminUI extends AlgosUI {
@@ -17,7 +20,9 @@ public class AdminUI extends AlgosUI {
      */
     @Override
     protected void addModuli() {
-        addView(MiliteModulo.class, "Militi", null);
-    }
+        this.addModulo(new CompanyModulo());
+        this.addModulo(new MiliteModulo());
+        this.addModulo(new FunzioneMod());
+    }// end of method
 
-}
+}// end of class
