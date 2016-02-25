@@ -2,6 +2,7 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 
 import java.time.LocalDate;
@@ -43,15 +44,37 @@ public class CTabellone extends GridLayout {
             addComponent(new CGiorno(d),i+2,0);
         }
 
+
         // aggiunge le righe successive
         int col=0;
         int row=0;
         for(RTabellone riga : righe){
             row++;
-//            addComponent(riga.getServizio(), 0, row);
-            Label label = new Label("ciao");
-            label.addStyleName("redBg");
-            addComponent(label, 0, row);
+
+
+            addComponent(riga.getServizio(), 0, row);
+
+//            Label label = new Label("ciao");
+//            label.addStyleName("redBg");
+//            addComponent(label, 0, row);
+
+//            HorizontalLayout layout =  new HorizontalLayout();
+//            layout.setWidth("100%");
+//            layout.addStyleName("redBg");
+//            Label label1 = new Label("xxx");
+//            label1.addStyleName("greenBg");
+//            Label label2 = new Label("ciao");
+//            label2.addStyleName("blueBg");
+//
+//            //label.setWidth("100%");
+//            layout.addComponent(label1);
+//            layout.addComponent(label2);
+//
+//            addComponent(layout, 0, row);
+
+
+
+
             addComponent(riga.getRuoli(), 1, row);
             col=2;
             for (CTurno t : riga.getTurni()){
@@ -59,6 +82,19 @@ public class CTabellone extends GridLayout {
                 col++;
             }
         }
+
+
+        // inizialmente tutte le colonne espandibili nello stesso modo
+        int count=getColumns();
+        for (int i = 0; i < count; i++) {
+            setColumnExpandRatio(i,100);
+        }
+
+        // poi definisce le colonne non espandibili
+        setColumnExpandRatio(0,0);
+        setColumnExpandRatio(1,0);
+
+
 
     }
 

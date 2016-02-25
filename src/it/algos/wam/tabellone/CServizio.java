@@ -13,6 +13,9 @@ import com.vaadin.ui.VerticalLayout;
 public class CServizio extends HorizontalLayout {
     public CServizio(String nome) {
         super();
+        setWidth("6em");
+        //setWidth("300px");
+
         setHeight("100%");
         //setWidth("11em");
 //        setWidthUndefined();
@@ -21,13 +24,16 @@ public class CServizio extends HorizontalLayout {
 
 
         Label labelOra=new Label("<strong>14-20</strong>", ContentMode.HTML);
+//        labelOra.setWidth("30%");
 //        labelOra.setWidth("3em");
 
         Label labelNome = new Label(nome, ContentMode.HTML);
+//        labelNome.setWidth("70%");
+
 //        labelNome.setWidthUndefined();
 
-        addComponent(labelOra);
-        setComponentAlignment(labelOra, Alignment.MIDDLE_CENTER);
+//        addComponent(labelOra);
+//        setComponentAlignment(labelOra, Alignment.MIDDLE_CENTER);
         addComponent(labelNome);
         setComponentAlignment(labelNome, Alignment.MIDDLE_LEFT);
 

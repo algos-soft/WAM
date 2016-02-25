@@ -106,10 +106,16 @@ $v-font-weight: 400;
     color:blue;
   }
 
+  // attributi comuni componenti del tabellone
+  .ctabellone{
+    font-size: 14px;
+  }
+
   // componente servizio
   $dark: rgba(218, 115, 0, 1);
   $light: rgba(218, 115, 0, 0.6);
   .cservizio {
+    @extend .ctabellone;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
@@ -121,6 +127,7 @@ $v-font-weight: 400;
   $dark: rgb(24, 40, 218);
   $light: rgba(24, 40, 218, 0.6);
   .cruolo {
+    @extend .ctabellone;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
@@ -132,6 +139,7 @@ $v-font-weight: 400;
   $dark: rgb(47, 116, 17);
   $light: rgba(47, 116, 17, 0.6);
   .cgiorno {
+    @extend .ctabellone;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
@@ -143,6 +151,7 @@ $v-font-weight: 400;
   $dark: rgb(9, 116, 83);
   $light: rgba(9, 116, 83, 0.6);
   .cturno {
+    @extend .ctabellone;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
@@ -154,6 +163,7 @@ $v-font-weight: 400;
   $dark: rgb(185, 52, 185);
   $light: rgba(185, 52, 185, 0.6);
   .ciscrizione {
+    @extend .ctabellone;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);

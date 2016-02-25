@@ -13,6 +13,8 @@ public class CRuoli extends VerticalLayout {
 
     public CRuoli(String... ruoli) {
 
+        setWidth("4em");
+
         for(String s : ruoli){
             Label label = new Label(s);
             label.addStyleName("cruolo");
