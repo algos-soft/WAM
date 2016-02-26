@@ -2,6 +2,7 @@ package it.algos.wam.entity.milite;
 
 
 import com.vaadin.server.FontAwesome;
+import it.algos.wam.entity.wamcompany.WamCompany_;
 import it.algos.webbase.web.module.ModulePop;
 
 import javax.persistence.metamodel.Attribute;
@@ -35,7 +36,7 @@ public class MiliteMod extends ModulePop {
      * sovrascrivere creaFieldsList, creaFieldsForm e creaFieldsSearch <br>
      */
     protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{Milite_.company, Milite_.nome, Milite_.cognome, Milite_.dataNascita, Milite_.telefonoCellulare};
+        return new Attribute[]{WamCompany_.company, Milite_.nome, Milite_.cognome, Milite_.dataNascita, Milite_.telefonoCellulare};
     }// end of method
 
 }// end of class

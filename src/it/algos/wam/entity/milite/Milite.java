@@ -1,7 +1,7 @@
 package it.algos.wam.entity.milite;
 
 import it.algos.wam.entity.company.Company;
-import it.algos.webbase.multiazienda.CompanyEntity;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -10,22 +10,24 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Entity che descrive un Milite
+ * Estende la Entity astratta WamCompany che contiene la property company
+ * <p>
+ * Classe di tipo JavaBean
+ * <p>
+ * 1) la classe deve avere un costruttore senza argomenti
+ * <p>
+ * 2) le proprietà devono essere private e accessibili solo con get, set e is (usato per i boolena al posto di get)
+ * 3) la classe deve implementare l'interfaccia Serializable (la fa nella superclasse)
+ * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
+ * <p>
  */
 @Entity
-public class Milite extends BaseEntity {
-
-    //--croce di riferimento
-    @NotNull
-    @ManyToOne
-    private Company company;
-
+public class Milite extends WamCompany {
 
     @NotEmpty
     @Column(length = 20)
@@ -91,11 +93,11 @@ public class Milite extends BaseEntity {
     @SuppressWarnings("all")
     public Milite(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare) {
         super();
-        this.setCompany(company);
-        this.setNome(nome);
-        this.setCognome(cognome);
-        this.setDataNascita(dataNascita);
-        this.setTelefonoCellulare(telefonoCellulare);
+        super.setCompany(company);
+        setNome(nome);
+        setCognome(cognome);
+        setDataNascita(dataNascita);
+        setTelefonoCellulare(telefonoCellulare);
     }// end of constructor
 
     /**
@@ -259,14 +261,6 @@ public class Milite extends BaseEntity {
 
     public void setCognome(String cognome) {
         this.cognome = cognome;
-    }//end of setter method
-
-    public Company getCompany() {
-        return company;
-    }// end of getter method
-
-    public void setCompany(Company company) {
-        this.company = company;
     }//end of setter method
 
     public String getTelefonoCellulare() {

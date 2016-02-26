@@ -2,6 +2,7 @@ package it.algos.wam.entity.funzione;
 
 
 import com.vaadin.server.FontAwesome;
+import it.algos.wam.entity.wamcompany.WamCompany_;
 import it.algos.webbase.web.module.ModulePop;
 
 import javax.persistence.metamodel.Attribute;
@@ -35,7 +36,7 @@ public class FunzioneMod extends ModulePop {
      * sovrascrivere creaFieldsList, creaFieldsForm e creaFieldsSearch <br>
      */
     protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{Funzione_.company,Funzione_.ordine, Funzione_.sigla, Funzione_.descrizione,Funzione_.note};
+        return new Attribute[]{WamCompany_.company,Funzione_.ordine, Funzione_.sigla, Funzione_.descrizione,Funzione_.note};
     }// end of method
 
 }// end of class
