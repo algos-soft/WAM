@@ -2,16 +2,16 @@ package it.algos.wam.entity.company;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.milite.Milite;
 import it.algos.wam.entity.milite.Milite_;
 import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.domain.company.BaseCompany_;
+import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.query.AQuery;
-import it.algos.webbase.web.query.EntityQuery;
-import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import java.util.List;
 
 
@@ -19,12 +19,11 @@ import java.util.List;
 @DefaultSort({"companyCode"})
 public class Company extends BaseCompany {
 
-	private static final long serialVersionUID = 8238775575826490450L;
-	public static final String DEMO_COMPANY_CODE="demo";
+    private static final long serialVersionUID = 8238775575826490450L;
 
-	// elenco delle relazioni OneToMany
-	// servono per creare le foreign key sul db
-	// che consentono la cancellazione a cascata
+    // elenco delle relazioni OneToMany
+    // servono per creare le foreign key sul db
+    // che consentono la cancellazione a cascata
 
 //    @OneToMany(mappedBy = "company")
 //    @CascadeOnDelete
@@ -66,24 +65,68 @@ public class Company extends BaseCompany {
 //    @CascadeOnDelete
 //    private List<PrefEventoEntity> prefs;
 
-	public Company() {
-		super();
-	}// end of constructor
+    public Company() {
+        super();
+    }// end of constructor
 
 
 //	public void createDemoData(){
 //		DemoDataGenerator.createDemoData(this);
 //	};
-	
-	/**
-	 * Elimina tutti i dati di questa azienda.
-	 * <p>
-	 * L'ordine di cancellazione è critico per l'integrità referenziale
-	 */
-	public void deleteAllData(){
+
+    /**
+     * Recupera una istanza di Company usando la query di una property specifica
+     *
+     * @param code valore della property code
+     * @return istanza di Company, null se non trovata
+     */
+    public static Company findByCode(String code) {
+        Company instance = null;
+        BaseEntity entity = AQuery.queryOne(Company.class, BaseCompany_.companyCode, code);
+
+        if (entity != null) {
+            if (entity instanceof Company) {
+                instance = (Company) entity;
+            }// end of if cycle
+        }// end of if cycle
+
+        return instance;
+    }// end of method
+
+    /**
+     * Ritorna la Demo Company
+     *
+     * @return la Demo Company, null se non esiste
+     */
+    public static Company getDemo() {
+        return findByCode(WAMApp.DEMO_COMPANY_CODE);
+    }// end of method
+
+    /**
+     * Ritorna la Demo Company
+     *
+     * @return la Demo Company, null se non esiste
+     * @deprecated
+     */
+    public static Company getDemoCompanyOld() {
+        Company company = null;
+        Container.Filter filter = new Compare.Equal(Company_.companyCode.getName(), WAMApp.DEMO_COMPANY_CODE);
+        List demoCompanies = AQuery.getList(Company.class, filter);
+        if (demoCompanies.size() > 0) {
+            company = (Company) demoCompanies.get(0);
+        }
+        return company;
+    }// end of method
+
+    /**
+     * Elimina tutti i dati di questa azienda.
+     * <p>
+     * L'ordine di cancellazione è critico per l'integrità referenziale
+     */
+    public void deleteAllData() {
 
         // elimina le tabelle
-		AQuery.delete(Milite.class, Milite_.company, this);
+        AQuery.delete(Milite.class, Milite_.company, this);
 
 //		AQuery.delete(Lettera.class, CompanyEntity_.company, this);
 //		AQuery.delete(EventoPren.class, CompanyEntity_.company, this);
@@ -111,21 +154,7 @@ public class Company extends BaseCompany {
 //		// elimina le preferenze
 //		AQuery.delete(PrefEventoEntity.class, CompanyEntity_.company, this);
 
-	}
-
-	/**
-	 * Ritorna la Demo Company
-	 * @return la Demo Company, null se non esiste
-	 */
-	public static Company getDemoCompany(){
-		Company company=null;
-		Container.Filter filter = new Compare.Equal(Company_.companyCode.getName(), DEMO_COMPANY_CODE);
-		List demoCompanies = AQuery.getList(Company.class, filter);
-		if(demoCompanies.size()>0) {
-			company=(Company)demoCompanies.get(0);
-		}
-		return company;
-	}
+    }
 
 
 }// end of entity class

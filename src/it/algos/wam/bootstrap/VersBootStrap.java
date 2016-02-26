@@ -6,36 +6,48 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
-  * Log delle versioni, modifiche e patch installate
-  * Executed on container startup
-  * Setup non-UI logic here
-  * <p/>
-  * Classe eseguita solo quando l'applicazione viene caricata/parte nel server (Tomcat od altri) <br>
-  * Eseguita quindi ad ogni avvio/riavvio del server e NON ad ogni sessione <br>
-  * È OBBLIGATORIO aggiungere questa classe nei listeners del file web.WEB-INF.web.xml
-  */
-public class VersBootStrap implements ServletContextListener{
+ * Log delle versioni, modifiche e patch installate
+ * Executed on container startup
+ * Setup non-UI logic here
+ * <p>
+ * Classe eseguita solo quando l'applicazione viene caricata/parte nel server (Tomcat od altri) <br>
+ * Eseguita quindi ad ogni avvio/riavvio del server e NON ad ogni sessione <br>
+ * È OBBLIGATORIO aggiungere questa classe nei listeners del file web.WEB-INF.web.xml
+ */
+public class VersBootStrap implements ServletContextListener {
 
     /**
      * Executed on container startup
      * Setup non-UI logic here
-     * <p/>
+     * <p>
      * This method is called prior to the servlet context being
      * initialized (when the Web application is deployed).
      * You can initialize servlet context related data here.
-     * <p/>
+     * <p>
      * Tutte le aggiunte, modifiche e patch vengono inserite con una versione <br>
      * L'ordine di inserimento è FONDAMENTALE
      */
     @Override
     public void contextInitialized(ServletContextEvent contextEvent) {
+        int k = 0;
 
         //--prima installazione del programma
         //--non fa nulla, solo informativo
-        if (LibVers.installa(1)) {
+        if (LibVers.installa(++k)) {
             LibVers.nuova("Setup", "Installazione iniziale");
         }// fine del blocco if
 
+        //--creazione di una croce "demo"
+        if (LibVers.installa(++k)) {
+            BootService.creaCompanyDemo();
+            LibVers.nuova("Demo", "Creazione di una croce demo, visibile a tutti");
+        }// fine del blocco if
+
+        //--creazione di una croce "test"
+        if (LibVers.installa(++k)) {
+            BootService.creaCompanyTest();
+            LibVers.nuova("Test", "Creazione di una croce di prova, visibile solo agli admin");
+        }// fine del blocco if
     }// end of method
 
 

@@ -1,4 +1,4 @@
-package it.algos.wam.funzione;
+package it.algos.wam.entity.funzione;
 
 import it.algos.wam.entity.company.Company;
 import it.algos.webbase.web.entity.BaseEntity;

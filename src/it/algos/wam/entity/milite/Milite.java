@@ -6,8 +6,10 @@ import it.algos.webbase.multiazienda.CompanyEntity;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
+import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.util.ArrayList;
 
@@ -18,6 +20,8 @@ import java.util.ArrayList;
 public class Milite extends CompanyEntity {
 
 	@NotEmpty
+    @Column(length = 10)
+    @Index
 	private String nome = "";
 
 	public Milite() {

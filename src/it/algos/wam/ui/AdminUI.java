@@ -3,8 +3,8 @@ package it.algos.wam.ui;
 import com.vaadin.annotations.Theme;
 import it.algos.wam.entity.company.CompanyModulo;
 import it.algos.wam.entity.milite.MiliteModulo;
-import it.algos.wam.funzione.FunzioneMod;
 import it.algos.webbase.web.ui.AlgosUI;
+import it.algos.wam.entity.funzione.*;
 
 /**
  * La UI dell'admin

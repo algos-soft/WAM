@@ -1,9 +1,8 @@
-package it.algos.wam.funzione;
+package it.algos.wam.entity.funzione;
 
 
 import com.vaadin.server.FontAwesome;
 import it.algos.webbase.web.module.ModulePop;
-import javax.persistence.metamodel.Attribute;
 
 /**
  * Gestione (minimale) del modulo specifico

@@ -58,28 +58,28 @@ public class WAMBootStrap extends ABootStrap {
         // eventuali modifiche ai flag generali di regolazione
 //        AlgosApp.USE_SECURITY = true;
 //        AlgosApp.USE_LOG = true;
-//        AlgosApp.USE_VERS = false;
+        AlgosApp.USE_VERS = true;
 //        AlgosApp.USE_PREF = false;
 
-        if (Company.getDemoCompany() == null) {
-            creaDemoCompany();
-        }
+//        if (Company.getDemo() == null) {
+//            creaDemoCompany();
+//        }
 
     }// end of method
 
 
 
-    private void creaDemoCompany() {
-        Company company = new Company();
-        company.setCompanyCode(Company.DEMO_COMPANY_CODE);
-        company.setName("Demo");
-        company.setAddress1("Via Turati 12");
-        company.setAddress1("20199 Garbagnate Milanese");
-        company.setContact("Mario Bianchi");
-        company.setEmail("info@crocedemo.it");
-        company.save();
-    }
-
+//    private void creaDemoCompany() {
+//        Company company = new Company();
+//        company.setCompanyCode(WAMApp.DEMO_COMPANY_CODE);
+//        company.setName("Demo");
+//        company.setAddress1("Via Turati 12");
+//        company.setAddress1("20199 Garbagnate Milanese");
+//        company.setContact("Mario Bianchi");
+//        company.setEmail("info@crocedemo.it");
+//        company.save();
+//    }
+//
     /**
      * This method is invoked when the Servlet Context
      * (the Web application) is undeployed or
