@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Entity che descrive un Milite
@@ -162,7 +163,8 @@ public class Milite extends WamCompany {
 //        }// end of if cycle
 
 
-        ArrayList<Milite> militiPerCognome = (ArrayList<Milite>) AQuery.queryLista(Milite.class, Milite_.cognome, cognome);
+//        ArrayList<Milite> militiPerCognome = (ArrayList<Milite>) AQuery.queryList(Milite.class, Milite_.cognome, cognome);
+        List<Milite> militiPerCognome = (List<Milite>) AQuery.queryList(Milite.class, Milite_.cognome, cognome);
         if (militiPerCognome != null && militiPerCognome.size() > 0) {
             for (Milite milite : militiPerCognome) {
                 if (milite.getNome().equals(nome) && milite.getCompany().getId().equals(company.getId())) {

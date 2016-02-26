@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entity per una funzione
@@ -147,7 +148,8 @@ public class Funzione extends WamCompany {
         Funzione instance = null;
 
         //@todo migliorabile
-        ArrayList<Funzione> funzioniPerSigla = (ArrayList<Funzione>) AQuery.queryLista(Funzione.class, Funzione_.sigla, sigla);
+//        ArrayList<Funzione> funzioniPerSigla = (ArrayList<Funzione>) AQuery.queryList(Funzione.class, Funzione_.sigla, sigla);
+        List<Funzione> funzioniPerSigla = (List<Funzione>) AQuery.queryList(Funzione.class, Funzione_.sigla, sigla);
 
         if (funzioniPerSigla != null && funzioniPerSigla.size() > 0) {
             for (Funzione funzione : funzioniPerSigla) {
