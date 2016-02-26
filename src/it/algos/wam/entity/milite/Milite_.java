@@ -11,6 +11,7 @@ import java.util.Date;
 
 @StaticMetamodel(Milite.class)
 public class Milite_ extends CompanyEntity_ {
+	public static volatile SingularAttribute<Milite, Company> company;
 	public static volatile SingularAttribute<Milite, String> nome;
 	public static volatile SingularAttribute<Milite, String> cognome;
 	public static volatile SingularAttribute<Milite, String> telefonoCellulare;
@@ -18,5 +19,4 @@ public class Milite_ extends CompanyEntity_ {
 	public static volatile SingularAttribute<Milite, String> email;
 	public static volatile SingularAttribute<Milite, String> note;
 	public static volatile SingularAttribute<Milite, Date> dataNascita;
-	public static volatile SingularAttribute<Milite, Company> company;
 }// end of entity class

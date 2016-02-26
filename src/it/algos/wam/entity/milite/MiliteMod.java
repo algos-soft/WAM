@@ -35,7 +35,7 @@ public class MiliteMod extends ModulePop {
      * sovrascrivere creaFieldsList, creaFieldsForm e creaFieldsSearch <br>
      */
     protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{Milite_.nome, Milite_.cognome, Milite_.dataNascita, Milite_.telefonoCellulare};
+        return new Attribute[]{Milite_.company, Milite_.nome, Milite_.cognome, Milite_.dataNascita, Milite_.telefonoCellulare};
     }// end of method
 
 }// end of class

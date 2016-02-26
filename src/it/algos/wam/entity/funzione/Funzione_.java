@@ -8,8 +8,9 @@ import javax.persistence.metamodel.StaticMetamodel;
 
 @StaticMetamodel(Funzione.class)
 public class Funzione_ extends BaseEntity_ {
+    public static volatile SingularAttribute<Funzione, Company> company;
     public static volatile SingularAttribute<Funzione, String> sigla;
     public static volatile SingularAttribute<Funzione, String> descrizione;
     public static volatile SingularAttribute<Funzione, Integer> ordine;
-    public static volatile SingularAttribute<Funzione, Company> company;
+    public static volatile SingularAttribute<Funzione, String> note;
 }// end of entity class

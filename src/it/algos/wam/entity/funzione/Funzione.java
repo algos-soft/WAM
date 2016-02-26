@@ -26,6 +26,12 @@ import java.util.ArrayList;
 public class Funzione extends BaseEntity {
 
 
+    //--croce di riferimento
+    @NotNull
+    @ManyToOne
+    private Company company;
+
+
     //--sigla di riferimento interna
     @NotEmpty
     @Column(length = 10)
@@ -43,10 +49,9 @@ public class Funzione extends BaseEntity {
     private int ordine;
 
 
-    //--croce di riferimento
-    @NotNull
-    @ManyToOne
-    private Company company;
+    //--note di spiegazione
+    private String note;
+
 
 
     /**
@@ -63,7 +68,7 @@ public class Funzione extends BaseEntity {
      * @param sigla prevista
      */
     public Funzione(String sigla) {
-        this(null, sigla, "", 0);
+        this(null, sigla, "", 0, "");
     }// end of general constructor
 
 
@@ -74,14 +79,16 @@ public class Funzione extends BaseEntity {
      * @param sigla
      * @param descrizione
      * @param ordine
+     * @param note
      */
     @SuppressWarnings("all")
-    public Funzione(Company company, String sigla, String descrizione, int ordine) {
+    public Funzione(Company company, String sigla, String descrizione, int ordine, String note) {
         super();
         this.setCompany(company);
         this.setSigla(sigla);
         this.setDescrizione(descrizione);
         this.setOrdine(ordine);
+        this.setNote(note);
     }// end of constructor
 
     /**
@@ -199,7 +206,7 @@ public class Funzione extends BaseEntity {
      */
     @SuppressWarnings("all")
     public static Funzione crea(Company company, String sigla) {
-        return crea(company, sigla, "", 0);
+        return crea(company, sigla, "", 0, "");
     }// end of static method
 
 
@@ -211,13 +218,14 @@ public class Funzione extends BaseEntity {
      * @param sigla
      * @param descrizione
      * @param ordine
+     * @param note
      */
     @SuppressWarnings("all")
-    public static Funzione crea(Company company, String sigla, String descrizione, int ordine) {
+    public static Funzione crea(Company company, String sigla, String descrizione, int ordine, String note) {
         Funzione funzione = Funzione.find(company, sigla);
 
         if (funzione == null) {
-            funzione = new Funzione(company, sigla, descrizione, ordine);
+            funzione = new Funzione(company, sigla, descrizione, ordine, note);
             funzione.save();
         }// end of if cycle
 
@@ -259,6 +267,14 @@ public class Funzione extends BaseEntity {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }//end of setter method
+
+    public String getNote() {
+        return note;
+    }// end of getter method
+
+    public void setNote(String note) {
+        this.note = note;
     }//end of setter method
 
     /**

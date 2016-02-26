@@ -19,7 +19,13 @@ import java.util.Date;
  * Entity che descrive un Milite
  */
 @Entity
-public class Milite extends CompanyEntity {
+public class Milite extends BaseEntity {
+
+    //--croce di riferimento
+    @NotNull
+    @ManyToOne
+    private Company company;
+
 
     @NotEmpty
     @Column(length = 20)
@@ -31,10 +37,6 @@ public class Milite extends CompanyEntity {
     @Index
     private String cognome = "";
 
-    //--croce di riferimento
-    @NotNull
-    @ManyToOne
-    private Company company;
 
     private String telefonoCellulare;
     private String telefonoFisso;
@@ -259,7 +261,6 @@ public class Milite extends CompanyEntity {
         this.cognome = cognome;
     }//end of setter method
 
-    @Override
     public Company getCompany() {
         return company;
     }// end of getter method

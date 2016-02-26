@@ -83,9 +83,9 @@ public abstract class BootService {
         Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
         if (company != null) {
-            Funzione.crea(company, "aut", "Autista", 1);
-            Funzione.crea(company, "soc", "Soccorritore", 2);
-            Funzione.crea(company, "bar", "Barelliere", 3);
+            Funzione.crea(company, "aut", "Autista", 1,"Autista patentato 118");
+            Funzione.crea(company, "soc", "Soccorritore", 2,"Soccorritore 118");
+            Funzione.crea(company, "bar", "Barelliere", 3,"Soccorritore in prova");
         }// end of if cycle
     }// end of static method
 
@@ -135,9 +135,10 @@ public abstract class BootService {
         Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
 
         if (company != null) {
-            Funzione.crea(company, "aut", "Autista", 1);
-            Funzione.crea(company, "sec", "Secondo", 2);
-            Funzione.crea(company, "ter", "Aiuto", 3);
+            Funzione.crea(company, "aut", "Autista", 1,"Autista emergenze");
+            Funzione.crea(company, "aut2", "Autista", 2,"Autista dimissioni");
+            Funzione.crea(company, "sec", "Secondo", 3,"Soccorritore");
+            Funzione.crea(company, "ter", "Aiuto", 4,"Barelliere in prova");
         }// end of if cycle
     }// end of static method
 
