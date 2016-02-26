@@ -2,7 +2,7 @@ package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
-import it.algos.wam.entity.company.CompanyModulo;
+import it.algos.wam.entity.company.CompanyMod;
 import it.algos.webbase.web.ui.AlgosUI;
 
 /**
@@ -26,7 +26,7 @@ public class ManagerUI extends AlgosUI {
      */
     @Override
     protected void addModuli() {
-        addView(CompanyModulo.class, "Aziende", null);
+        addView(CompanyMod.class, "Aziende", null);
     }
 
 }

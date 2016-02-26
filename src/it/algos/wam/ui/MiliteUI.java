@@ -1,10 +1,6 @@
 package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import it.algos.wam.entity.company.CompanyModulo;
 import it.algos.webbase.domain.vers.VersMod;
 import it.algos.webbase.web.ui.AlgosUI;
 

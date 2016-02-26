@@ -8,9 +8,9 @@ import it.algos.webbase.web.table.TablePortal;
 /**
  * Company module
  */
-public class CompanyModulo extends BaseCompanyModule {
+public class CompanyMod extends BaseCompanyModule {
 
-    public CompanyModulo() {
+    public CompanyMod() {
         super(Company.class);
     }
 

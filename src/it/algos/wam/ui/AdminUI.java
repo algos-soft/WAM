@@ -1,8 +1,8 @@
 package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
-import it.algos.wam.entity.company.CompanyModulo;
-import it.algos.wam.entity.milite.MiliteModulo;
+import it.algos.wam.entity.company.CompanyMod;
+import it.algos.wam.entity.milite.MiliteMod;
 import it.algos.webbase.web.ui.AlgosUI;
 import it.algos.wam.entity.funzione.*;
 
@@ -20,8 +20,8 @@ public class AdminUI extends AlgosUI {
      */
     @Override
     protected void addModuli() {
-        this.addModulo(new CompanyModulo());
-        this.addModulo(new MiliteModulo());
+        this.addModulo(new CompanyMod());
+        this.addModulo(new MiliteMod());
         this.addModulo(new FunzioneMod());
     }// end of method
 
