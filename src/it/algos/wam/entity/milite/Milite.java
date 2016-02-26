@@ -72,6 +72,7 @@ public class Milite extends CompanyEntity {
      * @param nome
      * @param cognome
      */
+    @SuppressWarnings("all")
     public Milite(Company company, String nome, String cognome) {
         this(company, nome, cognome, null, "");
     }// end of constructor
@@ -85,6 +86,7 @@ public class Milite extends CompanyEntity {
      * @param dataNascita
      * @param telefonoCellulare
      */
+    @SuppressWarnings("all")
     public Milite(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare) {
         super();
         this.setCompany(company);
@@ -202,6 +204,7 @@ public class Milite extends CompanyEntity {
      * @param nome
      * @param cognome
      */
+    @SuppressWarnings("all")
     public static Milite crea(Company company, String nome, String cognome) {
         return crea(company, nome, cognome, null, "");
     }// end of static method
@@ -217,6 +220,7 @@ public class Milite extends CompanyEntity {
      * @param dataNascita
      * @param telefonoCellulare
      */
+    @SuppressWarnings("all")
     public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare) {
         Milite milite = Milite.find(company, nome, cognome);
 

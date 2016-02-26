@@ -18,5 +18,5 @@ public class Milite_ extends CompanyEntity_ {
 	public static volatile SingularAttribute<Milite, String> email;
 	public static volatile SingularAttribute<Milite, String> note;
 	public static volatile SingularAttribute<Milite, Date> dataNascita;
-	public static volatile SingularAttribute<Funzione, Company> company;
+	public static volatile SingularAttribute<Milite, Company> company;
 }// end of entity class

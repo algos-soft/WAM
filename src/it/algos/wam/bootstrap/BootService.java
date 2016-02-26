@@ -2,6 +2,7 @@ package it.algos.wam.bootstrap;
 
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.company.Company;
+import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.milite.Milite;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibTime;
@@ -21,6 +22,7 @@ public abstract class BootService {
     public static void creaCompanyDemo() {
         creaCroceDemo();
         creaMilitiDemo();
+        creaFunzioniDemo();
     }// end of static method
 
     /**
@@ -33,6 +35,7 @@ public abstract class BootService {
     public static void creaCompanyTest() {
         creaCroceTest();
         creaMilitiTest();
+        creaFunzioniTest();
     }// end of static method
 
 
@@ -63,14 +66,27 @@ public abstract class BootService {
         Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
         if (company != null) {
-            Milite.crea(company, "Piero", "Bernocchi",null,"335-471824");
+            Milite.crea(company, "Piero", "Bernocchi", null, "335-471824");
             Milite.crea(company, "Maria", "Cavazzini");
-            Milite.crea(company, "Francesco", "Mantovani", LibTime.adesso(),"338-679115");
+            Milite.crea(company, "Francesco", "Mantovani", LibTime.adesso(), "338-679115");
             Milite.crea(company, "Giulia", "Politi");
-            Milite.crea(company, "Maria", "Rovescala", LibDate.getPrimoGennaio(1987),"340-453728");
+            Milite.crea(company, "Maria", "Rovescala", LibDate.getPrimoGennaio(1987), "340-453728");
             Milite.crea(company, "Aldo", "Vaccari");
         }// end of if cycle
+    }// end of static method
 
+    /**
+     * Creazione iniziale di alcune funzioni per la croce demo
+     * Li crea SOLO se non esistono già
+     */
+    private static void creaFunzioniDemo() {
+        Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+
+        if (company != null) {
+            Funzione.crea(company, "aut", "Autista", 1);
+            Funzione.crea(company, "soc", "Soccorritore", 2);
+            Funzione.crea(company, "bar", "Barelliere", 3);
+        }// end of if cycle
     }// end of static method
 
 
@@ -102,29 +118,27 @@ public abstract class BootService {
 
         if (company != null) {
             Milite.crea(company, "Carlo", "Bagno");
-            Milite.crea(company, "Renzo", "Cerrato");
-            Milite.crea(company, "Lucia", "Donadoni");
+            Milite.crea(company, "Renzo", "Cerrato", LibDate.creaData(14, 7, 1995), "340-564738");
+            Milite.crea(company, "Lucia", "Donadoni", LibDate.creaData(11, 3, 1999), "335-5124396");
             Milite.crea(company, "Ambra", "Angeletti");
-            Milite.crea(company, "Flacio", "Brambilla");
+            Milite.crea(company, "Flacio", "Brambilla", LibDate.creaData(27, 10, 1991), "340-6786432");
             Milite.crea(company, "Ruggero", "Testa");
         }// end of if cycle
-
     }// end of static method
 
 
-//    /**
-//     * Creazione iniziale di un milite
-//     * Lo crea SOLO se non esiste già
-//     */
-//    private static Milite creaMilite(Company company, String nome, String cognome) {
-//        Milite milite = Milite.findByNome(nome); //@todo errato
-//
-//        if (milite != null) {
-//            milite = new Milite(company, nome, cognome);
-//            milite.save();
-//        }// end of if cycle
-//
-//        return milite;
-//    }// end of static method
+    /**
+     * Creazione iniziale di alcune funzioni per la croce test
+     * Li crea SOLO se non esistono già
+     */
+    private static void creaFunzioniTest() {
+        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+
+        if (company != null) {
+            Funzione.crea(company, "aut", "Autista", 1);
+            Funzione.crea(company, "sec", "Secondo", 2);
+            Funzione.crea(company, "ter", "Aiuto", 3);
+        }// end of if cycle
+    }// end of static method
 
 }// end of abstract static class

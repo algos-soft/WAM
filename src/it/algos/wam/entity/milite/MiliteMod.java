@@ -34,7 +34,7 @@ public class MiliteMod extends ModulePop {
      * Se si vuole differenziare tra Table, Form e Search, <br>
      * sovrascrivere creaFieldsList, creaFieldsForm e creaFieldsSearch <br>
      */
-    protected Attribute<?, ?>[] creaFieldsAll() {
+    protected Attribute<?, ?>[] creaFieldsList() {
         return new Attribute[]{Milite_.nome, Milite_.cognome, Milite_.dataNascita, Milite_.telefonoCellulare};
     }// end of method
 

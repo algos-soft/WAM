@@ -74,6 +74,11 @@ public class Company extends BaseCompany {
 //		DemoDataGenerator.createDemoData(this);
 //	};
 
+    @Override
+    public String toString() {
+        return getCompanyCode();
+    }// end of method
+
     /**
      * Recupera una istanza di Company usando la query di una property specifica
      *

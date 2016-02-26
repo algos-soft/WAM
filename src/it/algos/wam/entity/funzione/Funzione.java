@@ -58,14 +58,31 @@ public class Funzione extends BaseEntity {
     }// end of constructor
 
     /**
-     * Costruttore completo
+     * Costruttore
      *
      * @param sigla prevista
      */
     public Funzione(String sigla) {
-        super();
-        this.setSigla(sigla);
+        this(null, sigla, "", 0);
     }// end of general constructor
+
+
+    /**
+     * Costruttore completo
+     *
+     * @param company
+     * @param sigla
+     * @param descrizione
+     * @param ordine
+     */
+    @SuppressWarnings("all")
+    public Funzione(Company company, String sigla, String descrizione, int ordine) {
+        super();
+        this.setCompany(company);
+        this.setSigla(sigla);
+        this.setDescrizione(descrizione);
+        this.setOrdine(ordine);
+    }// end of constructor
 
     /**
      * Recupera una istanza di Funzione usando la query standard della Primary Key
@@ -111,14 +128,28 @@ public class Funzione extends BaseEntity {
      * Recupera una istanza di Funzione usando la query di una property specifica
      * Relativa ad una company
      *
-     * @param sigla   valore della property sigla
      * @param company di appartenenza
+     * @param sigla   valore della property sigla
      * @return istanza di Funzione, null se non trovata
      */
-    public static Funzione findBySigla(Company company, String sigla) {
-        //@todo da sviluppare
+    @SuppressWarnings("unchecked")
+    public static Funzione find(Company company, String sigla) {
+        Funzione instance = null;
+
+        //@todo migliorabile
+        ArrayList<Funzione> funzioniPerSigla = (ArrayList<Funzione>) AQuery.queryLista(Funzione.class, Funzione_.sigla, sigla);
+
+        if (funzioniPerSigla != null && funzioniPerSigla.size() > 0) {
+            for (Funzione funzione : funzioniPerSigla) {
+                if (funzione.getCompany().getId().equals(company.getId())) {
+                    instance = funzione;
+                }// end of if cycle
+            }// end of for cycle
+        }// end of if cycle
+
         return null;
     }// end of method
+
 
     /**
      * Recupera il valore del numero totale di records della della Entity
@@ -157,6 +188,41 @@ public class Funzione extends BaseEntity {
         //@todo da sviluppare
         return null;
     }// end of method
+
+
+    /**
+     * Creazione iniziale di una funzione
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company
+     * @param sigla
+     */
+    @SuppressWarnings("all")
+    public static Funzione crea(Company company, String sigla) {
+        return crea(company, sigla, "", 0);
+    }// end of static method
+
+
+    /**
+     * Creazione iniziale di una funzione
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company
+     * @param sigla
+     * @param descrizione
+     * @param ordine
+     */
+    @SuppressWarnings("all")
+    public static Funzione crea(Company company, String sigla, String descrizione, int ordine) {
+        Funzione funzione = Funzione.find(company, sigla);
+
+        if (funzione == null) {
+            funzione = new Funzione(company, sigla, descrizione, ordine);
+            funzione.save();
+        }// end of if cycle
+
+        return funzione;
+    }// end of static method
 
     @Override
     public String toString() {
