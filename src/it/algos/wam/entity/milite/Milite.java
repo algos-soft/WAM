@@ -164,7 +164,7 @@ public class Milite extends WamCompany {
 
 
 //        ArrayList<Milite> militiPerCognome = (ArrayList<Milite>) AQuery.queryList(Milite.class, Milite_.cognome, cognome);
-        List<Milite> militiPerCognome = (List<Milite>) AQuery.queryList(Milite.class, Milite_.cognome, cognome);
+        List<Milite> militiPerCognome = (List<Milite>) AQuery.queryLista(Milite.class, Milite_.cognome, cognome);
         if (militiPerCognome != null && militiPerCognome.size() > 0) {
             for (Milite milite : militiPerCognome) {
                 if (milite.getNome().equals(nome) && milite.getCompany().getId().equals(company.getId())) {

@@ -4,6 +4,7 @@ package it.algos.wam.entity.milite;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.wamcompany.WamCompany_;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.table.TablePortal;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -37,6 +38,17 @@ public class MiliteMod extends ModulePop {
      */
     protected Attribute<?, ?>[] creaFieldsList() {
         return new Attribute[]{WamCompany_.company, Milite_.nome, Milite_.cognome, Milite_.dataNascita, Milite_.telefonoCellulare};
+    }// end of method
+
+
+    /**
+     * Create the Table Portal
+     *
+     * @return the TablePortal
+     */
+    @Override
+    public TablePortal createTablePortal() {
+        return new MiliteTablePortal(this);
     }// end of method
 
 }// end of class
