@@ -21,7 +21,7 @@ public class CTabellone extends GridLayout {
     public CTabellone(RTabellone... righe) {
 
         addStyleName("yellowBg");
-        setSizeFull();
+//        setSizeFull();
         setMargin(true);
 
         // determina il numero di colonne turni (giorni)
@@ -51,8 +51,7 @@ public class CTabellone extends GridLayout {
         for(RTabellone riga : righe){
             row++;
 
-
-            addComponent(riga.getServizio(), 0, row);
+           // addComponent(riga.getServizio(), 0, row);
 
 //            Label label = new Label("ciao");
 //            label.addStyleName("redBg");
@@ -75,7 +74,9 @@ public class CTabellone extends GridLayout {
 
 
 
-            addComponent(riga.getRuoli(), 1, row);
+            // addComponent(riga.getRuoli(), 1, row);
+
+
             col=2;
             for (CTurno t : riga.getTurni()){
                 addComponent(t, col, row);
@@ -85,14 +86,24 @@ public class CTabellone extends GridLayout {
 
 
         // inizialmente tutte le colonne espandibili nello stesso modo
-        int count=getColumns();
-        for (int i = 0; i < count; i++) {
+        int nCol=getColumns();
+        for (int i = 0; i < nCol; i++) {
             setColumnExpandRatio(i,100);
         }
 
         // poi definisce le colonne non espandibili
         setColumnExpandRatio(0,0);
         setColumnExpandRatio(1,0);
+
+        // inizialmente tutte le righe espandibili nello stesso modo
+        int nRows=getRows();
+        for (int i = 0; i < nRows; i++) {
+            setRowExpandRatio(i,100);
+        }
+
+        // poi definisce le righe non espandibili
+        setRowExpandRatio(0,0);
+        setRowExpandRatio(1,0);
 
 
 

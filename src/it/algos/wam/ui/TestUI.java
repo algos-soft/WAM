@@ -21,7 +21,8 @@ public class TestUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
         RTabellone[] righe = creaRighe();
-        Component comp = new CTabellone(righe);
+        //Component comp = new CTabellone(righe);
+        Component comp = new CRuoli("Autista", "Primo", "Secondo", "Terzo");
         setContent(comp);
     }
 
@@ -37,10 +38,10 @@ public class TestUI extends UI {
         cTurni = creaTurniDemo();
         lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
 
-        cServ = new CServizio("Ambulanza pom.");
-        cRuoli = new CRuoli("Autista", "Primo", "Aiutante","Apprendista");
-        cTurni = creaTurniDemo();
-        lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
+//        cServ = new CServizio("Ambulanza pom.");
+//        cRuoli = new CRuoli("Autista", "Primo", "Aiutante","Apprendista");
+//        cTurni = creaTurniDemo();
+//        lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
 
         return lRighe.toArray(new RTabellone[0]);
     }

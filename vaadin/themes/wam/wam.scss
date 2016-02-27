@@ -127,12 +127,14 @@ $v-font-weight: 400;
   $dark: rgb(24, 40, 218);
   $light: rgba(24, 40, 218, 0.6);
   .cruolo {
-    @extend .ctabellone;
+    //@extend .ctabellone;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
     background: -o-linear-gradient(top, $dark, $light, $dark);
     background: linear-gradient(top, $dark, $light, $dark);
+    font-size: 14px;
+
   }
 
   // componente giorno

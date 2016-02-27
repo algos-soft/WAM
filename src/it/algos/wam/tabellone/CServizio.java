@@ -10,7 +10,7 @@ import com.vaadin.ui.VerticalLayout;
  * Componente che rapresenta la cella con il titolo del servizio nel tabellone.
  * Created by alex on 20/02/16.
  */
-public class CServizio extends HorizontalLayout {
+public class CServizio extends VerticalLayout {
     public CServizio(String nome) {
         super();
         setWidth("6em");
