@@ -1,4 +1,4 @@
-package it.algos.wam.entity.milite;
+package it.algos.wam.entity.wamcompany;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
@@ -15,17 +15,17 @@ import java.util.HashMap;
 
 /**
  * Created by gac on 27 feb 2016.
- * Sovrascrive la classe standard per aggiungere un bottone/menu di filtro sul parametro Livello
+ * Sovrascrive la classe standard per aggiungere un bottone/menu di filtro sulla croce da selezionare
  */
-public class MiliteTablePortal extends TablePortal {
+public class WamTablePortal extends TablePortal {
 
-    private final static String MENU_CROCI_CAPTION = "Croci";
+    private final static String MENU_CROCI_CAPTION = "Croce";
     private final static String ITEM_ALL_CROCI = "tutte";
     private TableToolbar toolbar;
     private HashMap<Company, MenuBar.MenuItem> croci;
 
 
-    public MiliteTablePortal(ModulePop modulo) {
+    public WamTablePortal(ModulePop modulo) {
         super(modulo);
     }// end of constructor
 

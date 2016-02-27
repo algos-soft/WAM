@@ -2,8 +2,11 @@ package it.algos.wam.entity.funzione;
 
 
 import com.vaadin.server.FontAwesome;
+import it.algos.wam.entity.wamcompany.WamMod;
+import it.algos.wam.entity.wamcompany.WamTablePortal;
 import it.algos.wam.entity.wamcompany.WamCompany_;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.table.TablePortal;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -11,7 +14,7 @@ import javax.persistence.metamodel.Attribute;
  * Gestione (minimale) del modulo specifico
  */
 @SuppressWarnings("serial")
-public class FunzioneMod extends ModulePop {
+public class FunzioneMod extends WamMod {
 
     /**
      * Costruttore senza parametri

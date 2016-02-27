@@ -3,6 +3,8 @@ package it.algos.wam.entity.milite;
 
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.wamcompany.WamCompany_;
+import it.algos.wam.entity.wamcompany.WamMod;
+import it.algos.wam.entity.wamcompany.WamTablePortal;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.TablePortal;
 
@@ -12,7 +14,7 @@ import javax.persistence.metamodel.Attribute;
  * Modulo del Milite
  */
 @SuppressWarnings("serial")
-public class MiliteMod extends ModulePop {
+public class MiliteMod extends WamMod {
 
     /**
      * Costruttore senza parametri
@@ -40,16 +42,6 @@ public class MiliteMod extends ModulePop {
         return new Attribute[]{WamCompany_.company, Milite_.nome, Milite_.cognome, Milite_.dataNascita, Milite_.telefonoCellulare};
     }// end of method
 
-
-    /**
-     * Create the Table Portal
-     *
-     * @return the TablePortal
-     */
-    @Override
-    public TablePortal createTablePortal() {
-        return new MiliteTablePortal(this);
-    }// end of method
 
 }// end of class
 
