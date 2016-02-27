@@ -8,13 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 /**
- * Classe di tipo JavaBean
- * <p>
- * 1) la classe deve avere un costruttore senza argomenti
- * 2) le proprietà devono essere private e accessibili solo con get, set e is (usato per i boolena al posto di get)
- * 3) la classe deve implementare l'interfaccia Serializable (la fa nella superclasse)
- * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
- * <p>
  * Superclasse astratta per tutte le Entity del progetto WAM che necessitano del campo Company
  */
 @Entity
@@ -38,7 +31,7 @@ public abstract class WamCompany extends BaseEntity {
         String stringa = "";
 
         if (company != null) {
-            stringa = company.getCompanyCode();
+            stringa = company.getName();
         }// end of if cycle
 
         return stringa;

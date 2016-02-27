@@ -12,6 +12,7 @@ import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.query.AQuery;
 
 import javax.persistence.Entity;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -74,11 +75,6 @@ public class Company extends BaseCompany {
 //		DemoDataGenerator.createDemoData(this);
 //	};
 
-    @Override
-    public String toString() {
-        return getCompanyCode();
-    }// end of method
-
     /**
      * Recupera una istanza di Company usando la query di una property specifica
      *
@@ -121,6 +117,21 @@ public class Company extends BaseCompany {
             company = (Company) demoCompanies.get(0);
         }
         return company;
+    }// end of method
+
+    /**
+     * Recupera una lista (array) di tutti i records della Domain Class
+     *
+     * @return lista di tutte le istanze di Company
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Company> findAll() {
+        return (ArrayList<Company>) AQuery.getLista(Company.class);
+    }// end of method
+
+    @Override
+    public String toString() {
+        return getCompanyCode();
     }// end of method
 
     /**
