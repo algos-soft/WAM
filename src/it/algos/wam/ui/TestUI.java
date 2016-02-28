@@ -2,6 +2,7 @@ package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
@@ -14,12 +15,19 @@ import java.util.List;
 /**
  * Created by alex on 20/02/16.
  */
-@Theme("wam")
 @Title("WAM:test")
 public class TestUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
+        String themeName;
+        if(Page.getCurrent().getWebBrowser().isTouchDevice()) {
+            themeName="wam-mobile";
+        }else{
+            themeName="wam";
+        }
+        setTheme(themeName);
+
         RTabellone[] righe = creaRighe();
         Component comp = new CTabellone(righe);
 //        Component comp = new CRuoli("Autista", "Primo", "Secondo", "Terzo");

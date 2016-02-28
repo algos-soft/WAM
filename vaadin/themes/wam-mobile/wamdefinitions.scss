@@ -1,0 +1,17 @@
+/* Import the base theme.*/
+@import "../wam/styles.scss";
+
+/* Include all the styles from the imported theme */
+@include wamstyles;
+
+/* This contains all of your theme.*/
+/* If somebody wants to extend the theme she will include this mixin. */
+@mixin wamstyles-mobile {
+
+  // attributi di tutto il tabellone
+  .ctabellone {
+    font-size: 18px;
+  }
+
+}
+
