@@ -31,20 +31,14 @@ import java.util.List;
 public class Funzione extends WamCompany {
 
 
-//    //--croce di riferimento
-//    @NotNull
-//    @ManyToOne
-//    private Company company;
-
-
-    //--sigla di riferimento interna
+    //--sigla di riferimento interna (obbligatoria)
     @NotEmpty
-    @Column(length = 10)
+    @Column(length = 20)
     @Index
     private String sigla;
 
 
-    //--descrizione per il tabellone
+    //--descrizione per il tabellone (obbligatoria)
     @NotEmpty
     private String descrizione;
 
@@ -54,7 +48,7 @@ public class Funzione extends WamCompany {
     private int ordine;
 
 
-    //--note di spiegazione
+    //--note di spiegazione (facoltativa)
     private String note;
 
 

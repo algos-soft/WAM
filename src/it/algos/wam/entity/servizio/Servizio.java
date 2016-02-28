@@ -25,14 +25,14 @@ import java.util.ArrayList;
 @Entity
 public class Servizio extends WamCompany {
 
-    //--sigla di riferimento interna
+    //--sigla di riferimento interna (obbligatoria)
     @NotEmpty
     @Column(length = 20)
     @Index
     private String sigla;
 
 
-    //--descrizione per il tabellone
+    //--descrizione per il tabellone (obbligatoria)
     @NotEmpty
     private String descrizione;
 
@@ -75,7 +75,7 @@ public class Servizio extends WamCompany {
     //--possibilità di occorrenze multiple (extra)
     private boolean multiplo = false;
 
-    //--numero di militi/funzioni obbligatorie
+    //--numero di volntari/militi/funzioni obbligatorie
     private int persone = 0;
 
     //--elenco delle funzioni previste per questo tipo di turno

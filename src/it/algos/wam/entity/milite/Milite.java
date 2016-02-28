@@ -30,29 +30,32 @@ import java.util.List;
 @Entity
 public class Milite extends WamCompany {
 
+    //--nome del volontario (obbligatorio)
     @NotEmpty
     @Column(length = 20)
     @Index
     private String nome = "";
 
+    //--cognome del volontario (obbligatorio)
     @NotEmpty
-    @Column(length = 20)
+    @Column(length = 30)
     @Index
     private String cognome = "";
 
+    //--dati personali facoltativi
     private String telefonoCellulare;
     private String telefonoFisso;
     private String email;
     private String note;
     private Date dataNascita = null;
 
-    //--dati associazione
+    //--dati dell'associazione
     private boolean dipendente = false;
     private boolean attivo = true;
 
-//    //--scadenza certificati
-//    //--data di scadenza del certificato BSD
-//    //--se non valorizzata, il milite non ha acquisito il certificato
+    //--scadenza certificati
+    //--data di scadenza del certificato BSD
+    //--se non valorizzata, il milite non ha acquisito il certificato
 //    private Date scadenzaBLSD = null;
 //    //--data di scadenza del certificato Trauma
 //    //--se non valorizzata, il milite non ha acquisito il certificato
