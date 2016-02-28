@@ -56,11 +56,12 @@ public class WAMBootStrap extends ABootStrap {
         Toolbar.LARGHEZZA_BOTTONI = 140;
 
         // eventuali modifiche ai flag generali di regolazione
-//        AlgosApp.USE_SECURITY = true;
-//        AlgosApp.USE_LOG = true;
+        AlgosApp.USE_SECURITY = false; //@todo per adesso false
+        AlgosApp.USE_LOG = false;
         AlgosApp.USE_VERS = true;
-//        AlgosApp.USE_PREF = false;
+        AlgosApp.USE_PREF = true;
 
+        //@todo la creazione della demo è in VersBootStrap
 //        if (Company.getDemo() == null) {
 //            creaDemoCompany();
 //        }

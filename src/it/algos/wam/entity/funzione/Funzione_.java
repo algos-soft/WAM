@@ -1,6 +1,5 @@
 package it.algos.wam.entity.funzione;
 
-import it.algos.wam.entity.company.Company;
 import it.algos.webbase.web.entity.BaseEntity_;
 
 import javax.persistence.metamodel.SingularAttribute;

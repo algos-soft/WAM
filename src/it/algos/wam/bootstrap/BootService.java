@@ -106,6 +106,12 @@ public abstract class BootService {
             Servizio.crea(company, ++k, "msa-mat", "Automedica mattino", 8, 14, true, true, false, 2);
             Servizio.crea(company, ++k, "msa-pom", "Automedica pomeriggio", 14, 20, true, true, false, 2);
             Servizio.crea(company, ++k, "msa-not", "Automedica notte", 20, 8, true, true, false, 2);
+            Servizio.crea(company, ++k, "dia", "Dialisi mattino", 7, 13, true, true, false, 2);
+            Servizio.crea(company, ++k, "ord-mat", "Ordinario mattino", 7, 12, true, true, false, 3);
+            Servizio.crea(company, ++k, "ord-pom", "Ordinario pomeriggio", 12, 18, true, true, false, 3);
+            Servizio.crea(company, ++k, "ord-ser", "Ordinario sera", 18, 24, true, true, false, 2);
+            Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2);
+            Servizio.crea(company, ++k, "avis", "Servizio AVIS", 0, 0, true, false, false, 1);
         }// end of if cycle
     }// end of static method
 
@@ -173,9 +179,11 @@ public abstract class BootService {
         int k = 0;
 
         if (company != null) {
-            Servizio.crea(company, ++k, "amb-mat", "Ambulanza mattino", 7, 12, true, true, false, 3);
+            Servizio.crea(company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3);
             Servizio.crea(company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 18, true, true, false, 3);
-            Servizio.crea(company, ++k, "amb-not", "Ambulanza sera", 18, 24, true, true, false, 2);
+            Servizio.crea(company, ++k, "amb-ser", "Ambulanza sera", 18, 24, true, true, false, 2);
+            Servizio.crea(company, ++k, "dim", "Dimissioni", 0, 0, true, false, false, 2);
+            Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2);
         }// end of if cycle
     }// end of static method
 
