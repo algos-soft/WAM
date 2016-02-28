@@ -35,17 +35,17 @@ public class TestUI extends UI {
         CTurno[] cTurni;
 
         cServ = new CServizio("Ambulanza mattino");
-        cRuoli = new CRuoli("Autista", "Primo", "Secondo", "Terzo");
+        cRuoli = new CRuoli("Aut", "Sec", "Ter", "Bar");
         cTurni = creaTurniDemo();
         lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
 
         cServ = new CServizio("Ambulanza pomeriggio");
-        cRuoli = new CRuoli("Autista", "Primo", "Aiutante","Apprendista");
+        cRuoli = new CRuoli("Aut", "Sec", "Aiu","Ap");
         cTurni = creaTurniDemo();
         lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
 
         cServ = new CServizio("Ambulanza notte");
-        cRuoli = new CRuoli("Autista", "Primo", "Aiutante","Apprendista");
+        cRuoli = new CRuoli("Aut", "Sec", "Ter", "Bar");
         cTurni = creaTurniDemo();
         lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
 

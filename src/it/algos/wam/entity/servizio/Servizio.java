@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entity che descrive un Servizio (tipo di turno)
@@ -158,7 +159,7 @@ public class Servizio extends WamCompany {
     public static Servizio find(Company company, String sigla) {
         Servizio instance = null;
 
-        ArrayList<Servizio> serviziPerSigla = (ArrayList<Servizio>) AQuery.queryLista(Servizio.class, Servizio_.sigla, sigla);
+        List<Servizio> serviziPerSigla = (List<Servizio>) AQuery.queryList(Servizio.class, Servizio_.sigla, sigla);
         if (serviziPerSigla != null && serviziPerSigla.size() > 0) {
             for (Servizio servizio : serviziPerSigla) {
                 if (servizio.getCompany().getId().equals(company.getId())) {

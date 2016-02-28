@@ -10,7 +10,7 @@ import java.util.Date;
 
 /**
  * Componente che rappresenta un tabellone con servizi e giorni.
- * Sulle righe sono rappresentati i serizi, sulle colonne i giorni.
+ * Sulle righe sono rappresentati i servizi, sulle colonne i giorni.
  * Created by alex on 20/02/16.
  */
 public class CTabellone extends GridLayout {
@@ -23,7 +23,7 @@ public class CTabellone extends GridLayout {
         addStyleName("yellowBg");
         addStyleName("ctabellone");
 
-        setWidth("100%");
+        //setWidth("100%");
         setMargin(true);
         setSpacing(true);
 

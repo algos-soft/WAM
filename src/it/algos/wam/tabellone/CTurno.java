@@ -13,7 +13,7 @@ public class CTurno extends VerticalLayout {
 
         setSpacing(false);
 
-        addStyleName("redBg");
+        setWidth("6em");
 
         for(CIscrizione i : iscrizioni){
             addComponent(i);

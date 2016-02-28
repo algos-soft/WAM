@@ -20,7 +20,7 @@ public class CRuoli extends VerticalLayout {
 
         //setHeight("100%");
 
-        setWidth("5em");
+        setWidth("3em");
 
         for(String s : ruoli){
             Label label = new Label(s);
