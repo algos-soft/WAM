@@ -2,11 +2,8 @@ package it.algos.wam.entity.funzione;
 
 
 import com.vaadin.server.FontAwesome;
-import it.algos.wam.entity.wamcompany.WamMod;
-import it.algos.wam.entity.wamcompany.WamTablePortal;
 import it.algos.wam.entity.wamcompany.WamCompany_;
-import it.algos.webbase.web.module.ModulePop;
-import it.algos.webbase.web.table.TablePortal;
+import it.algos.wam.entity.wamcompany.WamMod;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -15,6 +12,9 @@ import javax.persistence.metamodel.Attribute;
  */
 @SuppressWarnings("serial")
 public class FunzioneMod extends WamMod {
+
+    // indirizzo interno del modulo (serve nei menu)
+    public static String MENU_ADDRESS = "Funzioni";
 
     /**
      * Costruttore senza parametri
@@ -25,7 +25,7 @@ public class FunzioneMod extends WamMod {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public FunzioneMod() {
-        super(Funzione.class, FontAwesome.GEAR);
+        super(Funzione.class, MENU_ADDRESS, FontAwesome.GEAR);
     }// end of constructor
 
     /**
@@ -39,7 +39,7 @@ public class FunzioneMod extends WamMod {
      * sovrascrivere creaFieldsList, creaFieldsForm e creaFieldsSearch <br>
      */
     protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{WamCompany_.company,Funzione_.ordine, Funzione_.sigla, Funzione_.descrizione,Funzione_.note};
+        return new Attribute[]{WamCompany_.company, Funzione_.ordine, Funzione_.sigla, Funzione_.descrizione, Funzione_.note};
     }// end of method
 
 }// end of class

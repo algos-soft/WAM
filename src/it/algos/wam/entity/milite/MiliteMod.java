@@ -13,6 +13,9 @@ import javax.persistence.metamodel.Attribute;
 @SuppressWarnings("serial")
 public class MiliteMod extends WamMod {
 
+    // indirizzo interno del modulo (serve nei menu)
+    public static String MENU_ADDRESS = "Volontari";
+
     /**
      * Costruttore senza parametri
      * <p>
@@ -22,7 +25,7 @@ public class MiliteMod extends WamMod {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public MiliteMod() {
-        super(Milite.class, FontAwesome.GEAR);
+        super(Milite.class, MENU_ADDRESS, FontAwesome.GEAR);
     }// end of constructor
 
     /**

@@ -13,6 +13,9 @@ import javax.persistence.metamodel.Attribute;
 @SuppressWarnings("serial")
 public class ServizioMod extends WamMod {
 
+    // indirizzo interno del modulo (serve nei menu)
+    public static String MENU_ADDRESS = "Servizi";
+
     /**
      * Costruttore senza parametri
      * <p>
@@ -22,7 +25,7 @@ public class ServizioMod extends WamMod {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public ServizioMod() {
-        super(Servizio.class, FontAwesome.GEAR);
+        super(Servizio.class, MENU_ADDRESS, FontAwesome.GEAR);
     }// end of constructor
 
     /**
@@ -38,6 +41,7 @@ public class ServizioMod extends WamMod {
     protected Attribute<?, ?>[] creaFieldsList() {
         return new Attribute[]{
                 WamCompany_.company,
+                Servizio_.ordine,
                 Servizio_.sigla,
                 Servizio_.descrizione,
                 Servizio_.durata,
@@ -46,7 +50,7 @@ public class ServizioMod extends WamMod {
                 Servizio_.visibile,
                 Servizio_.orario,
                 Servizio_.multiplo,
-                Servizio_.funzioniObbligatorie};
+                Servizio_.persone};
     }// end of method
 
 }// end of class

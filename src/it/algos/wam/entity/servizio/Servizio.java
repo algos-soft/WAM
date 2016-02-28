@@ -12,7 +12,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Entity che descrive un Servizio (tipo di turno)
@@ -77,7 +76,7 @@ public class Servizio extends WamCompany {
     private boolean multiplo = false;
 
     //--numero di militi/funzioni obbligatorie
-    private int funzioniObbligatorie = 0;
+    private int persone = 0;
 
     //--elenco delle funzioni previste per questo tipo di turno
     //--massimo hardcoded di 4
@@ -92,7 +91,7 @@ public class Servizio extends WamCompany {
      * Necessario per le specifiche JavaBean
      */
     public Servizio() {
-        this(null,"");
+        this(null, "");
     }// end of constructor
 
 
@@ -216,6 +215,39 @@ public class Servizio extends WamCompany {
         return servizio;
     }// end of static method
 
+    /**
+     * Creazione iniziale di un servizio
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company
+     * @param ordine
+     * @param sigla
+     * @param descrizione
+     * @param inizio
+     * @param fine
+     * @param visibile
+     * @param orario
+     * @param multiplo
+     * @param persone
+     */
+    @SuppressWarnings("all")
+    public static Servizio crea(Company company, int ordine,String sigla, String descrizione, int inizio, int fine, boolean visibile, boolean orario, boolean multiplo, int persone) {
+        Servizio servizio = Servizio.crea(company, sigla);
+
+        servizio.setOrdine(ordine);
+        servizio.setDescrizione(descrizione);
+        servizio.setDurata(Math.abs(fine - inizio));
+        servizio.setOraInizio(inizio);
+        servizio.setOraFine(fine);
+        servizio.setVisibile(visibile);
+        servizio.setOrario(orario);
+        servizio.setMultiplo(multiplo);
+        servizio.setPersone(persone);
+        servizio.save();
+
+        return servizio;
+    }// end of static method
+
     @Override
     public String toString() {
         return sigla;
@@ -331,12 +363,12 @@ public class Servizio extends WamCompany {
         this.multiplo = multiplo;
     }//end of setter method
 
-    public int getFunzioniObbligatorie() {
-        return funzioniObbligatorie;
+    public int getPersone() {
+        return persone;
     }// end of getter method
 
-    public void setFunzioniObbligatorie(int funzioniObbligatorie) {
-        this.funzioniObbligatorie = funzioniObbligatorie;
+    public void setPersone(int funzioniObbligatorie) {
+        this.persone = funzioniObbligatorie;
     }//end of setter method
 
     /**

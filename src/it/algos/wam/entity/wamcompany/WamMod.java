@@ -22,6 +22,17 @@ public abstract class WamMod extends ModulePop {
         super(entity, menuIcon);
     }// end of constructor
 
+    /**
+     * Costruttore
+     *
+     * @param entity    di riferimento del modulo
+     * @param menuLabel etichetta visibile nella menu bar
+     * @param menuIcon  icona del menu
+     */
+    public WamMod(Class entity, String menuLabel, Resource menuIcon) {
+        super(entity, menuLabel, menuIcon);
+    }// end of constructor
+
 
     /**
      * Create the Table Portal

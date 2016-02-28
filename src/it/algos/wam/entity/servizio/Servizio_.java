@@ -23,5 +23,5 @@ public class Servizio_ extends CompanyEntity_ {
     public static volatile SingularAttribute<Servizio, Boolean> visibile;
     public static volatile SingularAttribute<Servizio, Boolean> orario;
     public static volatile SingularAttribute<Servizio, Boolean> multiplo;
-    public static volatile SingularAttribute<Servizio, Integer> funzioniObbligatorie;
+    public static volatile SingularAttribute<Servizio, Integer> persone;
 }// end of entity class

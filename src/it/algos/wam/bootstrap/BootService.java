@@ -84,11 +84,12 @@ public abstract class BootService {
      */
     private static void creaFunzioniDemo() {
         Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        int k = 0;
 
         if (company != null) {
-            Funzione.crea(company, "aut", "Autista", 1, "Autista patentato 118");
-            Funzione.crea(company, "soc", "Soccorritore", 2, "Soccorritore 118");
-            Funzione.crea(company, "bar", "Barelliere", 3, "Soccorritore in prova");
+            Funzione.crea(company, "aut", "Autista", ++k, "Autista patentato 118");
+            Funzione.crea(company, "soc", "Soccorritore", ++k, "Soccorritore 118");
+            Funzione.crea(company, "bar", "Barelliere", ++k, "Soccorritore in prova");
         }// end of if cycle
     }// end of static method
 
@@ -99,39 +100,12 @@ public abstract class BootService {
      */
     private static void creaServiziDemo() {
         Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
-        Servizio servizio;
+        int k = 0;
 
         if (company != null) {
-            servizio = Servizio.crea(company, "msa-mat");
-            servizio.setDescrizione("Automedica mattino");
-            servizio.setDurata(6);
-            servizio.setOraInizio(8);
-            servizio.setOraFine(14);
-            servizio.setVisibile(true);
-            servizio.setOrario(true);
-            servizio.setMultiplo(false);
-            servizio.setFunzioniObbligatorie(2);
-            servizio.save();
-            servizio = Servizio.crea(company, "msa-pom");
-            servizio.setDescrizione("Automedica pomeriggio");
-            servizio.setDurata(6);
-            servizio.setOraInizio(14);
-            servizio.setOraFine(20);
-            servizio.setVisibile(true);
-            servizio.setOrario(true);
-            servizio.setMultiplo(false);
-            servizio.setFunzioniObbligatorie(2);
-            servizio.save();
-            servizio = Servizio.crea(company, "msa-not");
-            servizio.setDescrizione("Automedica notte");
-            servizio.setDurata(12);
-            servizio.setOraInizio(20);
-            servizio.setOraFine(8);
-            servizio.setVisibile(true);
-            servizio.setOrario(true);
-            servizio.setMultiplo(false);
-            servizio.setFunzioniObbligatorie(2);
-            servizio.save();
+            Servizio.crea(company, ++k, "msa-mat", "Automedica mattino", 8, 14, true, true, false, 2);
+            Servizio.crea(company, ++k, "msa-pom", "Automedica pomeriggio", 14, 20, true, true, false, 2);
+            Servizio.crea(company, ++k, "msa-not", "Automedica notte", 20, 8, true, true, false, 2);
         }// end of if cycle
     }// end of static method
 
@@ -179,12 +153,13 @@ public abstract class BootService {
      */
     private static void creaFunzioniTest() {
         Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        int k = 0;
 
         if (company != null) {
-            Funzione.crea(company, "aut", "Autista", 1, "Autista emergenze");
-            Funzione.crea(company, "aut2", "Autista", 2, "Autista dimissioni");
-            Funzione.crea(company, "sec", "Secondo", 3, "Soccorritore");
-            Funzione.crea(company, "ter", "Aiuto", 4, "Barelliere in prova");
+            Funzione.crea(company, "aut", "Autista", ++k, "Autista emergenze");
+            Funzione.crea(company, "aut2", "Autista", ++k, "Autista dimissioni");
+            Funzione.crea(company, "sec", "Secondo", ++k, "Soccorritore");
+            Funzione.crea(company, "ter", "Aiuto", ++k, "Barelliere in prova");
         }// end of if cycle
     }// end of static method
 
@@ -195,8 +170,12 @@ public abstract class BootService {
      */
     private static void creaServiziTest() {
         Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        int k = 0;
 
         if (company != null) {
+            Servizio.crea(company, ++k, "amb-mat", "Ambulanza mattino", 7, 12, true, true, false, 3);
+            Servizio.crea(company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 18, true, true, false, 3);
+            Servizio.crea(company, ++k, "amb-not", "Ambulanza sera", 18, 24, true, true, false, 2);
         }// end of if cycle
     }// end of static method
 
