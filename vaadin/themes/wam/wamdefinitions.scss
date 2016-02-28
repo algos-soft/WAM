@@ -13,7 +13,7 @@ $v-font-weight: 400;
 
 /* This contains all of your theme.*/
 /* If somebody wants to extend the theme she will include this mixin. */
-@mixin algos {
+@mixin wamstyles {
 
   /* Include all the styles from the imported theme */
   @include valo;
@@ -106,16 +106,27 @@ $v-font-weight: 400;
     color:blue;
   }
 
-  // attributi comuni componenti del tabellone
-  .ctabellone{
-    font-size: 14px;
+
+
+
+  // attributi di tutto il tabellone
+  .ctabellone {
+    font-size: 13px;
   }
+
+
+  // attributi ereditati dai vari stili delle celle del tabellone
+  .cbasecell {
+    display: block;
+    white-space:nowrap;
+  }
+
 
   // componente servizio
   $dark: rgba(218, 115, 0, 1);
   $light: rgba(218, 115, 0, 0.6);
   .cservizio {
-    @extend .ctabellone;
+    @extend .cbasecell;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
@@ -123,25 +134,34 @@ $v-font-weight: 400;
     background: linear-gradient(top, $dark, $light, $dark);
   }
 
-  // componente ruolo
-  $dark: rgb(24, 40, 218);
-  $light: rgba(24, 40, 218, 0.6);
+  // componente ora nel componente servizio
+  .cservizio-ora {
+    font-weight: bold;
+  }
+
+  // componente nome nel componente servizio
+  .cservizio-nome {
+    margin-left: 10%;
+  }
+
+
+  // componente ruolo (singolo ruolo nel componente Ruoli)
+  $dark: rgb(42, 156, 218);
+  $light: rgba(42, 156, 218, 0.6);
   .cruolo {
-    //@extend .ctabellone;
+    @extend .cbasecell;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
     background: -o-linear-gradient(top, $dark, $light, $dark);
     background: linear-gradient(top, $dark, $light, $dark);
-    font-size: 14px;
-
   }
 
   // componente giorno
   $dark: rgb(47, 116, 17);
   $light: rgba(47, 116, 17, 0.6);
   .cgiorno {
-    @extend .ctabellone;
+    @extend .cbasecell;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
@@ -153,7 +173,7 @@ $v-font-weight: 400;
   $dark: rgb(9, 116, 83);
   $light: rgba(9, 116, 83, 0.6);
   .cturno {
-    @extend .ctabellone;
+    @extend .cbasecell;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
@@ -162,10 +182,10 @@ $v-font-weight: 400;
   }
 
   // componente iscrizione
-  $dark: rgb(185, 52, 185);
-  $light: rgba(185, 52, 185, 0.6);
+  $dark: rgb(205, 205, 205);
+  $light: rgba(205, 205, 205, 0.6);
   .ciscrizione {
-    @extend .ctabellone;
+    @extend .cbasecell;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
@@ -174,30 +194,6 @@ $v-font-weight: 400;
   }
 
 
-
-
-  .v-gridlayout-gridexpandratio {
-    background: blue; /* Creates a "border" around the grid. */
-    margin:     10px; /* Empty space around the layout. */
-  }
-
-  /* Add padding through which the background color shows. */
-  .v-gridlayout-gridexpandratio .v-gridlayout-margin {
-    padding: 2px;
-  }
-
-  /* Add cell borders and make the cell backgrounds white.
-   * Warning: This depends heavily on the HTML structure. */
-  .v-gridlayout-gridexpandratio > div > div > div {
-    padding:    2px;   /* Layout background will show through. */
-    background: white; /* The cells will be colored white. */
-  }
-
-  /* Components inside the layout are a safe way to style cells. */
-  .v-gridlayout-gridexpandratio .v-label {
-    text-align: left;
-    background: #ffffc0; /* Pale yellow */
-  }
 
 
 }

@@ -13,29 +13,27 @@ import com.vaadin.ui.VerticalLayout;
 public class CServizio extends VerticalLayout {
     public CServizio(String nome) {
         super();
+
         setWidth("6em");
-        //setWidth("300px");
-
+        setSpacing(false);
         setHeight("100%");
-        //setWidth("11em");
-//        setWidthUndefined();
-
         addStyleName("cservizio");
 
 
-        Label labelOra=new Label("<strong>14-20</strong>", ContentMode.HTML);
-//        labelOra.setWidth("30%");
-//        labelOra.setWidth("3em");
+        Label labelOra=new Label("14-20");
+        labelOra.addStyleName("cservizio-ora");
+        labelOra.addStyleName("blueBg");
+        addComponent(labelOra);
 
-        Label labelNome = new Label(nome, ContentMode.HTML);
-//        labelNome.setWidth("70%");
+        Label labelNome = new Label(nome);
+        labelNome.addStyleName("cservizio-nome");
+        labelNome.addStyleName("greenBg");
 
-//        labelNome.setWidthUndefined();
-
-//        addComponent(labelOra);
-//        setComponentAlignment(labelOra, Alignment.MIDDLE_CENTER);
+        labelNome.setHeight("100%");
         addComponent(labelNome);
-        setComponentAlignment(labelNome, Alignment.MIDDLE_LEFT);
+
+        setExpandRatio(labelNome, 1);
+
 
     }
 }

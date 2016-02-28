@@ -21,8 +21,11 @@ public class CTabellone extends GridLayout {
     public CTabellone(RTabellone... righe) {
 
         addStyleName("yellowBg");
-//        setSizeFull();
+        addStyleName("ctabellone");
+
+        setWidth("100%");
         setMargin(true);
+        setSpacing(true);
 
         // determina il numero di colonne turni (giorni)
         int giorni=0;
@@ -51,59 +54,41 @@ public class CTabellone extends GridLayout {
         for(RTabellone riga : righe){
             row++;
 
-           // addComponent(riga.getServizio(), 0, row);
+            addComponent(riga.getServizio(), 0, row);
 
-//            Label label = new Label("ciao");
-//            label.addStyleName("redBg");
-//            addComponent(label, 0, row);
-
-//            HorizontalLayout layout =  new HorizontalLayout();
-//            layout.setWidth("100%");
-//            layout.addStyleName("redBg");
-//            Label label1 = new Label("xxx");
-//            label1.addStyleName("greenBg");
-//            Label label2 = new Label("ciao");
-//            label2.addStyleName("blueBg");
-//
-//            //label.setWidth("100%");
-//            layout.addComponent(label1);
-//            layout.addComponent(label2);
-//
-//            addComponent(layout, 0, row);
-
-
-
-
-            // addComponent(riga.getRuoli(), 1, row);
-
+            addComponent(riga.getRuoli(), 1, row);
 
             col=2;
             for (CTurno t : riga.getTurni()){
                 addComponent(t, col, row);
                 col++;
             }
+
         }
 
 
-        // inizialmente tutte le colonne espandibili nello stesso modo
-        int nCol=getColumns();
-        for (int i = 0; i < nCol; i++) {
-            setColumnExpandRatio(i,100);
+        /* Espandibilità delle colonne:
+        * Le prime 2 colonne (servizi e ruoli) sono fisse,
+        * le altre (turni) riempiono lo spazio disponibile
+        * in modo equamente distribuito */
+        for (int i = 0; i < getColumns(); i++) {
+            if(i==0 | i==1) {
+                setColumnExpandRatio(i,0);
+            }else{
+                setColumnExpandRatio(i,100);
+            }
         }
 
-        // poi definisce le colonne non espandibili
-        setColumnExpandRatio(0,0);
-        setColumnExpandRatio(1,0);
 
-        // inizialmente tutte le righe espandibili nello stesso modo
-        int nRows=getRows();
-        for (int i = 0; i < nRows; i++) {
-            setRowExpandRatio(i,100);
-        }
+//        // inizialmente tutte le righe espandibili nello stesso modo
+//        int nRows=getRows();
+//        for (int i = 0; i < nRows; i++) {
+//            setRowExpandRatio(i,100);
+//        }
 
-        // poi definisce le righe non espandibili
-        setRowExpandRatio(0,0);
-        setRowExpandRatio(1,0);
+//        // poi definisce quali sono le righe non espandibili
+//        setRowExpandRatio(0,0);
+//        setRowExpandRatio(1,0);
 
 
 

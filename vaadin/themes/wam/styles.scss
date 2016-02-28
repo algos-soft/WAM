@@ -1,9 +1,9 @@
 @import "addons.scss";
-@import "wam.scss";
+@import "wamdefinitions.scss";
 
 /* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
-/* The actual styles should be defined in asteriacultura.scss */
+/* The actual styles should be defined in .scss files */
 .wam {
   @include addons;
-  @include algos;
+  @include wamstyles;
 }

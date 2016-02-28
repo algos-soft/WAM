@@ -13,16 +13,18 @@ public class CRuoli extends VerticalLayout {
 
     public CRuoli(String... ruoli) {
 
+        addStyleName("greenBg");
+        //addStyleName("ctabellone");
+
         setSpacing(false);
 
         //setHeight("100%");
 
-        setWidth("4em");
+        setWidth("5em");
 
         for(String s : ruoli){
             Label label = new Label(s);
-            label.setStyleName("cruolo");
-            //label.addStyleName("yellowBg");
+            label.addStyleName("cruolo");
             addComponent(label);
         }
 

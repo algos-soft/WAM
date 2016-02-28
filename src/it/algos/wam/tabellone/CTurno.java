@@ -13,9 +13,11 @@ public class CTurno extends VerticalLayout {
 
         setSpacing(false);
 
+        addStyleName("redBg");
+
         for(CIscrizione i : iscrizioni){
             addComponent(i);
         }
-       // addStyleName("cturno");
+
     }
 }
