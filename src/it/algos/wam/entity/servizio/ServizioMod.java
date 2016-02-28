@@ -1,4 +1,4 @@
-package it.algos.wam.entity.milite;
+package it.algos.wam.entity.servizio;
 
 
 import com.vaadin.server.FontAwesome;
@@ -8,10 +8,10 @@ import it.algos.wam.entity.wamcompany.WamMod;
 import javax.persistence.metamodel.Attribute;
 
 /**
- * Modulo del Milite
+ * Modulo del servizio (fisso o variabile) previsto o effettuato
  */
 @SuppressWarnings("serial")
-public class MiliteMod extends WamMod {
+public class ServizioMod extends WamMod {
 
     /**
      * Costruttore senza parametri
@@ -21,8 +21,8 @@ public class MiliteMod extends WamMod {
      * (facoltativo) etichetta del menu (se manca usa il nome della Entity)
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
-    public MiliteMod() {
-        super(Milite.class, FontAwesome.GEAR);
+    public ServizioMod() {
+        super(Servizio.class, FontAwesome.GEAR);
     }// end of constructor
 
     /**
@@ -36,9 +36,18 @@ public class MiliteMod extends WamMod {
      * sovrascrivere creaFieldsList, creaFieldsForm e creaFieldsSearch <br>
      */
     protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{WamCompany_.company, Milite_.nome, Milite_.cognome, Milite_.dataNascita, Milite_.telefonoCellulare, Milite_.dipendente, Milite_.attivo};
+        return new Attribute[]{
+                WamCompany_.company,
+                Servizio_.sigla,
+                Servizio_.descrizione,
+                Servizio_.durata,
+                Servizio_.oraInizio,
+                Servizio_.oraFine,
+                Servizio_.visibile,
+                Servizio_.orario,
+                Servizio_.multiplo,
+                Servizio_.funzioniObbligatorie};
     }// end of method
-
 
 }// end of class
 

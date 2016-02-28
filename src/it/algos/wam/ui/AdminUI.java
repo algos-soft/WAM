@@ -2,9 +2,10 @@ package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
 import it.algos.wam.entity.company.CompanyMod;
+import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.milite.MiliteMod;
+import it.algos.wam.entity.servizio.*;
 import it.algos.webbase.web.ui.AlgosUI;
-import it.algos.wam.entity.funzione.*;
 
 /**
  * La UI dell'admin
@@ -23,6 +24,7 @@ public class AdminUI extends AlgosUI {
         this.addModulo(new CompanyMod());
         this.addModulo(new MiliteMod());
         this.addModulo(new FunzioneMod());
+        this.addModulo(new ServizioMod());
     }// end of method
 
 }// end of class

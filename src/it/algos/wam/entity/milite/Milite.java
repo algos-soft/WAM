@@ -40,17 +40,16 @@ public class Milite extends WamCompany {
     @Index
     private String cognome = "";
 
-
     private String telefonoCellulare;
     private String telefonoFisso;
     private String email;
     private String note;
     private Date dataNascita = null;
 
-//    //--dati associazione
-//    private boolean dipendente = false;
-//    private boolean attivo = true;
-//
+    //--dati associazione
+    private boolean dipendente = false;
+    private boolean attivo = true;
+
 //    //--scadenza certificati
 //    //--data di scadenza del certificato BSD
 //    //--se non valorizzata, il milite non ha acquisito il certificato
@@ -83,7 +82,7 @@ public class Milite extends WamCompany {
     }// end of constructor
 
     /**
-     * Costruttore completo
+     * Costruttore
      *
      * @param company
      * @param nome
@@ -93,12 +92,28 @@ public class Milite extends WamCompany {
      */
     @SuppressWarnings("all")
     public Milite(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare) {
+        this(company, nome, cognome, dataNascita, telefonoCellulare, false, true);
+    }// end of constructor
+
+    /**
+     * Costruttore completo
+     *
+     * @param company
+     * @param nome
+     * @param cognome
+     * @param dataNascita
+     * @param telefonoCellulare
+     */
+    @SuppressWarnings("all")
+    public Milite(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare, boolean dipendente, boolean attivo) {
         super();
         super.setCompany(company);
         setNome(nome);
         setCognome(cognome);
         setDataNascita(dataNascita);
         setTelefonoCellulare(telefonoCellulare);
+        setDipendente(dipendente);
+        setAttivo(attivo);
     }// end of constructor
 
     /**
@@ -228,10 +243,25 @@ public class Milite extends WamCompany {
      */
     @SuppressWarnings("all")
     public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare) {
+        return crea(company, nome, cognome, dataNascita, telefonoCellulare, false, true);
+    }// end of static method
+
+    /**
+     * Creazione iniziale di un milite
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company
+     * @param nome
+     * @param cognome
+     * @param dataNascita
+     * @param telefonoCellulare
+     */
+    @SuppressWarnings("all")
+    public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare, boolean dipendente, boolean attivo) {
         Milite milite = Milite.find(company, nome, cognome);
 
         if (milite == null) {
-            milite = new Milite(company, nome, cognome, dataNascita, telefonoCellulare);
+            milite = new Milite(company, nome, cognome, dataNascita, telefonoCellulare, dipendente, attivo);
             milite.save();
         }// end of if cycle
 
@@ -303,6 +333,22 @@ public class Milite extends WamCompany {
 
     public void setDataNascita(Date dataNascita) {
         this.dataNascita = dataNascita;
+    }//end of setter method
+
+    public boolean isDipendente() {
+        return dipendente;
+    }// end of getter method
+
+    public void setDipendente(boolean dipendente) {
+        this.dipendente = dipendente;
+    }//end of setter method
+
+    public boolean isAttivo() {
+        return attivo;
+    }// end of getter method
+
+    public void setAttivo(boolean attivo) {
+        this.attivo = attivo;
     }//end of setter method
 
     /**
