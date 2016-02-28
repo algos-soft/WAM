@@ -65,10 +65,10 @@ public class Turno extends WamCompany {
     //--ultima modifica effettuata per le funzioni previste per il tipo di servizio
     //--massimo hardcoded di 4
     //--serve per bloccare le modifiche dopo un determinato intervallo di tempo
-    private Timestamp modificaFunzione1 = null;
-    private Timestamp modificaFunzione2 = null;
-    private Timestamp modificaFunzione3 = null;
-    private Timestamp modificaFunzione4 = null;
+    private Timestamp lastModificaFunzione1 = null;
+    private Timestamp lastModificaFunzione2 = null;
+    private Timestamp lastModificaFunzione3 = null;
+    private Timestamp lastModificaFunzione4 = null;
 
     //--durata effettiva del turno per ogni milite/volontario
     //--massimo hardcoded di 4
@@ -88,10 +88,10 @@ public class Turno extends WamCompany {
     //--eventuali note associate ad una singola funzione
     //--serve per evidenziare il problema nel tabellone
     //--massimo hardcoded di 4
-    private boolean notaFunzione1 = false;
-    private boolean notaFunzione2 = false;
-    private boolean notaFunzione3 = false;
-    private boolean notaFunzione4 = false;
+    private String notaFunzione1;
+    private String notaFunzione2;
+    private String notaFunzione3;
+    private String notaFunzione4;
 
     //--motivazione del turno extra
     private String titoloExtra;
@@ -139,24 +139,24 @@ public class Turno extends WamCompany {
         return instance;
     }// end of method
 
-    /**
-     * Recupera una istanza di Turno usando la query di una property specifica
-     *
-     * @param sigla valore della property Sigla
-     * @return istanza di Turno, null se non trovata
-     */
-    public static Turno findByv(String sigla) {
-        Turno instance = null;
-        BaseEntity entity = AQuery.queryOne(Turno.class, Turno_.sigla, sigla);
-
-        if (entity != null) {
-            if (entity instanceof Turno) {
-                instance = (Turno) entity;
-            }// end of if cycle
-        }// end of if cycle
-
-        return instance;
-    }// end of method
+//    /**
+//     * Recupera una istanza di Turno usando la query di una property specifica
+//     *
+//     * @param sigla valore della property Sigla
+//     * @return istanza di Turno, null se non trovata
+//     */
+//    public static Turno findByv(String sigla) {
+//        Turno instance = null;
+//        BaseEntity entity = AQuery.queryOne(Turno.class, Turno_.sigla, sigla);
+//
+//        if (entity != null) {
+//            if (entity instanceof Turno) {
+//                instance = (Turno) entity;
+//            }// end of if cycle
+//        }// end of if cycle
+//
+//        return instance;
+//    }// end of method
 
     /**
      * Recupera il valore del numero totale di records della della Entity
@@ -272,36 +272,36 @@ public class Turno extends WamCompany {
         this.milite4 = milite4;
     }//end of setter method
 
-    public Timestamp getModificaFunzione1() {
-        return modificaFunzione1;
+    public Timestamp getLastModificaFunzione1() {
+        return lastModificaFunzione1;
     }// end of getter method
 
-    public void setModificaFunzione1(Timestamp modificaFunzione1) {
-        this.modificaFunzione1 = modificaFunzione1;
+    public void setLastModificaFunzione1(Timestamp modificaFunzione1) {
+        this.lastModificaFunzione1 = modificaFunzione1;
     }//end of setter method
 
-    public Timestamp getModificaFunzione2() {
-        return modificaFunzione2;
+    public Timestamp getLastModificaFunzione2() {
+        return lastModificaFunzione2;
     }// end of getter method
 
-    public void setModificaFunzione2(Timestamp modificaFunzione2) {
-        this.modificaFunzione2 = modificaFunzione2;
+    public void setLastModificaFunzione2(Timestamp modificaFunzione2) {
+        this.lastModificaFunzione2 = modificaFunzione2;
     }//end of setter method
 
-    public Timestamp getModificaFunzione3() {
-        return modificaFunzione3;
+    public Timestamp getLastModificaFunzione3() {
+        return lastModificaFunzione3;
     }// end of getter method
 
-    public void setModificaFunzione3(Timestamp modificaFunzione3) {
-        this.modificaFunzione3 = modificaFunzione3;
+    public void setLastModificaFunzione3(Timestamp modificaFunzione3) {
+        this.lastModificaFunzione3 = modificaFunzione3;
     }//end of setter method
 
-    public Timestamp getModificaFunzione4() {
-        return modificaFunzione4;
+    public Timestamp getLastModificaFunzione4() {
+        return lastModificaFunzione4;
     }// end of getter method
 
-    public void setModificaFunzione4(Timestamp modificaFunzione4) {
-        this.modificaFunzione4 = modificaFunzione4;
+    public void setLastModificaFunzione4(Timestamp modificaFunzione4) {
+        this.lastModificaFunzione4 = modificaFunzione4;
     }//end of setter method
 
     public int getOreMilite1() {
@@ -368,35 +368,35 @@ public class Turno extends WamCompany {
         this.problemiFunzione4 = problemiFunzione4;
     }//end of setter method
 
-    public boolean isNotaFunzione1() {
+    public String getNotaFunzione1() {
         return notaFunzione1;
     }// end of getter method
 
-    public void setNotaFunzione1(boolean notaFunzione1) {
+    public void setNotaFunzione1(String notaFunzione1) {
         this.notaFunzione1 = notaFunzione1;
     }//end of setter method
 
-    public boolean isNotaFunzione2() {
+    public String getNotaFunzione2() {
         return notaFunzione2;
     }// end of getter method
 
-    public void setNotaFunzione2(boolean notaFunzione2) {
+    public void setNotaFunzione2(String notaFunzione2) {
         this.notaFunzione2 = notaFunzione2;
     }//end of setter method
 
-    public boolean isNotaFunzione3() {
+    public String getNotaFunzione3() {
         return notaFunzione3;
     }// end of getter method
 
-    public void setNotaFunzione3(boolean notaFunzione3) {
+    public void setNotaFunzione3(String notaFunzione3) {
         this.notaFunzione3 = notaFunzione3;
     }//end of setter method
 
-    public boolean isNotaFunzione4() {
+    public String getNotaFunzione4() {
         return notaFunzione4;
     }// end of getter method
 
-    public void setNotaFunzione4(boolean notaFunzione4) {
+    public void setNotaFunzione4(String notaFunzione4) {
         this.notaFunzione4 = notaFunzione4;
     }//end of setter method
 

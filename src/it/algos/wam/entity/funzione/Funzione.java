@@ -18,15 +18,11 @@ import java.util.List;
  * Estende la Entity astratta WamCompany che contiene la property company
  * <p>
  * Classe di tipo JavaBean
- * <p>
  * 1) la classe deve avere un costruttore senza argomenti
- * <p>
  * 2) le proprietà devono essere private e accessibili solo con get, set e is (usato per i boolena al posto di get)
  * 3) la classe deve implementare l'interfaccia Serializable (la fa nella superclasse)
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
- * <p>
  */
-
 @Entity
 public class Funzione extends WamCompany {
 
@@ -48,7 +44,7 @@ public class Funzione extends WamCompany {
     private int ordine;
 
 
-    //--note di spiegazione (facoltativa)
+    //--note di spiegazione (facoltative)
     private String note;
 
 
@@ -57,15 +53,17 @@ public class Funzione extends WamCompany {
      * Necessario per le specifiche JavaBean
      */
     public Funzione() {
-        this("");
+        this(null, "", "");
     }// end of constructor
 
     /**
-     * Costruttore
+     * Costruttore minimo con tutte le properties obbligatorie
      *
-     * @param sigla prevista
+     * @param company     croce di appartenenza
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
      */
-    public Funzione(String sigla) {
+    public Funzione(Company company, String sigla, String descrizione) {
         this(null, sigla, "", 0, "");
     }// end of general constructor
 
@@ -73,13 +71,12 @@ public class Funzione extends WamCompany {
     /**
      * Costruttore completo
      *
-     * @param company
-     * @param sigla
-     * @param descrizione
-     * @param ordine
-     * @param note
+     * @param company     croce di appartenenza
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param ordine      di presentazione nelle liste
+     * @param note        di spiegazione (facoltative)
      */
-    @SuppressWarnings("all")
     public Funzione(Company company, String sigla, String descrizione, int ordine, String note) {
         super();
         this.setCompany(company);
@@ -111,9 +108,9 @@ public class Funzione extends WamCompany {
     /**
      * Recupera una istanza di Funzione usando la query di una property specifica
      *
-     * @param sigla valore della property sigla
+     * @param sigla sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione, null se non trovata
-     * @deprecated
+     * @deprecated perché manca la company e potrebbero esserci records multipli con la stessa sigla
      */
     public static Funzione findBySigla(String sigla) {
         Funzione instance = null;
@@ -133,8 +130,8 @@ public class Funzione extends WamCompany {
      * Recupera una istanza di Funzione usando la query di una property specifica
      * Relativa ad una company
      *
-     * @param company di appartenenza
-     * @param sigla   valore della property sigla
+     * @param company croce di appartenenza
+     * @param sigla   sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -198,12 +195,11 @@ public class Funzione extends WamCompany {
 
     /**
      * Creazione iniziale di una funzione
-     * Lo crea SOLO se non esiste già
+     * La crea SOLO se non esiste già
      *
-     * @param company
-     * @param sigla
+     * @param company croce di appartenenza
+     * @param sigla   sigla di riferimento interna (obbligatoria)
      */
-    @SuppressWarnings("all")
     public static Funzione crea(Company company, String sigla) {
         return crea(company, sigla, "", 0, "");
     }// end of static method
@@ -211,15 +207,14 @@ public class Funzione extends WamCompany {
 
     /**
      * Creazione iniziale di una funzione
-     * Lo crea SOLO se non esiste già
+     * La crea SOLO se non esiste già
      *
-     * @param company
-     * @param sigla
-     * @param descrizione
-     * @param ordine
-     * @param note
+     * @param company     croce di appartenenza
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param ordine      di presentazione nelle liste
+     * @param note        di spiegazione (facoltative)
      */
-    @SuppressWarnings("all")
     public static Funzione crea(Company company, String sigla, String descrizione, int ordine, String note) {
         Funzione funzione = Funzione.find(company, sigla);
 

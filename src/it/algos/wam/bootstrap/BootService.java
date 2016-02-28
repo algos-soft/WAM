@@ -25,6 +25,7 @@ public abstract class BootService {
         creaMilitiDemo();
         creaFunzioniDemo();
         creaServiziDemo();
+        creaTurniDemo();
     }// end of static method
 
     /**
@@ -112,6 +113,18 @@ public abstract class BootService {
             Servizio.crea(company, ++k, "ord-ser", "Ordinario sera", 18, 24, true, true, false, 2);
             Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2);
             Servizio.crea(company, ++k, "avis", "Servizio AVIS", 0, 0, true, false, false, 1);
+        }// end of if cycle
+    }// end of static method
+
+    /**
+     * Creazione iniziale di alcuni turni per la croce demo
+     * Li crea SOLO se non esistono già
+     */
+    private static void creaTurniDemo() {
+        Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+
+        if (company != null) {
+
         }// end of if cycle
     }// end of static method
 

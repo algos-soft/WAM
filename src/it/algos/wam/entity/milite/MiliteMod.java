@@ -13,7 +13,7 @@ import javax.persistence.metamodel.Attribute;
 @SuppressWarnings("serial")
 public class MiliteMod extends WamMod {
 
-    // indirizzo interno del modulo (serve nei menu)
+    // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Volontari";
 
     /**
@@ -29,14 +29,11 @@ public class MiliteMod extends WamMod {
     }// end of constructor
 
     /**
-     * Crea i campi visibili
-     * <p>
+     * Crea i campi visibili nella lista (table)
+     * <p/>
      * Come default spazzola tutti i campi della Entity <br>
      * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-     * NON garantisce l'ordine con cui vengono presentati i campi nella scheda <br>
-     * Può mostrare anche il campo ID, oppure no <br>
-     * Se si vuole differenziare tra Table, Form e Search, <br>
-     * sovrascrivere creaFieldsList, creaFieldsForm e creaFieldsSearch <br>
+     * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
      */
     protected Attribute<?, ?>[] creaFieldsList() {
         return new Attribute[]{WamCompany_.company, Milite_.nome, Milite_.cognome, Milite_.dataNascita, Milite_.telefonoCellulare, Milite_.dipendente, Milite_.attivo};

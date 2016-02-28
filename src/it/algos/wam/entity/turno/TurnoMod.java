@@ -11,7 +11,7 @@ import it.algos.webbase.web.module.ModulePop;
 @SuppressWarnings("serial")
 public class TurnoMod extends WamMod {
 
-    // indirizzo interno del modulo (serve nei menu)
+    // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Turni (solo admin)";
 
     /**
