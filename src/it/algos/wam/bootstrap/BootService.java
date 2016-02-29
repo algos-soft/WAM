@@ -5,8 +5,13 @@ import it.algos.wam.entity.company.Company;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.milite.Milite;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.wrapturno.Iscrizione;
+import it.algos.wam.wrapturno.WrapTurno;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibTime;
+
+import java.util.Date;
 
 /**
  * Created by gac on 25 feb 2016.
@@ -40,6 +45,7 @@ public abstract class BootService {
         creaMilitiTest();
         creaFunzioniTest();
         creaServiziTest();
+        creaTurniTest();
     }// end of static method
 
 
@@ -122,9 +128,17 @@ public abstract class BootService {
      */
     private static void creaTurniDemo() {
         Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        Servizio servizio = null;
 
         if (company != null) {
+            servizio = Servizio.find(company, "msa-pom");
+            Turno.crea(company, servizio, LibDate.creaData(14, 8, 2016));
 
+            servizio = Servizio.find(company, "ord-mat");
+            Turno.crea(company, servizio, LibDate.creaData(22, 11, 2015));
+
+            servizio = Servizio.find(company, "avis");
+            Turno.crea(company, servizio, LibDate.creaData(5, 2, 2016));
         }// end of if cycle
     }// end of static method
 
@@ -197,6 +211,36 @@ public abstract class BootService {
             Servizio.crea(company, ++k, "amb-ser", "Ambulanza sera", 18, 24, true, true, false, 2);
             Servizio.crea(company, ++k, "dim", "Dimissioni", 0, 0, true, false, false, 2);
             Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2);
+        }// end of if cycle
+    }// end of static method
+
+    /**
+     * Creazione iniziale di alcuni turni per la croce test
+     * Li crea SOLO se non esistono già
+     */
+    private static void creaTurniTest() {
+        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        Servizio servizio = null;
+        Date data = null;
+        WrapTurno wrap = null;
+        Iscrizione iscrizione;
+        Funzione funzione = Funzione.find(company, "aut");
+        Milite milite = Milite.find(company, "Ruggero", "Testa");
+
+        if (company != null) {
+            servizio = Servizio.find(company, "amb-mat");
+            data = LibDate.creaData(8, 1, 2014);
+            wrap = new WrapTurno(null);
+            Turno.crea(company, servizio, data, data, wrap, true);
+
+            servizio = Servizio.find(company, "dim");
+            data = LibDate.creaData(30, 4, 2015);
+            iscrizione = new Iscrizione(funzione, milite);
+            wrap = new WrapTurno(iscrizione);
+            Turno.crea(company, servizio, data, data, wrap, true);
+
+            servizio = Servizio.find(company, "ext");
+            Turno.crea(company, servizio, LibDate.creaData(1, 12, 2016));
         }// end of if cycle
     }// end of static method
 
