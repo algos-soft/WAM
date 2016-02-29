@@ -124,7 +124,7 @@ public abstract class BootService {
         Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
         if (company != null) {
-Turno.c
+
         }// end of if cycle
     }// end of static method
 
