@@ -32,7 +32,7 @@ public class Iscrizione {
     //--serve per evidenziare il problema nel tabellone
     private boolean esisteProblema = false;
 
-    //--eventuale nota associata al milite
+    //--eventuale nota associata al milite/volontario
     //--serve per evidenziare il problema nel tabellone
     private String nota;
 
@@ -44,6 +44,26 @@ public class Iscrizione {
      * @param milite   milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
      */
     public Iscrizione(Funzione funzione, Milite milite) {
+        this(funzione, milite, null, 0, false, "");
+    }// end of constructor
+
+    /**
+     * Costruttore completo
+     *
+     * @param funzione       funzione prevista per il tipo di servizio (obbligatorio)
+     * @param milite         milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
+     * @param lastModifica   ultima modifica a questa iscrizione, effettuata dal milite/volontario che si è iscritto
+     * @param oreEffettive   durata effettiva del turno del milite/volontario di questa iscrizione
+     * @param esisteProblema eventuali problemi di presenza del milite/volontario di questa iscrizione nel turno
+     * @param nota           eventuale nota associata al milite/volontario
+     */
+    public Iscrizione(Funzione funzione, Milite milite, Timestamp lastModifica, int oreEffettive, boolean esisteProblema, String nota) {
+        setFunzione(funzione);
+        setMilite(milite);
+        setLastModifica(lastModifica);
+        setOreEffettive(oreEffettive);
+        setEsisteProblema(esisteProblema);
+        setNota(nota);
     }// end of constructor
 
     public Funzione getFunzione() {

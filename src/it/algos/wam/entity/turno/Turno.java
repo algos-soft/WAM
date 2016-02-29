@@ -1,10 +1,9 @@
 package it.algos.wam.entity.turno;
 
 import it.algos.wam.entity.company.Company;
-import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.milite.Milite;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.wrapturno.WrapTurno;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -12,7 +11,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -41,58 +39,10 @@ public class Turno extends WamCompany {
     //--i servizi senza orario (fisso) vengono creati solo con la data di inizio; la data di fine viene aggiunata dopo
     private Date fine;
 
-    //--numero variabile di funzioni previste per il tipo di servizio
-    //--massimo hardcoded di 4
-    @ManyToOne
-    private Funzione funzione1 = null;
-    @ManyToOne
-    private Funzione funzione2 = null;
-    @ManyToOne
-    private Funzione funzione3 = null;
-    @ManyToOne
-    private Funzione funzione4 = null;
+    //--iscrizioni dei militi/volontari per questo turno
+    //--all'inizio puà essere nullo (per un turno previsto ma ancora senza iscrizioni)
+    private WrapTurno wrapTurno = null;
 
-    //--numero variabile di militi/volontari assegnati alle funzioni previste per il tipo di servizio
-    //--massimo hardcoded di 4
-    @ManyToOne
-    private Milite milite1 = null;
-    @ManyToOne
-    private Milite milite2 = null;
-    @ManyToOne
-    private Milite milite3 = null;
-    @ManyToOne
-    private Milite milite4 = null;
-
-    //--ultima modifica effettuata per le funzioni previste per il tipo di servizio
-    //--massimo hardcoded di 4
-    //--serve per bloccare le modifiche dopo un determinato intervallo di tempo
-    private Timestamp lastModificaFunzione1 = null;
-    private Timestamp lastModificaFunzione2 = null;
-    private Timestamp lastModificaFunzione3 = null;
-    private Timestamp lastModificaFunzione4 = null;
-
-    //--durata effettiva del turno per ogni milite/volontario
-    //--massimo hardcoded di 4
-    private int oreMilite1 = 0;
-    private int oreMilite2 = 0;
-    private int oreMilite3 = 0;
-    private int oreMilite4 = 0;
-
-    //--eventuali problemi di presenza del milite nel turno
-    //--serve per evidenziare il problema nel tabellone
-    //--massimo hardcoded di 4
-    private boolean problemiFunzione1 = false;
-    private boolean problemiFunzione2 = false;
-    private boolean problemiFunzione3 = false;
-    private boolean problemiFunzione4 = false;
-
-    //--eventuali note associate ad una singola funzione
-    //--serve per evidenziare il problema nel tabellone
-    //--massimo hardcoded di 4
-    private String notaFunzione1;
-    private String notaFunzione2;
-    private String notaFunzione3;
-    private String notaFunzione4;
 
     //--motivazione del turno extra
     private String titoloExtra;
@@ -126,18 +76,21 @@ public class Turno extends WamCompany {
     /**
      * Costruttore completo
      *
-     * @param company  croce di appartenenza
-     * @param servizio tipologia di servizio (obbligatoria)
-     * @param inizio   giorno, ora e minuto di inizio turno
+     * @param company   croce di appartenenza
+     * @param servizio  tipologia di servizio (obbligatoria)
+     * @param inizio    giorno, ora e minuto di inizio turno
+     * @param fine      giorno, ora e minuto di fine turno
+     * @param wrapTurno iscrizioni dei militi/volontari per questo turno
+     * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
      */
-    public Turno(Company company, Servizio servizio, Date inizio,Date fine) {
+    public Turno(Company company, Servizio servizio, Date inizio, Date fine, WrapTurno wrapTurno, boolean assegnato) {
         super();
         super.setCompany(company);
         setServizio(servizio);
         setInizio(inizio);
-        setOraInizio(oraInizio);
-        setOraFine(oraFine);
-        setPersone(persone);
+        setFine(fine);
+        setWrapTurno(wrapTurno);
+        setAssegnato(assegnato);
     }// end of constructor
 
     /**
@@ -168,24 +121,6 @@ public class Turno extends WamCompany {
         return instance;
     }// end of method
 
-//    /**
-//     * Recupera una istanza di Turno usando la query di una property specifica
-//     *
-//     * @param sigla valore della property Sigla
-//     * @return istanza di Turno, null se non trovata
-//     */
-//    public static Turno findByv(String sigla) {
-//        Turno instance = null;
-//        BaseEntity entity = AQuery.queryOne(Turno.class, Turno_.sigla, sigla);
-//
-//        if (entity != null) {
-//            if (entity instanceof Turno) {
-//                instance = (Turno) entity;
-//            }// end of if cycle
-//        }// end of if cycle
-//
-//        return instance;
-//    }// end of method
 
     /**
      * Recupera il valore del numero totale di records della della Entity
@@ -237,196 +172,13 @@ public class Turno extends WamCompany {
         this.fine = fine;
     }//end of setter method
 
-    public Funzione getFunzione1() {
-        return funzione1;
+
+    public WrapTurno getWrapTurno() {
+        return wrapTurno;
     }// end of getter method
 
-    public void setFunzione1(Funzione funzione1) {
-        this.funzione1 = funzione1;
-    }//end of setter method
-
-    public Funzione getFunzione2() {
-        return funzione2;
-    }// end of getter method
-
-    public void setFunzione2(Funzione funzione2) {
-        this.funzione2 = funzione2;
-    }//end of setter method
-
-    public Funzione getFunzione3() {
-        return funzione3;
-    }// end of getter method
-
-    public void setFunzione3(Funzione funzione3) {
-        this.funzione3 = funzione3;
-    }//end of setter method
-
-    public Funzione getFunzione4() {
-        return funzione4;
-    }// end of getter method
-
-    public void setFunzione4(Funzione funzione4) {
-        this.funzione4 = funzione4;
-    }//end of setter method
-
-    public Milite getMilite1() {
-        return milite1;
-    }// end of getter method
-
-    public void setMilite1(Milite milite1) {
-        this.milite1 = milite1;
-    }//end of setter method
-
-    public Milite getMilite2() {
-        return milite2;
-    }// end of getter method
-
-    public void setMilite2(Milite milite2) {
-        this.milite2 = milite2;
-    }//end of setter method
-
-    public Milite getMilite3() {
-        return milite3;
-    }// end of getter method
-
-    public void setMilite3(Milite milite3) {
-        this.milite3 = milite3;
-    }//end of setter method
-
-    public Milite getMilite4() {
-        return milite4;
-    }// end of getter method
-
-    public void setMilite4(Milite milite4) {
-        this.milite4 = milite4;
-    }//end of setter method
-
-    public Timestamp getLastModificaFunzione1() {
-        return lastModificaFunzione1;
-    }// end of getter method
-
-    public void setLastModificaFunzione1(Timestamp modificaFunzione1) {
-        this.lastModificaFunzione1 = modificaFunzione1;
-    }//end of setter method
-
-    public Timestamp getLastModificaFunzione2() {
-        return lastModificaFunzione2;
-    }// end of getter method
-
-    public void setLastModificaFunzione2(Timestamp modificaFunzione2) {
-        this.lastModificaFunzione2 = modificaFunzione2;
-    }//end of setter method
-
-    public Timestamp getLastModificaFunzione3() {
-        return lastModificaFunzione3;
-    }// end of getter method
-
-    public void setLastModificaFunzione3(Timestamp modificaFunzione3) {
-        this.lastModificaFunzione3 = modificaFunzione3;
-    }//end of setter method
-
-    public Timestamp getLastModificaFunzione4() {
-        return lastModificaFunzione4;
-    }// end of getter method
-
-    public void setLastModificaFunzione4(Timestamp modificaFunzione4) {
-        this.lastModificaFunzione4 = modificaFunzione4;
-    }//end of setter method
-
-    public int getOreMilite1() {
-        return oreMilite1;
-    }// end of getter method
-
-    public void setOreMilite1(int oreMilite1) {
-        this.oreMilite1 = oreMilite1;
-    }//end of setter method
-
-    public int getOreMilite2() {
-        return oreMilite2;
-    }// end of getter method
-
-    public void setOreMilite2(int oreMilite2) {
-        this.oreMilite2 = oreMilite2;
-    }//end of setter method
-
-    public int getOreMilite3() {
-        return oreMilite3;
-    }// end of getter method
-
-    public void setOreMilite3(int oreMilite3) {
-        this.oreMilite3 = oreMilite3;
-    }//end of setter method
-
-    public int getOreMilite4() {
-        return oreMilite4;
-    }// end of getter method
-
-    public void setOreMilite4(int oreMilite4) {
-        this.oreMilite4 = oreMilite4;
-    }//end of setter method
-
-    public boolean isProblemiFunzione1() {
-        return problemiFunzione1;
-    }// end of getter method
-
-    public void setProblemiFunzione1(boolean problemiFunzione1) {
-        this.problemiFunzione1 = problemiFunzione1;
-    }//end of setter method
-
-    public boolean isProblemiFunzione2() {
-        return problemiFunzione2;
-    }// end of getter method
-
-    public void setProblemiFunzione2(boolean problemiFunzione2) {
-        this.problemiFunzione2 = problemiFunzione2;
-    }//end of setter method
-
-    public boolean isProblemiFunzione3() {
-        return problemiFunzione3;
-    }// end of getter method
-
-    public void setProblemiFunzione3(boolean problemiFunzione3) {
-        this.problemiFunzione3 = problemiFunzione3;
-    }//end of setter method
-
-    public boolean isProblemiFunzione4() {
-        return problemiFunzione4;
-    }// end of getter method
-
-    public void setProblemiFunzione4(boolean problemiFunzione4) {
-        this.problemiFunzione4 = problemiFunzione4;
-    }//end of setter method
-
-    public String getNotaFunzione1() {
-        return notaFunzione1;
-    }// end of getter method
-
-    public void setNotaFunzione1(String notaFunzione1) {
-        this.notaFunzione1 = notaFunzione1;
-    }//end of setter method
-
-    public String getNotaFunzione2() {
-        return notaFunzione2;
-    }// end of getter method
-
-    public void setNotaFunzione2(String notaFunzione2) {
-        this.notaFunzione2 = notaFunzione2;
-    }//end of setter method
-
-    public String getNotaFunzione3() {
-        return notaFunzione3;
-    }// end of getter method
-
-    public void setNotaFunzione3(String notaFunzione3) {
-        this.notaFunzione3 = notaFunzione3;
-    }//end of setter method
-
-    public String getNotaFunzione4() {
-        return notaFunzione4;
-    }// end of getter method
-
-    public void setNotaFunzione4(String notaFunzione4) {
-        this.notaFunzione4 = notaFunzione4;
+    public void setWrapTurno(WrapTurno wrapTurno) {
+        this.wrapTurno = wrapTurno;
     }//end of setter method
 
     public String getTitoloExtra() {
