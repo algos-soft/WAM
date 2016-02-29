@@ -271,7 +271,7 @@ public class Milite extends WamCompany {
 
     @Override
     public String toString() {
-        return nome;
+        return getCognome() + " " + getNome();
     }// end of method
 
     /**

@@ -70,7 +70,7 @@ public class Turno extends WamCompany {
      * @param inizio   giorno, ora e minuto di inizio turno
      */
     public Turno(Company company, Servizio servizio, Date inizio) {
-//        this(company, 0, sigla, descrizione, 0, 0, 0);
+        this(company, servizio, inizio, null, null, false);
     }// end of constructor
 
     /**
@@ -94,15 +94,6 @@ public class Turno extends WamCompany {
     }// end of constructor
 
     /**
-     * Costruttore completo
-     *
-     * @param sigla
-     */
-    public Turno(String sigla) {
-        super();
-    }// end of general constructor
-
-    /**
      * Recupera una istanza di Turno usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
@@ -120,7 +111,6 @@ public class Turno extends WamCompany {
 
         return instance;
     }// end of method
-
 
     /**
      * Recupera il valore del numero totale di records della della Entity
@@ -146,6 +136,11 @@ public class Turno extends WamCompany {
     @SuppressWarnings("unchecked")
     public static ArrayList<Turno> findAll() {
         return (ArrayList<Turno>) AQuery.getLista(Turno.class);
+    }// end of method
+
+    @Override
+    public String toString() {
+        return getServizio() + "/" + getInizio();
     }// end of method
 
     public Servizio getServizio() {

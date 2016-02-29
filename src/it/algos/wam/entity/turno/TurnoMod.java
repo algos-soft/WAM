@@ -2,8 +2,12 @@ package it.algos.wam.entity.turno;
 
 
 import com.vaadin.server.FontAwesome;
+import it.algos.wam.entity.servizio.Servizio_;
+import it.algos.wam.entity.wamcompany.WamCompany_;
 import it.algos.wam.entity.wamcompany.WamMod;
 import it.algos.webbase.web.module.ModulePop;
+
+import javax.persistence.metamodel.Attribute;
 
 /**
  * Gestione (minimale) del modulo specifico
@@ -25,6 +29,27 @@ public class TurnoMod extends WamMod {
     public TurnoMod() {
         super(Turno.class, MENU_ADDRESS, FontAwesome.BARS);
     }// end of constructor
+
+
+    /**
+     * Crea i campi visibili nella lista (table)
+     * <p/>
+     * Come default spazzola tutti i campi della Entity <br>
+     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+     * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
+     */
+    protected Attribute<?, ?>[] creaFieldsList() {
+        return new Attribute[]{
+                WamCompany_.company,
+                Turno_.servizio,
+                Turno_.inizio,
+                Turno_.fine,
+                Turno_.wrapTurno,
+                Turno_.titoloExtra,
+                Turno_.localitàExtra,
+                Turno_.note,
+                Turno_.assegnato};
+    }// end of method
 
 }// end of class
 
