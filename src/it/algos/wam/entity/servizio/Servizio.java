@@ -92,22 +92,42 @@ public class Servizio extends WamCompany {
      * Necessario per le specifiche JavaBean
      */
     public Servizio() {
-        this(null, "");
+        this(null, "", "");
+    }// end of constructor
+
+    /**
+     * Costruttore minimo con tutte le properties obbligatorie
+     *
+     * @param company     croce di appartenenza
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     */
+    public Servizio(Company company, String sigla, String descrizione) {
+        this(company, 0, sigla, descrizione, 0, 0, 0);
     }// end of constructor
 
 
     /**
      * Costruttore completo
      *
-     * @param company
-     * @param sigla
+     * @param company     croce di appartenenza
+     * @param ordine      di presentazione nel tabellone
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param oraInizio   del servizio (facoltativo)
+     * @param oraFine     del servizio (facoltativo)
+     * @param persone     minime indispensabile allo svolgimento del servizio
      */
-    @SuppressWarnings("all")
-    public Servizio(Company company, String sigla) {
+    public Servizio(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone) {
         super();
         super.setCompany(company);
         setSigla(sigla);
+        setDescrizione(descrizione);
+        setOraInizio(oraInizio);
+        setOraFine(oraFine);
+        setPersone(persone);
     }// end of constructor
+
 
     /**
      * Recupera una istanza di Servizio usando la query standard della Primary Key
@@ -153,7 +173,7 @@ public class Servizio extends WamCompany {
      *
      * @param company valore della property Company
      * @param sigla   valore della property Sigla
-     * @return istanza di Milite, null se non trovata
+     * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
     public static Servizio find(Company company, String sigla) {
@@ -201,15 +221,16 @@ public class Servizio extends WamCompany {
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
      *
-     * @param company
-     * @param sigla
+     * @param company     croce di appartenenza
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @return istanza di Servizio
      */
-    @SuppressWarnings("all")
-    public static Servizio crea(Company company, String sigla) {
+    public static Servizio crea(Company company, String sigla, String descrizione) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
-            servizio = new Servizio(company, sigla);
+            servizio = new Servizio(company, sigla, descrizione);
             servizio.save();
         }// end of if cycle
 
@@ -220,31 +241,29 @@ public class Servizio extends WamCompany {
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
      *
-     * @param company
-     * @param ordine
-     * @param sigla
-     * @param descrizione
-     * @param inizio
-     * @param fine
-     * @param visibile
-     * @param orario
-     * @param multiplo
-     * @param persone
+     * @param company     croce di appartenenza
+     * @param ordine      di presentazione nel tabellone
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param oraInizio   del servizio (facoltativo)
+     * @param oraFine     del servizio (facoltativo)
+     * @param visibile    nel tabellone
+     * @param orario      servizio ad orario prefissato e fisso ogni giorno
+     * @param multiplo    servizio suscettibile di essere effettuato diverse volte nella giornata
+     * @param persone     minime indispensabile allo svolgimento del servizio
+     * @return istanza di Servizio
      */
-    @SuppressWarnings("all")
-    public static Servizio crea(Company company, int ordine,String sigla, String descrizione, int inizio, int fine, boolean visibile, boolean orario, boolean multiplo, int persone) {
-        Servizio servizio = Servizio.crea(company, sigla);
+    public static Servizio crea(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone) {
+        Servizio servizio = Servizio.find(company, sigla);
 
-        servizio.setOrdine(ordine);
-        servizio.setDescrizione(descrizione);
-        servizio.setDurata(Math.abs(fine - inizio));
-        servizio.setOraInizio(inizio);
-        servizio.setOraFine(fine);
-        servizio.setVisibile(visibile);
-        servizio.setOrario(orario);
-        servizio.setMultiplo(multiplo);
-        servizio.setPersone(persone);
-        servizio.save();
+        if (servizio == null) {
+            servizio = new Servizio(company, ordine, sigla, descrizione, oraInizio, oraFine, persone);
+            servizio.setDurata(Math.abs(oraFine - oraInizio));
+            servizio.setVisibile(visibile);
+            servizio.setOrario(orario);
+            servizio.setMultiplo(multiplo);
+            servizio.save();
+        }// end of if cycle
 
         return servizio;
     }// end of static method

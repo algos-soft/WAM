@@ -1,5 +1,6 @@
 package it.algos.wam.entity.turno;
 
+import it.algos.wam.entity.company.Company;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.milite.Milite;
 import it.algos.wam.entity.servizio.Servizio;
@@ -37,7 +38,7 @@ public class Turno extends WamCompany {
     private Date inizio;
 
     //--giorno, ora e minuto di fine turno
-    @NotNull
+    //--i servizi senza orario (fisso) vengono creati solo con la data di inizio; la data di fine viene aggiunata dopo
     private Date fine;
 
     //--numero variabile di funzioni previste per il tipo di servizio
@@ -108,7 +109,35 @@ public class Turno extends WamCompany {
      * Necessario per le specifiche JavaBean
      */
     public Turno() {
-        this("");
+        this(null, null, null);
+    }// end of constructor
+
+    /**
+     * Costruttore minimo con tutte le properties obbligatorie
+     *
+     * @param company  croce di appartenenza
+     * @param servizio tipologia di servizio (obbligatoria)
+     * @param inizio   giorno, ora e minuto di inizio turno
+     */
+    public Turno(Company company, Servizio servizio, Date inizio) {
+//        this(company, 0, sigla, descrizione, 0, 0, 0);
+    }// end of constructor
+
+    /**
+     * Costruttore completo
+     *
+     * @param company  croce di appartenenza
+     * @param servizio tipologia di servizio (obbligatoria)
+     * @param inizio   giorno, ora e minuto di inizio turno
+     */
+    public Turno(Company company, Servizio servizio, Date inizio,Date fine) {
+        super();
+        super.setCompany(company);
+        setServizio(servizio);
+        setInizio(inizio);
+        setOraInizio(oraInizio);
+        setOraFine(oraFine);
+        setPersone(persone);
     }// end of constructor
 
     /**

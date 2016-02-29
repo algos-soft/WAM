@@ -64,8 +64,8 @@ public class Funzione extends WamCompany {
      * @param descrizione per il tabellone (obbligatoria)
      */
     public Funzione(Company company, String sigla, String descrizione) {
-        this(null, sigla, "", 0, "");
-    }// end of general constructor
+        this(company, sigla, descrizione, 0, "");
+    }// end of constructor
 
 
     /**
@@ -186,7 +186,6 @@ public class Funzione extends WamCompany {
      *
      * @return lista di tutte le istanze di Funzione
      */
-    @SuppressWarnings("unchecked")
     public static ArrayList<Funzione> findAll(Company company) {
         //@todo da sviluppare
         return null;
@@ -199,6 +198,7 @@ public class Funzione extends WamCompany {
      *
      * @param company croce di appartenenza
      * @param sigla   sigla di riferimento interna (obbligatoria)
+     * @return istanza di Funzione
      */
     public static Funzione crea(Company company, String sigla) {
         return crea(company, sigla, "", 0, "");
@@ -214,6 +214,7 @@ public class Funzione extends WamCompany {
      * @param descrizione per il tabellone (obbligatoria)
      * @param ordine      di presentazione nelle liste
      * @param note        di spiegazione (facoltative)
+     * @return istanza di Funzione
      */
     public static Funzione crea(Company company, String sigla, String descrizione, int ordine, String note) {
         Funzione funzione = Funzione.find(company, sigla);

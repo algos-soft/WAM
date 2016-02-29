@@ -43,8 +43,8 @@ public class Milite extends WamCompany {
     private String cognome = "";
 
     //--dati personali facoltativi
-    private String telefonoCellulare;
-    private String telefonoFisso;
+    private String cellulare;
+    private String telefono;
     private String email;
     private String note;
     private Date dataNascita = null;
@@ -73,13 +73,12 @@ public class Milite extends WamCompany {
     }// end of constructor
 
     /**
-     * Costruttore
+     * Costruttore minimo con tutte le properties obbligatorie
      *
-     * @param company
-     * @param nome
-     * @param cognome
+     * @param company croce di appartenenza
+     * @param nome    del volontario/milite (obbligatorio)
+     * @param cognome del volontario/milite (obbligatorio)
      */
-    @SuppressWarnings("all")
     public Milite(Company company, String nome, String cognome) {
         this(company, nome, cognome, null, "");
     }// end of constructor
@@ -87,36 +86,35 @@ public class Milite extends WamCompany {
     /**
      * Costruttore
      *
-     * @param company
-     * @param nome
-     * @param cognome
-     * @param dataNascita
-     * @param telefonoCellulare
+     * @param company     croce di appartenenza
+     * @param nome        del volontario/milite (obbligatorio)
+     * @param cognome     del volontario/milite (obbligatorio)
+     * @param dataNascita del volontario/milite (facoltativo)
+     * @param cellulare   del volontario/milite (facoltativo)
      */
     @SuppressWarnings("all")
-    public Milite(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare) {
-        this(company, nome, cognome, dataNascita, telefonoCellulare, false, true);
+    public Milite(Company company, String nome, String cognome, Date dataNascita, String cellulare) {
+        this(company, nome, cognome, dataNascita, cellulare, false);
     }// end of constructor
 
     /**
      * Costruttore completo
      *
-     * @param company
-     * @param nome
-     * @param cognome
-     * @param dataNascita
-     * @param telefonoCellulare
+     * @param company     croce di appartenenza
+     * @param nome        del volontario/milite (obbligatorio)
+     * @param cognome     del volontario/milite (obbligatorio)
+     * @param dataNascita del volontario/milite (facoltativo)
+     * @param cellulare   del volontario/milite (facoltativo)
+     * @param dipendente  dell'associazione NON volontario
      */
-    @SuppressWarnings("all")
-    public Milite(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare, boolean dipendente, boolean attivo) {
+    public Milite(Company company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
         super();
         super.setCompany(company);
         setNome(nome);
         setCognome(cognome);
         setDataNascita(dataNascita);
-        setTelefonoCellulare(telefonoCellulare);
+        setCellulare(cellulare);
         setDipendente(dipendente);
-        setAttivo(attivo);
     }// end of constructor
 
     /**
@@ -128,25 +126,6 @@ public class Milite extends WamCompany {
     public static Milite find(long id) {
         Milite instance = null;
         BaseEntity entity = AQuery.queryById(Milite.class, id);
-
-        if (entity != null) {
-            if (entity instanceof Milite) {
-                instance = (Milite) entity;
-            }// end of if cycle
-        }// end of if cycle
-
-        return instance;
-    }// end of method
-
-    /**
-     * Recupera una istanza di Milite usando la query di una property specifica
-     *
-     * @param nome valore della property Nome
-     * @return istanza di Milite, null se non trovata
-     */
-    public static Milite findByNome(String nome) {
-        Milite instance = null;
-        BaseEntity entity = AQuery.queryOne(Milite.class, Milite_.nome, nome);
 
         if (entity != null) {
             if (entity instanceof Milite) {
@@ -224,11 +203,11 @@ public class Milite extends WamCompany {
      * Creazione iniziale di un milite
      * Lo crea SOLO se non esiste già
      *
-     * @param company
-     * @param nome
-     * @param cognome
+     * @param company croce di appartenenza
+     * @param nome    del volontario/milite (obbligatorio)
+     * @param cognome del volontario/milite (obbligatorio)
+     * @return istanza di Milite
      */
-    @SuppressWarnings("all")
     public static Milite crea(Company company, String nome, String cognome) {
         return crea(company, nome, cognome, null, "");
     }// end of static method
@@ -238,33 +217,52 @@ public class Milite extends WamCompany {
      * Creazione iniziale di un milite
      * Lo crea SOLO se non esiste già
      *
-     * @param company
-     * @param nome
-     * @param cognome
-     * @param dataNascita
-     * @param telefonoCellulare
+     * @param company     croce di appartenenza
+     * @param nome        del volontario/milite (obbligatorio)
+     * @param cognome     del volontario/milite (obbligatorio)
+     * @param dataNascita del volontario/milite (facoltativo)
+     * @param cellulare   del volontario/milite (facoltativo)
+     * @return istanza di Milite
      */
-    @SuppressWarnings("all")
-    public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare) {
-        return crea(company, nome, cognome, dataNascita, telefonoCellulare, false, true);
+    public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String cellulare) {
+        return crea(company, nome, cognome, dataNascita, cellulare, false);
     }// end of static method
 
     /**
      * Creazione iniziale di un milite
      * Lo crea SOLO se non esiste già
      *
-     * @param company
-     * @param nome
-     * @param cognome
-     * @param dataNascita
-     * @param telefonoCellulare
+     * @param company     croce di appartenenza
+     * @param nome        del volontario/milite (obbligatorio)
+     * @param cognome     del volontario/milite (obbligatorio)
+     * @param dataNascita del volontario/milite (facoltativo)
+     * @param cellulare   del volontario/milite (facoltativo)
+     * @param dipendente  dell'associazione NON volontario
+     * @return istanza di Milite
      */
-    @SuppressWarnings("all")
-    public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String telefonoCellulare, boolean dipendente, boolean attivo) {
-        Milite milite = Milite.find(company, nome, cognome);
+    public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
+        return crea(company, nome, cognome, dataNascita, cellulare, dipendente, true);
+    }// end of static method
+
+    /**
+     * Creazione iniziale di un milite
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company     croce di appartenenza
+     * @param nome        del volontario/milite (obbligatorio)
+     * @param cognome     del volontario/milite (obbligatorio)
+     * @param dataNascita del volontario/milite (facoltativo)
+     * @param cellulare   del volontario/milite (facoltativo)
+     * @param dipendente  dell'associazione NON volontario
+     * @param attivo      all'interno dell'associazione
+     * @return istanza di Milite
+     */
+    public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente, boolean attivo) {
+        Milite milite = Milite.crea(company, nome, cognome);
 
         if (milite == null) {
-            milite = new Milite(company, nome, cognome, dataNascita, telefonoCellulare, dipendente, attivo);
+            milite = new Milite(company, nome, cognome, dataNascita, cellulare, dipendente);
+            milite.setAttivo(attivo);
             milite.save();
         }// end of if cycle
 
@@ -298,20 +296,20 @@ public class Milite extends WamCompany {
         this.cognome = cognome;
     }//end of setter method
 
-    public String getTelefonoCellulare() {
-        return telefonoCellulare;
+    public String getCellulare() {
+        return cellulare;
     }// end of getter method
 
-    public void setTelefonoCellulare(String telefonoCellulare) {
-        this.telefonoCellulare = telefonoCellulare;
+    public void setCellulare(String telefonoCellulare) {
+        this.cellulare = telefonoCellulare;
     }//end of setter method
 
-    public String getTelefonoFisso() {
-        return telefonoFisso;
+    public String getTelefono() {
+        return telefono;
     }// end of getter method
 
-    public void setTelefonoFisso(String telefonoFisso) {
-        this.telefonoFisso = telefonoFisso;
+    public void setTelefono(String telefonoFisso) {
+        this.telefono = telefonoFisso;
     }//end of setter method
 
     public String getEmail() {

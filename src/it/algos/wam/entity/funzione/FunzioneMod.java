@@ -30,13 +30,18 @@ public class FunzioneMod extends WamMod {
 
     /**
      * Crea i campi visibili nella lista (table)
-     * <p/>
+     * <p>
      * Come default spazzola tutti i campi della Entity <br>
      * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
      * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
      */
     protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{WamCompany_.company, Funzione_.ordine, Funzione_.sigla, Funzione_.descrizione, Funzione_.note};
+        return new Attribute[]{
+                WamCompany_.company,
+                Funzione_.ordine,
+                Funzione_.sigla,
+                Funzione_.descrizione,
+                Funzione_.note};
     }// end of method
 
 }// end of class

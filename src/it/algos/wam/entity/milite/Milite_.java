@@ -10,8 +10,8 @@ import java.util.Date;
 public class Milite_ extends CompanyEntity_ {
     public static volatile SingularAttribute<Milite, String> nome;
     public static volatile SingularAttribute<Milite, String> cognome;
-    public static volatile SingularAttribute<Milite, String> telefonoCellulare;
-    public static volatile SingularAttribute<Milite, String> telefonoFisso;
+    public static volatile SingularAttribute<Milite, String> cellulare;
+    public static volatile SingularAttribute<Milite, String> telefono;
     public static volatile SingularAttribute<Milite, String> email;
     public static volatile SingularAttribute<Milite, String> note;
     public static volatile SingularAttribute<Milite, Date> dataNascita;

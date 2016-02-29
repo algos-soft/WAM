@@ -157,7 +157,7 @@ public abstract class BootService {
 
         if (company != null) {
             Milite.crea(company, "Carlo", "Bagno");
-            Milite.crea(company, "Renzo", "Cerrato", LibDate.creaData(14, 7, 1995), "340-564738", false, false);
+            Milite.crea(company, "Renzo", "Cerrato", LibDate.creaData(14, 7, 1995), "340-564738", false);
             Milite.crea(company, "Lucia", "Donadoni", LibDate.creaData(11, 3, 1999), "335-5124396", true, false);
             Milite.crea(company, "Ambra", "Angeletti");
             Milite.crea(company, "Flacio", "Brambilla", LibDate.creaData(27, 10, 1991), "340-6786432");
