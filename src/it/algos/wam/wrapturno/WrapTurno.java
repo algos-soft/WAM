@@ -1,6 +1,7 @@
 package it.algos.wam.wrapturno;
 
-import javax.persistence.Entity;
+import it.algos.wam.entity.milite.Milite;
+
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
@@ -30,10 +31,31 @@ public class WrapTurno implements Serializable {
     /**
      * Costruttore minimo con tutte le properties obbligatorie
      *
-     * @param iscrizione singola iscrizione di un milite/volontario
+     * @param iscrizione1 singola iscrizione di un milite/volontario
      */
-    public WrapTurno(Iscrizione iscrizione) {
-        this(iscrizione, null, null, null);
+    public WrapTurno(Iscrizione iscrizione1) {
+        this(iscrizione1, null, null, null);
+    }// end of constructor
+
+    /**
+     * Costruttore
+     *
+     * @param iscrizione1 singola iscrizione di un milite/volontario
+     * @param iscrizione2 singola iscrizione di un milite/volontario
+     */
+    public WrapTurno(Iscrizione iscrizione1, Iscrizione iscrizione2) {
+        this(iscrizione1, iscrizione2, null, null);
+    }// end of constructor
+
+    /**
+     * Costruttore
+     *
+     * @param iscrizione1 singola iscrizione di un milite/volontario
+     * @param iscrizione2 singola iscrizione di un milite/volontario
+     * @param iscrizione3 singola iscrizione di un milite/volontario
+     */
+    public WrapTurno(Iscrizione iscrizione1, Iscrizione iscrizione2, Iscrizione iscrizione3) {
+        this(iscrizione1, iscrizione2, iscrizione3, null);
     }// end of constructor
 
     /**
@@ -50,6 +72,38 @@ public class WrapTurno implements Serializable {
         setIscrizione3(iscrizione3);
         setIscrizione4(iscrizione4);
     }// end of constructor
+
+    public String toString() {
+        String stringa = "";
+        Milite milite;
+
+        if (iscrizione1 == null) {
+            stringa = "Non nulla, ma senza militi (errore)";
+        } else {
+            milite = iscrizione1.getMilite();
+            if (milite != null) {
+                stringa += milite.toString();
+            }// end of if cycle
+        }// end of if/else cycle
+
+        if (iscrizione2 != null) {
+            milite = iscrizione2.getMilite();
+            if (milite != null) {
+                stringa += " + ";
+                stringa += milite.toString();
+            }// end of if cycle
+        }// end of if cycle
+
+        if (iscrizione3 != null) {
+            milite = iscrizione3.getMilite();
+            if (milite != null) {
+                stringa += " + ";
+                stringa += milite.toString();
+            }// end of if cycle
+        }// end of if cycle
+
+        return stringa;
+    }// end of method
 
     public Iscrizione getIscrizione1() {
         return iscrizione1;

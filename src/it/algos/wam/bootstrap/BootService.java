@@ -129,6 +129,7 @@ public abstract class BootService {
     private static void creaTurniDemo() {
         Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
         Servizio servizio = null;
+        Turno turno;
 
         if (company != null) {
             servizio = Servizio.find(company, "msa-pom");
@@ -139,6 +140,13 @@ public abstract class BootService {
 
             servizio = Servizio.find(company, "avis");
             Turno.crea(company, servizio, LibDate.creaData(5, 2, 2016));
+
+            servizio = Servizio.find(company, "ext");
+            turno = Turno.crea(company, servizio, LibDate.creaData(17, 4, 2016));
+            turno.setTitoloExtra("Trasferimento");
+            turno.setLocalitàExtra("Padova");
+            turno.setNote("Sedia-Basta un milite");
+            turno.save();
         }// end of if cycle
     }// end of static method
 
@@ -224,8 +232,12 @@ public abstract class BootService {
         Date data = null;
         WrapTurno wrap = null;
         Iscrizione iscrizione;
+        Iscrizione iscrizione2;
+        Iscrizione iscrizione3;
         Funzione funzione = Funzione.find(company, "aut");
         Milite milite = Milite.find(company, "Ruggero", "Testa");
+        Milite milite2 = Milite.find(company, "Lucia","Donadoni");
+        Milite milite3 = Milite.find(company, "Renzo","Cerrato");
 
         if (company != null) {
             servizio = Servizio.find(company, "amb-mat");
@@ -239,8 +251,12 @@ public abstract class BootService {
             wrap = new WrapTurno(iscrizione);
             Turno.crea(company, servizio, data, data, wrap, true);
 
-            servizio = Servizio.find(company, "ext");
-            Turno.crea(company, servizio, LibDate.creaData(1, 12, 2016));
+            servizio = Servizio.find(company, "amb-pom");
+            data = LibDate.creaData(1, 12, 2015);
+            iscrizione2 = new Iscrizione(funzione, milite2);
+            iscrizione3 = new Iscrizione(funzione, milite3);
+            wrap = new WrapTurno(iscrizione2, iscrizione3);
+            Turno.crea(company, servizio, data, data, wrap, true);
         }// end of if cycle
     }// end of static method
 

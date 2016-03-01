@@ -150,7 +150,7 @@ public class Funzione extends WamCompany {
             }// end of for cycle
         }// end of if cycle
 
-        return null;
+        return instance;
     }// end of method
 
 

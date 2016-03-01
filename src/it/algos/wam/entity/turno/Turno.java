@@ -286,6 +286,10 @@ public class Turno extends WamCompany {
         }// end of if cycle
 
         if (turno == null) {
+            if (servizio!=null&&servizio.isOrario()) {
+                fine=inizio;
+            }// end of if cycle
+
             turno = new Turno(company, servizio, inizio, fine, wrapTurno, assegnato);
             turno.save();
         }// end of if cycle

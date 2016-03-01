@@ -4,6 +4,7 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.milite.Milite;
 
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -11,7 +12,7 @@ import java.sql.Timestamp;
  * Wrapper dei dati relativi ad una singola iscrizione al turno
  * Al massimo ci sono 4 iscrizioni per turno (hardcoded)
  */
-public class Iscrizione {
+public class Iscrizione implements Serializable{
 
     //--funzione prevista per il tipo di servizio
     @ManyToOne

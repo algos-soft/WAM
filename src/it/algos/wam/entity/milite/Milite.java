@@ -269,10 +269,17 @@ public class Milite extends WamCompany {
         return milite;
     }// end of static method
 
+    /**
+     * Abbreviazione visibile nel tabellone e nei popup
+     */
     @Override
     public String toString() {
-        return getCognome() + " " + getNome();
+        return getCognome() + " " + getNome().substring(0,1)+".";
     }// end of method
+
+    public String getNomeCognome() {
+        return getNome() + " " + getCognome();
+    }// end of getter method
 
     /**
      * @return the nome
