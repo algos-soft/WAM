@@ -31,7 +31,7 @@ public class WamTablePortal extends TablePortal {
 
     public TableToolbar createToolbar() {
         toolbar = super.createToolbar();
-        toolbar.setCreate(false);
+        toolbar.setCreate(true);
 
         addMenuCroci();
 //        setFiltro(Livello.info);

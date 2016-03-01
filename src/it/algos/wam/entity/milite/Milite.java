@@ -43,10 +43,10 @@ public class Milite extends WamCompany {
     private String cognome = "";
 
     //--dati personali facoltativi
-    private String cellulare;
-    private String telefono;
-    private String email;
-    private String note;
+    private String cellulare = "";
+    private String telefono = "";
+    private String email = "";
+    private String note = "";
     private Date dataNascita = null;
 
     //--dati dell'associazione
@@ -274,7 +274,7 @@ public class Milite extends WamCompany {
      */
     @Override
     public String toString() {
-        return getCognome() + " " + getNome().substring(0,1)+".";
+        return getCognome() + " " + getNome().substring(0, 1) + ".";
     }// end of method
 
     public String getNomeCognome() {

@@ -9,6 +9,7 @@ import it.algos.wam.entity.milite.Milite;
 import it.algos.webbase.web.AlgosApp;
 import it.algos.webbase.web.bootstrap.ABootStrap;
 import it.algos.webbase.web.entity.EM;
+import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.query.AQuery;
 import it.algos.webbase.web.toolbar.Toolbar;
 
@@ -54,6 +55,7 @@ public class WAMBootStrap extends ABootStrap {
         // eventuali modifiche allle dimensioni dei bottoni
         Toolbar.ALTEZZA_BOTTONI = 40;
         Toolbar.LARGHEZZA_BOTTONI = 140;
+        TextField.LARGHEZZA_DEFAULT="320px";
 
         // eventuali modifiche ai flag generali di regolazione
         AlgosApp.USE_SECURITY = false; //@todo per adesso false

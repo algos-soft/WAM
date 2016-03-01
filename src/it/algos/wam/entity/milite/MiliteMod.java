@@ -4,8 +4,11 @@ package it.algos.wam.entity.milite;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.wamcompany.WamCompany_;
 import it.algos.wam.entity.wamcompany.WamMod;
+import it.algos.webbase.web.form.AForm;
+import it.algos.webbase.web.search.SearchManager;
 
 import javax.persistence.metamodel.Attribute;
+import java.util.Date;
 
 /**
  * Modulo del Milite
@@ -46,6 +49,44 @@ public class MiliteMod extends WamMod {
                 Milite_.attivo};
     }// end of method
 
+    /**
+     * Crea i campi visibili nella scheda (form)
+     * <p/>
+     * Come default spazzola tutti i campi della Entity <br>
+     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
+     */
+    protected Attribute<?, ?>[] creaFieldsForm() {
+        return new Attribute[]{
+                WamCompany_.company,
+                Milite_.nome,
+                Milite_.cognome,
+                Milite_.cellulare,
+                Milite_.telefono,
+                Milite_.dataNascita,
+                Milite_.email,
+                Milite_.note,
+                Milite_.dipendente,
+                Milite_.attivo};
+    }// end of method
+
+    /**
+     * Crea i campi visibili nella scheda (search)
+     * <p/>
+     * Come default spazzola tutti i campi della Entity <br>
+     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
+     */
+    protected Attribute<?, ?>[] creaFieldsSearch() {
+        return new Attribute[]{
+                WamCompany_.company,
+                Milite_.nome,
+                Milite_.cognome,
+                Milite_.cellulare,
+                Milite_.email,
+                Milite_.dipendente,
+                Milite_.attivo};
+    }// end of method
 
 }// end of class
 
