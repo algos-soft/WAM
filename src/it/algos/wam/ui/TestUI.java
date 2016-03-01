@@ -24,7 +24,7 @@ public class TestUI extends UI {
         if(Page.getCurrent().getWebBrowser().isTouchDevice()) {
             themeName="wam-mobile";
         }else{
-            themeName="wam";
+            themeName="wam-mobile";
         }
         setTheme(themeName);
 

@@ -18,6 +18,7 @@ $v-font-weight: 400;
   /* Include all the styles from the imported theme */
   @include valo;
 
+
   /* Insert your theme rules here */
   .v-menubar-mainmenu {
     background: yellow;
@@ -108,14 +109,14 @@ $v-font-weight: 400;
 
 
 
-
   // attributi di tutto il tabellone
   .ctabellone {
     font-size: 13px;
+   // font-size: 1.5rem;
   }
 
 
-  // attributi ereditati dai vari stili delle celle del tabellone
+  // attributi ereditati dalle celle del tabellone
   .cbasecell {
     display: block;
     white-space:nowrap;
