@@ -22,6 +22,7 @@ import java.util.Date;
 public abstract class BootService {
 
     private static ArrayList<Funzione> FUNZ_DEMO;
+    private static ArrayList<Funzione> FUNZ_TEST;
 
     /**
      * Creazione iniziale di una croce demo
@@ -95,8 +96,8 @@ public abstract class BootService {
      */
     private static void creaFunzioniDemo() {
         Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
-        int k = 0;
         Funzione funzione;
+        int k = 0;
 
         if (company != null) {
             FUNZ_DEMO = new ArrayList<>();
@@ -207,13 +208,19 @@ public abstract class BootService {
      */
     private static void creaFunzioniTest() {
         Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        Funzione funzione;
         int k = 0;
 
         if (company != null) {
-            Funzione.crea(company, "aut", "Autista", ++k, "Autista emergenze");
-            Funzione.crea(company, "aut2", "Autista", ++k, "Autista dimissioni");
-            Funzione.crea(company, "sec", "Secondo", ++k, "Soccorritore");
-            Funzione.crea(company, "ter", "Aiuto", ++k, "Barelliere in prova");
+            FUNZ_TEST = new ArrayList<>();
+            funzione = Funzione.crea(company, "aut", "Autista", ++k, "Autista emergenze");
+            FUNZ_TEST.add(funzione);
+            funzione = Funzione.crea(company, "aut2", "Autista", ++k, "Autista dimissioni");
+            FUNZ_TEST.add(funzione);
+            funzione = Funzione.crea(company, "sec", "Secondo", ++k, "Soccorritore");
+            FUNZ_TEST.add(funzione);
+            funzione = Funzione.crea(company, "ter", "Aiuto", ++k, "Barelliere in prova");
+            FUNZ_TEST.add(funzione);
         }// end of if cycle
     }// end of static method
 
@@ -224,14 +231,20 @@ public abstract class BootService {
      */
     private static void creaServiziTest() {
         Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        WrapServizio wrap;
         int k = 0;
 
         if (company != null) {
-            Servizio.crea(company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3);
-            Servizio.crea(company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 18, true, true, false, 3);
-            Servizio.crea(company, ++k, "amb-ser", "Ambulanza sera", 18, 24, true, true, false, 2);
-            Servizio.crea(company, ++k, "dim", "Dimissioni", 0, 0, true, false, false, 2);
-            Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2);
+            wrap = new WrapServizio(FUNZ_TEST.get(0), FUNZ_TEST.get(1), FUNZ_TEST.get(2), FUNZ_TEST.get(3));
+            wrap.setObbligatoria1(true);
+            wrap.setObbligatoria2(true);
+            Servizio.crea(company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3, wrap);
+            wrap.setObbligatoria2(false);
+            Servizio.crea(company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 18, true, true, false, 3, wrap);
+            Servizio.crea(company, ++k, "amb-ser", "Ambulanza sera", 18, 24, true, true, false, 2, wrap);
+            wrap.setObbligatoria2(true);
+            Servizio.crea(company, ++k, "dim", "Dimissioni", 0, 0, true, false, false, 2, wrap);
+            Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2, wrap);
         }// end of if cycle
     }// end of static method
 
@@ -254,18 +267,18 @@ public abstract class BootService {
 
         if (company != null) {
             servizio = Servizio.find(company, "amb-mat");
-            data = LibDate.creaData(8, 1, 2014);
+            data = LibDate.creaData(3, 3, 2016);
             wrap = new WrapTurno(null);
             Turno.crea(company, servizio, data, data, wrap, true);
 
             servizio = Servizio.find(company, "dim");
-            data = LibDate.creaData(30, 4, 2015);
+            data = LibDate.creaData(4, 3, 2016);
             iscrizione = new Iscrizione(funzione, milite);
             wrap = new WrapTurno(iscrizione);
             Turno.crea(company, servizio, data, data, wrap, true);
 
             servizio = Servizio.find(company, "amb-pom");
-            data = LibDate.creaData(1, 12, 2015);
+            data = LibDate.creaData(8, 3, 2016);
             iscrizione2 = new Iscrizione(funzione, milite2);
             iscrizione3 = new Iscrizione(funzione, milite3);
             wrap = new WrapTurno(iscrizione2, iscrizione3);

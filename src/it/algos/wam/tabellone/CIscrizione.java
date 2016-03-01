@@ -9,6 +9,7 @@ import java.time.LocalDate;
  * Created by alex on 21/02/16.
  */
 public class CIscrizione extends Label {
+
     public CIscrizione(String nome) {
         super(nome);
 

@@ -4,6 +4,7 @@ import it.algos.wam.entity.milite.Milite;
 
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by gac on 28 feb 2016.
@@ -113,6 +114,31 @@ public class WrapTurno implements Serializable {
 
         return stringa;
     }// end of method
+
+    @SuppressWarnings("all")
+    public ArrayList<Iscrizione> getIscrizioni() {
+        ArrayList<Iscrizione> lista = null;
+
+        if (iscrizione1 != null) {
+            lista = new ArrayList<>();
+            lista.add(iscrizione1);
+        }// end of if/else cycle
+
+        if (iscrizione2 != null) {
+            lista.add(iscrizione2);
+        }// end of if cycle
+
+        if (iscrizione3 != null) {
+            lista.add(iscrizione3);
+        }// end of if cycle
+
+        if (iscrizione4 != null) {
+            lista.add(iscrizione4);
+        }// end of if cycle
+
+        return lista;
+    }// end of method
+
 
     public Iscrizione getIscrizione1() {
         return iscrizione1;

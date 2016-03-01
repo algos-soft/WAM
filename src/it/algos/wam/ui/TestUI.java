@@ -7,12 +7,15 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.company.Company;
-import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.lib.LibWam;
 import it.algos.wam.tabellone.*;
 import it.algos.wam.wrap.WrapServizio;
+import it.algos.webbase.web.lib.LibDate;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -72,13 +75,15 @@ public class TestUI extends UI {
      */
     private RTabellone[] creaRighe() {
         List<RTabellone> lRighe = new ArrayList();
-        Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
         ArrayList<Servizio> listaServizi = null;
         WrapServizio wrapServizio = null;
+        Date dataIniziale = LibDate.creaData(2, 3, 2016);
+        int primoGiorno = LibWam.creaChiave(dataIniziale);
 
         CServizio cServ;
         CRuoli cRuoli;
-        CTurno[] cTurni;
+        CTurno[] cTurni=null;
 
         if (company != null) {
             listaServizi = Servizio.findAll(company);
@@ -86,10 +91,11 @@ public class TestUI extends UI {
 
         if (listaServizi != null && listaServizi.size() > 0) {
             for (Servizio servizio : listaServizi) {
-                wrapServizio= servizio.getWrapServizio();
+                wrapServizio = servizio.getWrapServizio();
                 cServ = new CServizio(servizio);
                 cRuoli = new CRuoli(wrapServizio);
-                cTurni = creaTurniDemo();
+              cTurni = creaTurni(company, servizio, primoGiorno);
+//                cTurni = creaTurniDemo();
                 lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
             }// end of for cycle
         }// end of if cycle
@@ -98,6 +104,32 @@ public class TestUI extends UI {
 
     }// end of method
 
+    private CTurno[] creaTurni(Company company, Servizio servizio, int primoGiorno) {
+        return creaTurni(company, servizio, primoGiorno, 7);
+    }// end of method
+
+    private CTurno[] creaTurni(Company company, Servizio servizio, int primoGiorno, int giorni) {
+        List<CTurno> listaTurni = new ArrayList();
+        Turno turno = null;
+        CTurno cTurno = null;
+
+        for (int chiave = primoGiorno; chiave < primoGiorno+giorni; chiave++) {
+            turno = Turno.find(company, servizio,chiave);
+
+            if (turno != null) {
+                cTurno= new CTurno(turno);
+            } else {
+                cTurno= new CTurno();
+            }// end of if/else cycle
+            listaTurni.add(cTurno);
+        }// end of for cycle
+
+        return listaTurni.toArray(new CTurno[0]);
+    }// end of method
+
+    /**
+     * @deprecated
+     */
     private CTurno[] creaTurniDemo() {
         List<CTurno> lTurni = new ArrayList();
 

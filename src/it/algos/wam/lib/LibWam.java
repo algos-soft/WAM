@@ -14,8 +14,8 @@ public abstract class LibWam {
      * Costruisce una chiave della data
      * Usato per la indicizzaione dei Turni
      */
-    public static long creaChiave(Date data) {
-        long chiave = 0;
+    public static int creaChiave(Date data) {
+        int chiave = 0;
         int anno;
         int giorno;
 

@@ -130,7 +130,7 @@ public class Turno extends WamCompany {
      * @return lista di Turni, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Turno> findAllChiave(Company company, long chiave) {
+    public static ArrayList<Turno> findAllChiave(Company company, int chiave) {
         ArrayList<Turno> lista = null;
         List<Turno> listaPerChiave = (List<Turno>) AQuery.queryList(Turno.class, Turno_.chiave, chiave);
 
@@ -146,25 +146,29 @@ public class Turno extends WamCompany {
         return lista;
     }// end of method
 
+
     /**
-     * Recupera una istanza di Turno usando la chiave specifica
+     * Recupera una lista di Turni usando la query di tutte e sole le property obbligatorie
+     * Se il servizio è multiplo, ce ne possono essere diversi al giorno (per company)
+     * Se il servizio NON è multiplo, conviene usare la chiamata find (stessi parametri)
      *
-     * @param company croce di appartenenza
-     * @param chiave  indicizzata per query più veloci e 'mirate' (obbligatoria)
-     * @return istanza di Turno, null se non trovata
+     * @param company  croce di appartenenza
+     * @param servizio tipologia di servizio (obbligatoria)
+     * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
+     * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Turno findChiave(Company company, long chiave) {
-        Turno istanza = null;
-        ArrayList<Turno> lista = findAllChiave(company, chiave);
+    public static ArrayList<Turno> findAll(Company company, Servizio servizio, int chiave) {
+        ArrayList<Turno> lista = null;
 
-        if (lista != null && lista.size() == 1) {
-            istanza = lista.get(0);
+        if (company == null || servizio == null || chiave == 0) {
+            return null;
         }// end of if cycle
 
-        return istanza;
-    }// end of static method
+        lista = findAllChiave(company, chiave);
 
+        return lista;
+    }// end of method
 
     /**
      * Recupera una lista di Turni usando la query di tutte e sole le property obbligatorie
@@ -178,17 +182,65 @@ public class Turno extends WamCompany {
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<Turno> findAll(Company company, Servizio servizio, Date inizio) {
-        ArrayList<Turno> lista = null;
-        long chiave;
+        return findAll(company, servizio, LibWam.creaChiave(inizio));
+    }// end of method
 
-        if (company == null || servizio == null || inizio == null) {
+
+    /**
+     * Recupera una istanza di Turno usando la chiave specifica
+     *
+     * @param company croce di appartenenza
+     * @param chiave  indicizzata per query più veloci e 'mirate' (obbligatoria)
+     * @return istanza di Turno, null se non trovata
+     */
+    @SuppressWarnings("unchecked")
+    public static Turno findChiave(Company company, int chiave) {
+        Turno instance = null;
+        ArrayList<Turno> lista = findAllChiave(company, chiave);
+
+        if (lista != null && lista.size() == 1) {
+            instance = lista.get(0);
+        }// end of if cycle
+
+        return instance;
+    }// end of static method
+
+
+    /**
+     * Recupera una istanza di Turno usando la query di tutte e sole le property obbligatorie
+     * Se il servizio NON è multiplo, ce ne deve essere SOLO UNO al giorno (per company)
+     * Se il servizio è multiplo, usare la chiamata findAll (stessi parametri)
+     *
+     * @param company  croce di appartenenza
+     * @param servizio tipologia di servizio (obbligatoria)
+     * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
+     * @return istanza di Servizio, null se non trovata
+     */
+    @SuppressWarnings("unchecked")
+    public static Turno find(Company company, Servizio servizio, int chiave) {
+        Turno instance = null;
+        ArrayList<Turno> listaTurni = null;
+        Servizio servizioTmp = null;
+
+        if (company == null || servizio == null || chiave == 0) {
             return null;
         }// end of if cycle
 
-        chiave = LibWam.creaChiave(inizio);
-        lista = findAllChiave(company, chiave);
+        if (servizio.isMultiplo()) {
+            return null;//@todo per ora
+        } else {
+            listaTurni = findAll(company, servizio, chiave);
+            if (listaTurni != null && listaTurni.size() > 0) {
+                for (Turno turno : listaTurni) {
+                    servizioTmp = turno.getServizio();
+                    if (servizioTmp != null && servizioTmp.getId().equals(servizio.getId())) {
+                        instance = turno;
+                    }// end of if cycle
+                }// end of for cycle
+            }// end of if cycle
+        }// end of if/else cycle
 
-        return lista;
+        return instance;
     }// end of method
 
 
@@ -204,21 +256,7 @@ public class Turno extends WamCompany {
      */
     @SuppressWarnings("unchecked")
     public static Turno find(Company company, Servizio servizio, Date inizio) {
-        Turno instance = null;
-        long chiave;
-
-        if (company == null || servizio == null || inizio == null) {
-            return null;
-        }// end of if cycle
-
-        if (servizio.isMultiplo()) {
-            return null;
-        }// end of if cycle
-
-        chiave = LibWam.creaChiave(inizio);
-        instance = findChiave(company, chiave);
-
-        return instance;
+        return find(company, servizio, LibWam.creaChiave(inizio));
     }// end of method
 
     /**
@@ -286,8 +324,8 @@ public class Turno extends WamCompany {
         }// end of if cycle
 
         if (turno == null) {
-            if (servizio!=null&&servizio.isOrario()) {
-                fine=inizio;
+            if (servizio != null && servizio.isOrario()) {
+                fine = inizio;
             }// end of if cycle
 
             turno = new Turno(company, servizio, inizio, fine, wrapTurno, assegnato);
