@@ -1,10 +1,10 @@
 /* This contains all of your theme.*/
 /* If somebody wants to extend the theme she will include this mixin. */
-@mixin wamstyles-mobile {
+@mixin wamstyles-mob {
 
   // attributi di tutto il tabellone
   .ctabellone {
-    font-size: 24px;
+    font-size: 36px;
   }
 
 }

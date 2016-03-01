@@ -1,0 +1,9 @@
+@import "../wam/wamdefinitions.scss";
+@import "wam-mobile.scss";
+
+/* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
+/* The actual styles should be defined in .scss files */
+.wam-mob {
+  @include wamstyles; // stili di base
+  @include wamstyles-mob; // stili mobile; è incluso per secondo quindi vince sul precedente
+}

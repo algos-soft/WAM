@@ -28,81 +28,126 @@ public class TestUI extends UI {
     protected void init(VaadinRequest request) {
         String themeName;
         if (Page.getCurrent().getWebBrowser().isTouchDevice()) {
-            themeName = "wam-mobile";
+            themeName = "wam-mob";
         } else {
             themeName = "wam";
         }
         setTheme(themeName);
 
-        RTabellone[] righe = creaRighe();
-        Component comp = new CTabellone(righe);
+        WRigheTab wrapper = creaRighe();
+        CTabellone tab = EngineTab.creaTabellone(wrapper);
+
+
+        //Component comp = new CTabellone(righe);
+
+
 //        Component comp = new CRuoli("Autista", "Primo", "Secondo", "Terzo");
 //        Component comp = new CServizio("Ambulanza notte");
-        setContent(comp);
+        setContent(tab);
     }
 
+//    /**
+//     * @deprecated
+//     */
+//    private RTabellone[] creaRigheOldOld() {
+//        List<RTabellone> lRighe = new ArrayList();
+//        CServizio cServ;
+//        CRuoli cRuoli;
+//        CTurno[] cTurni;
+//
+//        cServ = new CServizio("Ambulanza mattino");
+//        cRuoli = new CRuoli("Aut", "Sec", "Ter", "Bar");
+//        cTurni = creaTurniDemo();
+//        lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
+//
+//        cServ = new CServizio("Ambulanza pomeriggio");
+//        cRuoli = new CRuoli("Aut", "Sec", "Aiu", "Ap");
+//        cTurni = creaTurniDemo();
+//        lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
+//
+//        cServ = new CServizio("Ambulanza notte");
+//        cRuoli = new CRuoli("Aut", "Sec", "Ter", "Bar");
+//        cTurni = creaTurniDemo();
+//        lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
+//
+//
+//        return lRighe.toArray(new RTabellone[0]);
+//
+//    }
+
+//    /**
+//     * Una volta stabilita la company (di norma non qui), crea tante righe quanti sono i servizi
+//     */
+//    private RTabellone[] creaRigheOld() {
+//        List<RTabellone> lRighe = new ArrayList();
+//        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+//        ArrayList<Servizio> listaServizi = null;
+//        WrapServizio wrapServizio = null;
+//        Date dataIniziale = LibDate.creaData(2, 3, 2016);
+//        int primoGiorno = LibWam.creaChiave(dataIniziale);
+//
+//        CServizio cServ;
+//        CRuoli cRuoli;
+//        CTurno[] cTurni=null;
+//
+//        if (company != null) {
+//            listaServizi = Servizio.findAll(company);
+//        }// end of if cycle
+//
+//        if (listaServizi != null && listaServizi.size() > 0) {
+//            for (Servizio servizio : listaServizi) {
+//                wrapServizio = servizio.getWrapServizio();
+//                cServ = new CServizio(servizio);
+//                cRuoli = new CRuoli(wrapServizio);
+//              cTurni = creaTurni(company, servizio, primoGiorno);
+////                cTurni = creaTurniDemo();
+//                lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
+//            }// end of for cycle
+//        }// end of if cycle
+//
+//        return lRighe.toArray(new RTabellone[0]);
+//
+//    }// end of method
+
+
     /**
-     * @deprecated
+     * Crea i wrapper per le righe di tabellone
+     * Un wrapper per ogni servizio
      */
-    private RTabellone[] creaRigheOld() {
-        List<RTabellone> lRighe = new ArrayList();
-        CServizio cServ;
-        CRuoli cRuoli;
-        CTurno[] cTurni;
+    private WRigheTab creaRighe() {
+        WRigheTab righe =new WRigheTab();
 
-        cServ = new CServizio("Ambulanza mattino");
-        cRuoli = new CRuoli("Aut", "Sec", "Ter", "Bar");
-        cTurni = creaTurniDemo();
-        lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
-
-        cServ = new CServizio("Ambulanza pomeriggio");
-        cRuoli = new CRuoli("Aut", "Sec", "Aiu", "Ap");
-        cTurni = creaTurniDemo();
-        lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
-
-        cServ = new CServizio("Ambulanza notte");
-        cRuoli = new CRuoli("Aut", "Sec", "Ter", "Bar");
-        cTurni = creaTurniDemo();
-        lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
-
-
-        return lRighe.toArray(new RTabellone[0]);
-
-    }
-
-    /**
-     * Una volta stabilita la company (di norma non qui), crea tante righe quanti sono i servizi
-     */
-    private RTabellone[] creaRighe() {
-        List<RTabellone> lRighe = new ArrayList();
         Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
         ArrayList<Servizio> listaServizi = null;
-        WrapServizio wrapServizio = null;
         Date dataIniziale = LibDate.creaData(2, 3, 2016);
         int primoGiorno = LibWam.creaChiave(dataIniziale);
 
-        CServizio cServ;
-        CRuoli cRuoli;
-        CTurno[] cTurni=null;
-
         if (company != null) {
             listaServizi = Servizio.findAll(company);
-        }// end of if cycle
+        }
 
         if (listaServizi != null && listaServizi.size() > 0) {
             for (Servizio servizio : listaServizi) {
-                wrapServizio = servizio.getWrapServizio();
-                cServ = new CServizio(servizio);
-                cRuoli = new CRuoli(wrapServizio);
-              cTurni = creaTurni(company, servizio, primoGiorno);
-//                cTurni = creaTurniDemo();
-                lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
-            }// end of for cycle
-        }// end of if cycle
 
-        return lRighe.toArray(new RTabellone[0]);
+                int giorni=7;
 
-    }// end of method
+                List<Turno> turni = new ArrayList<>();
+
+                // todo qui fare una sola query dal... al... non un ciclo!
+                for (int chiave = primoGiorno; chiave < primoGiorno+giorni; chiave++) {
+                    Turno turno = Turno.find(company, servizio, chiave);
+                    if (turno!=null){
+                        turni.add(turno);
+                    }
+                }
+                righe.add(new WRigaTab(servizio, turni.toArray(new Turno[0])));
+            }
+        }
+
+        return righe;
+
+    }
+
 
     private CTurno[] creaTurni(Company company, Servizio servizio, int primoGiorno) {
         return creaTurni(company, servizio, primoGiorno, 7);

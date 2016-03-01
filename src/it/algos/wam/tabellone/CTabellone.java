@@ -6,6 +6,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 /**
@@ -15,10 +16,13 @@ import java.util.Date;
  */
 public class CTabellone extends GridLayout {
 
-    private Date dStart;
-    private Date dEnd;
+    private LocalDate dStart;
+    private LocalDate dEnd;
 
-    public CTabellone(RTabellone... righe) {
+    public CTabellone(LocalDate dStart, LocalDate dEnd) {
+
+        this.dStart = dStart;
+        this.dEnd = dEnd;
 
         addStyleName("yellowBg");
         addStyleName("ctabellone");
@@ -28,56 +32,51 @@ public class CTabellone extends GridLayout {
         setSpacing(true);
 
         // determina il numero di colonne turni (giorni)
-        int giorni=0;
-        for(RTabellone riga : righe){
-            int quanti=riga.getTurni().length;
-            if (quanti>giorni){
-                giorni=quanti;
+
+        int giorni = (int) ChronoUnit.DAYS.between(this.dStart, this.dEnd);
+
+        // dimensiona il layout
+        setColumns(2 + giorni);     // prima colonna nome servizio, seconda colonna i ruoli, le successive i turni
+
+        /* Regola l'espandibilità delle colonne:
+         * Le prime 2 colonne (servizi e ruoli) sono fisse,
+         * le altre (turni) riempiono lo spazio disponibile
+         * in modo equamente distribuito */
+        for (int i = 0; i < getColumns(); i++) {
+            if (i == 0 | i == 1) {
+                setColumnExpandRatio(i, 0);
+            } else {
+                setColumnExpandRatio(i, 100);
             }
         }
 
-        // dimensiona il layout
-        setColumns(2+giorni);     // prima colonna nome servizio, seconda colonna i ruoli, le successive i turni
-        setRows(1+righe.length);    // la prima riga per i giorni, le successive per i turni
+        setRows(1);    // la prima riga per i giorni, le successive per i servizi
 
         // aggiunge le date (prima riga)
         LocalDate d1 = LocalDate.now();
-        for(int i=0; i<giorni;i++){
+        for (int i = 0; i < giorni; i++) {
             LocalDate d = d1.plusDays(i);
-            addComponent(new CGiorno(d),i+2,0);
+            addComponent(new CGiorno(d), i + 2, 0);
         }
 
 
-        // aggiunge le righe successive
-        int col=0;
-        int row=0;
-        for(RTabellone riga : righe){
-            row++;
-
-            addComponent(riga.getServizio(), 0, row);
-
-            addComponent(riga.getRuoli(), 1, row);
-
-            col=2;
-            for (CTurno t : riga.getTurni()){
-                addComponent(t, col, row);
-                col++;
-            }
-
-        }
-
-
-        /* Espandibilità delle colonne:
-        * Le prime 2 colonne (servizi e ruoli) sono fisse,
-        * le altre (turni) riempiono lo spazio disponibile
-        * in modo equamente distribuito */
-        for (int i = 0; i < getColumns(); i++) {
-            if(i==0 | i==1) {
-                setColumnExpandRatio(i,0);
-            }else{
-                setColumnExpandRatio(i,100);
-            }
-        }
+//        // aggiunge le righe successive
+//        int col=0;
+//        int row=0;
+//        for(RTabellone riga : righe){
+//            row++;
+//
+//            addComponent(riga.getServizio(), 0, row);
+//
+//            addComponent(riga.getRuoli(), 1, row);
+//
+//            col=2;
+//            for (CTurno t : riga.getTurni()){
+//                addComponent(t, col, row);
+//                col++;
+//            }
+//
+//        }
 
 
 //        // inizialmente tutte le righe espandibili nello stesso modo
@@ -91,7 +90,7 @@ public class CTabellone extends GridLayout {
 //        setRowExpandRatio(1,0);
 
 
-
     }
+
 
 }
