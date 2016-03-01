@@ -153,6 +153,7 @@ public class Servizio extends WamCompany {
      *
      * @param sigla valore della property Sigla
      * @return istanza di Servizio, null se non trovata
+     * @deprecated perché manca la company e potrebbero esserci records multipli con la stessa sigla
      */
     public static Servizio findBySigla(String sigla) {
         Servizio instance = null;

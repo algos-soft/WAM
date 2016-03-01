@@ -258,7 +258,7 @@ public class Milite extends WamCompany {
      * @return istanza di Milite
      */
     public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente, boolean attivo) {
-        Milite milite = Milite.crea(company, nome, cognome);
+        Milite milite = Milite.find(company, nome, cognome);
 
         if (milite == null) {
             milite = new Milite(company, nome, cognome, dataNascita, cellulare, dipendente);

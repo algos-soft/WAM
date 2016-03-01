@@ -10,6 +10,7 @@ import java.util.Date;
 
 @StaticMetamodel(Turno.class)
 public class Turno_ extends BaseEntity_ {
+    public static volatile SingularAttribute<Turno, Long> chiave;
     public static volatile SingularAttribute<Turno, Servizio> servizio;
     public static volatile SingularAttribute<Turno, Date> inizio;
     public static volatile SingularAttribute<Turno, Date> fine;
