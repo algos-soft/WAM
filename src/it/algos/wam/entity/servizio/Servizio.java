@@ -118,7 +118,7 @@ public class Servizio extends WamCompany {
      * @param persone     minime indispensabile allo svolgimento del servizio
      */
     public Servizio(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone) {
-        this(company, 0, sigla, descrizione, oraInizio, oraFine, persone, null);
+        this(company, ordine, sigla, descrizione, oraInizio, oraFine, persone, null);
     }// end of constructor
 
     /**
@@ -136,6 +136,7 @@ public class Servizio extends WamCompany {
     public Servizio(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone, WrapServizio wrapServizio) {
         super();
         super.setCompany(company);
+        setOrdine(ordine);
         setSigla(sigla);
         setDescrizione(descrizione);
         setOraInizio(oraInizio);
