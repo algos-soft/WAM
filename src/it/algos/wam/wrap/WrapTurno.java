@@ -1,4 +1,4 @@
-package it.algos.wam.wrapturno;
+package it.algos.wam.wrap;
 
 import it.algos.wam.entity.milite.Milite;
 
@@ -73,6 +73,7 @@ public class WrapTurno implements Serializable {
         setIscrizione4(iscrizione4);
     }// end of constructor
 
+    @Override
     public String toString() {
         String stringa = "";
         Milite milite;
@@ -96,6 +97,14 @@ public class WrapTurno implements Serializable {
 
         if (iscrizione3 != null) {
             milite = iscrizione3.getMilite();
+            if (milite != null) {
+                stringa += " + ";
+                stringa += milite.toString();
+            }// end of if cycle
+        }// end of if cycle
+
+        if (iscrizione4 != null) {
+            milite = iscrizione4.getMilite();
             if (milite != null) {
                 stringa += " + ";
                 stringa += milite.toString();

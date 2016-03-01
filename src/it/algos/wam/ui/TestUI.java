@@ -1,13 +1,16 @@
 package it.algos.wam.ui;
 
-import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
+import it.algos.wam.WAMApp;
+import it.algos.wam.entity.company.Company;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.tabellone.*;
+import it.algos.wam.wrap.WrapServizio;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +24,10 @@ public class TestUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
         String themeName;
-        if(Page.getCurrent().getWebBrowser().isTouchDevice()) {
-            themeName="wam-mobile";
-        }else{
-            themeName="wam-mobile";
+        if (Page.getCurrent().getWebBrowser().isTouchDevice()) {
+            themeName = "wam-mobile";
+        } else {
+            themeName = "wam";
         }
         setTheme(themeName);
 
@@ -35,9 +38,11 @@ public class TestUI extends UI {
         setContent(comp);
     }
 
-    private RTabellone[] creaRighe() {
+    /**
+     * @deprecated
+     */
+    private RTabellone[] creaRigheOld() {
         List<RTabellone> lRighe = new ArrayList();
-
         CServizio cServ;
         CRuoli cRuoli;
         CTurno[] cTurni;
@@ -48,7 +53,7 @@ public class TestUI extends UI {
         lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
 
         cServ = new CServizio("Ambulanza pomeriggio");
-        cRuoli = new CRuoli("Aut", "Sec", "Aiu","Ap");
+        cRuoli = new CRuoli("Aut", "Sec", "Aiu", "Ap");
         cTurni = creaTurniDemo();
         lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
 
@@ -59,7 +64,39 @@ public class TestUI extends UI {
 
 
         return lRighe.toArray(new RTabellone[0]);
+
     }
+
+    /**
+     * Una volta stabilita la company (di norma non qui), crea tante righe quanti sono i servizi
+     */
+    private RTabellone[] creaRighe() {
+        List<RTabellone> lRighe = new ArrayList();
+        Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        ArrayList<Servizio> listaServizi = null;
+        WrapServizio wrapServizio = null;
+
+        CServizio cServ;
+        CRuoli cRuoli;
+        CTurno[] cTurni;
+
+        if (company != null) {
+            listaServizi = Servizio.findAll(company);
+        }// end of if cycle
+
+        if (listaServizi != null && listaServizi.size() > 0) {
+            for (Servizio servizio : listaServizi) {
+                wrapServizio= servizio.getWrapServizio();
+                cServ = new CServizio(servizio);
+                cRuoli = new CRuoli(wrapServizio);
+                cTurni = creaTurniDemo();
+                lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
+            }// end of for cycle
+        }// end of if cycle
+
+        return lRighe.toArray(new RTabellone[0]);
+
+    }// end of method
 
     private CTurno[] creaTurniDemo() {
         List<CTurno> lTurni = new ArrayList();
@@ -75,11 +112,11 @@ public class TestUI extends UI {
         return lTurni.toArray(new CTurno[0]);
     }
 
-    private CIscrizione[] creaIscrizioni(int quale){
+    private CIscrizione[] creaIscrizioni(int quale) {
 
         List<CIscrizione> lIscrizioni = new ArrayList();
 
-        switch (quale){
+        switch (quale) {
             case 1:
                 lIscrizioni.add(new CIscrizione("Bianchini F."));
                 lIscrizioni.add(new CIscrizione("Madella C."));

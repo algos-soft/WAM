@@ -6,11 +6,13 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.milite.Milite;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
-import it.algos.wam.wrapturno.Iscrizione;
-import it.algos.wam.wrapturno.WrapTurno;
+import it.algos.wam.wrap.Iscrizione;
+import it.algos.wam.wrap.WrapServizio;
+import it.algos.wam.wrap.WrapTurno;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibTime;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -18,6 +20,8 @@ import java.util.Date;
  * Classe statica
  */
 public abstract class BootService {
+
+    private static ArrayList<Funzione> FUNZ_DEMO;
 
     /**
      * Creazione iniziale di una croce demo
@@ -92,11 +96,16 @@ public abstract class BootService {
     private static void creaFunzioniDemo() {
         Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
         int k = 0;
+        Funzione funzione;
 
         if (company != null) {
-            Funzione.crea(company, "aut", "Autista", ++k, "Autista patentato 118");
-            Funzione.crea(company, "soc", "Soccorritore", ++k, "Soccorritore 118");
-            Funzione.crea(company, "bar", "Barelliere", ++k, "Soccorritore in prova");
+            FUNZ_DEMO = new ArrayList<>();
+            funzione = Funzione.crea(company, "aut", "Autista", ++k, "Autista patentato 118");
+            FUNZ_DEMO.add(funzione);
+            funzione = Funzione.crea(company, "soc", "Soccorritore", ++k, "Soccorritore 118");
+            FUNZ_DEMO.add(funzione);
+            funzione = Funzione.crea(company, "bar", "Barelliere", ++k, "Soccorritore in prova");
+            FUNZ_DEMO.add(funzione);
         }// end of if cycle
     }// end of static method
 
@@ -107,18 +116,22 @@ public abstract class BootService {
      */
     private static void creaServiziDemo() {
         Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        WrapServizio wrap;
         int k = 0;
 
         if (company != null) {
-            Servizio.crea(company, ++k, "msa-mat", "Automedica mattino", 8, 14, true, true, false, 2);
-            Servizio.crea(company, ++k, "msa-pom", "Automedica pomeriggio", 14, 20, true, true, false, 2);
-            Servizio.crea(company, ++k, "msa-not", "Automedica notte", 20, 8, true, true, false, 2);
-            Servizio.crea(company, ++k, "dia", "Dialisi mattino", 7, 13, true, true, false, 2);
-            Servizio.crea(company, ++k, "ord-mat", "Ordinario mattino", 7, 12, true, true, false, 3);
-            Servizio.crea(company, ++k, "ord-pom", "Ordinario pomeriggio", 12, 18, true, true, false, 3);
-            Servizio.crea(company, ++k, "ord-ser", "Ordinario sera", 18, 24, true, true, false, 2);
-            Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2);
-            Servizio.crea(company, ++k, "avis", "Servizio AVIS", 0, 0, true, false, false, 1);
+            wrap = new WrapServizio(FUNZ_DEMO.get(0), FUNZ_DEMO.get(1), FUNZ_DEMO.get(2));
+            wrap.setObbligatoria1(true);
+            wrap.setObbligatoria2(true);
+            Servizio.crea(company, ++k, "msa-mat", "Automedica mattino", 8, 14, true, true, false, 2, wrap);
+            Servizio.crea(company, ++k, "msa-pom", "Automedica pomeriggio", 14, 20, true, true, false, 2, wrap);
+            Servizio.crea(company, ++k, "msa-not", "Automedica notte", 20, 8, true, true, false, 2, wrap);
+            Servizio.crea(company, ++k, "dia", "Dialisi mattino", 7, 13, true, true, false, 2, wrap);
+            Servizio.crea(company, ++k, "ord-mat", "Ordinario mattino", 7, 12, true, true, false, 3, wrap);
+            Servizio.crea(company, ++k, "ord-pom", "Ordinario pomeriggio", 12, 18, true, true, false, 3, wrap);
+            Servizio.crea(company, ++k, "ord-ser", "Ordinario sera", 18, 24, true, true, false, 2, wrap);
+            Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2, new WrapServizio(FUNZ_DEMO.get(0), FUNZ_DEMO.get(1)));
+            Servizio.crea(company, ++k, "avis", "Servizio AVIS", 0, 0, true, false, false, 1, new WrapServizio(FUNZ_DEMO.get(0)));
         }// end of if cycle
     }// end of static method
 
@@ -236,8 +249,8 @@ public abstract class BootService {
         Iscrizione iscrizione3;
         Funzione funzione = Funzione.find(company, "aut");
         Milite milite = Milite.find(company, "Ruggero", "Testa");
-        Milite milite2 = Milite.find(company, "Lucia","Donadoni");
-        Milite milite3 = Milite.find(company, "Renzo","Cerrato");
+        Milite milite2 = Milite.find(company, "Lucia", "Donadoni");
+        Milite milite3 = Milite.find(company, "Renzo", "Cerrato");
 
         if (company != null) {
             servizio = Servizio.find(company, "amb-mat");

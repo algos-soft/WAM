@@ -4,7 +4,7 @@ import it.algos.wam.entity.company.Company;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
-import it.algos.wam.wrapturno.WrapTurno;
+import it.algos.wam.wrap.WrapTurno;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;

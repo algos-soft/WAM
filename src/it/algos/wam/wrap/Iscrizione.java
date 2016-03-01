@@ -1,4 +1,4 @@
-package it.algos.wam.wrapturno;
+package it.algos.wam.wrap;
 
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.milite.Milite;

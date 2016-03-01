@@ -1,7 +1,10 @@
 package it.algos.wam.entity.servizio;
 
 import it.algos.wam.entity.company.Company;
+import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.entity.wamcompany.WamCompany_;
+import it.algos.wam.wrap.WrapServizio;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -81,11 +84,7 @@ public class Servizio extends WamCompany {
 
     //--elenco delle funzioni previste per questo tipo di turno
     //--massimo hardcoded di 4
-    //--l'ordine determina la presentazione in scheda turno
-//    private Funzione funzione1;
-//    private Funzione funzione2;
-//    private Funzione funzione3;
-//    private Funzione funzione4;
+    private WrapServizio wrapServizio = null;
 
     /**
      * Costruttore senza argomenti
@@ -108,7 +107,7 @@ public class Servizio extends WamCompany {
 
 
     /**
-     * Costruttore completo
+     * Costruttore
      *
      * @param company     croce di appartenenza
      * @param ordine      di presentazione nel tabellone
@@ -119,6 +118,22 @@ public class Servizio extends WamCompany {
      * @param persone     minime indispensabile allo svolgimento del servizio
      */
     public Servizio(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone) {
+        this(company, 0, sigla, descrizione, oraInizio, oraFine, persone, null);
+    }// end of constructor
+
+    /**
+     * Costruttore completo
+     *
+     * @param company      croce di appartenenza
+     * @param ordine       di presentazione nel tabellone
+     * @param sigla        sigla di riferimento interna (obbligatoria)
+     * @param descrizione  per il tabellone (obbligatoria)
+     * @param oraInizio    del servizio (facoltativo)
+     * @param oraFine      del servizio (facoltativo)
+     * @param persone      minime indispensabile allo svolgimento del servizio
+     * @param wrapServizio elenco delle funzioni previste (max quattro)
+     */
+    public Servizio(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone, WrapServizio wrapServizio) {
         super();
         super.setCompany(company);
         setSigla(sigla);
@@ -126,6 +141,7 @@ public class Servizio extends WamCompany {
         setOraInizio(oraInizio);
         setOraFine(oraFine);
         setPersone(persone);
+        setWrapServizio(wrapServizio);
     }// end of constructor
 
 
@@ -219,6 +235,17 @@ public class Servizio extends WamCompany {
     }// end of method
 
     /**
+     * Recupera una lista (array) dei records della Entity SOLO per la Company indicata
+     *
+     * @param company valore della property Company
+     * @return lista delle istanze di Servizio di una Company
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Servizio> findAll(Company company) {
+        return (ArrayList<Servizio>) AQuery.queryLista(Servizio.class, WamCompany_.company, company);
+    }// end of method
+
+    /**
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
      *
@@ -255,6 +282,27 @@ public class Servizio extends WamCompany {
      * @return istanza di Servizio
      */
     public static Servizio crea(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone) {
+        return crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile, orario, multiplo, persone, null);
+    }// end of static method
+
+    /**
+     * Creazione iniziale di un servizio
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company      croce di appartenenza
+     * @param ordine       di presentazione nel tabellone
+     * @param sigla        sigla di riferimento interna (obbligatoria)
+     * @param descrizione  per il tabellone (obbligatoria)
+     * @param oraInizio    del servizio (facoltativo)
+     * @param oraFine      del servizio (facoltativo)
+     * @param visibile     nel tabellone
+     * @param orario       servizio ad orario prefissato e fisso ogni giorno
+     * @param multiplo     servizio suscettibile di essere effettuato diverse volte nella giornata
+     * @param persone      minime indispensabile allo svolgimento del servizio
+     * @param wrapServizio elenco delle funzioni previste (max quattro)
+     * @return istanza di Servizio
+     */
+    public static Servizio crea(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone, WrapServizio wrapServizio) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
@@ -263,16 +311,50 @@ public class Servizio extends WamCompany {
             servizio.setVisibile(visibile);
             servizio.setOrario(orario);
             servizio.setMultiplo(multiplo);
+            servizio.setWrapServizio(wrapServizio);
             servizio.save();
         }// end of if cycle
 
         return servizio;
     }// end of static method
 
+    public ArrayList<Funzione> getFunzioni() {
+        ArrayList<Funzione> lista = null;
+
+        if (wrapServizio != null) {
+            lista = wrapServizio.getFunzioni();
+        }// end of if cycle
+
+        return lista;
+    }// end of method
+
+    public ArrayList<String> getSigleFunzioni() {
+        ArrayList<String> lista = null;
+
+        if (wrapServizio != null) {
+            lista = wrapServizio.getSigleFunzioni();
+        }// end of if cycle
+
+        return lista;
+    }// end of method
+
     @Override
     public String toString() {
         return sigla;
     }// end of method
+
+    /**
+     * @return intervallo fine - inizio
+     */
+    public String getOrario() {
+        String orario = "";
+
+        if (oraInizio > 0 && oraFine > 0) {
+            orario = oraInizio + "-" + oraFine;
+        }// end of if cycle
+
+        return orario;
+    }// end of getter method
 
     /**
      * @return the nome
@@ -390,6 +472,14 @@ public class Servizio extends WamCompany {
 
     public void setPersone(int funzioniObbligatorie) {
         this.persone = funzioniObbligatorie;
+    }//end of setter method
+
+    public WrapServizio getWrapServizio() {
+        return wrapServizio;
+    }// end of getter method
+
+    public void setWrapServizio(WrapServizio wrapServizio) {
+        this.wrapServizio = wrapServizio;
     }//end of setter method
 
     /**

@@ -1,7 +1,7 @@
 package it.algos.wam.entity.turno;
 
 import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.wrapturno.WrapTurno;
+import it.algos.wam.wrap.WrapTurno;
 import it.algos.webbase.web.entity.BaseEntity_;
 
 import javax.persistence.metamodel.SingularAttribute;

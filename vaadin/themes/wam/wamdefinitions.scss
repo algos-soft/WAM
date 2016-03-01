@@ -111,7 +111,8 @@ $v-font-weight: 400;
 
   // attributi di tutto il tabellone
   .ctabellone {
-    font-size: 13px;
+    //font-size: 13px;@todo se dobbiamo fornire anche gli occhiali....
+    font-size: 16px;
    // font-size: 1.5rem;
   }
 
@@ -150,6 +151,18 @@ $v-font-weight: 400;
   $dark: rgb(42, 156, 218);
   $light: rgba(42, 156, 218, 0.6);
   .cruolo {
+    @extend .cbasecell;
+    background: $dark;
+    background: -webkit-linear-gradient(top, $dark, $light, $dark);
+    background: -moz-linear-gradient(top, $dark, $light, $dark);
+    background: -o-linear-gradient(top, $dark, $light, $dark);
+    background: linear-gradient(top, $dark, $light, $dark);
+  }
+
+  // componente ruolo (singolo ruolo nel componente Ruoli)
+  $dark: rgb(218, 42, 156);
+  $light: rgba(218, 42, 156, 0.6);
+  .cruolor {
     @extend .cbasecell;
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
