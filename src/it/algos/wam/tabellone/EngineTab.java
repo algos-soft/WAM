@@ -1,12 +1,15 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.wrap.WrapServizio;
+import it.algos.webbase.web.lib.DateConvertUtils;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -50,21 +53,24 @@ public class EngineTab {
         Component cfunzioni = creaCompFunzioni(serv);
         tab.addComponent(cfunzioni, 1, row);
 
-        // componenti grafici turni
+        // componenti grafici per i turni
         riga.getTurni();
-        int i=2;
         for (Turno t : riga.getTurni()) {
-            Date inizio = t.getInizio();
+            LocalDate d1Tab=tab.getDataStart();
+            LocalDate d1Turno= DateConvertUtils.asLocalDate(t.getInizio());
+            int giorni = (int) ChronoUnit.DAYS.between(d1Tab, d1Turno);
+            int col = 2+giorni;
+
             CTurno comp = new CTurno();
-            tab.addComponent(comp, i, row);
-            i++;
+            //comp.addComponent(new Label(""+t.getInizio()));
+            tab.addComponent(comp, col, row);
         }
 
     }
 
 
     /**
-     * Crea un componente frafico con le funzioni in base al Servizio
+     * Crea un componente grafico con le funzioni in base al Servizio
      *
      * @param serv il servizio
      * @return il componente grafico con le funzioni

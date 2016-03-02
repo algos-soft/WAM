@@ -33,7 +33,7 @@ public class CTabellone extends GridLayout {
 
         // determina il numero di colonne turni (giorni)
 
-        int giorni = (int) ChronoUnit.DAYS.between(this.dStart, this.dEnd);
+        int giorni = (int) ChronoUnit.DAYS.between(this.dStart, this.dEnd)+1;
 
         // dimensiona il layout
         setColumns(2 + giorni);     // prima colonna nome servizio, seconda colonna i ruoli, le successive i turni
@@ -53,7 +53,7 @@ public class CTabellone extends GridLayout {
         setRows(1);    // la prima riga per i giorni, le successive per i servizi
 
         // aggiunge le date (prima riga)
-        LocalDate d1 = LocalDate.now();
+        LocalDate d1 =dStart;
         for (int i = 0; i < giorni; i++) {
             LocalDate d = d1.plusDays(i);
             addComponent(new CGiorno(d), i + 2, 0);
@@ -92,5 +92,12 @@ public class CTabellone extends GridLayout {
 
     }
 
+    public LocalDate getDataStart() {
+        return dStart;
+    }
+
+    public LocalDate getDataEnd() {
+        return dEnd;
+    }
 
 }

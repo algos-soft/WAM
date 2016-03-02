@@ -64,6 +64,7 @@ public class CTurno extends VerticalLayout {
 
     }// end of constructor
 
+
     /**
      * @deprecated
      */
