@@ -1,5 +1,6 @@
 package it.algos.wam.tabellone;
 
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import it.algos.wam.entity.servizio.Servizio;
@@ -59,13 +60,14 @@ public class CServizio extends VerticalLayout {
         setHeight("100%");
         addStyleName("cservizio");
 
-
-        Label labelOra = new Label(orario);
+        if(orario.equals("")){  orario="&nbsp;";}// evita label con testo vuoto, danno problemi
+        Label labelOra = new Label(orario, ContentMode.HTML);
         labelOra.addStyleName("cservizio-ora");
         labelOra.addStyleName("blueBg");
         addComponent(labelOra);
 
-        Label labelNome = new Label(descrizione);
+        if(descrizione.equals("")){  descrizione="&nbsp;";}// evita label con testo vuoto, danno problemi
+        Label labelNome = new Label(descrizione,ContentMode.HTML);
         labelNome.addStyleName("cservizio-nome");
         labelNome.addStyleName("greenBg");
 

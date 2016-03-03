@@ -117,9 +117,7 @@ public class TestUI extends UI {
      */
     private WTabellone creaRighe() {
 
-        Date data1 = LibDate.creaData(2, 3, 2016);
-
-        LocalDate d1=DateConvertUtils.asLocalDate(data1);
+        LocalDate d1=LocalDate.of(2016, 2, 28);
         LocalDate d2=d1.plusDays(6);
         WTabellone wtab =new WTabellone(d1, d2);
 

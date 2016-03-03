@@ -79,7 +79,7 @@ public class EngineTab {
         for (WrapServizio.Wrap w : wrappers) {
             Funzione f = w.funzione;
             boolean obblig = w.obbligatoria;
-            Component comp = cfunzioni.addFunzione(f.getDescrizione());
+            Component comp = cfunzioni.addFunzione(f.getSigla());
             if (obblig) {
                 comp.addStyleName("cfunzioneobblig");
             }
