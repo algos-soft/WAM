@@ -3,7 +3,6 @@ package it.algos.wam.ui;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.company.Company;
@@ -11,9 +10,11 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.lib.LibWam;
 import it.algos.wam.tabellone.*;
-import it.algos.wam.wrap.WrapServizio;
+import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibDate;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +35,7 @@ public class TestUI extends UI {
         }
         setTheme(themeName);
 
-        WRigheTab wrapper = creaRighe();
+        WTabellone wrapper = creaRighe();
         CTabellone tab = EngineTab.creaTabellone(wrapper);
 
 
@@ -114,22 +115,29 @@ public class TestUI extends UI {
      * Crea i wrapper per le righe di tabellone
      * Un wrapper per ogni servizio
      */
-    private WRigheTab creaRighe() {
-        WRigheTab righe =new WRigheTab();
+    private WTabellone creaRighe() {
+
+        Date data1 = LibDate.creaData(2, 3, 2016);
+
+        LocalDate d1=DateConvertUtils.asLocalDate(data1);
+        LocalDate d2=d1.plusDays(6);
+        WTabellone wtab =new WTabellone(d1, d2);
 
         Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
         ArrayList<Servizio> listaServizi = null;
-        Date dataIniziale = LibDate.creaData(2, 3, 2016);
-        int primoGiorno = LibWam.creaChiave(dataIniziale);
+
+        int primoGiorno = LibWam.creaChiave(d1);
 
         if (company != null) {
             listaServizi = Servizio.findAll(company);
         }
 
         if (listaServizi != null && listaServizi.size() > 0) {
+
+            long giorni = d1.until( d2, ChronoUnit.DAYS)+1;
+
             for (Servizio servizio : listaServizi) {
 
-                int giorni=7;
 
                 List<Turno> turni = new ArrayList<>();
 
@@ -140,11 +148,11 @@ public class TestUI extends UI {
                         turni.add(turno);
                     }
                 }
-                righe.add(new WRigaTab(servizio, turni.toArray(new Turno[0])));
+                wtab.add(new WRigaTab(servizio, turni.toArray(new Turno[0])));
             }
         }
 
-        return righe;
+        return wtab;
 
     }
 

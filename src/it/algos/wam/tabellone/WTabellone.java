@@ -11,7 +11,16 @@ import java.util.ArrayList;
  * Questo wrapper è dato in pasto all'engine che crea graficamente il tabellone.
  * Created by alex on 01/03/16.
  */
-public class WRigheTab extends ArrayList<WRigaTab>{
+public class WTabellone extends ArrayList<WRigaTab>{
+
+    private LocalDate d1;
+    private LocalDate d2;
+
+
+    public WTabellone(LocalDate d1, LocalDate d2) {
+        this.d1 = d1;
+        this.d2 = d2;
+    }
 
     /**
      * Determina la data minima tra tutti i turni delle varie righe
@@ -48,5 +57,12 @@ public class WRigheTab extends ArrayList<WRigaTab>{
         return date;
     }
 
+    public LocalDate getD1() {
+        return d1;
+    }
+
+    public LocalDate getD2() {
+        return d2;
+    }
 
 }

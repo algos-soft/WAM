@@ -66,7 +66,7 @@ public class CServizio extends VerticalLayout {
         addComponent(labelOra);
 
         Label labelNome = new Label(descrizione);
-        labelNome.addStyleName("cservizio-descrizione");
+        labelNome.addStyleName("cservizio-nome");
         labelNome.addStyleName("greenBg");
 
         labelNome.setHeight("100%");

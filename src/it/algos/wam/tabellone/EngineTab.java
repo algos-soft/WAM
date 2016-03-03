@@ -1,7 +1,6 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
@@ -10,7 +9,6 @@ import it.algos.webbase.web.lib.DateConvertUtils;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,9 +20,9 @@ public class EngineTab {
     /**
      * Genera un tabellone da un array di wrapper di riga
      */
-    public static CTabellone creaTabellone(WRigheTab wrapper) {
-        LocalDate d1 = wrapper.getMinDate();
-        LocalDate d2 = wrapper.getMaxDate();
+    public static CTabellone creaTabellone(WTabellone wrapper) {
+        LocalDate d1 = wrapper.getD1();
+        LocalDate d2 = wrapper.getD2();
         CTabellone tabellone = new CTabellone(d1, d2);
         for (WRigaTab riga : wrapper) {
             addRiga(tabellone, riga);

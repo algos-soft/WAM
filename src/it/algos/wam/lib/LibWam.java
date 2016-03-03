@@ -1,7 +1,10 @@
 package it.algos.wam.lib;
 
+import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibDate;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -27,5 +30,18 @@ public abstract class LibWam {
 
         return chiave;
     }// end of method
+
+
+    /**
+     * Costruisce una chiave da una LocalDate
+     * Usato per la indicizzaione dei Turni
+     */
+    public static int creaChiave(LocalDate data) {
+        Date d = Date.from(data.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return creaChiave(d);
+    }
+
+
+
 
 }// end of abstract static class
