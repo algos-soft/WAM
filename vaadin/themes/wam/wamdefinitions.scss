@@ -109,11 +109,19 @@ $v-font-weight: 400;
 
 
 
+
+
   // attributi di tutto il tabellone
   .ctabellone {
     font-size: 12px;
-   // font-size: 1.5rem;
   }
+
+  //@media screen and (max-width: 640px) {
+  //  .ctabellone {
+  //    font-size: 36px;
+  //  }
+  //}
+
 
 
   // attributi ereditati dalle celle del tabellone
