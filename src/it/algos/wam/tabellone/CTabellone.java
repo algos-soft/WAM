@@ -1,16 +1,12 @@
 package it.algos.wam.tabellone;
 
-import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Componente che rappresenta un tabellone con servizi e giorni.
@@ -22,7 +18,7 @@ public class CTabellone extends GridLayout {
     private LocalDate dStart;
     private LocalDate dEnd;
 
-    private ArrayList<ClickTurnoListener> clickTurnoListeners = new ArrayList();
+    private ArrayList<ClickCellListener> clickCellListeners = new ArrayList();
 
     public CTabellone(LocalDate dStart, LocalDate dEnd) {
 
@@ -112,34 +108,41 @@ public class CTabellone extends GridLayout {
         return (int)ChronoUnit.DAYS.between(dStart, dEnd)+1;
     }
 
-    public void addClickTurnoListener(ClickTurnoListener l){
-        clickTurnoListeners.add(l);
+    public void addClickCellListener(ClickCellListener l){
+        clickCellListeners.add(l);
     }
 
-    public interface ClickTurnoListener{
-        void turnoClicked(ClickTurnoEvent e);
+    /**
+     * E' stata cliccata una cella alla posizione col,row
+     */
+    public void cellClicked(int col, int row) {
+        LocalDate data=dStart.plusDays(col-2);
+        ClickCellEvent e = new ClickCellEvent(data, row);
+        for(ClickCellListener l : clickCellListeners){
+            l.cellClicked(e);
+        }
+
+
+    }
+
+    public interface ClickCellListener {
+        void cellClicked(ClickCellEvent e);
     }
 
     public void fireTurnoClicked(Turno turno, Servizio servizio, LocalDate data){
     }
 
-    public class ClickTurnoEvent{
-        private Turno turno;
-        private Servizio servizio;
+    public class ClickCellEvent {
+        private int row;
         private LocalDate data;
 
-        public ClickTurnoEvent(Turno turno, Servizio servizio, LocalDate data) {
-            this.turno = turno;
-            this.servizio = servizio;
+        public ClickCellEvent(LocalDate data, int row) {
             this.data = data;
+            this.row=row;
         }
 
-        public Turno getTurno() {
-            return turno;
-        }
-
-        public Servizio getServizio() {
-            return servizio;
+        public int getRow() {
+            return row;
         }
 
         public LocalDate getData() {

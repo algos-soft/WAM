@@ -2,11 +2,6 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.VerticalLayout;
-import it.algos.wam.entity.milite.Milite;
-import it.algos.wam.entity.turno.Turno;
-import it.algos.wam.wrap.Iscrizione;
-import it.algos.wam.wrap.WrapTurno;
 
 /**
  * Componente grafico che rappresenta un Turno visualizzato
@@ -14,7 +9,7 @@ import it.algos.wam.wrap.WrapTurno;
  * Ospita diverse Iscrizioni.
  * Created by alex on 20/02/16.
  */
-public class CTurnoDisplay extends GridLayout implements  TurnoCell {
+public class CTurnoDisplay extends GridLayout implements TabelloneCell {
 
     private CTabellone tabellone;
     private int x;
@@ -37,7 +32,7 @@ public class CTurnoDisplay extends GridLayout implements  TurnoCell {
         addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
             @Override
             public void layoutClick(LayoutEvents.LayoutClickEvent event) {
-                //tabellone.fireTurnoClicked();
+                tabellone.cellClicked(x, y);
             }
         });
 

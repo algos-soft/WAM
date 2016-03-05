@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by alex on 05/03/16.
  */
-public class UITabellone extends UI {
+public class TabelloneUI extends UI {
 
     private Placeholder placeholder;
 
@@ -48,6 +48,14 @@ public class UITabellone extends UI {
         WTabellone wrapper = creaRighe();
         CTabellone tab = EngineTab.creaTabellone(wrapper);
         placeholder.setComponent(tab);
+
+        // aggiunge i listener al tabellone
+        tab.addClickCellListener(new CTabellone.ClickCellListener() {
+            @Override
+            public void cellClicked(CTabellone.ClickCellEvent e) {
+                TabelloneUI.this.cellClicked(e.getData(), e.getRow());
+            }
+        });
 
 
     }
@@ -108,6 +116,11 @@ public class UITabellone extends UI {
 
         return wtab;
 
+    }
+
+    private void cellClicked(LocalDate data, int row){
+        int a = 87;
+        int b = 1;
     }
 
     /**

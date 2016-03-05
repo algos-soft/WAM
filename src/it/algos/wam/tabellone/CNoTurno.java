@@ -1,13 +1,12 @@
 package it.algos.wam.tabellone;
 
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 /**
  * Componente grafico che rappresenta l'assenza di turno
  */
-public class CNoTurno extends VerticalLayout implements  TurnoCell {
+public class CNoTurno extends VerticalLayout implements TabelloneCell {
 
     private CTabellone tabellone;
     private int x;

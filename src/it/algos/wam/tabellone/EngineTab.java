@@ -59,18 +59,18 @@ public class EngineTab {
             Turno t = riga.getTurno(currDate);
 
             // creo il componente grafico
-            TurnoCell tcell;
+            TabelloneCell tcomp;
             if (t!=null){
-                tcell = creaCompTurno(tab, t);
+                tcomp = creaCompTurno(tab, t);
             }else{
-                tcell=new CNoTurno(tab);
+                tcomp =new CNoTurno(tab);
             }
 
-            // aggiungo in posizione sul tabellone
+            // aggiungo il componente in posizione sul tabellone
             int col = 2+i;
-            tcell.setX(col);
-            tcell.setY(row);
-            tab.addComponent(tcell, col, row);
+            tcomp.setX(col);
+            tcomp.setY(row);
+            tab.addComponent(tcomp, col, row);
 
         }
 
@@ -83,7 +83,7 @@ public class EngineTab {
      * @param turno il turno
      * @return il componente grafico
      */
-    private static TurnoCell creaCompTurno(CTabellone tab, Turno turno){
+    private static TabelloneCell creaCompTurno(CTabellone tab, Turno turno){
         Servizio serv = turno.getServizio();
         int numFunzioni=serv.getNumFunzioni();
         CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni);
