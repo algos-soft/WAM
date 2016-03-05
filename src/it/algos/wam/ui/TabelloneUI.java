@@ -81,7 +81,7 @@ public class TabelloneUI extends UI {
      */
     private WTabellone creaRighe() {
 
-        LocalDate d1=LocalDate.of(2016, 2, 28);
+        LocalDate d1=LocalDate.of(2016, 3, 2);
         LocalDate d2=d1.plusDays(6);
         WTabellone wtab =new WTabellone(d1, d2);
 
