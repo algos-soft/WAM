@@ -4,9 +4,12 @@ import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.turno.Turno;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -18,6 +21,8 @@ public class CTabellone extends GridLayout {
 
     private LocalDate dStart;
     private LocalDate dEnd;
+
+    private ArrayList<ClickTurnoListener> clickTurnoListeners = new ArrayList();
 
     public CTabellone(LocalDate dStart, LocalDate dEnd) {
 
@@ -107,5 +112,39 @@ public class CTabellone extends GridLayout {
         return (int)ChronoUnit.DAYS.between(dStart, dEnd)+1;
     }
 
+    public void addClickTurnoListener(ClickTurnoListener l){
+        clickTurnoListeners.add(l);
+    }
+
+    public interface ClickTurnoListener{
+        void turnoClicked(ClickTurnoEvent e);
+    }
+
+    public void fireTurnoClicked(Turno turno, Servizio servizio, LocalDate data){
+    }
+
+    public class ClickTurnoEvent{
+        private Turno turno;
+        private Servizio servizio;
+        private LocalDate data;
+
+        public ClickTurnoEvent(Turno turno, Servizio servizio, LocalDate data) {
+            this.turno = turno;
+            this.servizio = servizio;
+            this.data = data;
+        }
+
+        public Turno getTurno() {
+            return turno;
+        }
+
+        public Servizio getServizio() {
+            return servizio;
+        }
+
+        public LocalDate getData() {
+            return data;
+        }
+    }
 
 }

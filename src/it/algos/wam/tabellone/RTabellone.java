@@ -9,9 +9,9 @@ package it.algos.wam.tabellone;
 public class RTabellone {
     CServizio servizio;
     CFunzioni ruoli;
-    CTurno[] turni;
+    CTurnoDisplay[] turni;
 
-    public RTabellone(CServizio servizio, CFunzioni ruoli, CTurno... turni) {
+    public RTabellone(CServizio servizio, CFunzioni ruoli, CTurnoDisplay... turni) {
         this.servizio=servizio;
         this.ruoli=ruoli;
         this.turni=turni;
@@ -27,7 +27,7 @@ public class RTabellone {
         return ruoli;
     }
 
-    public CTurno[] getTurni() {
+    public CTurnoDisplay[] getTurni() {
         return turni;
     }
 

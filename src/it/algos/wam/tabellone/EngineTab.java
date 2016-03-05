@@ -1,16 +1,13 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.wrap.Iscrizione;
 import it.algos.wam.wrap.WrapServizio;
-import it.algos.webbase.web.lib.DateConvertUtils;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -62,16 +59,18 @@ public class EngineTab {
             Turno t = riga.getTurno(currDate);
 
             // creo il componente grafico
-            Component comp;
+            TurnoCell tcell;
             if (t!=null){
-                comp = creaCompTurno(t);
+                tcell = creaCompTurno(tab, t);
             }else{
-                comp=new CNoTurno();
+                tcell=new CNoTurno(tab);
             }
 
             // aggiungo in posizione sul tabellone
             int col = 2+i;
-            tab.addComponent(comp, col, row);
+            tcell.setX(col);
+            tcell.setY(row);
+            tab.addComponent(tcell, col, row);
 
         }
 
@@ -84,10 +83,10 @@ public class EngineTab {
      * @param turno il turno
      * @return il componente grafico
      */
-    private static Component creaCompTurno(Turno turno){
+    private static TurnoCell creaCompTurno(CTabellone tab, Turno turno){
         Servizio serv = turno.getServizio();
         int numFunzioni=serv.getNumFunzioni();
-        CTurno comp = new CTurno(1,numFunzioni);
+        CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni);
         Iscrizione[] iscrizioni = turno.getIscrizioni();
         for (Iscrizione i : iscrizioni){
             String nome = i.getMilite().toString();
