@@ -1,8 +1,8 @@
 package it.algos.wam.tabellone;
 
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.GridLayout;
-import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.entity.turno.Turno;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Sulle righe sono rappresentati i servizi, sulle colonne i giorni.
  * Created by alex on 20/02/16.
  */
-public class CTabellone extends GridLayout {
+public class CTabellone extends GridLayout implements View {
 
     private LocalDate dStart;
     private LocalDate dEnd;
@@ -34,7 +34,7 @@ public class CTabellone extends GridLayout {
 
         // determina il numero di colonne turni (giorni)
 
-        int giorni = (int) ChronoUnit.DAYS.between(this.dStart, this.dEnd)+1;
+        int giorni = (int) ChronoUnit.DAYS.between(this.dStart, this.dEnd) + 1;
 
         // dimensiona il layout
         setColumns(2 + giorni);     // prima colonna nome servizio, seconda colonna i ruoli, le successive i turni
@@ -54,7 +54,7 @@ public class CTabellone extends GridLayout {
         setRows(1);    // la prima riga per i giorni, le successive per i servizi
 
         // aggiunge le date (prima riga)
-        LocalDate d1 =dStart;
+        LocalDate d1 = dStart;
         for (int i = 0; i < giorni; i++) {
             LocalDate d = d1.plusDays(i);
             addComponent(new CGiorno(d), i + 2, 0);
@@ -104,49 +104,65 @@ public class CTabellone extends GridLayout {
     /**
      * @return il numero di giorni rappresentati dal tabellone
      */
-    public int getNumGiorni(){
-        return (int)ChronoUnit.DAYS.between(dStart, dEnd)+1;
+    public int getNumGiorni() {
+        return (int) ChronoUnit.DAYS.between(dStart, dEnd) + 1;
     }
 
-    public void addClickCellListener(ClickCellListener l){
+    public void addClickCellListener(ClickCellListener l) {
         clickCellListeners.add(l);
     }
 
     /**
-     * E' stata cliccata una cella alla posizione col,row
+     * E' stata cliccata una cella
+     *
+     * @param tipo       il tipo di cella
+     * @param col        la colonna
+     * @param row        la riga
+     * @param cellObject l'oggetto di riferimento per la cella
      */
-    public void cellClicked(int col, int row) {
-        LocalDate data=dStart.plusDays(col-2);
-        ClickCellEvent e = new ClickCellEvent(data, row);
-        for(ClickCellListener l : clickCellListeners){
+    public void cellClicked(CellType tipo, int col, int row, Object cellObject) {
+        ClickCellEvent e = new ClickCellEvent(tipo, col, row, cellObject);
+        for (ClickCellListener l : clickCellListeners) {
             l.cellClicked(e);
         }
+    }
 
-
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
     }
 
     public interface ClickCellListener {
         void cellClicked(ClickCellEvent e);
     }
 
-    public void fireTurnoClicked(Turno turno, Servizio servizio, LocalDate data){
-    }
 
     public class ClickCellEvent {
+        private CellType tipo;
+        private int col;
         private int row;
-        private LocalDate data;
+        private Object cellObject;
 
-        public ClickCellEvent(LocalDate data, int row) {
-            this.data = data;
-            this.row=row;
+        public ClickCellEvent(CellType tipo, int col, int row, Object cellObject) {
+            this.tipo=tipo;
+            this.col = col;
+            this.row = row;
+            this.cellObject = cellObject;
+        }
+
+        public CellType getTipo() {
+            return tipo;
         }
 
         public int getRow() {
             return row;
         }
 
-        public LocalDate getData() {
-            return data;
+        public int getCol() {
+            return col;
+        }
+
+        public Object getCellObject() {
+            return cellObject;
         }
     }
 

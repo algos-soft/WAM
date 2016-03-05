@@ -1,5 +1,8 @@
 package it.algos.wam.ui;
 
+import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
@@ -8,10 +11,7 @@ import it.algos.wam.entity.company.Company;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.lib.LibWam;
-import it.algos.wam.tabellone.CTabellone;
-import it.algos.wam.tabellone.EngineTab;
-import it.algos.wam.tabellone.WRigaTab;
-import it.algos.wam.tabellone.WTabellone;
+import it.algos.wam.tabellone.*;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -23,7 +23,8 @@ import java.util.List;
  */
 public class TabelloneUI extends UI {
 
-    private Placeholder placeholder;
+    private VerticalLayout placeholder;
+    private Navigator navigator;
 
     @Override
     protected void init(VaadinRequest request) {
@@ -40,22 +41,26 @@ public class TabelloneUI extends UI {
         // crea e aggiungi i componenti, assegna il contenuto alla UI
         VerticalLayout layout = new VerticalLayout();
         layout.addComponent(creaCompTitolo());
-        placeholder=new Placeholder();
+        placeholder=new VerticalLayout();
         layout.addComponent(placeholder);
         setContent(layout);
 
         // crea il tabellone e lo mette nel placeholder
         WTabellone wrapper = creaRighe();
         CTabellone tab = EngineTab.creaTabellone(wrapper);
-        placeholder.setComponent(tab);
+        //placeholder.setComponent(tab);
 
         // aggiunge i listener al tabellone
         tab.addClickCellListener(new CTabellone.ClickCellListener() {
             @Override
             public void cellClicked(CTabellone.ClickCellEvent e) {
-                TabelloneUI.this.cellClicked(e.getData(), e.getRow());
+                TabelloneUI.this.cellClicked(e.getTipo(), e.getCol(), e.getRow(), e.getCellObject());
             }
         });
+
+        navigator = new Navigator(this, placeholder);
+        navigator.addView("tabellone", tab);
+        navigator.navigateTo("tabellone");
 
 
     }
@@ -100,7 +105,6 @@ public class TabelloneUI extends UI {
 
             for (Servizio servizio : listaServizi) {
 
-
                 List<Turno> turni = new ArrayList<>();
 
                 // todo qui fare una sola query dal... al... non un ciclo!
@@ -118,10 +122,26 @@ public class TabelloneUI extends UI {
 
     }
 
-    private void cellClicked(LocalDate data, int row){
+    /**
+     * E' stata cliccata una cella del tabellone
+     */
+    private void cellClicked(CellType tipo, int col, int row, Object cellObject){
+        switch (tipo){
+            case TURNO:
+                Turno turno = (Turno)cellObject;
+                CTurnoEditor editor = new CTurnoEditor(turno);
+                navigator.addView("turno",editor);
+                navigator.navigateTo("turno");
+                break;
+            case NO_TURNO:
+                break;
+
+        }
         int a = 87;
         int b = 1;
     }
+
+
 
     /**
      * Placeholder dei contenuti.

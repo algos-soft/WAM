@@ -1,5 +1,6 @@
 package it.algos.wam.tabellone;
 
+import com.vaadin.event.LayoutEvents;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
@@ -21,6 +22,14 @@ public class CNoTurno extends VerticalLayout implements TabelloneCell {
         setHeight("100%");
         addStyleName("cnoturno");
         addComponent(new Label("non previsto"));
+
+        addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+            @Override
+            public void layoutClick(LayoutEvents.LayoutClickEvent event) {
+                tabellone.cellClicked(CellType.NO_TURNO, x, y, null);
+            }
+        });
+
     }
 
     /**

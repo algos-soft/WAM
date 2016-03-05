@@ -1,5 +1,7 @@
 package it.algos.wam.tabellone;
 
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
@@ -12,11 +14,11 @@ import it.algos.webbase.web.field.RelatedComboField;
  * Componente grafico per presentare e modificare un turno.
  * Created by alex on 05/03/16.
  */
-public class CTurnoEdit extends VerticalLayout {
+public class CTurnoEditor extends VerticalLayout implements View {
 
     Turno turno;
 
-    public CTurnoEdit(Turno turno) {
+    public CTurnoEditor(Turno turno) {
         this.turno=turno;
         addComponent(creaCompTitolo());
         addComponent(creaCompIscrizioni());
@@ -47,4 +49,8 @@ public class CTurnoEdit extends VerticalLayout {
         return comp;
     }
 
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+
+    }
 }

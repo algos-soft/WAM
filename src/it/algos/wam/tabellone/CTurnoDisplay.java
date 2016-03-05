@@ -2,6 +2,7 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.ui.GridLayout;
+import it.algos.wam.entity.turno.Turno;
 
 /**
  * Componente grafico che rappresenta un Turno visualizzato
@@ -14,16 +15,20 @@ public class CTurnoDisplay extends GridLayout implements TabelloneCell {
     private CTabellone tabellone;
     private int x;
     private int y;
+    private Turno turno;
 
     /**
      * Costruttore
      *
      * @param tabellone il tabellone di riferimento
      * @param rows      il numero di righe nella griglia
+     * @param turno     il turno di riferimento
      */
-    public CTurnoDisplay(CTabellone tabellone, int rows) {
+    public CTurnoDisplay(CTabellone tabellone, int rows, Turno turno) {
         super(1, rows);
         this.tabellone = tabellone;
+        this.turno=turno;
+
         setSpacing(false);
         setWidth("6em");
         setHeight("100%");
@@ -32,7 +37,7 @@ public class CTurnoDisplay extends GridLayout implements TabelloneCell {
         addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
             @Override
             public void layoutClick(LayoutEvents.LayoutClickEvent event) {
-                tabellone.cellClicked(x, y);
+                tabellone.cellClicked(CellType.TURNO, x, y, turno);
             }
         });
 
