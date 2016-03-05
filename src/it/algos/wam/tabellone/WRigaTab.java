@@ -74,4 +74,20 @@ public class WRigaTab {
         return date;
     }
 
+    /**
+     * Ritorna il turno corrispondente a una certa data
+     * @return il turno, null se non previsto turno nella data specificata
+     */
+    public Turno getTurno(LocalDate currDate) {
+        Turno turno=null;
+        for(Turno t : turni){
+            LocalDate dStart=DateConvertUtils.asLocalDate(t.getInizio());
+            if(dStart.equals(currDate)){
+                turno=t;
+                break;
+            }
+        }
+        return turno;
+    }
+
 }

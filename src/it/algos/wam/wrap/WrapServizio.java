@@ -109,29 +109,19 @@ public class WrapServizio implements Serializable {
         return stringa;
     }// end of method
 
-
+    /**
+     * Ritorna l'elenco delle funzioni previste per questo servizio
+     * @return le funzioni
+     */
     public ArrayList<Funzione> getFunzioni() {
-        ArrayList<Funzione> lista = null;
-
-        if (funzione1 != null) {
-            lista = new ArrayList<>();
-            lista.add(funzione1);
-        }// end of if cycle
-
-        if (funzione2 != null && lista != null) {
-            lista.add(funzione2);
-        }// end of if cycle
-
-        if (funzione3 != null && lista != null) {
-            lista.add(funzione3);
-        }// end of if cycle
-
-        if (funzione4 != null && lista != null) {
-            lista.add(funzione4);
-        }// end of if cycle
-
-        return lista;
+        ArrayList<Funzione> funzioni=new ArrayList<>();
+        funzioni.add(funzione1);
+        funzioni.add(funzione2);
+        funzioni.add(funzione3);
+        funzioni.add(funzione4);
+        return funzioni;
     }// end of method
+
 
     public ArrayList<Wrap> getWrap() {
         ArrayList<Wrap> lista = null;
@@ -156,19 +146,16 @@ public class WrapServizio implements Serializable {
         return lista;
     }// end of method
 
+
     public ArrayList<String> getSigleFunzioni() {
         ArrayList<String> lista = null;
-        ArrayList<Funzione> listaFunzioni = getFunzioni();
-
-        if (listaFunzioni != null) {
-            lista = new ArrayList<>();
-            for (Funzione funzione : listaFunzioni) {
-                lista.add(funzione.getSigla());
-            }// end of for cycle
-        }// end of if cycle
-
+        lista = new ArrayList<>();
+        for (Funzione funzione : getFunzioni()) {
+            lista.add(funzione.getSigla());
+        }// end of for cycle
         return lista;
     }// end of method
+
 
     public Funzione getFunzione1() {
         return funzione1;

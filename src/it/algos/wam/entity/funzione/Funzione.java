@@ -281,4 +281,15 @@ public class Funzione extends WamCompany {
         }// fine del blocco try-catch
     }// end of method
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//
+//        Funzione funzione = (Funzione) o;
+//
+//        return sigla.equals(funzione.sigla);
+//
+//    }
+
 }// end of domain class

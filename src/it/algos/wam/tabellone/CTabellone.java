@@ -100,4 +100,12 @@ public class CTabellone extends GridLayout {
         return dEnd;
     }
 
+    /**
+     * @return il numero di giorni rappresentati dal tabellone
+     */
+    public int getNumGiorni(){
+        return (int)ChronoUnit.DAYS.between(dStart, dEnd)+1;
+    }
+
+
 }

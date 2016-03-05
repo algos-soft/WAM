@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -280,6 +281,11 @@ public class Milite extends WamCompany {
     public String getNomeCognome() {
         return getNome() + " " + getCognome();
     }// end of getter method
+
+
+//    public String pippo(){
+//        return "";
+//    }
 
     /**
      * @return the nome

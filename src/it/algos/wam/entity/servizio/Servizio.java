@@ -8,6 +8,7 @@ import it.algos.wam.wrap.WrapServizio;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
+import org.eclipse.persistence.annotations.Array;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -319,15 +320,42 @@ public class Servizio extends WamCompany {
         return servizio;
     }// end of static method
 
+
+    /**
+     * Ritorna l'elenco delle funzioni previste per questo servizio
+     * @return le funzioni
+     */
     public ArrayList<Funzione> getFunzioni() {
-        ArrayList<Funzione> lista = null;
+        return wrapServizio.getFunzioni();
+    }
 
-        if (wrapServizio != null) {
-            lista = wrapServizio.getFunzioni();
-        }// end of if cycle
+    /**
+     * Ritorna il numero di funzioni previste per questo servizio
+     */
+    public int getNumFunzioni(){
+        return getFunzioni().size();
+    }
 
-        return lista;
-    }// end of method
+    /**
+     * Restituisce la posizione di una data funzione tra le funzioni previste per il turno.
+     * @param f la funzione
+     * @return la posizione, -1 se non trovata
+     */
+    public int getPosFunzione(Funzione f){
+        int pos = -1;
+        ArrayList<Funzione> funzioni = getFunzioni();
+        for(int i=0; i<funzioni.size(); i++){
+            Funzione currFun=funzioni.get(i);
+            if(currFun.getSigla().equals(f.getSigla())){
+                pos=i;
+                break;
+            }
+        }
+        return pos;
+    }
+
+
+
 
     public ArrayList<String> getSigleFunzioni() {
         ArrayList<String> lista = null;
@@ -482,6 +510,8 @@ public class Servizio extends WamCompany {
     public void setWrapServizio(WrapServizio wrapServizio) {
         this.wrapServizio = wrapServizio;
     }//end of setter method
+
+
 
     /**
      * Clone di questa istanza

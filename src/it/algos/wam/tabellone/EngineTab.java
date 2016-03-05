@@ -1,9 +1,11 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.wrap.Iscrizione;
 import it.algos.wam.wrap.WrapServizio;
 import it.algos.webbase.web.lib.DateConvertUtils;
 
@@ -38,32 +40,65 @@ public class EngineTab {
      */
     public static void addRiga(CTabellone tab, WRigaTab riga) {
 
-        // aggiunge una riga al GridLayout
+        // aggiunge una riga al tabellone
         int row = tab.getRows();
         tab.setRows(row+1);
 
-        // componente grafico servizio
+        // crea e aggiunge componente grafico del servizio
         Servizio serv = riga.getServizio();
         CServizio s = new CServizio(serv.getOrario(), serv.getDescrizione());
         tab.addComponent(s, 0, row);
 
-        // componente grafico funzioni
+        // crea e aggiunge il componente grafico dele funzioni
         Component cfunzioni = creaCompFunzioni(serv);
         tab.addComponent(cfunzioni, 1, row);
 
-        // componenti grafici per i turni
-        riga.getTurni();
-        for (Turno t : riga.getTurni()) {
-            LocalDate d1Tab=tab.getDataStart();
-            LocalDate d1Turno= DateConvertUtils.asLocalDate(t.getInizio());
-            int giorni = (int) ChronoUnit.DAYS.between(d1Tab, d1Turno);
-            int col = 2+giorni;
+        // crea e aggiunge i componenti grafici per i turni
+        int totGiorni=tab.getNumGiorni();
+        for(int i=0; i<totGiorni; i++){
 
-            CTurno comp = new CTurno();
-            //comp.addComponent(new Label(""+t.getInizio()));
+            // recupero il turno del giorno
+            LocalDate currDate=tab.getDataStart().plusDays(i);
+            Turno t = riga.getTurno(currDate);
+
+            // creo il componente grafico
+            Component comp;
+            if (t!=null){
+                comp = creaCompTurno(t);
+            }else{
+                comp=new CNoTurno();
+            }
+
+            // aggiungo in posizione sul tabellone
+            int col = 2+i;
             tab.addComponent(comp, col, row);
+
         }
 
+    }
+
+
+    /**
+     * Crea un componente grafico con le iscrizioni per un turno
+     *
+     * @param turno il turno
+     * @return il componente grafico
+     */
+    private static Component creaCompTurno(Turno turno){
+        Servizio serv = turno.getServizio();
+        int numFunzioni=serv.getNumFunzioni();
+        CTurno comp = new CTurno(1,numFunzioni);
+        Iscrizione[] iscrizioni = turno.getIscrizioni();
+        for (Iscrizione i : iscrizioni){
+            String nome = i.getMilite().toString();
+            CIscrizione ci = new CIscrizione(nome);
+            Funzione f = i.getFunzione();
+            int pos = serv.getPosFunzione(f);
+            if (pos>=0){
+                comp.addComponent(ci, 0, pos);
+            }
+        }
+        return comp;
     }
 
 

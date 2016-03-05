@@ -203,6 +203,12 @@ $v-font-weight: 400;
     background: linear-gradient(top, $dark, $light, $dark);
   }
 
+  // componente no turno
+  .cnoturno {
+    background: rgba(215, 215, 215, 0.47);
+  }
+
+
   // componente iscrizione
   $dark: rgb(205, 205, 205);
   $light: rgba(205, 205, 205, 0.6);

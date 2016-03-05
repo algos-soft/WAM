@@ -155,45 +155,45 @@ public class TestUI extends UI {
     }
 
 
-    private CTurno[] creaTurni(Company company, Servizio servizio, int primoGiorno) {
-        return creaTurni(company, servizio, primoGiorno, 7);
-    }// end of method
+//    private CTurno[] creaTurni(Company company, Servizio servizio, int primoGiorno) {
+//        return creaTurni(company, servizio, primoGiorno, 7);
+//    }// end of method
 
-    private CTurno[] creaTurni(Company company, Servizio servizio, int primoGiorno, int giorni) {
-        List<CTurno> listaTurni = new ArrayList();
-        Turno turno = null;
-        CTurno cTurno = null;
+//    private CTurno[] creaTurni(Company company, Servizio servizio, int primoGiorno, int giorni) {
+//        List<CTurno> listaTurni = new ArrayList();
+//        Turno turno = null;
+//        CTurno cTurno = null;
+//
+//        for (int chiave = primoGiorno; chiave < primoGiorno+giorni; chiave++) {
+//            turno = Turno.find(company, servizio,chiave);
+//
+//            if (turno != null) {
+//                cTurno= new CTurno(turno);
+//            } else {
+//                cTurno= new CTurno();
+//            }// end of if/else cycle
+//            listaTurni.add(cTurno);
+//        }// end of for cycle
+//
+//        return listaTurni.toArray(new CTurno[0]);
+//    }// end of method
 
-        for (int chiave = primoGiorno; chiave < primoGiorno+giorni; chiave++) {
-            turno = Turno.find(company, servizio,chiave);
-
-            if (turno != null) {
-                cTurno= new CTurno(turno);
-            } else {
-                cTurno= new CTurno();
-            }// end of if/else cycle
-            listaTurni.add(cTurno);
-        }// end of for cycle
-
-        return listaTurni.toArray(new CTurno[0]);
-    }// end of method
-
-    /**
-     * @deprecated
-     */
-    private CTurno[] creaTurniDemo() {
-        List<CTurno> lTurni = new ArrayList();
-
-        lTurni.add(new CTurno(creaIscrizioni(1)));
-        lTurni.add(new CTurno(creaIscrizioni(2)));
-        lTurni.add(new CTurno(creaIscrizioni(1)));
-        lTurni.add(new CTurno(creaIscrizioni(3)));
-        lTurni.add(new CTurno(creaIscrizioni(2)));
-        lTurni.add(new CTurno(creaIscrizioni(3)));
-        lTurni.add(new CTurno(creaIscrizioni(1)));
-
-        return lTurni.toArray(new CTurno[0]);
-    }
+//    /**
+//     * @deprecated
+//     */
+//    private CTurno[] creaTurniDemo() {
+//        List<CTurno> lTurni = new ArrayList();
+//
+//        lTurni.add(new CTurno(creaIscrizioni(1)));
+//        lTurni.add(new CTurno(creaIscrizioni(2)));
+//        lTurni.add(new CTurno(creaIscrizioni(1)));
+//        lTurni.add(new CTurno(creaIscrizioni(3)));
+//        lTurni.add(new CTurno(creaIscrizioni(2)));
+//        lTurni.add(new CTurno(creaIscrizioni(3)));
+//        lTurni.add(new CTurno(creaIscrizioni(1)));
+//
+//        return lTurni.toArray(new CTurno[0]);
+//    }
 
     private CIscrizione[] creaIscrizioni(int quale) {
 

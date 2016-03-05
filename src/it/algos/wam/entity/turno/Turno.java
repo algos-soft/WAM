@@ -4,6 +4,7 @@ import it.algos.wam.entity.company.Company;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
+import it.algos.wam.wrap.Iscrizione;
 import it.algos.wam.wrap.WrapTurno;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
@@ -420,6 +421,22 @@ public class Turno extends WamCompany {
     public void setAssegnato(boolean assegnato) {
         this.assegnato = assegnato;
     }//end of setter method
+
+    /**
+     * Ritorna le iscrizioni a questo turno
+     */
+    public Iscrizione[] getIscrizioni(){
+        Iscrizione[] iscrizioni = new Iscrizione[0];
+        WrapTurno wt = getWrapTurno();
+        if(wt!=null){
+            ArrayList<Iscrizione> lista = wt.getIscrizioni();
+            if (lista!=null){
+                iscrizioni=lista.toArray(new Iscrizione[0]);
+            }
+        }
+        return iscrizioni;
+    }
+
 
     /**
      * Clone di questa istanza
