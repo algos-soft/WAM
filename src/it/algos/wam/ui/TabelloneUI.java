@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class TabelloneUI extends UI {
 
-    private VerticalLayout placeholder;
+    private Panel placeholder;
     private Navigator navigator;
 
     @Override
@@ -40,17 +40,23 @@ public class TabelloneUI extends UI {
 
         // crea e aggiungi i componenti, assegna il contenuto alla UI
         VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
         layout.addComponent(creaCompTitolo());
-        placeholder=new VerticalLayout();
+
+        placeholder=new Panel();
+        placeholder.addStyleName("pinkBg");
+        placeholder.setHeight("100%");
+        placeholder.setWidth("100%");
         layout.addComponent(placeholder);
+        layout.setExpandRatio(placeholder, 1);
         setContent(layout);
 
-        // crea il tabellone e lo mette nel placeholder
+        // crea il tabellone
         WTabellone wrapper = creaRighe();
         CTabellone tab = EngineTab.creaTabellone(wrapper);
-        //placeholder.setComponent(tab);
+        tab.setSizeUndefined();
 
-        // aggiunge i listener al tabellone
+        // aggiunge un listener per la cella cliccata al tabellone
         tab.addClickCellListener(new CTabellone.ClickCellListener() {
             @Override
             public void cellClicked(CTabellone.ClickCellEvent e) {
@@ -58,6 +64,8 @@ public class TabelloneUI extends UI {
             }
         });
 
+        // crea un navigator e lo registra sul componente placeholder
+        // il navigator sostituisce i componenti dentro al placeolder
         navigator = new Navigator(this, placeholder);
         navigator.addView("tabellone", tab);
         navigator.navigateTo("tabellone");
@@ -130,6 +138,12 @@ public class TabelloneUI extends UI {
             case TURNO:
                 Turno turno = (Turno)cellObject;
                 CTurnoEditor editor = new CTurnoEditor(turno);
+                editor.addDismissListener(new CTurnoEditor.DismissListener() {
+                    @Override
+                    public void editorDismissed(CTurnoEditor.DismissEvent e) {
+                        navigator.navigateTo("tabellone");
+                    }
+                });
                 navigator.addView("turno",editor);
                 navigator.navigateTo("turno");
                 break;
@@ -143,18 +157,18 @@ public class TabelloneUI extends UI {
 
 
 
-    /**
-     * Placeholder dei contenuti.
-     * Consente di switchare tra tabellone, edit turno o altro
-     */
-    class Placeholder extends CustomComponent {
-        public Placeholder() {
-            setCompositionRoot(null);
-        }
-
-        public void setComponent(Component comp){
-            setCompositionRoot(comp);
-        }
-    }
+//    /**
+//     * Placeholder dei contenuti.
+//     * Consente di switchare tra tabellone, edit turno o altro
+//     */
+//    class Placeholder extends CustomComponent {
+//        public Placeholder() {
+//            setCompositionRoot(null);
+//        }
+//
+//        public void setComponent(Component comp){
+//            setCompositionRoot(comp);
+//        }
+//    }
 
 }
