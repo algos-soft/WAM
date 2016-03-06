@@ -56,6 +56,7 @@ public class TabelloneUI extends UI {
         CTabellone tab = EngineTab.creaTabellone(wrapper);
         tab.setSizeUndefined();
 
+
         // aggiunge un listener per la cella cliccata al tabellone
         tab.addClickCellListener(new CTabellone.ClickCellListener() {
             @Override
