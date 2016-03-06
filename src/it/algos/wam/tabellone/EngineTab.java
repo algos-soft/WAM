@@ -94,11 +94,13 @@ public class EngineTab {
             Funzione f = i.getFunzione();
             int pos = serv.getPosFunzione(f);
             if (pos >= 0) {
-                try { // prova ad eseguire il codice
+                try {
                     comp.addComponent(ci, 0, pos);
-                } catch (Exception unErrore) { // intercetta l'errore
+                } catch (Exception e) {
+                    e.printStackTrace();
                     //@todo non aggiunge la seconda riga (gac)
-                }// fine del blocco try-catch
+                    //todo perché ci sono 2 autisti sullo stesso servizio - alex
+                }
             }
         }
         return comp;
