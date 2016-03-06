@@ -86,7 +86,7 @@ public class EngineTab {
     private static TabelloneCell creaCompTurno(CTabellone tab, Turno turno) {
         Servizio serv = turno.getServizio();
         int numFunzioni = serv.getNumFunzioni();
-        CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni);
+        CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni, turno);
         Iscrizione[] iscrizioni = turno.getIscrizioni();
         for (Iscrizione i : iscrizioni) {
             String nome = i.getMilite().toString();
