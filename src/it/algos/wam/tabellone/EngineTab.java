@@ -39,7 +39,7 @@ public class EngineTab {
 
         // aggiunge una riga al tabellone
         int row = tab.getRows();
-        tab.setRows(row+1);
+        tab.setRows(row + 1);
 
         // crea e aggiunge componente grafico del servizio
         Servizio serv = riga.getServizio();
@@ -51,23 +51,23 @@ public class EngineTab {
         tab.addComponent(cfunzioni, 1, row);
 
         // crea e aggiunge i componenti grafici per i turni
-        int totGiorni=tab.getNumGiorni();
-        for(int i=0; i<totGiorni; i++){
+        int totGiorni = tab.getNumGiorni();
+        for (int i = 0; i < totGiorni; i++) {
 
             // recupero il turno del giorno
-            LocalDate currDate=tab.getDataStart().plusDays(i);
+            LocalDate currDate = tab.getDataStart().plusDays(i);
             Turno t = riga.getTurno(currDate);
 
             // creo il componente grafico
             TabelloneCell tcomp;
-            if (t!=null){
+            if (t != null) {
                 tcomp = creaCompTurno(tab, t);
-            }else{
-                tcomp =new CNoTurno(tab);
+            } else {
+                tcomp = new CNoTurno(tab);
             }
 
             // aggiungo il componente in posizione sul tabellone
-            int col = 2+i;
+            int col = 2 + i;
             tcomp.setX(col);
             tcomp.setY(row);
             tab.addComponent(tcomp, col, row);
@@ -83,18 +83,22 @@ public class EngineTab {
      * @param turno il turno
      * @return il componente grafico
      */
-    private static TabelloneCell creaCompTurno(CTabellone tab, Turno turno){
+    private static TabelloneCell creaCompTurno(CTabellone tab, Turno turno) {
         Servizio serv = turno.getServizio();
-        int numFunzioni=serv.getNumFunzioni();
-        CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni, turno);
+        int numFunzioni = serv.getNumFunzioni();
+        CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni);
         Iscrizione[] iscrizioni = turno.getIscrizioni();
-        for (Iscrizione i : iscrizioni){
+        for (Iscrizione i : iscrizioni) {
             String nome = i.getMilite().toString();
             CIscrizione ci = new CIscrizione(nome);
             Funzione f = i.getFunzione();
             int pos = serv.getPosFunzione(f);
-            if (pos>=0){
-                comp.addComponent(ci, 0, pos);
+            if (pos >= 0) {
+                try { // prova ad eseguire il codice
+                    comp.addComponent(ci, 0, pos);
+                } catch (Exception unErrore) { // intercetta l'errore
+                    //@todo non aggiunge la seconda riga (gac)
+                }// fine del blocco try-catch
             }
         }
         return comp;

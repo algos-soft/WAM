@@ -10,13 +10,10 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.lib.LibWam;
 import it.algos.wam.tabellone.*;
-import it.algos.webbase.web.lib.DateConvertUtils;
-import it.algos.webbase.web.lib.LibDate;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -117,9 +114,9 @@ public class TestUI extends UI {
      */
     private WTabellone creaRighe() {
 
-        LocalDate d1=LocalDate.of(2016, 2, 28);
-        LocalDate d2=d1.plusDays(6);
-        WTabellone wtab =new WTabellone(d1, d2);
+        LocalDate d1 = LocalDate.of(2016, 3, 2);
+        LocalDate d2 = d1.plusDays(6);
+        WTabellone wtab = new WTabellone(d1, d2);
 
         Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
         ArrayList<Servizio> listaServizi = null;
@@ -132,7 +129,7 @@ public class TestUI extends UI {
 
         if (listaServizi != null && listaServizi.size() > 0) {
 
-            long giorni = d1.until( d2, ChronoUnit.DAYS)+1;
+            long giorni = d1.until(d2, ChronoUnit.DAYS) + 1;
 
             for (Servizio servizio : listaServizi) {
 
@@ -140,9 +137,9 @@ public class TestUI extends UI {
                 List<Turno> turni = new ArrayList<>();
 
                 // todo qui fare una sola query dal... al... non un ciclo!
-                for (int chiave = primoGiorno; chiave < primoGiorno+giorni; chiave++) {
+                for (int chiave = primoGiorno; chiave < primoGiorno + giorni; chiave++) {
                     Turno turno = Turno.find(company, servizio, chiave);
-                    if (turno!=null){
+                    if (turno != null) {
                         turni.add(turno);
                     }
                 }
