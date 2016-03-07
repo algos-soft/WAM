@@ -15,7 +15,7 @@ public abstract class LibWam {
 
     /**
      * Costruisce una chiave della data
-     * Usato per la indicizzaione dei Turni
+     * Usato per la indicizzazione dei Turni
      */
     public static int creaChiave(Date data) {
         int chiave = 0;
@@ -34,10 +34,9 @@ public abstract class LibWam {
 
     /**
      * Costruisce una chiave da una LocalDate
-     * Usato per la indicizzaione dei Turni
      */
     public static int creaChiave(LocalDate data) {
-        Date d = Date.from(data.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date d = DateConvertUtils.asUtilDate(data);
         return creaChiave(d);
     }
 
