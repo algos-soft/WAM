@@ -10,13 +10,15 @@ import com.vaadin.ui.VerticalLayout;
 public class CNoTurno extends VerticalLayout implements TabelloneCell {
 
     private CTabellone tabellone;
+    private InfoNewTurnoWrap wrapper;
     private int x;
     private int y;
 
 
-    public CNoTurno(CTabellone tabellone) {
+    public CNoTurno(CTabellone tabellone, InfoNewTurnoWrap wrapper) {
         super();
         this.tabellone=tabellone;
+        this.wrapper=wrapper;
         setSpacing(false);
         setWidth("6em");
         setHeight("100%");
@@ -26,7 +28,7 @@ public class CNoTurno extends VerticalLayout implements TabelloneCell {
         addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
             @Override
             public void layoutClick(LayoutEvents.LayoutClickEvent event) {
-                tabellone.cellClicked(CellType.NO_TURNO, x, y, null);
+                tabellone.cellClicked(CellType.NO_TURNO, x, y, wrapper);
             }
         });
 

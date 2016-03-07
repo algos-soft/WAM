@@ -12,6 +12,7 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.lib.LibWam;
 import it.algos.wam.tabellone.*;
+import it.algos.webbase.web.lib.DateConvertUtils;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -135,25 +136,32 @@ public class TabelloneUI extends UI {
      * E' stata cliccata una cella del tabellone
      */
     private void cellClicked(CellType tipo, int col, int row, Object cellObject){
+        Turno turno=null;
+        CTurnoEditor editor;
         switch (tipo){
             case TURNO:
-                Turno turno = (Turno)cellObject;
-                CTurnoEditor editor = new CTurnoEditor(turno);
-                editor.addDismissListener(new CTurnoEditor.DismissListener() {
-                    @Override
-                    public void editorDismissed(CTurnoEditor.DismissEvent e) {
-                        navigator.navigateTo("tabellone");
-                    }
-                });
-                navigator.addView("turno",editor);
-                navigator.navigateTo("turno");
+                turno = (Turno)cellObject;
                 break;
             case NO_TURNO:
+                InfoNewTurnoWrap wrapper = (InfoNewTurnoWrap)cellObject;
+                LocalDate dInizio=wrapper.getData();
+                Servizio serv = wrapper.getServizio();
+                turno = new Turno();
+                turno.setInizio(DateConvertUtils.asUtilDate(dInizio));
+                turno.setServizio(serv);
                 break;
-
         }
-        int a = 87;
-        int b = 1;
+
+        editor = new CTurnoEditor(turno);
+        editor.addDismissListener(new CTurnoEditor.DismissListener() {
+            @Override
+            public void editorDismissed(CTurnoEditor.DismissEvent e) {
+                navigator.navigateTo("tabellone");
+            }
+        });
+        navigator.addView("turno",editor);
+        navigator.navigateTo("turno");
+
     }
 
 

@@ -1,5 +1,6 @@
 package it.algos.wam.servlet;
 
+import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.ServiceException;
 import com.vaadin.server.SessionInitEvent;
@@ -9,6 +10,15 @@ import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.servlet.AlgosServlet;
 
 import javax.servlet.annotation.WebServlet;
+
+/**
+ * Servlet del Manager.
+ * Il manager amministra alcune preferenze di una singola azienda (non tutte)
+ * Il manager amministra gli utenti, crea i turni, controlla le statistiche
+ * Il manager NON accede alle altre aziende
+ * Il manager NON siamo noi.
+ */
+@Theme("valo")
 
 @WebServlet(value = "/wam-admin/*", asyncSupported = true, displayName = "WAM-Admin")
 @VaadinServletConfiguration(productionMode = false, ui = AdminUI.class)

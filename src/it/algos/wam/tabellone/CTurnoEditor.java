@@ -98,8 +98,10 @@ public class CTurnoEditor extends VerticalLayout implements View {
 
         Button bRegistra = new Button("Registra");
         bRegistra.addClickListener(new Button.ClickListener() {
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                turno.save();
                 fireDismissListeners(new DismissEvent(bRegistra, false));
             }
         });
@@ -110,6 +112,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
 
         return layout;
     }
+
 
     private void fireDismissListeners(DismissEvent e){
         for(DismissListener l : dismissListeners){

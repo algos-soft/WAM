@@ -63,7 +63,8 @@ public class EngineTab {
             if (t != null) {
                 tcomp = creaCompTurno(tab, t);
             } else {
-                tcomp = new CNoTurno(tab);
+                InfoNewTurnoWrap wrapper=new InfoNewTurnoWrap(serv, currDate);
+                tcomp = new CNoTurno(tab, wrapper);
             }
 
             // aggiungo il componente in posizione sul tabellone
