@@ -2,14 +2,22 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.milite.Milite;
+import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.wrap.Iscrizione;
 import it.algos.webbase.web.field.RelatedComboField;
+import it.algos.webbase.web.lib.DateConvertUtils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EventObject;
+import java.util.HashMap;
 
 /**
  * Componente grafico per presentare e modificare un turno.
@@ -19,6 +27,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
 
     private Turno turno;
     private ArrayList<DismissListener> dismissListeners=new ArrayList();
+    private HashMap<String, RelatedComboField> mappaCombo=new HashMap<>();
 
     public CTurnoEditor(Turno turno) {
         this.turno=turno;
@@ -37,6 +46,15 @@ public class CTurnoEditor extends VerticalLayout implements View {
         setWidth("100%");
         setHeight("100%");
         addStyleName("greenBg");
+
+        // seleziona i valori nei combo in base alle iscrizioni esistenti
+        for(Iscrizione i : turno.getIscrizioni()){
+            Funzione f = i.getFunzione();
+            RelatedComboField combo = mappaCombo.get(f.getSigla());
+            Milite m = i.getMilite();
+            //combo.setValue(m);
+        }
+
     }
 
 
@@ -49,7 +67,17 @@ public class CTurnoEditor extends VerticalLayout implements View {
     private Component creaCompTitolo(){
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
-        layout.addComponent(new Label(turno.getServizio().getDescrizione()));
+
+        Servizio serv = turno.getServizio();
+        LocalDate dataInizio = DateConvertUtils.asLocalDate(turno.getInizio());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d LLLL YYYY");
+        String sData = dataInizio.format(formatter);
+        String sOra = turno.getServizio().getOrario();
+        String dataOra =sData+", ore "+sOra;
+
+        layout.addComponent(new Label(dataOra));
+        layout.addComponent(new Label("<strong>"+serv.getDescrizione()+"</strong>", ContentMode.HTML));
+
         return layout;
     }
 
@@ -73,6 +101,9 @@ public class CTurnoEditor extends VerticalLayout implements View {
 
             RelatedComboField combo = new RelatedComboField(Milite.class);
             gridlayout.addComponent(combo, 1, i);
+
+            mappaCombo.put(fn, combo);
+
         }
 
         return gridlayout;
