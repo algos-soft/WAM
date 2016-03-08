@@ -132,6 +132,7 @@ public class WamCompany extends BaseCompany {
         return (ArrayList<WamCompany>) AQuery.getLista(WamCompany.class);
     }// end of method
 
+
     @Override
     public String toString() {
         return getCompanyCode();
