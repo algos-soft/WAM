@@ -3,13 +3,11 @@ package it.algos.wam.ui;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import it.algos.wam.entity.company.CompanyMod;
+import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.milite.MiliteMod;
 import it.algos.wam.entity.servizio.*;
 import it.algos.wam.entity.turno.TurnoMod;
-import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.ui.AlgosUI;
 
 /**
@@ -46,7 +44,7 @@ public class AdminUI extends AlgosUI {
      */
     @Override
     protected void addModuli() {
-        this.addModulo(new CompanyMod());
+        this.addModulo(new WamCompanyMod());
         this.addModulo(new MiliteMod());
         this.addModulo(new FunzioneMod());
         this.addModulo(new ServizioMod());

@@ -8,21 +8,22 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
         <class>it.algos.webbase.web.entity.BaseEntity</class>
-		<class>it.algos.wam.entity.turno.Turno</class>
-		<class>it.algos.wam.entity.servizio.Servizio</class>
-		<class>it.algos.wam.entity.wamcompany.WamCompany</class>
-		<class>it.algos.wam.entity.funzione.Funzione</class>
         <class>it.algos.webbase.domain.company.BaseCompany</class>
-        <class>it.algos.wam.entity.company.Company</class>
-        <class>it.algos.wam.entity.milite.Milite</class>
-
 
         <class>it.algos.webbase.domain.ruolo.Ruolo</class>
-		<class>it.algos.webbase.domain.utente.Utente</class>
-		<class>it.algos.webbase.domain.utenteruolo.UtenteRuolo</class>
+        <class>it.algos.webbase.domain.utente.Utente</class>
+        <class>it.algos.webbase.domain.utenteruolo.UtenteRuolo</class>
         <class>it.algos.webbase.domain.log.Log</class>
-		<class>it.algos.webbase.domain.vers.Versione</class>
+        <class>it.algos.webbase.domain.vers.Versione</class>
         <class>it.algos.webbase.domain.pref.Pref</class>
+
+        <class>it.algos.wam.entity.wamcompany.WamCompany</class>
+		<class>it.algos.wam.entity.turno.Turno</class>
+		<class>it.algos.wam.entity.servizio.Servizio</class>
+        <!--<class>it.algos.wam.entity.companyentity.WamCompanyEntity</class>-->
+		<class>it.algos.wam.entity.funzione.Funzione</class>
+        <class>it.algos.wam.entity.milite.Milite</class>
+
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

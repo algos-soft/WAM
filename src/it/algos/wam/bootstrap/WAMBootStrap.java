@@ -1,25 +1,12 @@
 package it.algos.wam.bootstrap;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.WAMApp;
-import it.algos.wam.entity.company.Company;
-import it.algos.wam.entity.company.Company_;
-import it.algos.wam.entity.milite.Milite;
 import it.algos.webbase.web.AlgosApp;
 import it.algos.webbase.web.bootstrap.ABootStrap;
-import it.algos.webbase.web.entity.EM;
-import it.algos.webbase.web.field.TextField;
-import it.algos.webbase.web.query.AQuery;
 import it.algos.webbase.web.toolbar.Toolbar;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
-import java.util.List;
 
 /**
  * Bootstrap dell'applicazione
@@ -73,14 +60,14 @@ public class WAMBootStrap extends ABootStrap {
 
 
 //    private void creaDemoCompany() {
-//        Company company = new Company();
-//        company.setCompanyCode(WAMApp.DEMO_COMPANY_CODE);
-//        company.setName("Demo");
-//        company.setAddress1("Via Turati 12");
-//        company.setAddress1("20199 Garbagnate Milanese");
-//        company.setContact("Mario Bianchi");
-//        company.setEmail("info@crocedemo.it");
-//        company.save();
+//        Company wamcompany = new Company();
+//        wamcompany.setCompanyCode(WAMApp.DEMO_COMPANY_CODE);
+//        wamcompany.setName("Demo");
+//        wamcompany.setAddress1("Via Turati 12");
+//        wamcompany.setAddress1("20199 Garbagnate Milanese");
+//        wamcompany.setContact("Mario Bianchi");
+//        wamcompany.setEmail("info@crocedemo.it");
+//        wamcompany.save();
 //    }
 //
     /**

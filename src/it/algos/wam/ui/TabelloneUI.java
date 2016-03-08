@@ -1,13 +1,11 @@
 package it.algos.wam.ui;
 
 import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
 import it.algos.wam.WAMApp;
-import it.algos.wam.entity.company.Company;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.lib.LibWam;
@@ -100,7 +98,7 @@ public class TabelloneUI extends UI {
         LocalDate d2=d1.plusDays(6);
         WTabellone wtab =new WTabellone(d1, d2);
 
-        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
         ArrayList<Servizio> listaServizi = null;
 
         int primoGiorno = LibWam.creaChiave(d1);

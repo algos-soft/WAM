@@ -2,13 +2,10 @@ package it.algos.wam.entity.milite;
 
 
 import com.vaadin.server.FontAwesome;
-import it.algos.wam.entity.wamcompany.WamCompany_;
-import it.algos.wam.entity.wamcompany.WamMod;
-import it.algos.webbase.web.form.AForm;
-import it.algos.webbase.web.search.SearchManager;
+import it.algos.wam.entity.companyentity.WamCompanyEntity_;
+import it.algos.wam.entity.companyentity.WamMod;
 
 import javax.persistence.metamodel.Attribute;
-import java.util.Date;
 
 /**
  * Modulo del Milite
@@ -40,7 +37,7 @@ public class MiliteMod extends WamMod {
      */
     protected Attribute<?, ?>[] creaFieldsList() {
         return new Attribute[]{
-                WamCompany_.company,
+                WamCompanyEntity_.company,
                 Milite_.nome,
                 Milite_.cognome,
                 Milite_.dataNascita,
@@ -58,7 +55,7 @@ public class MiliteMod extends WamMod {
      */
     protected Attribute<?, ?>[] creaFieldsForm() {
         return new Attribute[]{
-                WamCompany_.company,
+                WamCompanyEntity_.company,
                 Milite_.nome,
                 Milite_.cognome,
                 Milite_.cellulare,
@@ -79,7 +76,7 @@ public class MiliteMod extends WamMod {
      */
     protected Attribute<?, ?>[] creaFieldsSearch() {
         return new Attribute[]{
-                WamCompany_.company,
+                WamCompanyEntity_.company,
                 Milite_.nome,
                 Milite_.cognome,
                 Milite_.cellulare,
@@ -88,5 +85,9 @@ public class MiliteMod extends WamMod {
                 Milite_.attivo};
     }// end of method
 
+    @Override
+    public void search() {
+        super.search();
+    }
 }// end of class
 

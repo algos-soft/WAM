@@ -1,26 +1,26 @@
 package it.algos.wam.entity.servizio;
 
-import it.algos.wam.entity.company.Company;
-import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.entity.wamcompany.WamCompany_;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.companyentity.WamCompanyEntity;
+import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.wrap.WrapServizio;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
-import org.eclipse.persistence.annotations.Array;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Entity che descrive un Servizio (tipo di turno)
- * Estende la Entity astratta WamCompany che contiene la property company
+ * Estende la Entity astratta WamCompany che contiene la property wamcompany
  * <p>
  * 1) la classe deve avere un costruttore senza argomenti
  * 2) le proprietà devono essere private e accessibili solo con get, set e is (usato per i boolena al posto di get)
@@ -28,7 +28,7 @@ import java.util.List;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
-public class Servizio extends WamCompany {
+public class Servizio extends WamCompanyEntity {
 
     //--sigla di riferimento interna (obbligatoria)
     @NotEmpty
@@ -87,6 +87,7 @@ public class Servizio extends WamCompany {
     //--massimo hardcoded di 4
     private WrapServizio wrapServizio = null;
 
+
     /**
      * Costruttore senza argomenti
      * Necessario per le specifiche JavaBean
@@ -102,7 +103,7 @@ public class Servizio extends WamCompany {
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
      */
-    public Servizio(Company company, String sigla, String descrizione) {
+    public Servizio(WamCompany company, String sigla, String descrizione) {
         this(company, 0, sigla, descrizione, 0, 0, 0);
     }// end of constructor
 
@@ -118,7 +119,7 @@ public class Servizio extends WamCompany {
      * @param oraFine     del servizio (facoltativo)
      * @param persone     minime indispensabile allo svolgimento del servizio
      */
-    public Servizio(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone) {
+    public Servizio(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone) {
         this(company, ordine, sigla, descrizione, oraInizio, oraFine, persone, null);
     }// end of constructor
 
@@ -134,7 +135,7 @@ public class Servizio extends WamCompany {
      * @param persone      minime indispensabile allo svolgimento del servizio
      * @param wrapServizio elenco delle funzioni previste (max quattro)
      */
-    public Servizio(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone, WrapServizio wrapServizio) {
+    public Servizio(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone, WrapServizio wrapServizio) {
         super();
         super.setCompany(company);
         setOrdine(ordine);
@@ -171,7 +172,7 @@ public class Servizio extends WamCompany {
      *
      * @param sigla valore della property Sigla
      * @return istanza di Servizio, null se non trovata
-     * @deprecated perché manca la company e potrebbero esserci records multipli con la stessa sigla
+     * @deprecated perché manca la wamcompany e potrebbero esserci records multipli con la stessa sigla
      */
     public static Servizio findBySigla(String sigla) {
         Servizio instance = null;
@@ -195,7 +196,7 @@ public class Servizio extends WamCompany {
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Servizio find(Company company, String sigla) {
+    public static Servizio find(WamCompany company, String sigla) {
         Servizio instance = null;
 
         List<Servizio> serviziPerSigla = (List<Servizio>) AQuery.queryList(Servizio.class, Servizio_.sigla, sigla);
@@ -243,8 +244,8 @@ public class Servizio extends WamCompany {
      * @return lista delle istanze di Servizio di una Company
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Servizio> findAll(Company company) {
-        return (ArrayList<Servizio>) AQuery.queryLista(Servizio.class, WamCompany_.company, company);
+    public static ArrayList<Servizio> findAll(WamCompany company) {
+        return (ArrayList<Servizio>) AQuery.queryLista(Servizio.class, WamCompanyEntity_.company, company);
     }// end of method
 
     /**
@@ -256,7 +257,7 @@ public class Servizio extends WamCompany {
      * @param descrizione per il tabellone (obbligatoria)
      * @return istanza di Servizio
      */
-    public static Servizio crea(Company company, String sigla, String descrizione) {
+    public static Servizio crea(WamCompany company, String sigla, String descrizione) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
@@ -283,7 +284,7 @@ public class Servizio extends WamCompany {
      * @param persone     minime indispensabile allo svolgimento del servizio
      * @return istanza di Servizio
      */
-    public static Servizio crea(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone) {
+    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone) {
         return crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile, orario, multiplo, persone, null);
     }// end of static method
 
@@ -304,7 +305,7 @@ public class Servizio extends WamCompany {
      * @param wrapServizio elenco delle funzioni previste (max quattro)
      * @return istanza di Servizio
      */
-    public static Servizio crea(Company company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone, WrapServizio wrapServizio) {
+    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone, WrapServizio wrapServizio) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {

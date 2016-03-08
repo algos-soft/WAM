@@ -4,7 +4,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.ServiceException;
 import com.vaadin.server.SessionInitEvent;
-import it.algos.wam.entity.company.Company;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.ui.AdminUI;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.servlet.AlgosServlet;
@@ -42,7 +42,7 @@ public class AdminServlet extends AlgosServlet {
         // Do session start stuff here
 
         // provvisorio!! fino a quando non gestiamo il login
-        CompanySessionLib.setCompany(Company.getDemo());
+        CompanySessionLib.setCompany(WamCompany.getDemo());
     }// end of method
 
 }// end of servlet class

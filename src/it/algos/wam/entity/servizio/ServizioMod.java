@@ -2,8 +2,8 @@ package it.algos.wam.entity.servizio;
 
 
 import com.vaadin.server.FontAwesome;
-import it.algos.wam.entity.wamcompany.WamCompany_;
-import it.algos.wam.entity.wamcompany.WamMod;
+import it.algos.wam.entity.companyentity.WamCompanyEntity_;
+import it.algos.wam.entity.companyentity.WamMod;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -37,7 +37,7 @@ public class ServizioMod extends WamMod {
      */
     protected Attribute<?, ?>[] creaFieldsList() {
         return new Attribute[]{
-                WamCompany_.company,
+                WamCompanyEntity_.company,
                 Servizio_.ordine,
                 Servizio_.sigla,
                 Servizio_.descrizione,

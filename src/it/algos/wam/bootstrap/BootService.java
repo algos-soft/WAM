@@ -1,7 +1,7 @@
 package it.algos.wam.bootstrap;
 
 import it.algos.wam.WAMApp;
-import it.algos.wam.entity.company.Company;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.milite.Milite;
 import it.algos.wam.entity.servizio.Servizio;
@@ -59,10 +59,10 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaCroceDemo() {
-        Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
         if (company == null) {
-            company = new Company();
+            company = new WamCompany();
             company.setCompanyCode(WAMApp.DEMO_COMPANY_CODE);
             company.setName("Demo");
             company.setAddress1("Via Turati, 12");
@@ -78,7 +78,7 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaMilitiDemo() {
-        Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
         if (company != null) {
             Milite.crea(company, "Piero", "Bernocchi", null, "335-471824");
@@ -95,7 +95,7 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaFunzioniDemo() {
-        Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
         Funzione funzione;
         int k = 0;
 
@@ -116,7 +116,7 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaServiziDemo() {
-        Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
         WrapServizio wrap;
         int k = 0;
 
@@ -141,7 +141,7 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaTurniDemo() {
-        Company company = Company.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
         Servizio servizio = null;
         Turno turno;
 
@@ -170,10 +170,10 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaCroceTest() {
-        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
 
         if (company == null) {
-            company = new Company();
+            company = new WamCompany();
             company.setCompanyCode(WAMApp.TEST_COMPANY_CODE);
             company.setName("Test");
             company.setAddress1("Via Roma, 17");
@@ -189,7 +189,7 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaMilitiTest() {
-        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
 
         if (company != null) {
             Milite.crea(company, "Carlo", "Bagno");
@@ -207,7 +207,7 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaFunzioniTest() {
-        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
         Funzione funzione;
         int k = 0;
 
@@ -230,7 +230,7 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaServiziTest() {
-        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
         WrapServizio wrap;
         int k = 0;
 
@@ -253,7 +253,7 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaTurniTest() {
-        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
         Servizio servizio = null;
         Date data = null;
         WrapTurno wrap = null;

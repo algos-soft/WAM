@@ -1,7 +1,7 @@
 package it.algos.wam.entity.funzione;
 
-import it.algos.wam.entity.company.Company;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Entity per una funzione
- * Estende la Entity astratta WamCompany che contiene la property company
+ * Estende la Entity astratta WamCompany che contiene la property wamcompany
  * <p>
  * Classe di tipo JavaBean
  * 1) la classe deve avere un costruttore senza argomenti
@@ -24,7 +24,7 @@ import java.util.List;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
-public class Funzione extends WamCompany {
+public class Funzione extends WamCompanyEntity {
 
 
     //--sigla di riferimento interna (obbligatoria)
@@ -63,7 +63,7 @@ public class Funzione extends WamCompany {
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
      */
-    public Funzione(Company company, String sigla, String descrizione) {
+    public Funzione(WamCompany company, String sigla, String descrizione) {
         this(company, sigla, descrizione, 0, "");
     }// end of constructor
 
@@ -77,7 +77,7 @@ public class Funzione extends WamCompany {
      * @param ordine      di presentazione nelle liste
      * @param note        di spiegazione (facoltative)
      */
-    public Funzione(Company company, String sigla, String descrizione, int ordine, String note) {
+    public Funzione(WamCompany company, String sigla, String descrizione, int ordine, String note) {
         super();
         this.setCompany(company);
         this.setSigla(sigla);
@@ -110,7 +110,7 @@ public class Funzione extends WamCompany {
      *
      * @param sigla sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione, null se non trovata
-     * @deprecated perché manca la company e potrebbero esserci records multipli con la stessa sigla
+     * @deprecated perché manca la wamcompany e potrebbero esserci records multipli con la stessa sigla
      */
     public static Funzione findBySigla(String sigla) {
         Funzione instance = null;
@@ -128,14 +128,14 @@ public class Funzione extends WamCompany {
 
     /**
      * Recupera una istanza di Funzione usando la query di una property specifica
-     * Relativa ad una company
+     * Relativa ad una wamcompany
      *
      * @param company croce di appartenenza
      * @param sigla   sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Funzione find(Company company, String sigla) {
+    public static Funzione find(WamCompany company, String sigla) {
         Funzione instance = null;
 
         //@todo migliorabile
@@ -182,11 +182,11 @@ public class Funzione extends WamCompany {
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Relativa ad una company
+     * Relativa ad una wamcompany
      *
      * @return lista di tutte le istanze di Funzione
      */
-    public static ArrayList<Funzione> findAll(Company company) {
+    public static ArrayList<Funzione> findAll(WamCompany company) {
         //@todo da sviluppare
         return null;
     }// end of method
@@ -200,7 +200,7 @@ public class Funzione extends WamCompany {
      * @param sigla   sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione
      */
-    public static Funzione crea(Company company, String sigla) {
+    public static Funzione crea(WamCompany company, String sigla) {
         return crea(company, sigla, "", 0, "");
     }// end of static method
 
@@ -216,7 +216,7 @@ public class Funzione extends WamCompany {
      * @param note        di spiegazione (facoltative)
      * @return istanza di Funzione
      */
-    public static Funzione crea(Company company, String sigla, String descrizione, int ordine, String note) {
+    public static Funzione crea(WamCompany company, String sigla, String descrizione, int ordine, String note) {
         Funzione funzione = Funzione.find(company, sigla);
 
         if (funzione == null) {

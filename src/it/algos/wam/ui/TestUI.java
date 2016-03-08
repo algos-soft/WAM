@@ -5,7 +5,7 @@ import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.UI;
 import it.algos.wam.WAMApp;
-import it.algos.wam.entity.company.Company;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.lib.LibWam;
@@ -74,11 +74,11 @@ public class TestUI extends UI {
 //    }
 
 //    /**
-//     * Una volta stabilita la company (di norma non qui), crea tante righe quanti sono i servizi
+//     * Una volta stabilita la wamcompany (di norma non qui), crea tante righe quanti sono i servizi
 //     */
 //    private RTabellone[] creaRigheOld() {
 //        List<RTabellone> lRighe = new ArrayList();
-//        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+//        Company wamcompany = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
 //        ArrayList<Servizio> listaServizi = null;
 //        WrapServizio wrapServizio = null;
 //        Date dataIniziale = LibDate.creaData(2, 3, 2016);
@@ -88,8 +88,8 @@ public class TestUI extends UI {
 //        CRuoli cRuoli;
 //        CTurno[] cTurni=null;
 //
-//        if (company != null) {
-//            listaServizi = Servizio.findAll(company);
+//        if (wamcompany != null) {
+//            listaServizi = Servizio.findAll(wamcompany);
 //        }// end of if cycle
 //
 //        if (listaServizi != null && listaServizi.size() > 0) {
@@ -97,7 +97,7 @@ public class TestUI extends UI {
 //                wrapServizio = servizio.getWrapServizio();
 //                cServ = new CServizio(servizio);
 //                cRuoli = new CRuoli(wrapServizio);
-//              cTurni = creaTurni(company, servizio, primoGiorno);
+//              cTurni = creaTurni(wamcompany, servizio, primoGiorno);
 ////                cTurni = creaTurniDemo();
 //                lRighe.add(new RTabellone(cServ, cRuoli, cTurni));
 //            }// end of for cycle
@@ -118,7 +118,7 @@ public class TestUI extends UI {
         LocalDate d2 = d1.plusDays(6);
         WTabellone wtab = new WTabellone(d1, d2);
 
-        Company company = Company.findByCode(WAMApp.TEST_COMPANY_CODE);
+        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
         ArrayList<Servizio> listaServizi = null;
 
         int primoGiorno = LibWam.creaChiave(d1);
@@ -152,17 +152,17 @@ public class TestUI extends UI {
     }
 
 
-//    private CTurno[] creaTurni(Company company, Servizio servizio, int primoGiorno) {
-//        return creaTurni(company, servizio, primoGiorno, 7);
+//    private CTurno[] creaTurni(Company wamcompany, Servizio servizio, int primoGiorno) {
+//        return creaTurni(wamcompany, servizio, primoGiorno, 7);
 //    }// end of method
 
-//    private CTurno[] creaTurni(Company company, Servizio servizio, int primoGiorno, int giorni) {
+//    private CTurno[] creaTurni(Company wamcompany, Servizio servizio, int primoGiorno, int giorni) {
 //        List<CTurno> listaTurni = new ArrayList();
 //        Turno turno = null;
 //        CTurno cTurno = null;
 //
 //        for (int chiave = primoGiorno; chiave < primoGiorno+giorni; chiave++) {
-//            turno = Turno.find(company, servizio,chiave);
+//            turno = Turno.find(wamcompany, servizio,chiave);
 //
 //            if (turno != null) {
 //                cTurno= new CTurno(turno);

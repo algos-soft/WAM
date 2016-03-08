@@ -1,6 +1,6 @@
 package it.algos.wam.entity.milite;
 
-import it.algos.wam.entity.company.Company;
+import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
@@ -10,14 +10,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Entity che descrive un Milite
- * Estende la Entity astratta WamCompany che contiene la property company
+ * Estende la Entity astratta WamCompany che contiene la property wamcompany
  * <p>
  * Classe di tipo JavaBean
  * <p>
@@ -29,7 +28,11 @@ import java.util.List;
  * <p>
  */
 @Entity
-public class Milite extends WamCompany {
+public class Milite extends WamCompanyEntity {
+//    //--croce di riferimento
+//    @NotNull
+//    @ManyToOne
+//    private WamCompany company;
 
     //--nome del volontario (obbligatorio)
     @NotEmpty
@@ -80,7 +83,7 @@ public class Milite extends WamCompany {
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
      */
-    public Milite(Company company, String nome, String cognome) {
+    public Milite(WamCompany company, String nome, String cognome) {
         this(company, nome, cognome, null, "");
     }// end of constructor
 
@@ -94,7 +97,7 @@ public class Milite extends WamCompany {
      * @param cellulare   del volontario/milite (facoltativo)
      */
     @SuppressWarnings("all")
-    public Milite(Company company, String nome, String cognome, Date dataNascita, String cellulare) {
+    public Milite(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare) {
         this(company, nome, cognome, dataNascita, cellulare, false);
     }// end of constructor
 
@@ -108,9 +111,11 @@ public class Milite extends WamCompany {
      * @param cellulare   del volontario/milite (facoltativo)
      * @param dipendente  dell'associazione NON volontario
      */
-    public Milite(Company company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
+    public Milite(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
         super();
-        super.setCompany(company);
+        if (this.getCompany() == null) {
+            super.setCompany(company);
+        }// fine del blocco if
         setNome(nome);
         setCognome(cognome);
         setDataNascita(dataNascita);
@@ -122,6 +127,7 @@ public class Milite extends WamCompany {
      * Recupera una istanza di Milite usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
+     *
      * @return istanza di Milite, null se non trovata
      */
     public static Milite find(long id) {
@@ -143,14 +149,15 @@ public class Milite extends WamCompany {
      * @param company valore della property Company
      * @param nome    valore della property Nome
      * @param cognome valore della property Cognome
+     *
      * @return istanza di Milite, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Milite find(Company company, String nome, String cognome) {
+    public static Milite find(WamCompany company, String nome, String cognome) {
         Milite instance = null;
 
         //@todo questo non funziona - si blocca
-//        Container.Filter f1 = new Compare.Equal(Company_.companyCode.getName(), company.getCompanyCode());
+//        Container.Filter f1 = new Compare.Equal(Company_.companyCode.getName(), wamcompany.getCompanyCode());
 //        Container.Filter f2 = new Compare.Equal(Milite_.nome.getName(), nome);
 //        Container.Filter f3 = new Compare.Equal(Milite_.cognome.getName(), cognome);
 //        Container.Filter filter = new And(f1, f2, f3);
@@ -159,7 +166,6 @@ public class Milite extends WamCompany {
 //        if (militi != null && militi.size() > 0) {
 //            instance = (Milite) militi.get(0);
 //        }// end of if cycle
-
 
 //        ArrayList<Milite> militiPerCognome = (ArrayList<Milite>) AQuery.queryList(Milite.class, Milite_.cognome, cognome);
         List<Milite> militiPerCognome = (List<Milite>) AQuery.queryList(Milite.class, Milite_.cognome, cognome);
@@ -198,6 +204,7 @@ public class Milite extends WamCompany {
     @SuppressWarnings("unchecked")
     public static ArrayList<Milite> findAll() {
         return (ArrayList<Milite>) AQuery.getLista(Milite.class);
+
     }// end of method
 
     /**
@@ -207,12 +214,12 @@ public class Milite extends WamCompany {
      * @param company croce di appartenenza
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
+     *
      * @return istanza di Milite
      */
-    public static Milite crea(Company company, String nome, String cognome) {
+    public static Milite crea(WamCompany company, String nome, String cognome) {
         return crea(company, nome, cognome, null, "");
     }// end of static method
-
 
     /**
      * Creazione iniziale di un milite
@@ -223,9 +230,10 @@ public class Milite extends WamCompany {
      * @param cognome     del volontario/milite (obbligatorio)
      * @param dataNascita del volontario/milite (facoltativo)
      * @param cellulare   del volontario/milite (facoltativo)
+     *
      * @return istanza di Milite
      */
-    public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String cellulare) {
+    public static Milite crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare) {
         return crea(company, nome, cognome, dataNascita, cellulare, false);
     }// end of static method
 
@@ -239,9 +247,10 @@ public class Milite extends WamCompany {
      * @param dataNascita del volontario/milite (facoltativo)
      * @param cellulare   del volontario/milite (facoltativo)
      * @param dipendente  dell'associazione NON volontario
+     *
      * @return istanza di Milite
      */
-    public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
+    public static Milite crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
         return crea(company, nome, cognome, dataNascita, cellulare, dipendente, true);
     }// end of static method
 
@@ -256,9 +265,10 @@ public class Milite extends WamCompany {
      * @param cellulare   del volontario/milite (facoltativo)
      * @param dipendente  dell'associazione NON volontario
      * @param attivo      all'interno dell'associazione
+     *
      * @return istanza di Milite
      */
-    public static Milite crea(Company company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente, boolean attivo) {
+    public static Milite crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente, boolean attivo) {
         Milite milite = Milite.find(company, nome, cognome);
 
         if (milite == null) {
@@ -281,7 +291,6 @@ public class Milite extends WamCompany {
     public String getNomeCognome() {
         return getNome() + " " + getCognome();
     }// end of getter method
-
 
 //    public String pippo(){
 //        return "";

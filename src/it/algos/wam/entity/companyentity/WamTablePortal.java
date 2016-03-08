@@ -1,11 +1,12 @@
-package it.algos.wam.entity.wamcompany;
+package it.algos.wam.entity.companyentity;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.MenuBar;
-import it.algos.wam.entity.company.Company;
-import it.algos.wam.entity.wamcompany.WamCompany_;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.multiazienda.ELazyContainer;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
@@ -22,7 +23,7 @@ public class WamTablePortal extends TablePortal {
     private final static String MENU_CROCI_CAPTION = "Croce";
     private final static String ITEM_ALL_CROCI = "tutte";
     private TableToolbar toolbar;
-    private HashMap<Company, MenuBar.MenuItem> croci;
+    private HashMap<WamCompany, MenuBar.MenuItem> croci;
 
 
     public WamTablePortal(ModulePop modulo) {
@@ -47,7 +48,7 @@ public class WamTablePortal extends TablePortal {
     private void addMenuCroci() {
         MenuBar.MenuItem item = null;
         MenuBar.MenuItem subItem;
-        croci = new HashMap<Company, MenuBar.MenuItem>();
+        croci = new HashMap<WamCompany, MenuBar.MenuItem>();
 
         item = toolbar.addButton(MENU_CROCI_CAPTION, FontAwesome.NAVICON, null);
 
@@ -57,7 +58,7 @@ public class WamTablePortal extends TablePortal {
             }// end of inner method
         });// end of anonymous inner class
         croci.put(null, subItem);
-        for (Company company : Company.findAll()) {
+        for (WamCompany company : WamCompany.findAll()) {
             subItem = item.addItem(company.toString(), null, new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     setFiltro(company);
@@ -70,29 +71,42 @@ public class WamTablePortal extends TablePortal {
 
 
     /**
-     * Shows in the table only the needed company
-     * Creates a filter corresponding to the needed company in the table
+     * Shows in the table only the needed wamcompany
+     * Creates a filter corresponding to the needed wamcompany in the table
      * I filtri sono comprensivi del livello sottostante (GreaterOrEqual)
      */
-    private void setFiltro(Company company) {
+    private void setFiltro(WamCompany company) {
         Container.Filter filter = null;
         ATable table = this.getTable();
         Container.Filterable cont = null;
 
+//        if (table != null) {
+//            cont = table.getFilterableContainer();
+//        }// fine del blocco if
+//
+//        if (company != null) {
+//            filter = new Compare.Equal(WamCompanyEntity_.company.getName(), company);
+//        }// fine del blocco if
+//
+//        if (cont != null) {
+//            cont.removeAllContainerFilters();
+//            cont.addContainerFilter(filter);
+//        }// fine del blocco if
+
+//        if (company != null) {
+//            CompanySessionLib.setCompany(company);
+//        } else {
+//            CompanySessionLib.setCompany(null);
+//        }// fine del blocco if-else
+
         if (table != null) {
             cont = table.getFilterableContainer();
-        }// fine del blocco if
+            if (company != null) {
+                ((ELazyContainer)cont).setFilter(company);
+            } else {
+                ((ELazyContainer)cont).setFilter(null);
+            }// fine del blocco if-else
 
-        if (company != null) {
-            filter = new Compare.Equal(WamCompany_.company.getName(), company);
-        }// fine del blocco if
-
-        if (cont != null) {
-            cont.removeAllContainerFilters();
-            cont.addContainerFilter(filter);
-        }// fine del blocco if
-
-        if (table != null) {
             table.refresh();
         }// end of if cycle
 
@@ -103,13 +117,13 @@ public class WamTablePortal extends TablePortal {
      * Spunta il menu selezionato
      * Elimina la spunta in tutti gli altri
      */
-    private void spuntaMenu(Company croceSelezionata) {
+    private void spuntaMenu(WamCompany croceSelezionata) {
         MenuBar.MenuItem subItem;
 
         if (croci.containsKey(croceSelezionata)) {
             subItem = croci.get(croceSelezionata);
             if (subItem != null) {
-                for (Company croce : croci.keySet()) {
+                for (WamCompany croce : croci.keySet()) {
                     croci.get(croce).setIcon(FontAwesome.MINUS);
                 }// end of for cycle
 

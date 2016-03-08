@@ -2,10 +2,8 @@ package it.algos.wam.entity.turno;
 
 
 import com.vaadin.server.FontAwesome;
-import it.algos.wam.entity.servizio.Servizio_;
-import it.algos.wam.entity.wamcompany.WamCompany_;
-import it.algos.wam.entity.wamcompany.WamMod;
-import it.algos.webbase.web.module.ModulePop;
+import it.algos.wam.entity.companyentity.WamCompanyEntity_;
+import it.algos.wam.entity.companyentity.WamMod;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -40,7 +38,7 @@ public class TurnoMod extends WamMod {
      */
     protected Attribute<?, ?>[] creaFieldsList() {
         return new Attribute[]{
-                WamCompany_.company,
+                WamCompanyEntity_.company,
                 Turno_.servizio,
                 Turno_.inizio,
                 Turno_.fine,

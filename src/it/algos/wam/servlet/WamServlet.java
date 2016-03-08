@@ -1,18 +1,21 @@
 package it.algos.wam.servlet;
 
+import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.ServiceException;
 import com.vaadin.server.SessionInitEvent;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.ui.MiliteUI;
+import it.algos.wam.ui.AdminUI;
+import it.algos.wam.ui.WamUI;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.servlet.AlgosServlet;
 
 import javax.servlet.annotation.WebServlet;
 
-@WebServlet(value = "/*", asyncSupported = true, displayName = "WAM-Admin")
-@VaadinServletConfiguration(productionMode = false, ui = MiliteUI.class)
-public class MiliteServlet extends AlgosServlet {
+@Theme("valo")
+@WebServlet(value = "/wam/*", asyncSupported = true, displayName = "Wam")
+@VaadinServletConfiguration(productionMode = false, ui = WamUI.class)
+public class WamServlet extends AlgosServlet {
 
     /**
      * Invoked when a new Vaadin service session is initialized for that service.
@@ -23,6 +26,7 @@ public class MiliteServlet extends AlgosServlet {
      * prima (PRIMA) di eseguire le regolazioni specifiche <br>
      *
      * @param event the initialization event
+     *
      * @throws ServiceException a problem occurs when processing the event
      */
     @Override
@@ -33,7 +37,6 @@ public class MiliteServlet extends AlgosServlet {
 
         // provvisorio!! fino a quando non gestiamo il login
         CompanySessionLib.setCompany(WamCompany.getDemo());
-
-    }
+    }// end of method
 
 }// end of servlet class

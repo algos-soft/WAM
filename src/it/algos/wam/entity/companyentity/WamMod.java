@@ -1,7 +1,8 @@
-package it.algos.wam.entity.wamcompany;
+package it.algos.wam.entity.companyentity;
 
 
 import com.vaadin.server.Resource;
+import it.algos.webbase.multiazienda.CompanyModule;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.TablePortal;
 
@@ -10,7 +11,7 @@ import it.algos.webbase.web.table.TablePortal;
  * Si interpone come layer tra le classi Mod che usano la property Company e la superclasse standard ModulePop
  */
 @SuppressWarnings("serial")
-public abstract class WamMod extends ModulePop {
+public abstract class WamMod extends CompanyModule {
 
     /**
      * Costruttore
