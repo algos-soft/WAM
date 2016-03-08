@@ -1,6 +1,7 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
@@ -88,11 +89,15 @@ public class EngineTab {
         Servizio serv = turno.getServizio();
         int numFunzioni = serv.getNumFunzioni();
         CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni, turno);
+
+        int row=0;
+        comp.addComponent(new Label("titolo"), 0, row);
+
         Iscrizione[] iscrizioni = turno.getIscrizioni();
-        for (Iscrizione i : iscrizioni) {
-            String nome = i.getMilite().toString();
+        for (Iscrizione iscr : iscrizioni) {
+            String nome = iscr.getMilite().toString();
             CIscrizione ci = new CIscrizione(nome);
-            Funzione f = i.getFunzione();
+            Funzione f = iscr.getFunzione();
             int pos = serv.getPosFunzione(f);
             if (pos >= 0) {
                 try {
@@ -116,6 +121,12 @@ public class EngineTab {
      */
     private static Component creaCompFunzioni(Servizio serv) {
         CFunzioni cfunzioni = new CFunzioni();
+
+        // se orario variabile, prima riga vuota per allinearsi con i turni che in questo caso avranno il titolo
+        if(serv.isOrarioVariabile()){
+            cfunzioni.addFunzione("rigavuota");
+        }
+
         List<WrapServizio.Wrap> wrappers = serv.getWrapServizio().getWrap();
         for (WrapServizio.Wrap w : wrappers) {
             Funzione f = w.funzione;

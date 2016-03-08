@@ -513,6 +513,13 @@ public class Servizio extends WamCompanyEntity {
     }//end of setter method
 
 
+    /**
+     * @return true se questo servizio prevede orari variabili, quindi nel tabellone
+     * non appare l'orario in corrispondenza del servizio, ma appare un titolo sopra ogni turno
+     */
+    public boolean isOrarioVariabile(){
+        return isMultiplo();    //?? alex
+    }
 
     /**
      * Clone di questa istanza
