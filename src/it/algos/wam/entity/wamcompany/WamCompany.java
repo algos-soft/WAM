@@ -22,6 +22,9 @@ public class WamCompany extends BaseCompany {
 
     private static final long serialVersionUID = 8238775575826490450L;
 
+    //--mostra il tabellone alla partenza; in caso contrario va alla home
+    private boolean vaiSubitoTabellone = true;
+
     // elenco delle relazioni OneToMany
     // servono per creare le foreign key sul db
     // che consentono la cancellazione a cascata
@@ -133,6 +136,14 @@ public class WamCompany extends BaseCompany {
     public String toString() {
         return getCompanyCode();
     }// end of method
+
+    public boolean isVaiSubitoTabellone() {
+        return vaiSubitoTabellone;
+    }// end of getter method
+
+    public void setVaiSubitoTabellone(boolean vaiSubitoTabellone) {
+        this.vaiSubitoTabellone = vaiSubitoTabellone;
+    }//end of setter method
 
     /**
      * Elimina tutti i dati di questa azienda.

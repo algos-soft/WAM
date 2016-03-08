@@ -8,5 +8,5 @@ import javax.persistence.metamodel.StaticMetamodel;
 
 @StaticMetamodel(BaseCompany.class)
 public class WamCompany_ extends BaseCompany_ {
-	public static volatile SingularAttribute<WamCompany, String> alfa;
+	public static volatile SingularAttribute<WamCompany, Boolean> vaiSubitoTabellone;
 }// end of entity class

@@ -5,7 +5,6 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.Notification;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.milite.MiliteMod;
 import it.algos.wam.entity.servizio.ServizioMod;
@@ -15,9 +14,7 @@ import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.ruolo.Ruolo;
-import it.algos.webbase.multiazienda.CompanyEntity;
 import it.algos.webbase.multiazienda.CompanySessionLib;
-import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.screen.ErrorScreen;
 import it.algos.webbase.web.ui.AlgosUI;
@@ -29,7 +26,7 @@ import it.algos.webbase.web.ui.AlgosUI;
 public class WamUI extends AlgosUI {
 
     private Navigator nav;
-    private MenuBar menuBar =null;
+    private MenuBar menuBar = null;
 
     /**
      * Initializes this UI. This method is intended to be overridden by subclasses to build the view and configure
@@ -47,40 +44,25 @@ public class WamUI extends AlgosUI {
     @Override
     protected void init(VaadinRequest request) {
 //        footerLayout.addComponent(new Label("Wam versione 0.1 del 1 mar 2016"));
-        String croce = "";
-        String path;
         boolean vaiSubitoTabellone = false;
         Ruolo ruolo = new Ruolo();
         String nomeRuolo;
         menuBar = new MenuBar();
-
-        BaseCompany company = WamCompany.findByCode("test");
-//        BaseCompany company =null;
-
-//        LibSession.setAttribute("",company);
-        CompanySessionLib.setCompany(company);
-        path = request.getPathInfo();
-        if (path.startsWith("/")) {
-            croce = path.substring(1, path.length() - 1);
-            int a = 87;
-        }// fine del blocco if
-
-        //leggere la croce
-
-        //vedere se serve il login per vedere il tabellone (dipende dalla croce)
-        //se serve presentare il login
-
         Component baseComp = null;
+
+        //--legge la croce
+        //--vedere se serve il login per vedere il tabellone (dipende dalla croce)
+        vaiSubitoTabellone = leggeCroce(request);
 
         //@todo programmatore (da leggere)
         nomeRuolo = ruolo.getNome();
         WamRuoli eRuolo = WamRuoli.get(nomeRuolo);
-        eRuolo=WamRuoli.developer;
-        if (eRuolo!=null) {
+        eRuolo = WamRuoli.developer;
+        if (eRuolo != null) {
             switch (eRuolo) {
                 case developer:
-                    baseComp=new BaseComponent(this);
-                    configProgrammatore((BaseComponent)baseComp, vaiSubitoTabellone);
+                    baseComp = new BaseComponent(this);
+                    configProgrammatore((BaseComponent) baseComp, vaiSubitoTabellone);
                     break;
                 case custode:
 
@@ -96,33 +78,61 @@ public class WamUI extends AlgosUI {
 //                break;
                 default: // caso non definito
                     if (vaiSubitoTabellone) {
-                        baseComp=new BaseComponent(this);
+                        baseComp = new BaseComponent(this);
                         configGuest((BaseComponent) baseComp);
                     } else {
-                        baseComp= gatErrorComp();
+                        baseComp = gatErrorComp();
                     }// fine del blocco if-else
                     break;
             } // fine del blocco switch
         } else {
-            baseComp= gatErrorComp();
+            baseComp = gatErrorComp();
         }// fine del blocco if-else
 
-
-//        LibSession.setAttribute("croce", croce);
-//        VerticalLayout layout = new VerticalLayout();
-//        nav = new Navigator(this, layout);
-//
-//        nav.addView("c", new WamCompanyMod());
-//        nav.addView("pippo", new MiliteMod());
-//        nav.addView("delta", new FunzioneMod());
-//        nav.addView(new ServizioMod());
-//        nav.addView(new TurnoMod());
-
-//        nav.navigateTo("pippo");
-
-            this.setContent(baseComp);
+        this.setContent(baseComp);
 
     }// end of method
+
+    /**
+     * Elabora l'URL della Request ed estrae (se esiste) il nome della croce selezionata
+     * Se non trova nulla, di default parte con la croce 'demo'
+     * Se il nome della croce è sbagliato o non esiste nella lista delle croci esistenti (?), mostra un messaggio di errore
+     * Registra la croce (come Company) nella Sessione corrente
+     * Controlla la property della croce, per sapere se far partire subito il tabellone
+     *
+     * @param request the Vaadin request that caused this UI to be created
+     * @return la partenza immediata del tabellone senza login
+     */
+    private boolean leggeCroce(VaadinRequest request) {
+        boolean vaiSubitoTabellone = false;
+        BaseCompany company = null;
+        String path;
+        String siglaCroce = "";
+        String[] parti = null;
+
+        path = request.getPathInfo();
+        if (path != null && !path.equals("")) {
+            parti = path.split("/");
+        }// end of if cycle
+
+        if (parti != null && parti.length > 1) {
+            siglaCroce = parti[1];
+        }// fine del blocco if
+
+        //legge la croce
+        company = WamCompany.findByCode(siglaCroce);
+        if (company == null) {
+            company = WamCompany.findByCode("demo");
+        }// end of if cycle
+        CompanySessionLib.setCompany(company);
+
+        if (company != null) {
+            vaiSubitoTabellone = ((WamCompany) company).isVaiSubitoTabellone();
+        }// end of if cycle
+
+        return vaiSubitoTabellone;
+    }// end of method
+
 
     private Component gatErrorComp() {
         return new ErrorScreen("Errore");

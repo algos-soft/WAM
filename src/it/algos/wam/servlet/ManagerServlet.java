@@ -9,6 +9,13 @@ import it.algos.webbase.web.servlet.AlgosServlet;
 
 import javax.servlet.annotation.WebServlet;
 
+/**
+ * Servlet dell'admin
+ * Il manager amministra alcune preferenze di una singola azienda (non tutte)
+ * Il manager amministra gli utenti, crea i turni, controlla le statistiche
+ * Il manager NON accede alle altre aziende
+ * Il manager NON siamo noi.
+ */
 @WebServlet(value = "/wam-manager/*", asyncSupported = true, displayName = "WAM-Admin")
 @VaadinServletConfiguration(productionMode = false, ui = ManagerUI.class)
 public class ManagerServlet extends AlgosServlet {

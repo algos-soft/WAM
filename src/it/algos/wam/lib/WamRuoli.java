@@ -4,9 +4,15 @@ import java.util.ArrayList;
 
 /**
  * Created by Gac on 08 mar 2016.
+ * .
  */
 public enum WamRuoli {
-    developer("developer"), custode("custode"), admin("admin"), user("user"), guest("guest");
+
+    developer("developer"),
+    custode("custode"),
+    admin("admin"),
+    user("user"),
+    guest("guest");
 
     private String nome;
 
