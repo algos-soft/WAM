@@ -24,7 +24,6 @@ public abstract class BootService {
     private static ArrayList<Funzione> FUNZ_DEMO;
     private static ArrayList<Funzione> FUNZ_TEST;
 
-
     /**
      * Creazione iniziale di una croce demo
      * Visibile a tutti
