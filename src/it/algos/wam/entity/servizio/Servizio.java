@@ -17,7 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * Entity che descrive un Servizio (tipo di turno)
  * Estende la Entity astratta WamCompany che contiene la property wamcompany
