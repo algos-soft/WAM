@@ -69,6 +69,7 @@ public abstract class BootService {
             company.setAddress1("20199 Garbagnate Milanese");
             company.setContact("Mario Bianchi");
             company.setEmail("info@crocedemo.it");
+            company.setVaiSubitoTabellone(true);
             company.save();
         }// end of if cycle
     }// end of static method
