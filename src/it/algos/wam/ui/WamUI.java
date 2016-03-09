@@ -11,7 +11,6 @@ import it.algos.wam.entity.volontario.VolontarioMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
-import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.ruolo.Ruolo;
 import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -50,7 +49,7 @@ public class WamUI extends AlgosUI {
         Component comp;
 
         // legge la croce
-        company = leggeCroce();
+        company = leggeCompany();
 
         if (company != null) {
 
@@ -86,7 +85,7 @@ public class WamUI extends AlgosUI {
      *
      * @return la company selezionata
      */
-    private WamCompany leggeCroce() {
+    private WamCompany leggeCompany() {
         WamCompany company = null;
 
         // recupero la company dall'url
