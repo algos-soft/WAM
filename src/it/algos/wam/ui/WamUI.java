@@ -167,10 +167,6 @@ public class WamUI extends UI {
         return utente;
     }// end of method
 
-    private Component gatErrorComp() {
-        return new ErrorScreen("Errore");
-    }
-
 
     /**
      * Crea il componente per il programmatore
