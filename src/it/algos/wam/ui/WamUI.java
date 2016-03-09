@@ -2,11 +2,12 @@ package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.UI;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.volontario.VolontarioMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
@@ -25,7 +26,7 @@ import java.net.URI;
  * Created by Gac on 08 mar 2016.
  */
 @Theme("valo")
-public class WamUI extends UI {
+public class WamUI extends AlgosUI {
 
     private Navigator nav;
     private MenuBar menuBar = null;
@@ -168,9 +169,6 @@ public class WamUI extends UI {
         return utente;
     }// end of method
 
-    private Component gatErrorComp() {
-        return new ErrorScreen("Errore");
-    }
 
 
     /**
@@ -179,33 +177,28 @@ public class WamUI extends UI {
      * @return il componente creato
      */
     private Component creaCompProgrammatore() {
-        BaseComponent comp = new BaseComponent(this);
 
-        nav = comp.getNav();
+        NavComponent nc = new NavComponent(this);
+        nc.addView(WamCompanyMod.class, WamCompanyMod.MENU_ADDRESS, FontAwesome.AMBULANCE);
+        nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
+        nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.TASKS);
+        nc.setFooter(new Label("Footer text"));
+        nc.setup();
 
-        menuBar = new MenuBar();
-        //this.addModulo(WamCompanyMod.class);
-        this.add(new WamCompanyMod());
-        this.add(new VolontarioMod());
-        this.add(new FunzioneMod());
-        comp.putHeader(menuBar);
-
-        nav.navigateTo(VolontarioMod.MENU_ADDRESS);
-
-        return comp;
+        return nc;
 
     }
 
-    private void configCustode(BaseComponent baseComp) {
+    private void configCustode(NavComponent baseComp) {
     }
 
-    private void configAdmin(BaseComponent baseComp) {
+    private void configAdmin(NavComponent baseComp) {
     }
 
-    private void configUtente(BaseComponent baseComp) {
+    private void configUtente(NavComponent baseComp) {
     }
 
-    private void configGuest(BaseComponent baseComp) {
+    private void configGuest(NavComponent baseComp) {
     }
 
     private void add(ModulePop mod) {
@@ -219,4 +212,9 @@ public class WamUI extends UI {
         });
     }
 
+
+    @Override
+    protected void addModulo(ModulePop modulo) {
+        super.addModulo(modulo);
+    }
 }

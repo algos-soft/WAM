@@ -3,6 +3,7 @@ package it.algos.wam.entity.wamcompany;
 
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.webbase.domain.company.BaseCompanyForm;
