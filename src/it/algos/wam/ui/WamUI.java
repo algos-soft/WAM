@@ -2,16 +2,18 @@ package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.View;
 import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.milite.MiliteMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
-import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.ruolo.Ruolo;
 import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -25,7 +27,7 @@ import java.net.URI;
  * Created by Gac on 08 mar 2016.
  */
 @Theme("valo")
-public class WamUI extends AlgosUI {
+public class WamUI extends UI {
 
     private Navigator nav;
     private MenuBar menuBar = null;
@@ -182,9 +184,9 @@ public class WamUI extends AlgosUI {
 
         menuBar = new MenuBar();
         //this.addModulo(WamCompanyMod.class);
-        this.add(new WamCompanyMod());
-        this.add(new MiliteMod());
-        this.add(new FunzioneMod());
+        this.addModulo(new WamCompanyMod());
+        this.addModulo(new MiliteMod());
+        this.addModulo(new FunzioneMod());
         comp.putHeader(menuBar);
 
         nav.navigateTo(MiliteMod.MENU_ADDRESS);
@@ -205,7 +207,7 @@ public class WamUI extends AlgosUI {
     private void configGuest(BaseComponent baseComp) {
     }
 
-    private void add(ModulePop mod) {
+    private void addModulo(ModulePop mod) {
         nav.addView(mod.getMenuLabel(), mod);
 
         menuBar.addItem(mod.getMenuLabel(), new MenuBar.Command() {
@@ -215,5 +217,34 @@ public class WamUI extends AlgosUI {
             }
         });
     }
+
+
+//    /**
+//     * Adds a View to the UI
+//     * <p/>
+//     * Will create a lazy (class-based) view provider
+//     * The view will be instantiated by the view provider from the provided class
+//     * The viewCached parameter controls if the view will be instantiated only once
+//     * or each time is requested by the Navigator.
+//     * <p/>
+//     * Invocato dalla sottoclasse
+//     *
+//     * @param viewClass  the view class to instantiate
+//     * @param viewCached true to instantiated only once, false to instantiate each time
+//     * @param label  the text for the menu item
+//     * @param icon  the icon for the menu item
+//     */
+//    protected void addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
+//
+//        String keyModulo = "";
+//        MenuBar.MenuItem menuItem = createMenuItem(viewClass, label, viewCached, icon);
+//
+//        if (menuItem != null) {
+//            keyModulo = viewClass.getSimpleName();
+//            mappaItem.put(keyModulo, menuItem);
+//        }// end of if cycle
+//
+//    }// end of method
+
 
 }
