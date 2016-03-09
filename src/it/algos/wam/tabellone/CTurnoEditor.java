@@ -5,7 +5,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.milite.Milite;
+import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.wrap.Iscrizione;
@@ -15,7 +15,6 @@ import it.algos.webbase.web.lib.DateConvertUtils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.EventObject;
 import java.util.HashMap;
 
@@ -51,7 +50,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
         for(Iscrizione i : turno.getIscrizioni()){
             Funzione f = i.getFunzione();
             RelatedComboField combo = mappaCombo.get(f.getSigla());
-            Milite m = i.getMilite();
+            Volontario m = i.getMilite();
             //combo.setValue(m);
         }
 
@@ -99,7 +98,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
             gridlayout.addComponent(lblFunzione, 0, i);
             gridlayout.setComponentAlignment(lblFunzione, Alignment.MIDDLE_LEFT);
 
-            RelatedComboField combo = new RelatedComboField(Milite.class);
+            RelatedComboField combo = new RelatedComboField(Volontario.class);
             gridlayout.addComponent(combo, 1, i);
 
             mappaCombo.put(fn, combo);

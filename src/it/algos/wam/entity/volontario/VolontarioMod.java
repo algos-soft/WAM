@@ -1,4 +1,4 @@
-package it.algos.wam.entity.milite;
+package it.algos.wam.entity.volontario;
 
 
 import com.vaadin.server.FontAwesome;
@@ -8,10 +8,10 @@ import it.algos.wam.entity.companyentity.WamMod;
 import javax.persistence.metamodel.Attribute;
 
 /**
- * Modulo del Milite
+ * Modulo del Volontario
  */
 @SuppressWarnings("serial")
-public class MiliteMod extends WamMod {
+public class VolontarioMod extends WamMod {
 
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Volontari";
@@ -24,8 +24,8 @@ public class MiliteMod extends WamMod {
      * (facoltativo) etichetta del menu (se manca usa il nome della Entity)
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
-    public MiliteMod() {
-        super(Milite.class, MENU_ADDRESS, FontAwesome.GEAR);
+    public VolontarioMod() {
+        super(Volontario.class, MENU_ADDRESS, FontAwesome.GEAR);
     }// end of constructor
 
     /**
@@ -38,12 +38,12 @@ public class MiliteMod extends WamMod {
     protected Attribute<?, ?>[] creaFieldsList() {
         return new Attribute[]{
                 WamCompanyEntity_.company,
-                Milite_.nome,
-                Milite_.cognome,
-                Milite_.dataNascita,
-                Milite_.cellulare,
-                Milite_.dipendente,
-                Milite_.attivo};
+                Volontario_.nome,
+                Volontario_.cognome,
+                Volontario_.dataNascita,
+                Volontario_.cellulare,
+                Volontario_.dipendente,
+                Volontario_.attivo};
     }// end of method
 
     /**
@@ -56,15 +56,15 @@ public class MiliteMod extends WamMod {
     protected Attribute<?, ?>[] creaFieldsForm() {
         return new Attribute[]{
                 WamCompanyEntity_.company,
-                Milite_.nome,
-                Milite_.cognome,
-                Milite_.cellulare,
-                Milite_.telefono,
-                Milite_.dataNascita,
-                Milite_.email,
-                Milite_.note,
-                Milite_.dipendente,
-                Milite_.attivo};
+                Volontario_.nome,
+                Volontario_.cognome,
+                Volontario_.cellulare,
+                Volontario_.telefono,
+                Volontario_.dataNascita,
+                Volontario_.email,
+                Volontario_.note,
+                Volontario_.dipendente,
+                Volontario_.attivo};
     }// end of method
 
     /**
@@ -77,17 +77,13 @@ public class MiliteMod extends WamMod {
     protected Attribute<?, ?>[] creaFieldsSearch() {
         return new Attribute[]{
                 WamCompanyEntity_.company,
-                Milite_.nome,
-                Milite_.cognome,
-                Milite_.cellulare,
-                Milite_.email,
-                Milite_.dipendente,
-                Milite_.attivo};
+                Volontario_.nome,
+                Volontario_.cognome,
+                Volontario_.cellulare,
+                Volontario_.email,
+                Volontario_.dipendente,
+                Volontario_.attivo};
     }// end of method
 
-    @Override
-    public void search() {
-        super.search();
-    }
 }// end of class
 

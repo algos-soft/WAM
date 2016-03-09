@@ -20,9 +20,8 @@
         <class>it.algos.wam.entity.wamcompany.WamCompany</class>
 		<class>it.algos.wam.entity.turno.Turno</class>
 		<class>it.algos.wam.entity.servizio.Servizio</class>
-        <!--<class>it.algos.wam.entity.companyentity.WamCompanyEntity</class>-->
-		<class>it.algos.wam.entity.funzione.Funzione</class>
-        <class>it.algos.wam.entity.milite.Milite</class>
+        <class>it.algos.wam.entity.funzione.Funzione</class>
+        <class>it.algos.wam.entity.volontario.Volontario</class>
 
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>

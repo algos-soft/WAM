@@ -46,7 +46,7 @@ public class VersBootStrap implements ServletContextListener {
         //--creazione di una croce "test"
         if (LibVers.installa(++k)) {
             BootService.creaCompanyTest();
-            LibVers.nuova("Test", "Creazione di una croce di prova, visibile solo agli admin");
+            LibVers.nuova("Test", "Creazione di una croce di prova, visibile solo ai developer");
         }// fine del blocco if
     }// end of method
 

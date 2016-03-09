@@ -7,7 +7,6 @@ import com.vaadin.server.SessionInitEvent;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.ui.AdminUI;
 import it.algos.wam.ui.WamUI;
-import it.algos.wam.ui.WamUI2;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.servlet.AlgosServlet;
 

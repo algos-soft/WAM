@@ -1,9 +1,6 @@
 package it.algos.wam.entity.servizio;
 
-import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.milite.Milite;
 import it.algos.webbase.multiazienda.CompanyEntity_;
-import it.algos.webbase.web.entity.BaseEntity_;
 
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;

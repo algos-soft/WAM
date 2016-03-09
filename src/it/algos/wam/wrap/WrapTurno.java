@@ -1,6 +1,6 @@
 package it.algos.wam.wrap;
 
-import it.algos.wam.entity.milite.Milite;
+import it.algos.wam.entity.volontario.Volontario;
 
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
@@ -77,7 +77,7 @@ public class WrapTurno implements Serializable {
     @Override
     public String toString() {
         String stringa = "";
-        Milite milite;
+        Volontario milite;
 
         if (iscrizione1 == null) {
             stringa = "Non nulla, ma senza militi (errore)";

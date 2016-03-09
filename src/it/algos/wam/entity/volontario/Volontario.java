@@ -1,4 +1,4 @@
-package it.algos.wam.entity.milite;
+package it.algos.wam.entity.volontario;
 
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.wamcompany.WamCompany;
@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Entity che descrive un Milite
+ * Entity che descrive un Volontario
  * Estende la Entity astratta WamCompany che contiene la property wamcompany
  * <p>
  * Classe di tipo JavaBean
@@ -28,11 +28,7 @@ import java.util.List;
  * <p>
  */
 @Entity
-public class Milite extends WamCompanyEntity {
-//    //--croce di riferimento
-//    @NotNull
-//    @ManyToOne
-//    private WamCompany company;
+public class Volontario extends WamCompanyEntity {
 
     //--nome del volontario (obbligatorio)
     @NotEmpty
@@ -72,7 +68,7 @@ public class Milite extends WamCompanyEntity {
      * Costruttore senza argomenti
      * Necessario per le specifiche JavaBean
      */
-    public Milite() {
+    public Volontario() {
         this(null, "", "");
     }// end of constructor
 
@@ -83,7 +79,7 @@ public class Milite extends WamCompanyEntity {
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
      */
-    public Milite(WamCompany company, String nome, String cognome) {
+    public Volontario(WamCompany company, String nome, String cognome) {
         this(company, nome, cognome, null, "");
     }// end of constructor
 
@@ -97,7 +93,7 @@ public class Milite extends WamCompanyEntity {
      * @param cellulare   del volontario/milite (facoltativo)
      */
     @SuppressWarnings("all")
-    public Milite(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare) {
+    public Volontario(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare) {
         this(company, nome, cognome, dataNascita, cellulare, false);
     }// end of constructor
 
@@ -111,7 +107,7 @@ public class Milite extends WamCompanyEntity {
      * @param cellulare   del volontario/milite (facoltativo)
      * @param dipendente  dell'associazione NON volontario
      */
-    public Milite(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
+    public Volontario(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
         super();
         if (this.getCompany() == null) {
             super.setCompany(company);
@@ -124,19 +120,19 @@ public class Milite extends WamCompanyEntity {
     }// end of constructor
 
     /**
-     * Recupera una istanza di Milite usando la query standard della Primary Key
+     * Recupera una istanza di Volontario usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
      *
-     * @return istanza di Milite, null se non trovata
+     * @return istanza di Volontario, null se non trovata
      */
-    public static Milite find(long id) {
-        Milite instance = null;
-        BaseEntity entity = AQuery.queryById(Milite.class, id);
+    public static Volontario find(long id) {
+        Volontario instance = null;
+        BaseEntity entity = AQuery.queryById(Volontario.class, id);
 
         if (entity != null) {
-            if (entity instanceof Milite) {
-                instance = (Milite) entity;
+            if (entity instanceof Volontario) {
+                instance = (Volontario) entity;
             }// end of if cycle
         }// end of if cycle
 
@@ -144,17 +140,17 @@ public class Milite extends WamCompanyEntity {
     }// end of method
 
     /**
-     * Recupera una istanza di Milite usando la query di tutte e sole le property obbligatorie
+     * Recupera una istanza di Volontario usando la query di tutte e sole le property obbligatorie
      *
      * @param company valore della property Company
      * @param nome    valore della property Nome
      * @param cognome valore della property Cognome
      *
-     * @return istanza di Milite, null se non trovata
+     * @return istanza di Volontario, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Milite find(WamCompany company, String nome, String cognome) {
-        Milite instance = null;
+    public static Volontario find(WamCompany company, String nome, String cognome) {
+        Volontario instance = null;
 
         //@todo questo non funziona - si blocca
 //        Container.Filter f1 = new Compare.Equal(Company_.companyCode.getName(), wamcompany.getCompanyCode());
@@ -167,10 +163,10 @@ public class Milite extends WamCompanyEntity {
 //            instance = (Milite) militi.get(0);
 //        }// end of if cycle
 
-//        ArrayList<Milite> militiPerCognome = (ArrayList<Milite>) AQuery.queryList(Milite.class, Milite_.cognome, cognome);
-        List<Milite> militiPerCognome = (List<Milite>) AQuery.queryList(Milite.class, Milite_.cognome, cognome);
+//        ArrayList<Volontario> militiPerCognome = (ArrayList<Milite>) AQuery.queryList(Volontario.class, Milite_.cognome, cognome);
+        List<Volontario> militiPerCognome = (List<Volontario>) AQuery.queryList(Volontario.class, Volontario_.cognome, cognome);
         if (militiPerCognome != null && militiPerCognome.size() > 0) {
-            for (Milite milite : militiPerCognome) {
+            for (Volontario milite : militiPerCognome) {
                 if (milite.getNome().equals(nome) && milite.getCompany().getId().equals(company.getId())) {
                     instance = milite;
                 }// end of if cycle
@@ -187,7 +183,7 @@ public class Milite extends WamCompanyEntity {
      */
     public static int count() {
         int totRec = 0;
-        long totTmp = AQuery.getCount(Milite.class);
+        long totTmp = AQuery.getCount(Volontario.class);
 
         if (totTmp > 0) {
             totRec = (int) totTmp;
@@ -199,30 +195,30 @@ public class Milite extends WamCompanyEntity {
     /**
      * Recupera una lista (array) di tutti i records della Domain Class
      *
-     * @return lista di tutte le istanze di Milite
+     * @return lista di tutte le istanze di Volontario
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Milite> findAll() {
-        return (ArrayList<Milite>) AQuery.getLista(Milite.class);
+    public static ArrayList<Volontario> findAll() {
+        return (ArrayList<Volontario>) AQuery.getLista(Volontario.class);
 
     }// end of method
 
     /**
-     * Creazione iniziale di un milite
+     * Creazione iniziale di un volontario
      * Lo crea SOLO se non esiste già
      *
      * @param company croce di appartenenza
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
      *
-     * @return istanza di Milite
+     * @return istanza di Volontario
      */
-    public static Milite crea(WamCompany company, String nome, String cognome) {
+    public static Volontario crea(WamCompany company, String nome, String cognome) {
         return crea(company, nome, cognome, null, "");
     }// end of static method
 
     /**
-     * Creazione iniziale di un milite
+     * Creazione iniziale di un volontario
      * Lo crea SOLO se non esiste già
      *
      * @param company     croce di appartenenza
@@ -231,14 +227,14 @@ public class Milite extends WamCompanyEntity {
      * @param dataNascita del volontario/milite (facoltativo)
      * @param cellulare   del volontario/milite (facoltativo)
      *
-     * @return istanza di Milite
+     * @return istanza di Volontario
      */
-    public static Milite crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare) {
+    public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare) {
         return crea(company, nome, cognome, dataNascita, cellulare, false);
     }// end of static method
 
     /**
-     * Creazione iniziale di un milite
+     * Creazione iniziale di un volontario
      * Lo crea SOLO se non esiste già
      *
      * @param company     croce di appartenenza
@@ -248,14 +244,14 @@ public class Milite extends WamCompanyEntity {
      * @param cellulare   del volontario/milite (facoltativo)
      * @param dipendente  dell'associazione NON volontario
      *
-     * @return istanza di Milite
+     * @return istanza di Volontario
      */
-    public static Milite crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
+    public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
         return crea(company, nome, cognome, dataNascita, cellulare, dipendente, true);
     }// end of static method
 
     /**
-     * Creazione iniziale di un milite
+     * Creazione iniziale di un volontario
      * Lo crea SOLO se non esiste già
      *
      * @param company     croce di appartenenza
@@ -266,13 +262,13 @@ public class Milite extends WamCompanyEntity {
      * @param dipendente  dell'associazione NON volontario
      * @param attivo      all'interno dell'associazione
      *
-     * @return istanza di Milite
+     * @return istanza di Volontario
      */
-    public static Milite crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente, boolean attivo) {
-        Milite milite = Milite.find(company, nome, cognome);
+    public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente, boolean attivo) {
+        Volontario milite = Volontario.find(company, nome, cognome);
 
         if (milite == null) {
-            milite = new Milite(company, nome, cognome, dataNascita, cellulare, dipendente);
+            milite = new Volontario(company, nome, cognome, dataNascita, cellulare, dipendente);
             milite.setAttivo(attivo);
             milite.save();
         }// end of if cycle
@@ -291,10 +287,6 @@ public class Milite extends WamCompanyEntity {
     public String getNomeCognome() {
         return getNome() + " " + getCognome();
     }// end of getter method
-
-//    public String pippo(){
-//        return "";
-//    }
 
     /**
      * @return the nome
@@ -383,9 +375,9 @@ public class Milite extends WamCompanyEntity {
      */
     @Override
     @SuppressWarnings("all")
-    public Milite clone() throws CloneNotSupportedException {
+    public Volontario clone() throws CloneNotSupportedException {
         try {
-            return (Milite) BeanUtils.cloneBean(this);
+            return (Volontario) BeanUtils.cloneBean(this);
         } catch (Exception ex) {
             throw new CloneNotSupportedException();
         }// fine del blocco try-catch

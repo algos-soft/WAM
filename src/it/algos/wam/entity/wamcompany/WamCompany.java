@@ -3,8 +3,8 @@ package it.algos.wam.entity.wamcompany;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.WAMApp;
-import it.algos.wam.entity.milite.Milite;
-import it.algos.wam.entity.milite.Milite_;
+import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -157,7 +157,7 @@ public class WamCompany extends BaseCompany {
     public void deleteAllData() {
 
         // elimina le tabelle
-        AQuery.delete(Milite.class, Milite_.company, this);
+        AQuery.delete(Volontario.class, Volontario_.company, this);
 
 //		AQuery.delete(Lettera.class, CompanyEntity_.wamcompany, this);
 //		AQuery.delete(EventoPren.class, CompanyEntity_.wamcompany, this);

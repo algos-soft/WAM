@@ -1,7 +1,7 @@
 package it.algos.wam.wrap;
 
 import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.milite.Milite;
+import it.algos.wam.entity.volontario.Volontario;
 
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
@@ -20,7 +20,7 @@ public class Iscrizione implements Serializable{
 
     //--milite/volontario assegnato alle funzione prevista per questa iscrizione
     @ManyToOne
-    private Milite milite = null;
+    private Volontario milite = null;
 
     //--ultima modifica a questa iscrizione, effettuata dal milite/volontario che si è iscritto
     //--serve per bloccare le modifiche dopo un determinato intervallo di tempo
@@ -44,7 +44,7 @@ public class Iscrizione implements Serializable{
      * @param funzione funzione prevista per il tipo di servizio (obbligatorio)
      * @param milite   milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
      */
-    public Iscrizione(Funzione funzione, Milite milite) {
+    public Iscrizione(Funzione funzione, Volontario milite) {
         this(funzione, milite, null, 0, false, "");
     }// end of constructor
 
@@ -58,7 +58,7 @@ public class Iscrizione implements Serializable{
      * @param esisteProblema eventuali problemi di presenza del milite/volontario di questa iscrizione nel turno
      * @param nota           eventuale nota associata al milite/volontario
      */
-    public Iscrizione(Funzione funzione, Milite milite, Timestamp lastModifica, int oreEffettive, boolean esisteProblema, String nota) {
+    public Iscrizione(Funzione funzione, Volontario milite, Timestamp lastModifica, int oreEffettive, boolean esisteProblema, String nota) {
         setFunzione(funzione);
         setMilite(milite);
         setLastModifica(lastModifica);
@@ -75,11 +75,11 @@ public class Iscrizione implements Serializable{
         this.funzione = funzione;
     }//end of setter method
 
-    public Milite getMilite() {
+    public Volontario getMilite() {
         return milite;
     }// end of getter method
 
-    public void setMilite(Milite milite) {
+    public void setMilite(Volontario milite) {
         this.milite = milite;
     }//end of setter method
 

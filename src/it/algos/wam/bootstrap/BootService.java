@@ -3,7 +3,7 @@ package it.algos.wam.bootstrap;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.milite.Milite;
+import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.wrap.Iscrizione;
@@ -40,7 +40,7 @@ public abstract class BootService {
 
     /**
      * Creazione iniziale di una croce test
-     * Visibile solo a noi (admin)
+     * Visibile solo a noi (developer)
      * Serve come prova per visualizzare solo i Militi, le Funzioni ed i Turni di una demo rispetto all'altra
      * <p>
      * La crea SOLO se non esiste già
@@ -82,12 +82,12 @@ public abstract class BootService {
         WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
         if (company != null) {
-            Milite.crea(company, "Piero", "Bernocchi", null, "335-471824");
-            Milite.crea(company, "Maria", "Cavazzini");
-            Milite.crea(company, "Francesco", "Mantovani", LibTime.adesso(), "338-679115");
-            Milite.crea(company, "Giulia", "Politi");
-            Milite.crea(company, "Maria", "Rovescala", LibDate.getPrimoGennaio(1987), "340-453728", true, true);
-            Milite.crea(company, "Aldo", "Vaccari");
+            Volontario.crea(company, "Piero", "Bernocchi", null, "335-471824");
+            Volontario.crea(company, "Maria", "Cavazzini");
+            Volontario.crea(company, "Francesco", "Mantovani", LibTime.adesso(), "338-679115");
+            Volontario.crea(company, "Giulia", "Politi");
+            Volontario.crea(company, "Maria", "Rovescala", LibDate.getPrimoGennaio(1987), "340-453728", true, true);
+            Volontario.crea(company, "Aldo", "Vaccari");
         }// end of if cycle
     }// end of static method
 
@@ -193,12 +193,12 @@ public abstract class BootService {
         WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
 
         if (company != null) {
-            Milite.crea(company, "Carlo", "Bagno");
-            Milite.crea(company, "Renzo", "Cerrato", LibDate.creaData(14, 7, 1995), "340-564738", false);
-            Milite.crea(company, "Lucia", "Donadoni", LibDate.creaData(11, 3, 1999), "335-5124396", true, false);
-            Milite.crea(company, "Ambra", "Angeletti");
-            Milite.crea(company, "Flacio", "Brambilla", LibDate.creaData(27, 10, 1991), "340-6786432");
-            Milite.crea(company, "Ruggero", "Testa");
+            Volontario.crea(company, "Carlo", "Bagno");
+            Volontario.crea(company, "Renzo", "Cerrato", LibDate.creaData(14, 7, 1995), "340-564738", false);
+            Volontario.crea(company, "Lucia", "Donadoni", LibDate.creaData(11, 3, 1999), "335-5124396", true, false);
+            Volontario.crea(company, "Ambra", "Angeletti");
+            Volontario.crea(company, "Flacio", "Brambilla", LibDate.creaData(27, 10, 1991), "340-6786432");
+            Volontario.crea(company, "Ruggero", "Testa");
         }// end of if cycle
     }// end of static method
 
@@ -262,9 +262,9 @@ public abstract class BootService {
         Iscrizione iscrizione2;
         Iscrizione iscrizione3;
         Funzione funzione = Funzione.find(company, "aut");
-        Milite milite = Milite.find(company, "Ruggero", "Testa");
-        Milite milite2 = Milite.find(company, "Lucia", "Donadoni");
-        Milite milite3 = Milite.find(company, "Renzo", "Cerrato");
+        Volontario milite = Volontario.find(company, "Ruggero", "Testa");
+        Volontario milite2 = Volontario.find(company, "Lucia", "Donadoni");
+        Volontario milite3 = Volontario.find(company, "Renzo", "Cerrato");
 
         if (company != null) {
             servizio = Servizio.find(company, "amb-mat");

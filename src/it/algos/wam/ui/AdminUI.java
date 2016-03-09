@@ -5,7 +5,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Label;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
-import it.algos.wam.entity.milite.MiliteMod;
+import it.algos.wam.entity.volontario.VolontarioMod;
 import it.algos.wam.entity.servizio.*;
 import it.algos.wam.entity.turno.TurnoMod;
 import it.algos.webbase.web.ui.AlgosUI;
@@ -45,7 +45,7 @@ public class AdminUI extends AlgosUI {
     @Override
     protected void addModuli() {
         this.addModulo(new WamCompanyMod());
-        this.addModulo(new MiliteMod());
+        this.addModulo(new VolontarioMod());
         this.addModulo(new FunzioneMod());
         this.addModulo(new ServizioMod());
         this.addModulo(new TurnoMod());
