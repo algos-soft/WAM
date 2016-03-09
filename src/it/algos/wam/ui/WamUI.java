@@ -62,6 +62,7 @@ public class WamUI extends AlgosUI {
             }// end of if/else cycle
         } else {
             // company non specificata nell'url
+            // company non trovata nel db
             comp = new ErrorScreen("Nome azienda non specificato nell'url o non esistente");
         }// end of if/else cycle
 
