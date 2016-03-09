@@ -6,6 +6,7 @@ import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.volontario.VolontarioMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
@@ -24,7 +25,7 @@ import java.net.URI;
  * Created by Gac on 08 mar 2016.
  */
 @Theme("valo")
-public class WamUI extends AlgosUI {
+public class WamUI extends UI {
 
     private Navigator nav;
     private MenuBar menuBar = null;
@@ -88,7 +89,7 @@ public class WamUI extends AlgosUI {
     private WamCompany leggeCompany() {
         WamCompany company = null;
 
-        // recupero la company dall'url
+        // recupero il codice della company dall'url
         URI uri = Page.getCurrent().getLocation();
         String path = uri.getPath();
         String[] parti = path.split("/");
