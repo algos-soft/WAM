@@ -22,6 +22,9 @@ public class WamCompany extends BaseCompany {
 
     private static final long serialVersionUID = 8238775575826490450L;
 
+    public static String DEMO_COMPANY_CODE="demo";
+
+
     //--mostra il tabellone alla partenza; in caso contrario va alla home
     private boolean vaiSubitoTabellone = true;
 

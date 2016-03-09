@@ -49,8 +49,8 @@ public class WamUI extends AlgosUI {
         WamCompany company = null;
         Component comp;
 
-        //--legge la croce
-        company = leggeCroce(request);
+        // legge la croce
+        company = leggeCroce();
 
         if (company != null) {
 
@@ -84,33 +84,33 @@ public class WamUI extends AlgosUI {
      * Se il nome della croce è sbagliato o non esiste nella lista delle croci esistenti (?), mostra un messaggio di errore
      * Registra la croce (come Company) nella Sessione corrente
      *
-     * @param request the Vaadin request that caused this UI to be created
-     * @return la croce selezionata (company)
+     * @return la company selezionata
      */
-    private WamCompany leggeCroce(VaadinRequest request) {
+    private WamCompany leggeCroce() {
         WamCompany company = null;
 
         // recupero la company dall'url
         URI uri = Page.getCurrent().getLocation();
         String path = uri.getPath();
         String[] parti = path.split("/");
-        String siglaCroce = null;
+        String siglaComp = null;
         for (int i = 0; i < parti.length; i++) {
             if (i > 1) {
-                siglaCroce = parti[i];
+                siglaComp = parti[i];
                 break;
             }
         }
 
         // recupero la company dal db
-        if(siglaCroce!=null){
-            company = WamCompany.findByCode(siglaCroce);
+        if(siglaComp!=null){
+            company = WamCompany.findByCode(siglaComp);
             if (company == null) {
-                company = WamCompany.findByCode("demo");
+                company = WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
             }// end of if cycle
         }
 
         return company;
+
     }// end of method
 
 

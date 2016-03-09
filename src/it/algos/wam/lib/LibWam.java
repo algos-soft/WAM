@@ -7,11 +7,13 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+
 /**
  * Created by gac on 29 feb 2016.
  * Classe statica di libreria
  */
 public abstract class LibWam {
+
 
     /**
      * Costruisce una chiave della data
