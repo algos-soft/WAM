@@ -2,9 +2,7 @@ package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
 import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
@@ -19,7 +17,6 @@ import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.screen.ErrorScreen;
-import it.algos.webbase.web.ui.AlgosUI;
 
 import java.net.URI;
 
@@ -52,7 +49,7 @@ public class WamUI extends UI {
         Component comp;
 
         // legge la croce
-        company = leggeCroce();
+        company = leggeCompany();
 
         if (company != null) {
 
@@ -88,7 +85,7 @@ public class WamUI extends UI {
      *
      * @return la company selezionata
      */
-    private WamCompany leggeCroce() {
+    private WamCompany leggeCompany() {
         WamCompany company = null;
 
         // recupero la company dall'url
