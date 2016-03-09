@@ -7,13 +7,12 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.milite.MiliteMod;
-import it.algos.wam.entity.servizio.ServizioMod;
-import it.algos.wam.entity.turno.TurnoMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.ruolo.Ruolo;
+import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.screen.ErrorScreen;
@@ -44,52 +43,29 @@ public class WamUI extends AlgosUI {
     @Override
     protected void init(VaadinRequest request) {
 //        footerLayout.addComponent(new Label("Wam versione 0.1 del 1 mar 2016"));
-        boolean vaiSubitoTabellone = false;
-        Ruolo ruolo = new Ruolo();
-        String nomeRuolo;
-        menuBar = new MenuBar();
-        Component baseComp = null;
+        WamCompany company = null;
+        Component comp;
 
         //--legge la croce
-        //--vedere se serve il login per vedere il tabellone (dipende dalla croce)
-        vaiSubitoTabellone = leggeCroce(request);
+        company = leggeCroce(request);
 
-        //@todo programmatore (da leggere)
-        nomeRuolo = ruolo.getNome();
-        WamRuoli eRuolo = WamRuoli.get(nomeRuolo);
-        eRuolo = WamRuoli.developer;
-        if (eRuolo != null) {
-            switch (eRuolo) {
-                case developer:
-                    baseComp = new BaseComponent(this);
-                    configProgrammatore((BaseComponent) baseComp, vaiSubitoTabellone);
-                    break;
-                case custode:
-
-                    break;
-                case admin:
-
-                    break;
-                case user:
-
-                    break;
-//            case guest:
-////                configUtente(baseComp, true);
-//                break;
-                default: // caso non definito
-                    if (vaiSubitoTabellone) {
-                        baseComp = new BaseComponent(this);
-                        configGuest((BaseComponent) baseComp);
-                    } else {
-                        baseComp = gatErrorComp();
-                    }// fine del blocco if-else
-                    break;
-            } // fine del blocco switch
+        if (company != null) {
+            //--controlla la property della croce, per sapere se far partire subito il tabellone
+            if (company.isVaiSubitoTabellone()) {  // mostra subito il tabellone senza login
+                comp = new ErrorScreen("qui ci va il tabellone");
+            } else {
+                //--crea il componente da visualizzare in funzione del ruolo.
+                comp = creaCompPerRuolo();
+                if (comp == null) {
+                    comp = new ErrorScreen("Login fallito");
+                }// end of if cycle
+            }// end of if/else cycle
         } else {
-            baseComp = gatErrorComp();
-        }// fine del blocco if-else
+            // company non specificata nell'url
+            comp = new ErrorScreen("Nome azienda non specificato nell'url o non esistente");
+        }// end of if/else cycle
 
-        this.setContent(baseComp);
+        this.setContent(comp);
 
     }// end of method
 
@@ -98,14 +74,12 @@ public class WamUI extends AlgosUI {
      * Se non trova nulla, di default parte con la croce 'demo'
      * Se il nome della croce è sbagliato o non esiste nella lista delle croci esistenti (?), mostra un messaggio di errore
      * Registra la croce (come Company) nella Sessione corrente
-     * Controlla la property della croce, per sapere se far partire subito il tabellone
      *
      * @param request the Vaadin request that caused this UI to be created
-     * @return la partenza immediata del tabellone senza login
+     * @return la croce selezionata (company)
      */
-    private boolean leggeCroce(VaadinRequest request) {
-        boolean vaiSubitoTabellone = false;
-        BaseCompany company = null;
+    private WamCompany leggeCroce(VaadinRequest request) {
+        WamCompany company = null;
         String path;
         String siglaCroce = "";
         String[] parti = null;
@@ -126,41 +100,106 @@ public class WamUI extends AlgosUI {
         }// end of if cycle
         CompanySessionLib.setCompany(company);
 
-        if (company != null) {
-            vaiSubitoTabellone = ((WamCompany) company).isVaiSubitoTabellone();
-        }// end of if cycle
-
-        return vaiSubitoTabellone;
+        return company;
     }// end of method
 
+
+    /**
+     * Crea il componente da visualizzare in funzione del ruolo.
+     *
+     * @return il componente
+     */
+    private Component creaCompPerRuolo() {
+        Component comp = null;
+
+        // chiedo il login - se riuscito registro l'utente nella sessione
+        Utente user = login();
+
+        // recupero il ruolo dall'utente
+        Ruolo ruolo = new Ruolo();  // provvisorio
+        ruolo.setNome("prog");
+        //ruolo.setNome(TipoRuolo.developer.get);
+
+        String nomeRuolo = ruolo.getNome();
+        WamRuoli eRuolo = WamRuoli.get(nomeRuolo);
+
+        eRuolo = WamRuoli.developer;  // provvisorio
+
+        switch (eRuolo) {
+            case developer:
+                comp = creaCompProgrammatore();
+                break;
+            case custode:
+
+                break;
+            case admin:
+
+                break;
+            case user:
+
+                break;
+            default: // caso non definito
+                break;
+        }
+
+        return comp;
+    }// end of method
+
+    /**
+     * Presento il dialogo di login
+     *
+     * @return l'utente loggato, null se fallito
+     */
+    private Utente login() {
+        Utente utente = new Utente();
+        return utente;
+    }// end of method
 
     private Component gatErrorComp() {
         return new ErrorScreen("Errore");
     }
 
-    private void configProgrammatore(BaseComponent baseComp, boolean vaiSubitoTabellone) {
+//    private void configProgrammatore(BaseComponent baseComp, boolean vaiSubitoTabellone) {
+////        ModulePop modMilite = new MiliteMod();
+//        nav = baseComp.getNav();
+//        this.add(new WamCompanyMod());
+//        this.add(new MiliteMod());
+//        this.add(new FunzioneMod());
+//
+//        if (vaiSubitoTabellone) {
+//            nav.navigateTo("tabellone");
+//        } else {
+//            nav.navigateTo(MiliteMod.MENU_ADDRESS);
+//        }// fine del blocco if-else
+//
+//        baseComp.putHeader(menuBar);
+//    }// end of method
+
+
+    /**
+     * Crea il componente per il programmatore
+     *
+     * @return il componente creato
+     */
+    private Component creaCompProgrammatore() {
+        BaseComponent comp = new BaseComponent(this);
+
 //        ModulePop modMilite = new MiliteMod();
-        nav = baseComp.getNav();
+        nav = comp.getNav();
+
+        menuBar = new MenuBar();
         this.add(new WamCompanyMod());
         this.add(new MiliteMod());
         this.add(new FunzioneMod());
+        comp.putHeader(menuBar);
 
-        if (vaiSubitoTabellone) {
-            nav.navigateTo("tabellone");
-        } else {
-            nav.navigateTo(MiliteMod.MENU_ADDRESS);
-        }// fine del blocco if-else
+        nav.navigateTo(MiliteMod.MENU_ADDRESS);
 
-        baseComp.putHeader(menuBar);
+        return comp;
 
     }
 
     private void configCustode(BaseComponent baseComp) {
-        this.add(new WamCompanyMod());
-        this.addModulo(new MiliteMod());
-        this.addModulo(new FunzioneMod());
-        this.addModulo(new ServizioMod());
-        this.addModulo(new TurnoMod());
     }
 
     private void configAdmin(BaseComponent baseComp) {
