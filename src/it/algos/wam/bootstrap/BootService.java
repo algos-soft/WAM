@@ -21,6 +21,7 @@ import java.util.Date;
  */
 public abstract class BootService {
 
+
     private static ArrayList<Funzione> FUNZ_DEMO;
     private static ArrayList<Funzione> FUNZ_TEST;
 
