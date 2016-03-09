@@ -162,6 +162,9 @@ public class WamUI extends AlgosUI {
      */
     private Utente login() {
         Utente utente = new Utente();
+//        Ruolo ruolo = new Ruolo();
+//        ruolo.setNome(WamRuoli.developer.getNome());
+//        utente.set
         return utente;
     }// end of method
 
