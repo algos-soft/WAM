@@ -67,6 +67,7 @@ public class WamUI extends AlgosUI {
                     comp = new ErrorScreen("Login fallito");
                 }// end of if cycle
             }// end of if/else cycle
+
         } else {
             // company non specificata nell'url
             // company non trovata nel db
@@ -168,22 +169,6 @@ public class WamUI extends AlgosUI {
         return new ErrorScreen("Errore");
     }
 
-//    private void configProgrammatore(BaseComponent baseComp, boolean vaiSubitoTabellone) {
-////        ModulePop modMilite = new MiliteMod();
-//        nav = baseComp.getNav();
-//        this.add(new WamCompanyMod());
-//        this.add(new MiliteMod());
-//        this.add(new FunzioneMod());
-//
-//        if (vaiSubitoTabellone) {
-//            nav.navigateTo("tabellone");
-//        } else {
-//            nav.navigateTo(MiliteMod.MENU_ADDRESS);
-//        }// fine del blocco if-else
-//
-//        baseComp.putHeader(menuBar);
-//    }// end of method
-
 
     /**
      * Crea il componente per il programmatore
@@ -193,10 +178,10 @@ public class WamUI extends AlgosUI {
     private Component creaCompProgrammatore() {
         BaseComponent comp = new BaseComponent(this);
 
-//        ModulePop modMilite = new MiliteMod();
         nav = comp.getNav();
 
         menuBar = new MenuBar();
+        //this.addModulo(WamCompanyMod.class);
         this.add(new WamCompanyMod());
         this.add(new MiliteMod());
         this.add(new FunzioneMod());
@@ -231,9 +216,4 @@ public class WamUI extends AlgosUI {
         });
     }
 
-//    private void creaComponenteBase(boolean usaTabellone){
-//        VerticalLayout layout=new VerticalLayout();
-//        layout.addComponent();
-//
-//    }
 }
