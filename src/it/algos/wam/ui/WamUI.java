@@ -7,7 +7,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
 import it.algos.wam.entity.funzione.FunzioneMod;
-import it.algos.wam.entity.milite.MiliteMod;
+import it.algos.wam.entity.volontario.VolontarioMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
@@ -183,11 +183,11 @@ public class WamUI extends AlgosUI {
         menuBar = new MenuBar();
         //this.addModulo(WamCompanyMod.class);
         this.add(new WamCompanyMod());
-        this.add(new MiliteMod());
+        this.add(new VolontarioMod());
         this.add(new FunzioneMod());
         comp.putHeader(menuBar);
 
-        nav.navigateTo(MiliteMod.MENU_ADDRESS);
+        nav.navigateTo(VolontarioMod.MENU_ADDRESS);
 
         return comp;
 
