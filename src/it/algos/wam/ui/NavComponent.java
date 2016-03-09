@@ -12,6 +12,7 @@ import it.algos.webbase.web.navigator.AlgosNavigator;
 import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.navigator.NavPlaceholder;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 
 /**
@@ -27,7 +28,7 @@ public class NavComponent extends VerticalLayout {
 
     private AlgosNavigator nav;
     private MenuBar menuBar = new MenuBar();
-    private NavPlaceholder body = new NavPlaceholder();
+    private NavPlaceholder body = new NavPlaceholder(null);
     private VerticalLayout footer = new VerticalLayout();
     private LinkedHashMap<String, MenuBar.MenuItem> mappaItem = new LinkedHashMap<String, MenuBar.MenuItem>();
 
@@ -47,10 +48,19 @@ public class NavComponent extends VerticalLayout {
      * Da invocare per configurare il Navigator dopo aver aggiunto i componenti
      */
     public void setup() {
+
+        // configura il navigator in base alla MenuBar
         nav.configureFromMenubar(menuBar);
 
-//        MenuBar.MenuItem firstItem = mappaItem.values().(0);
-//        nav.navigateTo();
+        // manda il navigatore alla prima view
+        Collection<MenuBar.MenuItem> coll = mappaItem.values();
+        MenuBar.MenuItem[] items = coll.toArray(new MenuBar.MenuItem[0]);
+        if (items.length>0){
+            MenuBar.MenuItem item = items[0];
+            MenuCommand mcmd = (MenuCommand)item.getCommand();
+            String addr = mcmd.getNavigatorAddress();
+            nav.navigateTo(addr);
+        }
     }
 
 
