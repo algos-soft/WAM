@@ -2,6 +2,7 @@ package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
@@ -17,6 +18,8 @@ import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.screen.ErrorScreen;
 import it.algos.webbase.web.ui.AlgosUI;
+
+import java.net.URI;
 
 /**
  * Created by Gac on 08 mar 2016.
@@ -50,6 +53,10 @@ public class WamUI extends AlgosUI {
         company = leggeCroce(request);
 
         if (company != null) {
+
+            // registra la Company nella sessione
+            CompanySessionLib.setCompany(company);
+
             //--controlla la property della croce, per sapere se far partire subito il tabellone
             if (company.isVaiSubitoTabellone()) {  // mostra subito il tabellone senza login
                 comp = new ErrorScreen("qui ci va il tabellone");
@@ -81,25 +88,26 @@ public class WamUI extends AlgosUI {
      */
     private WamCompany leggeCroce(VaadinRequest request) {
         WamCompany company = null;
-        String path;
-        String siglaCroce = "";
-        String[] parti = null;
 
-        path = request.getPathInfo();
-        if (path != null && !path.equals("")) {
-            parti = path.split("/");
-        }// end of if cycle
+        // recupero la company dall'url
+        URI uri = Page.getCurrent().getLocation();
+        String path = uri.getPath();
+        String[] parti = path.split("/");
+        String siglaCroce = null;
+        for (int i = 0; i < parti.length; i++) {
+            if (i > 1) {
+                siglaCroce = parti[i];
+                break;
+            }
+        }
 
-        if (parti != null && parti.length > 1) {
-            siglaCroce = parti[1];
-        }// fine del blocco if
-
-        //legge la croce
-        company = WamCompany.findByCode(siglaCroce);
-        if (company == null) {
-            company = WamCompany.findByCode("demo");
-        }// end of if cycle
-        CompanySessionLib.setCompany(company);
+        // recupero la company dal db
+        if(siglaCroce!=null){
+            company = WamCompany.findByCode(siglaCroce);
+            if (company == null) {
+                company = WamCompany.findByCode("demo");
+            }// end of if cycle
+        }
 
         return company;
     }// end of method
