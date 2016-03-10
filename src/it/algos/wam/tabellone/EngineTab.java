@@ -2,13 +2,18 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.lib.LibWam;
 import it.algos.wam.wrap.Iscrizione;
 import it.algos.wam.wrap.WrapServizio;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,10 +25,10 @@ public class EngineTab {
     /**
      * Genera un tabellone da un array di wrapper di riga
      */
-    public static CTabellone creaTabellone(WTabellone wrapper) {
+    public static GridTabellone creaTabellone(WTabellone wrapper) {
         LocalDate d1 = wrapper.getD1();
         LocalDate d2 = wrapper.getD2();
-        CTabellone tabellone = new CTabellone(d1, d2);
+        GridTabellone tabellone = new GridTabellone(d1, d2);
         for (WRigaTab riga : wrapper) {
             addRiga(tabellone, riga);
         }
@@ -36,7 +41,7 @@ public class EngineTab {
      * @param tab  il tabellone
      * @param riga la riga da aggiungere
      */
-    public static void addRiga(CTabellone tab, WRigaTab riga) {
+    public static void addRiga(GridTabellone tab, WRigaTab riga) {
 
         // aggiunge una riga al tabellone
         int row = tab.getRows();
@@ -85,7 +90,7 @@ public class EngineTab {
      * @param turno il turno
      * @return il componente grafico
      */
-    private static TabelloneCell creaCompTurno(CTabellone tab, Turno turno) {
+    private static TabelloneCell creaCompTurno(GridTabellone tab, Turno turno) {
         Servizio serv = turno.getServizio();
         int numFunzioni = serv.getNumFunzioni();
         CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni, turno);
@@ -137,6 +142,48 @@ public class EngineTab {
             }
         }
         return cfunzioni;
+    }
+
+
+    /**
+     * Crea i wrapper per le righe di tabellone
+     * Un wrapper per ogni servizio
+     */
+    public static WTabellone creaRighe(LocalDate d1, int quantiGiorni) {
+
+        LocalDate d2=d1.plusDays(quantiGiorni);
+        WTabellone wtab =new WTabellone(d1, d2);
+
+        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
+        ArrayList<Servizio> listaServizi = null;
+
+        int primoGiorno = LibWam.creaChiave(d1);
+
+        if (company != null) {
+            listaServizi = Servizio.findAll(company);
+        }
+
+        if (listaServizi != null && listaServizi.size() > 0) {
+
+            long giorni = d1.until( d2, ChronoUnit.DAYS)+1;
+
+            for (Servizio servizio : listaServizi) {
+
+                List<Turno> turni = new ArrayList<>();
+
+                // todo qui fare una sola query dal... al... non un ciclo!
+                for (int chiave = primoGiorno; chiave < primoGiorno+giorni; chiave++) {
+                    Turno turno = Turno.find(company, servizio, chiave);
+                    if (turno!=null){
+                        turni.add(turno);
+                    }
+                }
+                wtab.add(new WRigaTab(servizio, turni.toArray(new Turno[0])));
+            }
+        }
+
+        return wtab;
+
     }
 
 

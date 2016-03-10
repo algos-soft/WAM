@@ -12,7 +12,7 @@ import it.algos.wam.entity.turno.Turno;
  */
 public class CTurnoDisplay extends GridLayout implements TabelloneCell {
 
-    private CTabellone tabellone;
+    private GridTabellone tabellone;
     private int x;
     private int y;
     private Turno turno;
@@ -24,7 +24,7 @@ public class CTurnoDisplay extends GridLayout implements TabelloneCell {
      * @param rows      il numero di righe nella griglia
      * @param turno     il turno di riferimento
      */
-    public CTurnoDisplay(CTabellone tabellone, int rows, Turno turno) {
+    public CTurnoDisplay(GridTabellone tabellone, int rows, Turno turno) {
         super(1, rows);
         this.tabellone = tabellone;
         this.turno=turno;

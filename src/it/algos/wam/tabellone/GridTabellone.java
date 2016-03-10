@@ -13,20 +13,22 @@ import java.util.ArrayList;
  * Sulle righe sono rappresentati i servizi, sulle colonne i giorni.
  * Created by alex on 20/02/16.
  */
-public class CTabellone extends GridLayout implements View {
+public class GridTabellone extends GridLayout implements View {
 
     private LocalDate dStart;
     private LocalDate dEnd;
 
     private ArrayList<ClickCellListener> clickCellListeners = new ArrayList();
 
-    public CTabellone(LocalDate dStart, LocalDate dEnd) {
+    public GridTabellone(LocalDate dStart, LocalDate dEnd) {
 
         this.dStart = dStart;
         this.dEnd = dEnd;
 
         addStyleName("yellowBg");
         addStyleName("ctabellone");
+
+        setSizeUndefined();
 
         //setWidth("100%");
         setMargin(true);

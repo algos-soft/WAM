@@ -9,13 +9,13 @@ import com.vaadin.ui.VerticalLayout;
  */
 public class CNoTurno extends VerticalLayout implements TabelloneCell {
 
-    private CTabellone tabellone;
+    private GridTabellone tabellone;
     private InfoNewTurnoWrap wrapper;
     private int x;
     private int y;
 
 
-    public CNoTurno(CTabellone tabellone, InfoNewTurnoWrap wrapper) {
+    public CNoTurno(GridTabellone tabellone, InfoNewTurnoWrap wrapper) {
         super();
         this.tabellone=tabellone;
         this.wrapper=wrapper;

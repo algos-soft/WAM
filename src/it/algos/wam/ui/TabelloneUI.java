@@ -51,18 +51,22 @@ public class TabelloneUI extends UI {
         setContent(layout);
 
         // crea il tabellone
-        WTabellone wrapper = creaRighe();
-        CTabellone tab = EngineTab.creaTabellone(wrapper);
-        tab.setSizeUndefined();
+        LocalDate d1=LocalDate.of(2016, 3, 2);
+        WTabellone wrapper = EngineTab.creaRighe(d1,7);
+        GridTabellone grid = EngineTab.creaTabellone(wrapper);
 
 
         // aggiunge un listener per la cella cliccata al tabellone
-        tab.addClickCellListener(new CTabellone.ClickCellListener() {
+        grid.addClickCellListener(new GridTabellone.ClickCellListener() {
             @Override
-            public void cellClicked(CTabellone.ClickCellEvent e) {
+            public void cellClicked(GridTabellone.ClickCellEvent e) {
                 TabelloneUI.this.cellClicked(e.getTipo(), e.getCol(), e.getRow(), e.getCellObject());
             }
         });
+
+        Tabellone tab = new Tabellone();
+        //tab.setContent(grid);
+
 
         // crea un navigator e lo registra sul componente placeholder
         // il navigator sostituisce i componenti dentro al placeolder
@@ -88,47 +92,6 @@ public class TabelloneUI extends UI {
     }
 
 
-    /**
-     * Crea i wrapper per le righe di tabellone
-     * Un wrapper per ogni servizio
-     */
-    private WTabellone creaRighe() {
-
-        LocalDate d1=LocalDate.of(2016, 3, 2);
-        LocalDate d2=d1.plusDays(6);
-        WTabellone wtab =new WTabellone(d1, d2);
-
-        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
-        ArrayList<Servizio> listaServizi = null;
-
-        int primoGiorno = LibWam.creaChiave(d1);
-
-        if (company != null) {
-            listaServizi = Servizio.findAll(company);
-        }
-
-        if (listaServizi != null && listaServizi.size() > 0) {
-
-            long giorni = d1.until( d2, ChronoUnit.DAYS)+1;
-
-            for (Servizio servizio : listaServizi) {
-
-                List<Turno> turni = new ArrayList<>();
-
-                // todo qui fare una sola query dal... al... non un ciclo!
-                for (int chiave = primoGiorno; chiave < primoGiorno+giorni; chiave++) {
-                    Turno turno = Turno.find(company, servizio, chiave);
-                    if (turno!=null){
-                        turni.add(turno);
-                    }
-                }
-                wtab.add(new WRigaTab(servizio, turni.toArray(new Turno[0])));
-            }
-        }
-
-        return wtab;
-
-    }
 
     /**
      * E' stata cliccata una cella del tabellone
