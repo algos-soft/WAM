@@ -1,18 +1,27 @@
 package it.algos.wam.tabellone;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.webbase.web.field.DateField;
+import it.algos.webbase.web.field.IntegerField;
+import it.algos.webbase.web.form.AForm;
 import it.algos.webbase.web.lib.DateConvertUtils;
+import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.screen.ErrorScreen;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Date;
 
 /**
  * Tabellone con menubar dei comandi.
@@ -25,24 +34,26 @@ public class Tabellone extends VerticalLayout implements View {
     //    private VerticalLayout placeholder =new VerticalLayout();
     private TabComponent tabComponent;
     private EditComponent editComponent;
+    private SearchComponent searchComponent;
 
     private Navigator navigator;
 
     public Tabellone() {
 
+        setSizeFull();
+
         fillMenu();
 
         tabComponent = new TabComponent(menuBar);
-        editComponent = new EditComponent();
-//        tabComponent.addComponent(menuBar);
-//        tabComponent.addComponent(placeholder);
+        creaGrid(LocalDate.now());
 
-//        addComponent(menuBar);
-//        addComponent(placeholder);
+        editComponent = new EditComponent();
+        searchComponent = new SearchComponent();
 
         navigator = new Navigator(UI.getCurrent(), this);
         navigator.addView("tabellone", tabComponent);
         navigator.addView("edit", editComponent);
+        navigator.addView("search", searchComponent);
         navigator.setErrorView(new TabErrView());
         navigator.navigateTo("tabellone");
 
@@ -52,49 +63,51 @@ public class Tabellone extends VerticalLayout implements View {
         menuBar.addItem("precedente", FontAwesome.ARROW_LEFT, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                LocalDate d1 = LocalDate.of(2016, 3, 2);
-                creaGrid(d1);
-//                WTabellone wrapper = EngineTab.creaRighe(d1,7);
-//                GridTabellone grid = EngineTab.creaTabellone(wrapper);
-//                setContent(grid);
+                LocalDate current = tabComponent.getDataStart();
+                if (current != null) {
+                    creaGrid(current.minusWeeks(1));
+                } else {
+                    Notification.show("Data corrente nulla!", Notification.Type.ERROR_MESSAGE);
+                }
             }
         });
 
         menuBar.addItem("da lunedì", FontAwesome.CALENDAR_O, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                LocalDate d1 = LocalDate.of(2016, 3, 2);
-                creaGrid(d1);
-//                WTabellone wrapper = EngineTab.creaRighe(d1,7);
-//                GridTabellone grid = EngineTab.creaTabellone(wrapper);
-//                setContent(grid);
+                LocalDate d1 = LocalDate.now();
+                int numDow = d1.getDayOfWeek().getValue();
+                LocalDate d2 = d1.minusDays(numDow - 1);
+                creaGrid(d2);
             }
         });
 
         menuBar.addItem("da oggi", FontAwesome.CALENDAR_O, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                LocalDate d1 = LocalDate.of(2016, 3, 2);
-                creaGrid(d1);
-//                WTabellone wrapper = EngineTab.creaRighe(d1,7);
-//                GridTabellone grid = EngineTab.creaTabellone(wrapper);
-//                setContent(grid);
+                creaGrid(LocalDate.now());
             }
         });
-
-
 
         menuBar.addItem("successiva", FontAwesome.ARROW_RIGHT, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                LocalDate d1 = LocalDate.of(2016, 3, 9);
-                creaGrid(d1);
-
-//                WTabellone wrapper = EngineTab.creaRighe(d1,7);
-//                GridTabellone grid = EngineTab.creaTabellone(wrapper);
-//                setContent(grid);
+                LocalDate current = tabComponent.getDataStart();
+                if (current != null) {
+                    creaGrid(current.plusWeeks(1));
+                } else {
+                    Notification.show("Data corrente nulla!", Notification.Type.ERROR_MESSAGE);
+                }
             }
         });
+
+        menuBar.addItem("cerca", FontAwesome.SEARCH, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                navigator.navigateTo("search");
+            }
+        });
+
 
     }
 
@@ -110,9 +123,12 @@ public class Tabellone extends VerticalLayout implements View {
     /**
      * Crea una GridTabellone a partire dalla data richiesta e la mette
      * nel componente visibile
+     *
+     * @param d1           la data iniziale
+     * @param quantiGiorni il numero di giorni da visualizzare
      */
-    private void creaGrid(LocalDate d1) {
-        WTabellone wrapper = EngineTab.creaRighe(d1, 7);
+    private void creaGrid(LocalDate d1, int quantiGiorni) {
+        WTabellone wrapper = EngineTab.creaRighe(d1, quantiGiorni);
         GridTabellone grid = EngineTab.creaTabellone(wrapper);
         tabComponent.setGrid(grid);
 
@@ -124,6 +140,16 @@ public class Tabellone extends VerticalLayout implements View {
             }
         });
 
+    }
+
+
+    /**
+     * Crea una GridTabellone a partire dalla data richiesta della durata di 7 giorni
+     * e la mette nel componente visibile
+     * @param d1           la data iniziale
+     */
+    private void creaGrid(LocalDate d1) {
+        creaGrid(d1, 7);
     }
 
 
@@ -168,6 +194,7 @@ public class Tabellone extends VerticalLayout implements View {
     class TabComponent extends VerticalLayout implements View {
 
         private VerticalLayout gridPlaceholder = new VerticalLayout();
+        private GridTabellone gridTabellone;
 
         public TabComponent(MenuBar menuBar) {
             addComponent(menuBar);
@@ -176,8 +203,17 @@ public class Tabellone extends VerticalLayout implements View {
 
 
         public void setGrid(GridTabellone grid) {
+            this.gridTabellone = grid;
             gridPlaceholder.removeAllComponents();
             gridPlaceholder.addComponent(grid);
+        }
+
+        public LocalDate getDataStart() {
+            LocalDate data = null;
+            if (gridTabellone != null) {
+                data = gridTabellone.getDataStart();
+            }
+            return data;
         }
 
         @Override
@@ -226,6 +262,105 @@ public class Tabellone extends VerticalLayout implements View {
         public void enter(ViewChangeListener.ViewChangeEvent event) {
 
         }
+
+    }
+
+
+    /**
+     * Componente View con MenuBar comandi ricerca perdiodo.
+     */
+    class SearchComponent extends VerticalLayout implements View {
+
+        private SearchForm form;
+
+        /**
+         * Constructor
+         */
+        public SearchComponent() {
+            setSizeFull();
+            form = new SearchForm();
+            addComponent(form);
+            setComponentAlignment(form, Alignment.MIDDLE_CENTER);
+            addStyleName("yellowBg");
+        }
+
+        @Override
+        public void enter(ViewChangeListener.ViewChangeEvent event) {
+
+        }
+
+
+    }
+
+    /**
+     * Componente View con MenuBar comandi ricerca perdiodo.
+     */
+    class SearchForm extends AForm {
+
+        /**
+         * Constructor
+         */
+        public SearchForm() {
+            super(new PropertysetItem());
+            setSizeUndefined();
+            getItem().addItemProperty("data", new ObjectProperty(new Date()));
+            getItem().addItemProperty("giorni", new ObjectProperty(7));
+            init();
+
+            addStyleName("blueBg");
+
+            setConfirmText("Conferma");
+
+
+
+            addFormListener(new FormListener() {
+                @Override
+                public void cancel_() {
+                    navigator.navigateTo("tabellone");
+                }
+
+                @Override
+                public void commit_() {
+                    int numGiorni = getNumGiorni();
+                    if(numGiorni>0 && numGiorni<60){
+                        LocalDate data = getDataInizio();
+                        if(data!=null){
+                            creaGrid(data, numGiorni);
+                            navigator.navigateTo("tabellone");
+                        }else{
+                            Notification.show("La data non può essere nulla.", Notification.Type.WARNING_MESSAGE);
+                        }
+                    }else{
+                        Notification.show("Minimo 1 giorno, massimo 60 giorni.", Notification.Type.WARNING_MESSAGE);
+                    }
+                }
+
+            });
+
+        }
+
+        @Override
+        public void createFields() {
+            addField("data", new DateField("Data iniziale"));
+            addField("giorni", new IntegerField("Numero di giorni"));
+        }
+
+        private int getNumGiorni(){
+            Object obj = getFieldValue("giorni");
+            return Lib.getInt(obj);
+        }
+
+        private LocalDate getDataInizio(){
+            LocalDate data=null;
+            Object obj = getFieldValue("data");
+            if(obj!=null && obj instanceof Date){
+                Date d = (Date)obj;
+                data = DateConvertUtils.asLocalDate(d);
+            }
+            return data;
+        }
+
+
 
     }
 

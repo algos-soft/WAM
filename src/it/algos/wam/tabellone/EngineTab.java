@@ -151,7 +151,7 @@ public class EngineTab {
      */
     public static WTabellone creaRighe(LocalDate d1, int quantiGiorni) {
 
-        LocalDate d2=d1.plusDays(quantiGiorni);
+        LocalDate d2=d1.plusDays(quantiGiorni-1);
         WTabellone wtab =new WTabellone(d1, d2);
 
         WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
