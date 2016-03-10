@@ -201,11 +201,14 @@ $v-font-weight: 400;
     background: -moz-linear-gradient(top, $dark, $light, $dark);
     background: -o-linear-gradient(top, $dark, $light, $dark);
     background: linear-gradient(top, $dark, $light, $dark);
+    cursor: pointer;
   }
+
 
   // componente no turno
   .cnoturno {
     background: rgba(215, 215, 215, 0.47);
+    cursor: pointer;
   }
 
 

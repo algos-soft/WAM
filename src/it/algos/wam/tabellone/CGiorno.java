@@ -13,9 +13,9 @@ public class CGiorno extends Label {
     public CGiorno(LocalDate date) {
         super();
 
-        setWidth("6em");
+        setWidth(GridTabellone.W_COLONNE_TURNI);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE d");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE d MMM");
         String text = date.format(formatter);
         setValue(text);
         addStyleName("cgiorno");

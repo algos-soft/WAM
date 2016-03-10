@@ -49,12 +49,10 @@ public class WamUI extends UI {
         }
         setTheme(themeName);
 
-//        footerLayout.addComponent(new Label("Wam versione 0.1 del 1 mar 2016"));
-        WamCompany company = null;
-        Component comp;
-
         // legge la croce
-        company = leggeCompany();
+        WamCompany company = leggeCompany();
+
+        Component comp;
 
         if (company != null) {
 
@@ -192,7 +190,7 @@ public class WamUI extends UI {
         MenuBar.MenuItem item = nc.addView(WamCompanyMod.class, WamCompanyMod.MENU_ADDRESS, FontAwesome.AMBULANCE);
         nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
         nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.TASKS);
-        nc.setFooter(new Label("Footer text"));
+//        nc.setFooter(new Label("Footer text"));
 
         // aggiungo un MenuItem con il tabellone.
         // volendo posso anche aggiungerlo nella posizione desiderata

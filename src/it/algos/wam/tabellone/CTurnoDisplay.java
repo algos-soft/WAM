@@ -30,9 +30,10 @@ public class CTurnoDisplay extends GridLayout implements TabelloneCell {
         this.turno=turno;
 
         setSpacing(false);
-        setWidth("6em");
+        setWidth(GridTabellone.W_COLONNE_TURNI);
         setHeight("100%");
         addStyleName("cturno");
+
 
         addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
             @Override

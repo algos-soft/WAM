@@ -1,9 +1,11 @@
 package it.algos.wam.tabellone;
 
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
@@ -119,6 +121,8 @@ public class CTurnoEditor extends VerticalLayout implements View {
         });
 
         Button bRegistra = new Button("Registra");
+        bRegistra.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        bRegistra.addStyleName(ValoTheme.BUTTON_PRIMARY);    // "primary" not "default"
         bRegistra.addClickListener(new Button.ClickListener() {
 
             @Override

@@ -20,7 +20,7 @@ public class CNoTurno extends VerticalLayout implements TabelloneCell {
         this.tabellone=tabellone;
         this.wrapper=wrapper;
         setSpacing(false);
-        setWidth("6em");
+        setWidth(GridTabellone.W_COLONNE_TURNI);
         setHeight("100%");
         addStyleName("cnoturno");
         addComponent(new Label("non previsto"));

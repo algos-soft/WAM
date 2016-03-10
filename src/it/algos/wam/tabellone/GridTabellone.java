@@ -15,6 +15,7 @@ import java.util.ArrayList;
  */
 public class GridTabellone extends GridLayout implements View {
 
+    public static final String W_COLONNE_TURNI="7em";   // larghezza fissa delle colonne turni
     private LocalDate dStart;
     private LocalDate dEnd;
 
