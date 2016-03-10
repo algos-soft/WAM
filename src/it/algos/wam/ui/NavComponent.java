@@ -96,8 +96,8 @@ public class NavComponent extends VerticalLayout {
      * @param label     the text for the menu item
      * @param icon      the icon for the menu item
      */
-    public void addView(Class<? extends View> viewClass, String label, Resource icon) {
-        addView(viewClass, true, label, icon);
+    public MenuBar.MenuItem addView(Class<? extends View> viewClass, String label, Resource icon) {
+        return addView(viewClass, true, label, icon);
     }
 
 
@@ -114,7 +114,7 @@ public class NavComponent extends VerticalLayout {
      * @param label      the text for the menu item
      * @param icon       the icon for the menu item
      */
-    public void addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
+    public MenuBar.MenuItem addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
 
         MenuBar.MenuItem menuItem = createMenuItem(viewClass, label, viewCached, icon);
 
@@ -122,6 +122,8 @@ public class NavComponent extends VerticalLayout {
             String keyModulo = viewClass.getSimpleName();
             mappaItem.put(keyModulo, menuItem);
         }
+
+        return menuItem;
 
     }
 
@@ -152,4 +154,8 @@ public class NavComponent extends VerticalLayout {
         return nav;
     }
 
+
+    public MenuBar getMenuBar() {
+        return menuBar;
+    }
 }

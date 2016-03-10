@@ -5,9 +5,9 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.wrap.Iscrizione;
 import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.lib.DateConvertUtils;
@@ -19,7 +19,7 @@ import java.util.EventObject;
 import java.util.HashMap;
 
 /**
- * Componente grafico per presentare e modificare un turno.
+ * Componente per presentare e modificare un turno nel Tabellone.
  * Created by alex on 05/03/16.
  */
 public class CTurnoEditor extends VerticalLayout implements View {
@@ -29,22 +29,14 @@ public class CTurnoEditor extends VerticalLayout implements View {
     private HashMap<String, RelatedComboField> mappaCombo=new HashMap<>();
 
     public CTurnoEditor(Turno turno) {
+
         this.turno=turno;
 
-        // layout interno
-        VerticalLayout layout = new VerticalLayout();
-        layout.setWidthUndefined();
-        layout.addComponent(creaCompTitolo());
-        layout.addComponent(creaCompIscrizioni());
-        layout.addComponent(creaPanComandi());
-        layout.addStyleName("yellowBg");
+        setSizeUndefined();
 
-        // layout esterno (questo)
-        addComponent(layout);
-        setComponentAlignment(layout, Alignment.MIDDLE_CENTER);
-        setWidth("100%");
-        setHeight("100%");
-        addStyleName("greenBg");
+        addComponent(creaCompTitolo());
+        addComponent(creaCompIscrizioni());
+        addComponent(creaPanComandi());
 
         // seleziona i valori nei combo in base alle iscrizioni esistenti
         for(Iscrizione i : turno.getIscrizioni()){
@@ -75,7 +67,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
         String dataOra =sData+", ore "+sOra;
 
         layout.addComponent(new Label(dataOra));
-        layout.addComponent(new Label("<strong>"+serv.getDescrizione()+"</strong>", ContentMode.HTML));
+        layout.addComponent(new Label("<strong>" + serv.getDescrizione()+"</strong>", ContentMode.HTML));
 
         return layout;
     }
@@ -159,6 +151,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
     public void addDismissListener(DismissListener l){
         dismissListeners.add(l);
     }
+
 
     /**
      * Listener per editor dismissed

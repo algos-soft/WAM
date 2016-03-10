@@ -13,6 +13,7 @@ import it.algos.wam.entity.volontario.VolontarioMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
+import it.algos.wam.tabellone.Tabellone;
 import it.algos.webbase.domain.ruolo.Ruolo;
 import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -25,7 +26,7 @@ import java.net.URI;
 /**
  * Created by Gac on 08 mar 2016.
  */
-@Theme("valo")
+//@Theme("valo")
 public class WamUI extends AlgosUI {
 
     private Navigator nav;
@@ -46,6 +47,17 @@ public class WamUI extends AlgosUI {
      */
     @Override
     protected void init(VaadinRequest request) {
+
+
+        // set theme
+        String themeName;
+        if (Page.getCurrent().getWebBrowser().isTouchDevice()) {
+            themeName = "wam-mob";
+        } else {
+            themeName = "wam";
+        }
+        setTheme(themeName);
+
 //        footerLayout.addComponent(new Label("Wam versione 0.1 del 1 mar 2016"));
         WamCompany company = null;
         Component comp;
@@ -178,11 +190,28 @@ public class WamUI extends AlgosUI {
      */
     private Component creaCompProgrammatore() {
 
+        // creo un componente standard di navigazione
         NavComponent nc = new NavComponent(this);
+
+        // aggiungo le view - la menubar viene riempita automaticamente
         nc.addView(WamCompanyMod.class, WamCompanyMod.MENU_ADDRESS, FontAwesome.AMBULANCE);
         nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
-        nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.TASKS);
+        MenuBar.MenuItem itemFunzione=nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.TASKS);
         nc.setFooter(new Label("Footer text"));
+
+        // aggiungo un MenuItem con il tabellone.
+        // volendo posso anche aggiungerlo nella posizione desiderata
+        MenuBar mb = nc.getMenuBar();
+        mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                Tabellone tab = new Tabellone();
+                setContent(tab);
+            }
+        }, itemFunzione);
+
+        // da chiamare dopo che ho aggiunto tutti i MenuItems,
+        // configura il Navigator in base alla MenuBar
         nc.setup();
 
         return nc;

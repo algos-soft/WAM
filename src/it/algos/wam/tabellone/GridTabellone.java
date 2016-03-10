@@ -25,13 +25,14 @@ public class GridTabellone extends GridLayout implements View {
         this.dStart = dStart;
         this.dEnd = dEnd;
 
-        addStyleName("yellowBg");
+        //addStyleName("yellowBg");
+
         addStyleName("ctabellone");
 
         setSizeUndefined();
 
         //setWidth("100%");
-        setMargin(true);
+        //setMargin(true);
         setSpacing(true);
 
         // determina il numero di colonne turni (giorni)

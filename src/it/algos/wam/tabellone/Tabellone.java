@@ -1,7 +1,5 @@
 package it.algos.wam.tabellone;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.navigator.Navigator;
@@ -18,20 +16,21 @@ import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.screen.ErrorScreen;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Date;
 
 /**
- * Tabellone con menubar dei comandi.
+ * Componente Tabellone.
  * <p>
- * Created by alex on 09/03/16.
+ * Contiene un navigatore che gestisce la navigazione tra i componenti
+ * tabComponent, editComponent, searchComponent.
+ * Il componente tabComponent ospita una menubar con i comandi di spostamento e la griglia del tabellone.
+ * Il componente editComponent presenta il form con i dati di un turno e permette di modificarli.
+ * Il componente searchComponent presenta il dialogo per impostare le conizioni di
+ * ricerca per visualizzare un tabellone custom.
  */
-public class Tabellone extends VerticalLayout implements View {
+public class Tabellone extends VerticalLayout  {
 
-    private MenuBar menuBar = new MenuBar();
-    //    private VerticalLayout placeholder =new VerticalLayout();
     private TabComponent tabComponent;
     private EditComponent editComponent;
     private SearchComponent searchComponent;
@@ -40,16 +39,19 @@ public class Tabellone extends VerticalLayout implements View {
 
     public Tabellone() {
 
-        setSizeFull();
+        //addStyleName("greenBg");
 
-        fillMenu();
+        setSizeUndefined();
+        setMargin(true);
 
-        tabComponent = new TabComponent(menuBar);
+        tabComponent = new TabComponent();
         creaGrid(LocalDate.now());
 
         editComponent = new EditComponent();
         searchComponent = new SearchComponent();
 
+        // creo un Navigator e vi aggiungo i vari componenti che possono
+        // essere presenati dal tabellone
         navigator = new Navigator(UI.getCurrent(), this);
         navigator.addView("tabellone", tabComponent);
         navigator.addView("edit", editComponent);
@@ -57,72 +59,41 @@ public class Tabellone extends VerticalLayout implements View {
         navigator.setErrorView(new TabErrView());
         navigator.navigateTo("tabellone");
 
-    }
 
-    private void fillMenu() {
-        menuBar.addItem("precedente", FontAwesome.ARROW_LEFT, new MenuBar.Command() {
+        // Listener di cambio View nel Navigator.
+        // In funzione della pagina in cui stiamo entrando, cambio
+        // la dimensione del Tabellone
+        navigator.addViewChangeListener(new ViewChangeListener() {
             @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                LocalDate current = tabComponent.getDataStart();
-                if (current != null) {
-                    creaGrid(current.minusWeeks(1));
-                } else {
-                    Notification.show("Data corrente nulla!", Notification.Type.ERROR_MESSAGE);
+            public boolean beforeViewChange(ViewChangeEvent event) {
+                String name = event.getViewName();
+                switch (name) {
+                    case "tabellone":
+                        setSizeUndefined();
+                        break;
+                    case "search":
+                        setSizeFull();
+                        break;
+                    case "edit":
+                        setSizeFull();
+                        break;
                 }
+                return true;
             }
-        });
 
-        menuBar.addItem("da lunedì", FontAwesome.CALENDAR_O, new MenuBar.Command() {
             @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                LocalDate d1 = LocalDate.now();
-                int numDow = d1.getDayOfWeek().getValue();
-                LocalDate d2 = d1.minusDays(numDow - 1);
-                creaGrid(d2);
-            }
-        });
+            public void afterViewChange(ViewChangeEvent event) {
 
-        menuBar.addItem("da oggi", FontAwesome.CALENDAR_O, new MenuBar.Command() {
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                creaGrid(LocalDate.now());
             }
-        });
 
-        menuBar.addItem("successiva", FontAwesome.ARROW_RIGHT, new MenuBar.Command() {
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                LocalDate current = tabComponent.getDataStart();
-                if (current != null) {
-                    creaGrid(current.plusWeeks(1));
-                } else {
-                    Notification.show("Data corrente nulla!", Notification.Type.ERROR_MESSAGE);
-                }
-            }
         });
-
-        menuBar.addItem("cerca", FontAwesome.SEARCH, new MenuBar.Command() {
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                navigator.navigateTo("search");
-            }
-        });
-
 
     }
 
-//    public void setContent(GridTabellone grid){
-//        tabComponent.setGrid(grid);
-//    }
-
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-
-    }
 
     /**
-     * Crea una GridTabellone a partire dalla data richiesta e la mette
-     * nel componente visibile
+     * Crea una GridTabellone a partire dalla data richiesta e per il numero di giorni richiesto
+     * e la mette nel componente visibile
      *
      * @param d1           la data iniziale
      * @param quantiGiorni il numero di giorni da visualizzare
@@ -132,7 +103,7 @@ public class Tabellone extends VerticalLayout implements View {
         GridTabellone grid = EngineTab.creaTabellone(wrapper);
         tabComponent.setGrid(grid);
 
-        // aggiunge un listener per la cella cliccata al tabellone
+        // aggiunge al tabellone un listener per la cella cliccata
         grid.addClickCellListener(new GridTabellone.ClickCellListener() {
             @Override
             public void cellClicked(GridTabellone.ClickCellEvent e) {
@@ -146,7 +117,8 @@ public class Tabellone extends VerticalLayout implements View {
     /**
      * Crea una GridTabellone a partire dalla data richiesta della durata di 7 giorni
      * e la mette nel componente visibile
-     * @param d1           la data iniziale
+     *
+     * @param d1 la data iniziale
      */
     private void creaGrid(LocalDate d1) {
         creaGrid(d1, 7);
@@ -155,6 +127,11 @@ public class Tabellone extends VerticalLayout implements View {
 
     /**
      * E' stata cliccata una cella del tabellone
+     *
+     * @param tipo       tipo di cella
+     * @param col        la colonna
+     * @param row        la riga
+     * @param cellObject l'oggetto specifico trasportato nella cella
      */
     private void cellClicked(CellType tipo, int col, int row, Object cellObject) {
         Turno turno = null;
@@ -173,32 +150,33 @@ public class Tabellone extends VerticalLayout implements View {
                 break;
         }
 
-        editor = new CTurnoEditor(turno);
-        editor.addDismissListener(new CTurnoEditor.DismissListener() {
-            @Override
-            public void editorDismissed(CTurnoEditor.DismissEvent e) {
-                navigator.navigateTo("tabellone");
-            }
-        });
 
-        editComponent.setEditor(editor);
-        //navigator.navigateTo("turno");
+        // assegna il turno al componente editor e naviga al componente
+        editComponent.setTurno(turno);
+        navigator.navigateTo("edit");
 
     }
 
 
     /**
      * Componente View con MenuBar comandi tabellone e griglia tabellone.
-     * Invocare setGrid per sostituire la griglia.
+     * Invocare setGrid() per sostituire la griglia.
      */
-    class TabComponent extends VerticalLayout implements View {
+    private class TabComponent extends VerticalLayout implements View {
 
         private VerticalLayout gridPlaceholder = new VerticalLayout();
         private GridTabellone gridTabellone;
 
-        public TabComponent(MenuBar menuBar) {
-            addComponent(menuBar);
+        public TabComponent() {
+
+            addComponent(new TabMenuBar());
+
+            Label spacer = new Label("");
+            spacer.setHeight("1em");
+            addComponent(spacer);
+
             addComponent(gridPlaceholder);
+
         }
 
 
@@ -221,42 +199,100 @@ public class Tabellone extends VerticalLayout implements View {
 
         }
 
+
+
+    }
+
+
+    /**
+     * Menu bar con i comandi di movimento del tabellone
+     */
+    private class TabMenuBar extends MenuBar{
+        public TabMenuBar() {
+            addItem("precedente", FontAwesome.ARROW_LEFT, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    LocalDate current = tabComponent.getDataStart();
+                    if (current != null) {
+                        creaGrid(current.minusWeeks(1));
+                    } else {
+                        Notification.show("Data corrente nulla!", Notification.Type.ERROR_MESSAGE);
+                    }
+                }
+            });
+
+            addItem("da lunedì", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    LocalDate d1 = LocalDate.now();
+                    int numDow = d1.getDayOfWeek().getValue();
+                    LocalDate d2 = d1.minusDays(numDow - 1);
+                    creaGrid(d2);
+                }
+            });
+
+            addItem("da oggi", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    creaGrid(LocalDate.now());
+                }
+            });
+
+            addItem("successiva", FontAwesome.ARROW_RIGHT, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    LocalDate current = tabComponent.getDataStart();
+                    if (current != null) {
+                        creaGrid(current.plusWeeks(1));
+                    } else {
+                        Notification.show("Data corrente nulla!", Notification.Type.ERROR_MESSAGE);
+                    }
+                }
+            });
+
+            addItem("cerca", FontAwesome.SEARCH, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    navigator.navigateTo("search");
+                }
+            });
+
+        }
     }
 
 
     /**
      * Componente View con MenuBar comandi editor turno e editor turno.
-     * Invocare setEditor per sostituire l'editor.
+     * Invocare il metodo setTurno() per inserire un editor di turno.
      */
-    class EditComponent extends VerticalLayout implements View {
+    private class EditComponent extends VerticalLayout implements View {
 
-        private VerticalLayout placeholder = new VerticalLayout();
+        private CTurnoEditor editor;
 
         public EditComponent() {
-            MenuBar mb = new MenuBar();
-            mb.addItem("Uno", new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
+            setSizeFull();
+        }
 
+        /**
+         * Assegna un Turno a questo componente.
+         * Crea l'editor di turno e lo aggiunge graficamente
+         */
+        public void setTurno(Turno turno) {
+            removeAllComponents();
+            editor = new CTurnoEditor(turno);
+            addComponent(editor);
+            setComponentAlignment(editor, Alignment.MIDDLE_CENTER);
+
+            // quando si dismette l'editor, torna al tabellone
+            editor.addDismissListener(new CTurnoEditor.DismissListener() {
+                @Override
+                public void editorDismissed(CTurnoEditor.DismissEvent e) {
+                    navigator.navigateTo("tabellone");
                 }
             });
 
-            mb.addItem("Due", new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-
-                }
-            });
-
-            addComponent(mb);
-            addComponent(placeholder);
         }
 
-
-        public void setEditor(CTurnoEditor cEditor) {
-            placeholder.removeAllComponents();
-            placeholder.addComponent(cEditor);
-        }
 
         @Override
         public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -269,7 +305,7 @@ public class Tabellone extends VerticalLayout implements View {
     /**
      * Componente View con MenuBar comandi ricerca perdiodo.
      */
-    class SearchComponent extends VerticalLayout implements View {
+    private class SearchComponent extends VerticalLayout implements View {
 
         private SearchForm form;
 
@@ -281,12 +317,11 @@ public class Tabellone extends VerticalLayout implements View {
             form = new SearchForm();
             addComponent(form);
             setComponentAlignment(form, Alignment.MIDDLE_CENTER);
-            addStyleName("yellowBg");
+            //addStyleName("yellowBg");
         }
 
         @Override
         public void enter(ViewChangeListener.ViewChangeEvent event) {
-
         }
 
 
@@ -295,7 +330,7 @@ public class Tabellone extends VerticalLayout implements View {
     /**
      * Componente View con MenuBar comandi ricerca perdiodo.
      */
-    class SearchForm extends AForm {
+    private class SearchForm extends AForm {
 
         /**
          * Constructor
@@ -303,14 +338,17 @@ public class Tabellone extends VerticalLayout implements View {
         public SearchForm() {
             super(new PropertysetItem());
             setSizeUndefined();
+
+
             getItem().addItemProperty("data", new ObjectProperty(new Date()));
             getItem().addItemProperty("giorni", new ObjectProperty(7));
             init();
 
-            addStyleName("blueBg");
+
+            //addStyleName("blueBg");
 
             setConfirmText("Conferma");
-
+            getToolbar().removeStyleName("toolbar");
 
 
             addFormListener(new FormListener() {
@@ -322,15 +360,15 @@ public class Tabellone extends VerticalLayout implements View {
                 @Override
                 public void commit_() {
                     int numGiorni = getNumGiorni();
-                    if(numGiorni>0 && numGiorni<60){
+                    if (numGiorni > 0 && numGiorni < 60) {
                         LocalDate data = getDataInizio();
-                        if(data!=null){
+                        if (data != null) {
                             creaGrid(data, numGiorni);
                             navigator.navigateTo("tabellone");
-                        }else{
+                        } else {
                             Notification.show("La data non può essere nulla.", Notification.Type.WARNING_MESSAGE);
                         }
-                    }else{
+                    } else {
                         Notification.show("Minimo 1 giorno, massimo 60 giorni.", Notification.Type.WARNING_MESSAGE);
                     }
                 }
@@ -345,21 +383,20 @@ public class Tabellone extends VerticalLayout implements View {
             addField("giorni", new IntegerField("Numero di giorni"));
         }
 
-        private int getNumGiorni(){
+        private int getNumGiorni() {
             Object obj = getFieldValue("giorni");
             return Lib.getInt(obj);
         }
 
-        private LocalDate getDataInizio(){
-            LocalDate data=null;
+        private LocalDate getDataInizio() {
+            LocalDate data = null;
             Object obj = getFieldValue("data");
-            if(obj!=null && obj instanceof Date){
-                Date d = (Date)obj;
+            if (obj != null && obj instanceof Date) {
+                Date d = (Date) obj;
                 data = DateConvertUtils.asLocalDate(d);
             }
             return data;
         }
-
 
 
     }
@@ -368,7 +405,7 @@ public class Tabellone extends VerticalLayout implements View {
     /**
      * Error screen se il Navigator non trova una view
      */
-    class TabErrView extends ErrorScreen implements View {
+    private class TabErrView extends ErrorScreen implements View {
 
         public TabErrView() {
             super("View non trovata");
