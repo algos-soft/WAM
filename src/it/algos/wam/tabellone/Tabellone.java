@@ -3,6 +3,7 @@ package it.algos.wam.tabellone;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -48,7 +49,7 @@ public class Tabellone extends VerticalLayout implements View {
     }
 
     private void fillMenu() {
-        menuBar.addItem("Settimana precedente", new MenuBar.Command() {
+        menuBar.addItem("precedente", FontAwesome.ARROW_LEFT, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 LocalDate d1 = LocalDate.of(2016, 3, 2);
@@ -59,7 +60,31 @@ public class Tabellone extends VerticalLayout implements View {
             }
         });
 
-        menuBar.addItem("Settimana successiva", new MenuBar.Command() {
+        menuBar.addItem("da lunedì", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                LocalDate d1 = LocalDate.of(2016, 3, 2);
+                creaGrid(d1);
+//                WTabellone wrapper = EngineTab.creaRighe(d1,7);
+//                GridTabellone grid = EngineTab.creaTabellone(wrapper);
+//                setContent(grid);
+            }
+        });
+
+        menuBar.addItem("da oggi", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                LocalDate d1 = LocalDate.of(2016, 3, 2);
+                creaGrid(d1);
+//                WTabellone wrapper = EngineTab.creaRighe(d1,7);
+//                GridTabellone grid = EngineTab.creaTabellone(wrapper);
+//                setContent(grid);
+            }
+        });
+
+
+
+        menuBar.addItem("successiva", FontAwesome.ARROW_RIGHT, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 LocalDate d1 = LocalDate.of(2016, 3, 9);
