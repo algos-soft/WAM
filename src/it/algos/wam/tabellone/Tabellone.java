@@ -32,6 +32,9 @@ import java.util.Date;
  */
 public class Tabellone extends VerticalLayout implements View {
 
+    /** numero massimo di giorni visualizzabili nel tabellone */
+    private static int MAX_GG_TAB=60;
+
     private TabComponent tabComponent;
     private EditComponent editComponent;
     private SearchComponent searchComponent;
@@ -193,7 +196,8 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private void goHome() {
         if (homeURI != null) {
-            Page.getCurrent().setLocation(URI.create(homeURI));
+            URI uri = URI.create(homeURI+"?skip=1");
+            Page.getCurrent().setLocation(uri);
             Page.getCurrent().reload();
         }
     }
@@ -441,7 +445,7 @@ public class Tabellone extends VerticalLayout implements View {
                 @Override
                 public void commit_() {
                     int numGiorni = getNumGiorni();
-                    if (numGiorni > 0 && numGiorni <= 60) {
+                    if (numGiorni > 0 && numGiorni <= MAX_GG_TAB) {
                         LocalDate data = getDataInizio();
                         if (data != null) {
                             creaGrid(data, numGiorni);
@@ -450,7 +454,7 @@ public class Tabellone extends VerticalLayout implements View {
                             Notification.show("La data non può essere nulla.", Notification.Type.WARNING_MESSAGE);
                         }
                     } else {
-                        Notification.show("Minimo 1 giorno, massimo 60 giorni.", Notification.Type.WARNING_MESSAGE);
+                        Notification.show("Minimo 1 giorno, massimo "+MAX_GG_TAB+" giorni.", Notification.Type.WARNING_MESSAGE);
                     }
                 }
 

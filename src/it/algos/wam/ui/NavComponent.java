@@ -38,10 +38,17 @@ public class NavComponent extends VerticalLayout {
      * @param ui UI che il Navigator deve controllare
      */
     public NavComponent(UI ui) {
+        setMargin(true);
+        setSpacing(true);
+        setSizeFull();
+
         this.nav = new AlgosNavigator(ui, body);
         this.addComponent(menuBar);
         this.addComponent(body);
         this.addComponent(footer);
+
+        setExpandRatio(body, 1);
+
     }
 
     /**

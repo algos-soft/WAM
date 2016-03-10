@@ -10,6 +10,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.volontario.VolontarioMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
@@ -19,6 +20,8 @@ import it.algos.wam.tabellone.Tabellone;
 import it.algos.webbase.domain.ruolo.Ruolo;
 import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.lib.Lib;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.screen.ErrorScreen;
 import it.algos.webbase.web.ui.AlgosUI;
@@ -28,23 +31,9 @@ import java.net.URI;
 /**
  * Created by Gac on 08 mar 2016.
  */
-//@Theme("valo")
-public class WamUI extends AlgosUI {
-
-    private Navigator nav;
-    private MenuBar menuBar = null;
+public class WamUI extends UI {
 
     /**
-     * Initializes this UI. This method is intended to be overridden by subclasses to build the view and configure
-     * non-component functionality. Performing the initialization in a constructor is not suggested as the state of the
-     * UI is not properly set up when the constructor is invoked.
-     * <p>
-     * The {@link VaadinRequest} can be used to get information about the request that caused this UI to be created.
-     * </p>
-     * Se viene sovrascritto dalla sottoclasse, deve (DEVE) richiamare anche il metodo della superclasse
-     * di norma dopo (DOPO) aver effettuato alcune regolazioni <br>
-     * Nella sottoclasse specifica viene eventualmente regolato il nome del modulo di partenza <br>
-     *
      * @param request the Vaadin request that caused this UI to be created
      */
     @Override
@@ -74,7 +63,12 @@ public class WamUI extends AlgosUI {
 
             //--controlla la property della croce, per sapere se far partire subito il tabellone
             if (company.isVaiSubitoTabellone()) {  // mostra subito il tabellone senza login
-                comp = new ErrorScreen("qui ci va il tabellone");
+                String skip = request.getParameter("skip");// se c'è questo parametro non va al tabellone (ma non funziona, vedi goHome() in Tabellone)
+                if (skip==null || skip.isEmpty()) {
+                    comp = new Tabellone(getCurrentAddress());
+                }else{
+                    comp = creaCompPerRuolo();
+                }
             } else {
                 //--crea il componente da visualizzare in funzione del ruolo.
                 comp = creaCompPerRuolo();
@@ -195,9 +189,9 @@ public class WamUI extends AlgosUI {
         NavComponent nc = new NavComponent(this);
 
         // aggiungo le view - la menubar viene riempita automaticamente
-        nc.addView(WamCompanyMod.class, WamCompanyMod.MENU_ADDRESS, FontAwesome.AMBULANCE);
+        MenuBar.MenuItem item = nc.addView(WamCompanyMod.class, WamCompanyMod.MENU_ADDRESS, FontAwesome.AMBULANCE);
         nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
-        MenuBar.MenuItem itemFunzione = nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.TASKS);
+        nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.TASKS);
         nc.setFooter(new Label("Footer text"));
 
         // aggiungo un MenuItem con il tabellone.
@@ -206,18 +200,14 @@ public class WamUI extends AlgosUI {
         mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                URI uri = Page.getCurrent().getLocation();
-                String addr = uri.getAuthority()+uri.getPath();
-                Tabellone tab = new Tabellone(addr);
+                Tabellone tab = new Tabellone(getCurrentAddress());
                 setContent(tab);
             }
-        }, itemFunzione);
+        }, item);
 
         // da chiamare dopo che ho aggiunto tutti i MenuItems,
         // configura il Navigator in base alla MenuBar
         nc.setup();
-
-
 
         return nc;
 
@@ -235,20 +225,10 @@ public class WamUI extends AlgosUI {
     private void configGuest(NavComponent baseComp) {
     }
 
-    private void add(ModulePop mod) {
-        nav.addView(mod.getMenuLabel(), mod);
-
-        menuBar.addItem(mod.getMenuLabel(), new MenuBar.Command() {
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                nav.navigateTo(mod.getMenuLabel());
-            }
-        });
+    private String getCurrentAddress(){
+        URI uri = Page.getCurrent().getLocation();
+        String str = uri.getAuthority()+uri.getPath();
+        return str;
     }
 
-
-    @Override
-    protected void addModulo(ModulePop modulo) {
-        super.addModulo(modulo);
-    }
 }
