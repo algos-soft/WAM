@@ -5,7 +5,7 @@ import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.FontAwesome;
+import com.vaadin.server.*;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
@@ -16,6 +16,7 @@ import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.screen.ErrorScreen;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -37,7 +38,16 @@ public class Tabellone extends VerticalLayout implements View {
 
     private Navigator navigator;
 
-    public Tabellone() {
+    private String homeURI;
+
+    /**
+     * Costruttore.
+     *
+     * @param homeURI la pagina da caricare quanto si preme il pulsante Home
+     */
+    public Tabellone(String homeURI) {
+
+        this.homeURI = homeURI;
 
         //addStyleName("greenBg");
 
@@ -60,6 +70,7 @@ public class Tabellone extends VerticalLayout implements View {
         navigator.setErrorView(new TabErrView());
         navigator.navigateTo("tabellone");
 
+        //UI.setCurrent();
 
         // Listener di cambio View nel Navigator.
         // In funzione della pagina in cui stiamo entrando, cambio
@@ -68,6 +79,7 @@ public class Tabellone extends VerticalLayout implements View {
             @Override
             public boolean beforeViewChange(ViewChangeEvent event) {
                 String name = event.getViewName();
+                boolean cont=true;
                 switch (name) {
                     case "tabellone":
                         setSizeUndefined();
@@ -78,8 +90,13 @@ public class Tabellone extends VerticalLayout implements View {
                     case "edit":
                         setSizeFull();
                         break;
+                    default:
+                        cont=false;
+                        goHome();
                 }
-                return true;
+
+                return cont;
+
             }
 
             @Override
@@ -89,6 +106,13 @@ public class Tabellone extends VerticalLayout implements View {
 
         });
 
+    }
+
+    /**
+     * Costruttore.
+     */
+    public Tabellone() {
+        this(null);
     }
 
 
@@ -164,6 +188,17 @@ public class Tabellone extends VerticalLayout implements View {
     }
 
 
+    /**
+     * Manda il browser all'indirizzo definito nella homeURI (se esiste)
+     */
+    private void goHome() {
+        if (homeURI != null) {
+            Page.getCurrent().setLocation(URI.create(homeURI));
+            Page.getCurrent().reload();
+        }
+    }
+
+
     public Navigator getNavigator() {
         return navigator;
     }
@@ -212,14 +247,13 @@ public class Tabellone extends VerticalLayout implements View {
         }
 
 
-
     }
 
 
     /**
      * Menu bar con i comandi di movimento del tabellone
      */
-    private class TabMenuBar extends MenuBar{
+    private class TabMenuBar extends MenuBar {
         public TabMenuBar() {
             addItem("precedente", FontAwesome.ARROW_LEFT, new MenuBar.Command() {
                 @Override
@@ -275,13 +309,14 @@ public class Tabellone extends VerticalLayout implements View {
     /**
      * Menu bar di destra
      */
-    private class TabMenuBarHome extends MenuBar{
+    private class TabMenuBarHome extends MenuBar {
 
         public TabMenuBarHome() {
 
             addItem("Home", FontAwesome.HOME, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    goHome();
                 }
             });
 
@@ -292,7 +327,7 @@ public class Tabellone extends VerticalLayout implements View {
     /**
      * Menu bar di login
      */
-    private class TabMenuBarLogin extends MenuBar{
+    private class TabMenuBarLogin extends MenuBar {
 
         public TabMenuBarLogin() {
 
@@ -305,7 +340,6 @@ public class Tabellone extends VerticalLayout implements View {
 
         }
     }
-
 
 
     /**
@@ -407,7 +441,7 @@ public class Tabellone extends VerticalLayout implements View {
                 @Override
                 public void commit_() {
                     int numGiorni = getNumGiorni();
-                    if (numGiorni > 0 && numGiorni < 60) {
+                    if (numGiorni > 0 && numGiorni <= 60) {
                         LocalDate data = getDataInizio();
                         if (data != null) {
                             creaGrid(data, numGiorni);

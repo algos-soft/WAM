@@ -34,7 +34,7 @@ public class TabelloneUI extends UI {
         }
         setTheme(themeName);
 
-        setContent(new Tabellone());
+        setContent(new Tabellone(null));
 
     }
 

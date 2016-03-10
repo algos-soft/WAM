@@ -206,7 +206,9 @@ public class WamUI extends AlgosUI {
         mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Tabellone tab = new Tabellone();
+                URI uri = Page.getCurrent().getLocation();
+                String addr = uri.getAuthority()+uri.getPath();
+                Tabellone tab = new Tabellone(addr);
                 setContent(tab);
             }
         }, itemFunzione);
@@ -214,6 +216,8 @@ public class WamUI extends AlgosUI {
         // da chiamare dopo che ho aggiunto tutti i MenuItems,
         // configura il Navigator in base alla MenuBar
         nc.setup();
+
+
 
         return nc;
 
