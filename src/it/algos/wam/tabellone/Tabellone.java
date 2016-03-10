@@ -29,7 +29,7 @@ import java.util.Date;
  * Il componente searchComponent presenta il dialogo per impostare le conizioni di
  * ricerca per visualizzare un tabellone custom.
  */
-public class Tabellone extends VerticalLayout  {
+public class Tabellone extends VerticalLayout implements View {
 
     private TabComponent tabComponent;
     private EditComponent editComponent;
@@ -42,6 +42,7 @@ public class Tabellone extends VerticalLayout  {
         //addStyleName("greenBg");
 
         setSizeUndefined();
+
         setMargin(true);
 
         tabComponent = new TabComponent();
@@ -90,6 +91,11 @@ public class Tabellone extends VerticalLayout  {
 
     }
 
+
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+
+    }
 
     /**
      * Crea una GridTabellone a partire dalla data richiesta e per il numero di giorni richiesto
@@ -158,6 +164,10 @@ public class Tabellone extends VerticalLayout  {
     }
 
 
+    public Navigator getNavigator() {
+        return navigator;
+    }
+
     /**
      * Componente View con MenuBar comandi tabellone e griglia tabellone.
      * Invocare setGrid() per sostituire la griglia.
@@ -169,12 +179,14 @@ public class Tabellone extends VerticalLayout  {
 
         public TabComponent() {
 
-            addComponent(new TabMenuBar());
+            HorizontalLayout menuPlaceholder = new HorizontalLayout();
+            menuPlaceholder.setSpacing(true);
+            menuPlaceholder.addComponent(new TabMenuBarHome());
+            menuPlaceholder.addComponent(new TabMenuBar());
+            menuPlaceholder.addComponent(new TabMenuBarLogin());
 
-            Label spacer = new Label("");
-            spacer.setHeight("1em");
-            addComponent(spacer);
-
+            setSpacing(true);
+            addComponent(menuPlaceholder);
             addComponent(gridPlaceholder);
 
         }
@@ -259,6 +271,41 @@ public class Tabellone extends VerticalLayout  {
 
         }
     }
+
+    /**
+     * Menu bar di destra
+     */
+    private class TabMenuBarHome extends MenuBar{
+
+        public TabMenuBarHome() {
+
+            addItem("Home", FontAwesome.HOME, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                }
+            });
+
+
+        }
+    }
+
+    /**
+     * Menu bar di login
+     */
+    private class TabMenuBarLogin extends MenuBar{
+
+        public TabMenuBarLogin() {
+
+            addItem("Login", FontAwesome.USER, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                }
+            });
+
+
+        }
+    }
+
 
 
     /**

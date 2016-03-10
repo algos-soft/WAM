@@ -2,6 +2,8 @@ package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
@@ -115,7 +117,7 @@ public class WamUI extends AlgosUI {
         }
 
         // recupero la company dal db
-        if(siglaComp!=null){
+        if (siglaComp != null) {
             company = WamCompany.findByCode(siglaComp);
             if (company == null) {
                 company = WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
@@ -182,7 +184,6 @@ public class WamUI extends AlgosUI {
     }// end of method
 
 
-
     /**
      * Crea il componente per il programmatore
      *
@@ -196,7 +197,7 @@ public class WamUI extends AlgosUI {
         // aggiungo le view - la menubar viene riempita automaticamente
         nc.addView(WamCompanyMod.class, WamCompanyMod.MENU_ADDRESS, FontAwesome.AMBULANCE);
         nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
-        MenuBar.MenuItem itemFunzione=nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.TASKS);
+        MenuBar.MenuItem itemFunzione = nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.TASKS);
         nc.setFooter(new Label("Footer text"));
 
         // aggiungo un MenuItem con il tabellone.

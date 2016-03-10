@@ -26,7 +26,7 @@ import java.util.LinkedHashMap;
  */
 public class NavComponent extends VerticalLayout {
 
-    private AlgosNavigator nav;
+    private Navigator nav;
     private MenuBar menuBar = new MenuBar();
     private NavPlaceholder body = new NavPlaceholder(null);
     private VerticalLayout footer = new VerticalLayout();
@@ -50,7 +50,7 @@ public class NavComponent extends VerticalLayout {
     public void setup() {
 
         // configura il navigator in base alla MenuBar
-        nav.configureFromMenubar(menuBar);
+        ((AlgosNavigator)nav).configureFromMenubar(menuBar);
 
         // manda il navigatore alla prima view
         Collection<MenuBar.MenuItem> coll = mappaItem.values();
@@ -150,10 +150,13 @@ public class NavComponent extends VerticalLayout {
      *
      * @return il Navigator
      */
-    public AlgosNavigator getNavigator() {
+    public Navigator getNavigator() {
         return nav;
     }
 
+    public void setNavigator(Navigator nav) {
+        this.nav = nav;
+    }
 
     public MenuBar getMenuBar() {
         return menuBar;
