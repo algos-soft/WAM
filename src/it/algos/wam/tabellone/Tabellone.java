@@ -14,6 +14,7 @@ import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.form.AForm;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.Lib;
+import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.screen.ErrorScreen;
 
 import java.net.URI;
@@ -259,29 +260,15 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private class TabMenuBar extends MenuBar {
         public TabMenuBar() {
-            addItem("precedente", FontAwesome.ARROW_LEFT, new MenuBar.Command() {
+            MenuItem item = addItem("precedente", FontAwesome.ARROW_LEFT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    LocalDate current = tabComponent.getDataStart();
-                    if (current != null) {
-                        creaGrid(current.minusWeeks(1));
-                    } else {
-                        Notification.show("Data corrente nulla!", Notification.Type.ERROR_MESSAGE);
-                    }
+                    creaGrid(tabComponent.getDataStart().minusWeeks(1));
                 }
             });
 
-            addItem("da lunedì", FontAwesome.CALENDAR_O, new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    LocalDate d1 = LocalDate.now();
-                    int numDow = d1.getDayOfWeek().getValue();
-                    LocalDate d2 = d1.minusDays(numDow - 1);
-                    creaGrid(d2);
-                }
-            });
 
-            addItem("da oggi", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+            addItem("oggi", FontAwesome.CALENDAR_O, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     creaGrid(LocalDate.now());
@@ -291,21 +278,43 @@ public class Tabellone extends VerticalLayout implements View {
             addItem("successiva", FontAwesome.ARROW_RIGHT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    LocalDate current = tabComponent.getDataStart();
-                    if (current != null) {
-                        creaGrid(current.plusWeeks(1));
-                    } else {
-                        Notification.show("Data corrente nulla!", Notification.Type.ERROR_MESSAGE);
-                    }
+                    creaGrid(tabComponent.getDataStart().plusWeeks(1));
                 }
             });
 
-            addItem("cerca", FontAwesome.SEARCH, new MenuBar.Command() {
+            MenuItem menuVai = addItem("vai", FontAwesome.ARROW_CIRCLE_DOWN, null);
+
+            menuVai.addItem("settimana da lunedì", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    LocalDate d1 = LocalDate.now();
+                    int numDow = d1.getDayOfWeek().getValue();
+                    LocalDate d2 = d1.minusDays(numDow - 1);
+                    creaGrid(d2);
+                }
+            });
+
+            menuVai.addItem("giorno precedente", FontAwesome.ARROW_CIRCLE_O_LEFT, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    creaGrid(tabComponent.getDataStart().minusDays(1));
+                }
+            });
+
+            menuVai.addItem("giorno successivo", FontAwesome.ARROW_CIRCLE_O_RIGHT, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    creaGrid(tabComponent.getDataStart().plusDays(1));
+                }
+            });
+
+            menuVai.addItem("cerca", FontAwesome.SEARCH, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     navigator.navigateTo("search");
                 }
             });
+
 
         }
     }

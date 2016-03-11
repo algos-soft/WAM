@@ -14,7 +14,7 @@ import javax.persistence.metamodel.Attribute;
 public class TurnoMod extends WamMod {
 
     // indirizzo interno del modulo - etichetta del menu
-    public static String MENU_ADDRESS = "Turni (solo admin)";
+    public static String MENU_ADDRESS = "Turni";
 
     /**
      * Costruttore senza parametri
