@@ -18,7 +18,6 @@ $v-font-weight: 400;
   /* Include all the styles from the imported theme */
   @include valo;
 
-
   /* Insert your theme rules here */
   .v-menubar-mainmenu {
     background: yellow;
@@ -104,12 +103,8 @@ $v-font-weight: 400;
   }
 
   .v-icon {
-    color:blue;
+    color: blue;
   }
-
-
-
-
 
   // attributi di tutto il tabellone
   .ctabellone {
@@ -122,14 +117,11 @@ $v-font-weight: 400;
   //  }
   //}
 
-
-
   // attributi ereditati dalle celle del tabellone
   .cbasecell {
     display: block;
-    white-space:nowrap;
+    white-space: nowrap;
   }
-
 
   // componente servizio
   $dark: rgba(218, 115, 0, 1);
@@ -153,64 +145,82 @@ $v-font-weight: 400;
     margin-left: 10%;
   }
 
-
   // componente funzione (singola funzione nel componente CFunzioni)
-  $dark: rgb(42, 156, 218);
-  $light: rgba(42, 156, 218, 0.6);
+  //$dark: rgb(42, 156, 218);
+  //$light: rgba(42, 156, 218, 0.6);
   .cfunzione {
     @extend .cbasecell;
-    background: $dark;
-    background: -webkit-linear-gradient(top, $dark, $light, $dark);
-    background: -moz-linear-gradient(top, $dark, $light, $dark);
-    background: -o-linear-gradient(top, $dark, $light, $dark);
-    background: linear-gradient(top, $dark, $light, $dark);
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+
+    //background: $dark;
+    //background: -webkit-linear-gradient(top, $dark, $light, $dark);
+    //background: -moz-linear-gradient(top, $dark, $light, $dark);
+    //background: -o-linear-gradient(top, $dark, $light, $dark);
+    //background: linear-gradient(top, $dark, $light, $dark);
   }
 
   // componente funzione obbligatoria
-  $dark: rgb(218, 42, 156);
-  $light: rgba(218, 42, 156, 0.6);
+  //$dark: rgb(218, 42, 156);
+  //$light: rgba(218, 42, 156, 0.6);
   .cfunzioneobblig {
     @extend .cbasecell;
-    background: $dark;
-    background: -webkit-linear-gradient(top, $dark, $light, $dark);
-    background: -moz-linear-gradient(top, $dark, $light, $dark);
-    background: -o-linear-gradient(top, $dark, $light, $dark);
-    background: linear-gradient(top, $dark, $light, $dark);
+    font-weight: bold;
+
+    //background: $dark;
+    //background: -webkit-linear-gradient(top, $dark, $light, $dark);
+    //background: -moz-linear-gradient(top, $dark, $light, $dark);
+    //background: -o-linear-gradient(top, $dark, $light, $dark);
+    //background: linear-gradient(top, $dark, $light, $dark);
   }
 
   // componente giorno
-  $dark: rgb(47, 116, 17);
-  $light: rgba(47, 116, 17, 0.6);
+  $dark: rgb(0, 58, 116);
+  $light: rgba(0, 58, 116, 0.6);
   .cgiorno {
     @extend .cbasecell;
-    text-align: center;
+
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
     background: -o-linear-gradient(top, $dark, $light, $dark);
     background: linear-gradient(top, $dark, $light, $dark);
+
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+
   }
 
   // componente turno
-  $dark: rgb(9, 116, 83);
-  $light: rgba(9, 116, 83, 0.6);
+  //$dark: rgb(9, 116, 83);
+  //$light: rgba(9, 116, 83, 0.6);
   .cturno {
     @extend .cbasecell;
-    background: $dark;
-    background: -webkit-linear-gradient(top, $dark, $light, $dark);
-    background: -moz-linear-gradient(top, $dark, $light, $dark);
-    background: -o-linear-gradient(top, $dark, $light, $dark);
-    background: linear-gradient(top, $dark, $light, $dark);
+    //background: $dark;
+    //background: -webkit-linear-gradient(top, $dark, $light, $dark);
+    //background: -moz-linear-gradient(top, $dark, $light, $dark);
+    //background: -o-linear-gradient(top, $dark, $light, $dark);
+    //background: linear-gradient(top, $dark, $light, $dark);
+    background: rgba(0, 198, 15, 0.77);
+    border-radius: 6px;
     cursor: pointer;
   }
 
 
   // componente no turno
   .cnoturno {
-    background: rgba(215, 215, 215, 0.47);
+    @extend .cbasecell;
+    background: repeating-linear-gradient(
+                    135deg,
+                    rgba(0, 0, 0, 0.05),
+                    rgba(0, 0, 0, 0.05) 10px,
+                    rgba(0, 0, 0, 0.0) 10px,
+                    rgba(0, 0, 0, 0.0) 20px
+    );
+    border-radius: 6px;
     cursor: pointer;
   }
-
 
   // componente iscrizione
   $dark: rgb(205, 205, 205);
@@ -223,8 +233,5 @@ $v-font-weight: 400;
     background: -o-linear-gradient(top, $dark, $light, $dark);
     background: linear-gradient(top, $dark, $light, $dark);
   }
-
-
-
 
 }

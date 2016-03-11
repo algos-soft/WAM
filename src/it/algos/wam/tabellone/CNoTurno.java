@@ -23,7 +23,7 @@ public class CNoTurno extends VerticalLayout implements TabelloneCell {
         setWidth(GridTabellone.W_COLONNE_TURNI);
         setHeight("100%");
         addStyleName("cnoturno");
-        addComponent(new Label("non previsto"));
+        //addComponent(new Label("non previsto"));
 
         addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
             @Override
