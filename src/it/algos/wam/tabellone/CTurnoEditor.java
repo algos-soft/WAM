@@ -146,6 +146,9 @@ public class CTurnoEditor extends VerticalLayout implements View {
         Iscrizione[] iscrizioni = iscrizioniEditor.getIscrizioni();
         turno.setIscrizioni(iscrizioni);
         turno.save(entityManager);
+
+//        Notification.show("Turno non valido", Notification.Type.ERROR_MESSAGE);
+
     }
 
 
@@ -292,7 +295,9 @@ public class CTurnoEditor extends VerticalLayout implements View {
             String label = iscrizione.getFunzione().getDescrizione();
             fVolontario = new ERelatedComboField(Volontario.class, label);
             fVolontario.setWidth("10em");
-            fVolontario.setValue(iscrizione.getVolontario());
+            if(iscrizione.getVolontario()!=null){
+                fVolontario.setValue(iscrizione.getVolontario().getId());
+            }
             fVolontario.addValueChangeListener(new Property.ValueChangeListener() {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {

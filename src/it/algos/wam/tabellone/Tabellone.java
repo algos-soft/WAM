@@ -385,13 +385,7 @@ public class Tabellone extends VerticalLayout implements View {
             editor.addDismissListener(new CTurnoEditor.DismissListener() {
                 @Override
                 public void editorDismissed(CTurnoEditor.DismissEvent e) {
-                    if (e.isSaved()) {
-                        if (saveTurno()) {
-                            navigator.navigateTo("tabellone");
-                        }
-                    } else {
-                        navigator.navigateTo("tabellone");
-                    }
+                    navigator.navigateTo("tabellone");
                 }
             });
 
@@ -403,15 +397,6 @@ public class Tabellone extends VerticalLayout implements View {
 
         }
 
-        /**
-         * Tenta di registrare il turno correntemente editato.
-         * Se non riesce visualizza il motivo.
-         * @return true se registrato correttamente
-         */
-        private boolean saveTurno(){
-            Notification.show("Turno non valido", Notification.Type.ERROR_MESSAGE);
-            return false;
-        }
 
     }
 

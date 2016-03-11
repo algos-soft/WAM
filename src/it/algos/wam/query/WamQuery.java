@@ -23,7 +23,7 @@ public class WamQuery {
 
 
     /**
-     * Tutti i turni relativi a un dato servizio in un certo periodo
+     * Tutti i turni relativi a un dato servizio in un certo periodo.
      *
      * @param em       l'EntityManager da utilizzare (se nullo lo crea qui)
      * @param servizio il servizio di riferimento

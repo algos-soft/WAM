@@ -124,15 +124,18 @@ $v-font-weight: 400;
   }
 
   // componente servizio
-  $dark: rgba(218, 115, 0, 1);
-  $light: rgba(218, 115, 0, 0.6);
+  //$dark: rgba(218, 115, 0, 1);
+  //$light: rgba(218, 115, 0, 0.6);
   .cservizio {
     @extend .cbasecell;
-    background: $dark;
-    background: -webkit-linear-gradient(top, $dark, $light, $dark);
-    background: -moz-linear-gradient(top, $dark, $light, $dark);
-    background: -o-linear-gradient(top, $dark, $light, $dark);
-    background: linear-gradient(top, $dark, $light, $dark);
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+
+    //background: $dark;
+    //background: -webkit-linear-gradient(top, $dark, $light, $dark);
+    //background: -moz-linear-gradient(top, $dark, $light, $dark);
+    //background: -o-linear-gradient(top, $dark, $light, $dark);
+    //background: linear-gradient(top, $dark, $light, $dark);
   }
 
   // componente ora nel componente servizio
@@ -257,6 +260,8 @@ $v-font-weight: 400;
     background: -moz-linear-gradient(top, $dark, $light, $dark);
     background: -o-linear-gradient(top, $dark, $light, $dark);
     background: linear-gradient(top, $dark, $light, $dark);
+    border-radius: 6px;
+    margin-inside: 0.1em;
   }
 
 }

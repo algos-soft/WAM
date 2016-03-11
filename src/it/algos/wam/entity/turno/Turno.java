@@ -512,7 +512,12 @@ public class Turno extends WamCompanyEntity {
      * @param iscrizioni le iscrizioni
      */
     public void setIscrizioni(Iscrizione[] iscrizioni) {
-        getWrapTurno().setIscrizioni(iscrizioni);
+        WrapTurno wt = getWrapTurno();
+        if (wt==null){
+            wt=new WrapTurno();
+            setWrapTurno(wt);
+        }
+        wt.setIscrizioni(iscrizioni);
     }
 
 

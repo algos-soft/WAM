@@ -118,7 +118,6 @@ public class EngineTab {
 
 
         int row=0;
-        comp.addComponent(new Label("titolo"), 0, row);
 
         Iscrizione[] iscrizioni = turno.getIscrizioni();
         for (Iscrizione iscr : iscrizioni) {

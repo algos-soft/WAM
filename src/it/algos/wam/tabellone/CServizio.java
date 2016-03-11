@@ -63,13 +63,13 @@ public class CServizio extends VerticalLayout {
         if(orario.equals("")){  orario="&nbsp;";}// evita label con testo vuoto, danno problemi
         Label labelOra = new Label(orario, ContentMode.HTML);
         labelOra.addStyleName("cservizio-ora");
-        labelOra.addStyleName("blueBg");
+        //labelOra.addStyleName("blueBg");
         addComponent(labelOra);
 
         if(descrizione.equals("")){  descrizione="&nbsp;";}// evita label con testo vuoto, danno problemi
         Label labelNome = new Label(descrizione,ContentMode.HTML);
         labelNome.addStyleName("cservizio-nome");
-        labelNome.addStyleName("greenBg");
+        //labelNome.addStyleName("greenBg");
 
         labelNome.setHeight("100%");
         addComponent(labelNome);

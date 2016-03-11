@@ -33,7 +33,14 @@ public class WrapTurno implements Serializable {
     private Iscrizione iscrizione4 = null;
 
     /**
-     * Costruttore minimo con tutte le properties obbligatorie
+     * Costruttore vuoto
+     */
+    public WrapTurno() {
+        this(null, null, null, null);
+    }// end of constructor
+
+    /**
+     * Costruttore
      *
      * @param iscrizione1 singola iscrizione di un milite/volontario
      */

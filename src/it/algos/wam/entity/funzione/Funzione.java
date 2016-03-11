@@ -293,4 +293,5 @@ public class Funzione extends WamCompanyEntity {
 //
 //    }
 
+
 }// end of domain class
