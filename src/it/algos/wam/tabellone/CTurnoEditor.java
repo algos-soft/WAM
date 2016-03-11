@@ -1,5 +1,6 @@
 package it.algos.wam.tabellone;
 
+import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -11,14 +12,16 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.wrap.Iscrizione;
-import it.algos.webbase.web.field.RelatedComboField;
+import it.algos.webbase.multiazienda.ERelatedComboField;
+import it.algos.webbase.web.field.IntegerField;
+import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EventObject;
-import java.util.HashMap;
 
 /**
  * Componente per presentare e modificare un turno nel Tabellone.
@@ -27,37 +30,32 @@ import java.util.HashMap;
 public class CTurnoEditor extends VerticalLayout implements View {
 
     private Turno turno;
-    private ArrayList<DismissListener> dismissListeners=new ArrayList();
-    private HashMap<String, RelatedComboField> mappaCombo=new HashMap<>();
+    private ArrayList<DismissListener> dismissListeners = new ArrayList();
+    private IscrizioniEditor iscrizioniEditor;
+    private EntityManager entityManager;
 
-    public CTurnoEditor(Turno turno) {
+    public CTurnoEditor(Turno turno, EntityManager entityManager) {
 
-        this.turno=turno;
+        this.turno = turno;
+        this.entityManager=entityManager;
 
         setSizeUndefined();
 
         addComponent(creaCompTitolo());
-        addComponent(creaCompIscrizioni());
+        iscrizioniEditor = new IscrizioniEditor();
+        addComponent(iscrizioniEditor);
         addComponent(creaPanComandi());
 
-        // seleziona i valori nei combo in base alle iscrizioni esistenti
-        for(Iscrizione i : turno.getIscrizioni()){
-            Funzione f = i.getFunzione();
-            RelatedComboField combo = mappaCombo.get(f.getSigla());
-            Volontario m = i.getMilite();
-            //combo.setValue(m);
-        }
-
     }
-
 
 
     /**
      * Crea il componente che visualizza il titolo del turno
      * (descrizione, data, ora ecc..)
+     *
      * @return il componente titolo
      */
-    private Component creaCompTitolo(){
+    private Component creaCompTitolo() {
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
@@ -66,45 +64,47 @@ public class CTurnoEditor extends VerticalLayout implements View {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d LLLL YYYY");
         String sData = dataInizio.format(formatter);
         String sOra = turno.getServizio().getOrario();
-        String dataOra =sData+", ore "+sOra;
+        String dataOra = sData + ", ore " + sOra;
 
         layout.addComponent(new Label(dataOra));
-        layout.addComponent(new Label("<strong>" + serv.getDescrizione()+"</strong>", ContentMode.HTML));
+        layout.addComponent(new Label("<strong>" + serv.getDescrizione() + "</strong>", ContentMode.HTML));
 
         return layout;
     }
 
-    /**
-     * Crea il componente che ospita la griglia delle iscrizioni
-     * (un elemento per ogni funzione)
-     * @return il componente iscrizioni
-     */
-    private Component creaCompIscrizioni(){
-        int numFunzioni=turno.getServizio().getNumFunzioni();
-        ArrayList<Funzione> funzioni = turno.getServizio().getFunzioni();
-        GridLayout gridlayout = new GridLayout(2,numFunzioni);
-        gridlayout.setSpacing(true);
-
-        for(int i=0; i<numFunzioni; i++){
-
-            String fn = funzioni.get(i).getSigla();
-            Label lblFunzione = new Label(fn);
-            gridlayout.addComponent(lblFunzione, 0, i);
-            gridlayout.setComponentAlignment(lblFunzione, Alignment.MIDDLE_LEFT);
-
-            RelatedComboField combo = new RelatedComboField(Volontario.class);
-            gridlayout.addComponent(combo, 1, i);
-
-            mappaCombo.put(fn, combo);
-
-        }
-
-        return gridlayout;
-    }
+//    /**
+//     * Crea il componente che ospita la lista delle iscrizioni
+//     * (un elemento per ogni funzione)
+//     *
+//     * @return il componente iscrizioni
+//     */
+//    private Component creaCompIscrizioni() {
+//        int numFunzioni = turno.getServizio().getNumFunzioni();
+//        ArrayList<Funzione> funzioni = turno.getServizio().getFunzioni();
+//        GridLayout gridlayout = new GridLayout(2, numFunzioni);
+//        gridlayout.setSpacing(true);
+//
+//        for (int i = 0; i < numFunzioni; i++) {
+//
+//            String fn = funzioni.get(i).getSigla();
+//            Label lblFunzione = new Label(fn);
+//            gridlayout.addComponent(lblFunzione, 0, i);
+//            gridlayout.setComponentAlignment(lblFunzione, Alignment.MIDDLE_LEFT);
+//
+//            RelatedComboField combo = new ERelatedComboField(Volontario.class);
+//            gridlayout.addComponent(combo, 1, i);
+//
+////            mappaCombo.put(fn, combo);
+//
+//        }
+//
+//        return gridlayout;
+//    }
 
 
     /**
      * Crea e ritorna il pannello comandi.
+     *
      * @return il pannello comandi
      */
     private Component creaPanComandi() {
@@ -127,21 +127,30 @@ public class CTurnoEditor extends VerticalLayout implements View {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                turno.save();
-                fireDismissListeners(new DismissEvent(bRegistra, false));
+                saveTurno();
+                fireDismissListeners(new DismissEvent(bRegistra, true));
             }
         });
 
         layout.addComponent(bAnnulla);
         layout.addComponent(bRegistra);
 
-
         return layout;
     }
 
 
-    private void fireDismissListeners(DismissEvent e){
-        for(DismissListener l : dismissListeners){
+    /**
+     * Registra il turno corrente
+     */
+    private void saveTurno() {
+        Iscrizione[] iscrizioni = iscrizioniEditor.getIscrizioni();
+        turno.setIscrizioni(iscrizioni);
+        turno.save(entityManager);
+    }
+
+
+    private void fireDismissListeners(DismissEvent e) {
+        for (DismissListener l : dismissListeners) {
             l.editorDismissed(e);
         }
     }
@@ -152,7 +161,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
 
     }
 
-    public void addDismissListener(DismissListener l){
+    public void addDismissListener(DismissListener l) {
         dismissListeners.add(l);
     }
 
@@ -167,7 +176,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
     /**
      * Evento editor dismissed
      */
-    public class DismissEvent extends EventObject{
+    public class DismissEvent extends EventObject {
         private boolean saved;
 
         public DismissEvent(Object source, boolean saved) {
@@ -179,4 +188,188 @@ public class CTurnoEditor extends VerticalLayout implements View {
             return saved;
         }
     }
+
+
+    /**
+     * Editor delle iscrizioni
+     */
+    private class IscrizioniEditor extends VerticalLayout {
+
+        private ArrayList<IscrizioneEditor> iEditors = new ArrayList<>();
+
+        public IscrizioniEditor() {
+
+            setSpacing(true);
+
+            // crea gli editor di iscrizione e li aggiunge
+            for (Funzione f : turno.getServizio().getFunzioni()) {
+
+                Iscrizione i = turno.getIscrizione(f);
+
+                // se l'iscrizione on esiste la crea ora
+                if (i == null) {
+                    i = new Iscrizione(f);
+                }
+
+                IscrizioneEditor ie = new IscrizioneEditor(i, this);
+                iEditors.add(ie);
+                addComponent(ie);
+
+            }
+        }
+
+        /**
+         * Controlla se un dato volontario è iscritto
+         *
+         * @param v       il volontario da controllare
+         * @param exclude eventuale editor da escludere
+         */
+        public boolean isIscritto(Volontario v, IscrizioneEditor exclude) {
+            boolean iscritto = false;
+            for (IscrizioneEditor ie : iEditors) {
+
+                boolean skip = false;
+                if (exclude != null) {
+                    if (ie.equals(exclude)) {
+                        skip = true;
+                    }
+                }
+
+                if (!skip) {
+                    Volontario iev = ie.getVolontario();
+                    if (iev != null) {
+                        if (iev.equals(v)) {
+                            iscritto = true;
+                            break;
+                        }
+                    }
+                }
+
+            }
+            return iscritto;
+        }
+
+        /**
+         * Ritorna l'elenco delle iscrizioni correntemente presenti
+         * (tutte quelle che hanno un volontario)
+         * @return l'elenco delle iscrizioni
+         */
+        public Iscrizione[] getIscrizioni() {
+            ArrayList<Iscrizione> iscrizioni = new ArrayList();
+            for(IscrizioneEditor ie : iEditors){
+                Iscrizione i = ie.getIscrizione();
+                if(i!=null){
+                    iscrizioni.add(i);
+                }
+            }
+            return iscrizioni.toArray(new Iscrizione[0]);
+        }
+
+    }
+
+
+    /**
+     * Editor di una singola Iscrizione
+     */
+    private class IscrizioneEditor extends HorizontalLayout {
+
+        private IscrizioniEditor parent;
+        private ERelatedComboField fVolontario;
+        private TextField fNote;
+        private IntegerField fOre;
+        private Volontario currentSelectedVolontario;
+        private Iscrizione iscrizione;
+
+        /**
+         * @param iscrizione l'iscrizione da editare
+         * @param parent     l'editor parente per il controllo che il volontario non sia già iscritto
+         */
+        public IscrizioneEditor(Iscrizione iscrizione, IscrizioniEditor parent) {
+            this.iscrizione=iscrizione;
+            this.parent = parent;
+            setSpacing(true);
+
+            String label = iscrizione.getFunzione().getDescrizione();
+            fVolontario = new ERelatedComboField(Volontario.class, label);
+            fVolontario.setWidth("10em");
+            fVolontario.setValue(iscrizione.getVolontario());
+            fVolontario.addValueChangeListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent event) {
+
+                    // controllo che non sia già iscritto
+                    Volontario sel = getVolontario();
+                    if (sel != null) {
+                        boolean giaIscritto = IscrizioneEditor.this.parent.isIscritto(sel, IscrizioneEditor.this);
+                        if (giaIscritto) {
+                            Notification.show(sel + " è già iscritto a questo turno", Notification.Type.ERROR_MESSAGE);
+                            if (currentSelectedVolontario == null) {
+                                fVolontario.select(null);
+                            } else {
+                                fVolontario.select(currentSelectedVolontario.getId());
+                            }
+                        }
+                    }
+
+                    syncFields();
+
+                    Volontario v = getVolontario();
+                    currentSelectedVolontario = v;
+                }
+            });
+            addComponent(fVolontario);
+
+            fNote = new TextField("Note");
+            fNote.setValue(iscrizione.getNota());
+            fNote.setWidth("10em");
+            addComponent(fNote);
+
+            fOre = new IntegerField("Ore");
+            fOre.setWidth("2em");
+            fOre.setValue(iscrizione.getOreEffettive());
+            addComponent(fOre);
+
+            syncFields();
+
+        }
+
+        private void syncFields() {
+            boolean enable = (fVolontario.getValue() != null);
+            fNote.setVisible(enable);
+            fOre.setVisible(enable);
+        }
+
+
+        /**
+         * Recupera il volontario correntemente selezionato nel combo
+         *
+         * @return il volontario
+         */
+        public Volontario getVolontario() {
+            Volontario v = null;
+            Object value = fVolontario.getSelectedBean();
+            if (value != null && value instanceof Volontario) {
+                v = (Volontario) value;
+            }
+            return v;
+        }
+
+        /**
+         * Recupera l'iscrizione aggiornata
+         * @return l'iscrizione aggiornata, null se non è specificato il volontario
+         */
+        public Iscrizione getIscrizione(){
+            if(getVolontario()!=null){
+                iscrizione.setVolontario(getVolontario());
+                iscrizione.setNota(fNote.getValue());
+                iscrizione.setOreEffettive(fOre.getValue());
+                return iscrizione;
+            }else{
+                return null;
+            }
+        }
+
+    }
+
+
 }

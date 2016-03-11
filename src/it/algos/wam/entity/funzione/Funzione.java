@@ -26,6 +26,7 @@ import java.util.List;
 @Entity
 public class Funzione extends WamCompanyEntity {
 
+    private static final long serialVersionUID = 1L;
 
     //--sigla di riferimento interna (obbligatoria)
     @NotEmpty

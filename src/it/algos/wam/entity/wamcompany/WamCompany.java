@@ -20,7 +20,7 @@ import java.util.List;
 @DefaultSort({"companyCode"})
 public class WamCompany extends BaseCompany {
 
-    private static final long serialVersionUID = 8238775575826490450L;
+    private static final long serialVersionUID = 1L;
 
     public static String DEMO_COMPANY_CODE="demo";
 

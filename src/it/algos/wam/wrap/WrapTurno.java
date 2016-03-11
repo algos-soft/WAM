@@ -13,6 +13,9 @@ import java.util.ArrayList;
  */
 public class WrapTurno implements Serializable {
 
+    // versione della classe per la serializzazione
+    private static final long serialVersionUID = 1L;
+
     //--singola iscrizione di un milite/volontario
     @ManyToOne
     private Iscrizione iscrizione1 = null;
@@ -82,14 +85,14 @@ public class WrapTurno implements Serializable {
         if (iscrizione1 == null) {
             stringa = "Non nulla, ma senza militi (errore)";
         } else {
-            milite = iscrizione1.getMilite();
+            milite = iscrizione1.getVolontario();
             if (milite != null) {
                 stringa += milite.toString();
             }// end of if cycle
         }// end of if/else cycle
 
         if (iscrizione2 != null) {
-            milite = iscrizione2.getMilite();
+            milite = iscrizione2.getVolontario();
             if (milite != null) {
                 stringa += " + ";
                 stringa += milite.toString();
@@ -97,7 +100,7 @@ public class WrapTurno implements Serializable {
         }// end of if cycle
 
         if (iscrizione3 != null) {
-            milite = iscrizione3.getMilite();
+            milite = iscrizione3.getVolontario();
             if (milite != null) {
                 stringa += " + ";
                 stringa += milite.toString();
@@ -105,7 +108,7 @@ public class WrapTurno implements Serializable {
         }// end of if cycle
 
         if (iscrizione4 != null) {
-            milite = iscrizione4.getMilite();
+            milite = iscrizione4.getVolontario();
             if (milite != null) {
                 stringa += " + ";
                 stringa += milite.toString();
@@ -171,4 +174,29 @@ public class WrapTurno implements Serializable {
     public void setIscrizione4(Iscrizione iscrizione4) {
         this.iscrizione4 = iscrizione4;
     }//end of setter method
+
+    /**
+     * Assegna una lista di iscrizioni.
+     * @param iscrizioni le iscrizioni
+     */
+    public void setIscrizioni(Iscrizione[] iscrizioni) {
+        iscrizione1=null;
+        iscrizione2=null;
+        iscrizione3=null;
+        iscrizione4=null;
+
+        if(iscrizioni.length>0){
+            iscrizione1=iscrizioni[0];
+        }
+        if(iscrizioni.length>1){
+            iscrizione2=iscrizioni[1];
+        }
+        if(iscrizioni.length>2){
+            iscrizione3=iscrizioni[2];
+        }
+        if(iscrizioni.length>3){
+            iscrizione4=iscrizioni[3];
+        }
+    }
+
 }// end of class

@@ -30,6 +30,8 @@ import java.util.List;
 @Entity
 public class Volontario extends WamCompanyEntity {
 
+    private static final long serialVersionUID = 1L;
+
     //--nome del volontario (obbligatorio)
     @NotEmpty
     @Column(length = 20)
@@ -383,4 +385,27 @@ public class Volontario extends WamCompanyEntity {
         }// fine del blocco try-catch
     }// end of method
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Volontario that = (Volontario) o;
+
+        if (nome != null ? !nome.equals(that.nome) : that.nome != null) return false;
+        if (cognome != null ? !cognome.equals(that.cognome) : that.cognome != null) return false;
+        if (email != null ? !email.equals(that.email) : that.email != null) return false;
+        return !(dataNascita != null ? !dataNascita.equals(that.dataNascita) : that.dataNascita != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = nome != null ? nome.hashCode() : 0;
+        result = 31 * result + (cognome != null ? cognome.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (dataNascita != null ? dataNascita.hashCode() : 0);
+        return result;
+    }
 }// end of domain class

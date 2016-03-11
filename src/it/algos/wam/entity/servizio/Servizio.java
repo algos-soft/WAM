@@ -29,6 +29,8 @@ import java.util.List;
 @Entity
 public class Servizio extends WamCompanyEntity {
 
+    private static final long serialVersionUID = 1L;
+
     //--sigla di riferimento interna (obbligatoria)
     @NotEmpty
     @Column(length = 20)

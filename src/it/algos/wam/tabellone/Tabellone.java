@@ -9,6 +9,7 @@ import com.vaadin.server.*;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.field.DateField;
 import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.form.AForm;
@@ -17,6 +18,7 @@ import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.screen.ErrorScreen;
 
+import javax.persistence.EntityManager;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Date;
@@ -24,8 +26,7 @@ import java.util.Date;
 /**
  * Componente Tabellone.
  * <p>
- * Contiene un navigatore che gestisce la navigazione tra i componenti
- * tabComponent, editComponent, searchComponent.
+ * Contiene la business logic e gestisce la navigazione e l'interazione tra i componenti grafici di alto livello.
  * Il componente tabComponent ospita una menubar con i comandi di spostamento e la griglia del tabellone.
  * Il componente editComponent presenta il form con i dati di un turno e permette di modificarli.
  * Il componente searchComponent presenta il dialogo per impostare le conizioni di
@@ -33,15 +34,16 @@ import java.util.Date;
  */
 public class Tabellone extends VerticalLayout implements View {
 
-    /** numero massimo di giorni visualizzabili nel tabellone */
-    private static int MAX_GG_TAB=60;
+    /**
+     * numero massimo di giorni visualizzabili nel tabellone
+     */
+    private static int MAX_GG_TAB = 60;
 
+    private EntityManager entityManager;
     private TabComponent tabComponent;
     private EditComponent editComponent;
     private SearchComponent searchComponent;
-
     private Navigator navigator;
-
     private String homeURI;
 
     /**
@@ -58,6 +60,8 @@ public class Tabellone extends VerticalLayout implements View {
         setSizeUndefined();
 
         setMargin(true);
+
+        entityManager= EM.createEntityManager();
 
         tabComponent = new TabComponent();
         creaGrid(LocalDate.now());
@@ -83,7 +87,7 @@ public class Tabellone extends VerticalLayout implements View {
             @Override
             public boolean beforeViewChange(ViewChangeEvent event) {
                 String name = event.getViewName();
-                boolean cont=true;
+                boolean cont = true;
                 switch (name) {
                     case "tabellone":
                         setSizeUndefined();
@@ -95,7 +99,7 @@ public class Tabellone extends VerticalLayout implements View {
                         setSizeFull();
                         break;
                     default:
-                        cont=false;
+                        cont = false;
                         goHome();
                 }
 
@@ -133,7 +137,7 @@ public class Tabellone extends VerticalLayout implements View {
      * @param quantiGiorni il numero di giorni da visualizzare
      */
     private void creaGrid(LocalDate d1, int quantiGiorni) {
-        WTabellone wrapper = EngineTab.creaRighe(d1, quantiGiorni);
+        WTabellone wrapper = EngineTab.creaRighe(d1, quantiGiorni, entityManager);
         GridTabellone grid = EngineTab.creaTabellone(wrapper);
         tabComponent.setGrid(grid);
 
@@ -197,7 +201,7 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private void goHome() {
         if (homeURI != null) {
-            URI uri = URI.create(homeURI+"?skip=1");
+            URI uri = URI.create(homeURI + "?skip=1");
             Page.getCurrent().setLocation(uri);
             Page.getCurrent().reload();
         }
@@ -356,8 +360,8 @@ public class Tabellone extends VerticalLayout implements View {
 
 
     /**
-     * Componente View con MenuBar comandi editor turno e editor turno.
-     * Invocare il metodo setTurno() per inserire un editor di turno.
+     * Componente di alto livello con logica di modifica e registrazione di un turno.
+     * Invocare il metodo setTurno() per inserire un turno.
      */
     private class EditComponent extends VerticalLayout implements View {
 
@@ -373,7 +377,7 @@ public class Tabellone extends VerticalLayout implements View {
          */
         public void setTurno(Turno turno) {
             removeAllComponents();
-            editor = new CTurnoEditor(turno);
+            editor = new CTurnoEditor(turno, entityManager);
             addComponent(editor);
             setComponentAlignment(editor, Alignment.MIDDLE_CENTER);
 
@@ -381,7 +385,13 @@ public class Tabellone extends VerticalLayout implements View {
             editor.addDismissListener(new CTurnoEditor.DismissListener() {
                 @Override
                 public void editorDismissed(CTurnoEditor.DismissEvent e) {
-                    navigator.navigateTo("tabellone");
+                    if (e.isSaved()) {
+                        if (saveTurno()) {
+                            navigator.navigateTo("tabellone");
+                        }
+                    } else {
+                        navigator.navigateTo("tabellone");
+                    }
                 }
             });
 
@@ -391,6 +401,16 @@ public class Tabellone extends VerticalLayout implements View {
         @Override
         public void enter(ViewChangeListener.ViewChangeEvent event) {
 
+        }
+
+        /**
+         * Tenta di registrare il turno correntemente editato.
+         * Se non riesce visualizza il motivo.
+         * @return true se registrato correttamente
+         */
+        private boolean saveTurno(){
+            Notification.show("Turno non valido", Notification.Type.ERROR_MESSAGE);
+            return false;
         }
 
     }
@@ -463,7 +483,7 @@ public class Tabellone extends VerticalLayout implements View {
                             Notification.show("La data non può essere nulla.", Notification.Type.WARNING_MESSAGE);
                         }
                     } else {
-                        Notification.show("Minimo 1 giorno, massimo "+MAX_GG_TAB+" giorni.", Notification.Type.WARNING_MESSAGE);
+                        Notification.show("Minimo 1 giorno, massimo " + MAX_GG_TAB + " giorni.", Notification.Type.WARNING_MESSAGE);
                     }
                 }
 

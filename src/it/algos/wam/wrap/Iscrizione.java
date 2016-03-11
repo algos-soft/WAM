@@ -14,13 +14,16 @@ import java.sql.Timestamp;
  */
 public class Iscrizione implements Serializable{
 
+    // versione della classe per la serializzazione
+    private static final long serialVersionUID = 1L;
+
     //--funzione prevista per il tipo di servizio
     @ManyToOne
     private Funzione funzione = null;
 
-    //--milite/volontario assegnato alle funzione prevista per questa iscrizione
+    //--volontario assegnato alle funzione prevista per questa iscrizione
     @ManyToOne
-    private Volontario milite = null;
+    private Volontario volontario = null;
 
     //--ultima modifica a questa iscrizione, effettuata dal milite/volontario che si è iscritto
     //--serve per bloccare le modifiche dopo un determinato intervallo di tempo
@@ -37,9 +40,18 @@ public class Iscrizione implements Serializable{
     //--serve per evidenziare il problema nel tabellone
     private String nota;
 
+    /**
+     * Costruttore con la funzione
+     *
+     * @param funzione funzione prevista per il tipo di servizio (obbligatorio)
+     */
+    public Iscrizione(Funzione funzione) {
+        this(funzione, null);
+    }// end of constructor
+
 
     /**
-     * Costruttore minimo con tutte le properties obbligatorie
+     * Costruttore con la funzione e il volontario
      *
      * @param funzione funzione prevista per il tipo di servizio (obbligatorio)
      * @param milite   milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
@@ -60,7 +72,7 @@ public class Iscrizione implements Serializable{
      */
     public Iscrizione(Funzione funzione, Volontario milite, Timestamp lastModifica, int oreEffettive, boolean esisteProblema, String nota) {
         setFunzione(funzione);
-        setMilite(milite);
+        setVolontario(milite);
         setLastModifica(lastModifica);
         setOreEffettive(oreEffettive);
         setEsisteProblema(esisteProblema);
@@ -75,12 +87,12 @@ public class Iscrizione implements Serializable{
         this.funzione = funzione;
     }//end of setter method
 
-    public Volontario getMilite() {
-        return milite;
+    public Volontario getVolontario() {
+        return volontario;
     }// end of getter method
 
-    public void setMilite(Volontario milite) {
-        this.milite = milite;
+    public void setVolontario(Volontario milite) {
+        this.volontario = milite;
     }//end of setter method
 
     public Timestamp getLastModifica() {

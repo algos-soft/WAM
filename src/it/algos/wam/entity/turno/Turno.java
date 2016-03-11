@@ -34,6 +34,8 @@ import java.util.List;
 @Entity
 public class Turno extends WamCompanyEntity {
 
+    private static final long serialVersionUID = 1L;
+
     //--chiave indicizzata per query più veloci e 'mirate' (obbligatoria)
     //--annoX1000 + giorno nell'anno
     @NotNull
@@ -494,7 +496,7 @@ public class Turno extends WamCompanyEntity {
      * @param f la funzione
      * @return l'iscrizione
      */
-    private Iscrizione getIscrizione(Funzione f) {
+    public Iscrizione getIscrizione(Funzione f) {
         Iscrizione iscrizione = null;
         for (Iscrizione i : getIscrizioni()) {
             if (i.getFunzione().equals(f)) {
@@ -505,6 +507,13 @@ public class Turno extends WamCompanyEntity {
         return iscrizione;
     }
 
+    /**
+     * Assegna una lista di iscrizioni al turno.
+     * @param iscrizioni le iscrizioni
+     */
+    public void setIscrizioni(Iscrizione[] iscrizioni) {
+        getWrapTurno().setIscrizioni(iscrizioni);
+    }
 
 
     /**
