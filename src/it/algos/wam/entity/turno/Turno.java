@@ -1,5 +1,6 @@
 package it.algos.wam.entity.turno;
 
+import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
@@ -7,6 +8,7 @@ import it.algos.wam.lib.LibWam;
 import it.algos.wam.wrap.Iscrizione;
 import it.algos.wam.wrap.WrapTurno;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.Index;
@@ -15,6 +17,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -370,6 +373,18 @@ public class Turno extends WamCompanyEntity {
         return inizio;
     }// end of getter method
 
+    /**
+     * Ritorna la data iniziale come LocalDate
+     */
+    public LocalDate getData1() {
+        LocalDate d = null;
+        if(getInizio()!=null){
+            d= DateConvertUtils.asLocalDate(getInizio());
+        }
+        return d;
+    }// end of getter method
+
+
     public void setInizio(Date inizio) {
         this.inizio = inizio;
     }//end of setter method
@@ -425,17 +440,71 @@ public class Turno extends WamCompanyEntity {
     /**
      * Ritorna le iscrizioni a questo turno
      */
-    public Iscrizione[] getIscrizioni(){
+    public Iscrizione[] getIscrizioni() {
         Iscrizione[] iscrizioni = new Iscrizione[0];
         WrapTurno wt = getWrapTurno();
-        if(wt!=null){
+        if (wt != null) {
             ArrayList<Iscrizione> lista = wt.getIscrizioni();
-            if (lista!=null){
-                iscrizioni=lista.toArray(new Iscrizione[0]);
+            if (lista != null) {
+                iscrizioni = lista.toArray(new Iscrizione[0]);
             }
         }
         return iscrizioni;
     }
+
+
+    /**
+     * Controlla se questo turno ha le iscrizioni coperte per tutte le funzioni
+     * obbligatorie dichiarate dal relativo Servizio.
+     * @return true se ha le iscrizioni.
+     */
+    public boolean isValido() {
+        boolean valido = true;
+        Funzione[] funzioni = getServizio().getWrapServizio().getFunzioniObbligatorie();
+        for (Funzione f : funzioni) {
+            if(getIscrizione(f)==null){
+                valido=false;
+                break;
+            }
+        }
+        return valido;
+    }
+
+
+    /**
+     * Controlla se questo turno ha le iscrizioni coperte per tutte le funzioni
+     * (obbligatorie e non) dichiarate dal relativo Servizio
+     * @return true se ha le iscrizioni.
+     */
+    public boolean isCompleto() {
+        boolean completo = true;
+        ArrayList<Funzione> funzioni = getServizio().getWrapServizio().getFunzioni();
+        for (Funzione f : funzioni) {
+            if(getIscrizione(f)==null){
+                completo=false;
+                break;
+            }
+        }
+        return completo;
+    }
+
+    /**
+     * Recupera la eventuale iscrizione a una data funzione.
+     *
+     * @param f la funzione
+     * @return l'iscrizione
+     */
+    private Iscrizione getIscrizione(Funzione f) {
+        Iscrizione iscrizione = null;
+        for (Iscrizione i : getIscrizioni()) {
+            if (i.getFunzione().equals(f)) {
+                iscrizione = i;
+                break;
+            }
+        }
+        return iscrizione;
+    }
+
 
 
     /**

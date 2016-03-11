@@ -95,6 +95,25 @@ public class EngineTab {
         int numFunzioni = serv.getNumFunzioni();
         CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni, turno);
 
+
+        // controlla se il turno è valido
+        boolean valido = turno.isValido();
+
+        // se il turno è valido è comunque verde
+        if(valido){
+            comp.addStyleName("turno-green");
+        }else{  // turno non valido
+            // se il turno è vicino e giallo, se è vicinissimo è rosso, se è lontano resta com'è
+            long ggMancanti = ChronoUnit.DAYS.between(turno.getData1(), LocalDate.now());
+            if(ggMancanti<=3){
+                comp.addStyleName("turno-yellow");
+            }
+            if(ggMancanti<=1){
+                comp.addStyleName("turno-red");
+            }
+        }
+
+
         int row=0;
         comp.addComponent(new Label("titolo"), 0, row);
 
@@ -132,7 +151,7 @@ public class EngineTab {
             cfunzioni.addFunzione("rigavuota");
         }
 
-        List<WrapServizio.Wrap> wrappers = serv.getWrapServizio().getWrap();
+        List<WrapServizio.Wrap> wrappers = serv.getWrapServizio().getWrappers();
         for (WrapServizio.Wrap w : wrappers) {
             Funzione f = w.funzione;
             boolean obblig = w.obbligatoria;

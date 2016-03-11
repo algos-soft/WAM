@@ -192,6 +192,31 @@ $v-font-weight: 400;
 
   }
 
+  // colore del giorno di oggi
+  $dark: rgb(116, 0, 0);
+  $light: rgba(116, 0, 0, 0.6);
+  .cgiorno-today {
+    background: $dark;
+    background: -webkit-linear-gradient(top, $dark, $light, $dark);
+    background: -moz-linear-gradient(top, $dark, $light, $dark);
+    background: -o-linear-gradient(top, $dark, $light, $dark);
+    background: linear-gradient(top, $dark, $light, $dark);
+  }
+
+  // colore del giorno nel passato
+  $dark: rgb(101, 101, 104);
+  $light: rgba(101, 101, 104, 0.6);
+  .cgiorno-past {
+    background: $dark;
+    background: -webkit-linear-gradient(top, $dark, $light, $dark);
+    background: -moz-linear-gradient(top, $dark, $light, $dark);
+    background: -o-linear-gradient(top, $dark, $light, $dark);
+    background: linear-gradient(top, $dark, $light, $dark);
+  }
+
+
+
+
   // componente turno
   //$dark: rgb(9, 116, 83);
   //$light: rgba(9, 116, 83, 0.6);
@@ -202,7 +227,7 @@ $v-font-weight: 400;
     //background: -moz-linear-gradient(top, $dark, $light, $dark);
     //background: -o-linear-gradient(top, $dark, $light, $dark);
     //background: linear-gradient(top, $dark, $light, $dark);
-    background: rgba(0, 198, 15, 0.77);
+    background: rgba(0, 0, 0, 0.15);
     border-radius: 6px;
     cursor: pointer;
   }

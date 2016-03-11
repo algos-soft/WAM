@@ -18,7 +18,21 @@ public class CGiorno extends Label {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE d MMM");
         String text = date.format(formatter);
         setValue(text);
+
         addStyleName("cgiorno");
+
+
+        // colore se è oggi
+        if(date.equals(LocalDate.now())){
+            addStyleName("cgiorno-today");
+        }
+
+        // colore se è nel passato
+        if(date.isBefore(LocalDate.now())){
+            addStyleName("cgiorno-past");
+        }
+
+
     }
 
 

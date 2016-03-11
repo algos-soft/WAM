@@ -2,6 +2,7 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 
 import java.time.LocalDate;

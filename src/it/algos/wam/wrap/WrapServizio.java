@@ -13,6 +13,9 @@ import java.util.ArrayList;
  */
 public class WrapServizio implements Serializable {
 
+    // versione della classe per la serializzazione
+    private static final long serialVersionUID = 1L;
+
     //--singola funzione da assegnare ad un milite/volontario
     @ManyToOne
     private Funzione funzione1 = null;
@@ -110,7 +113,7 @@ public class WrapServizio implements Serializable {
     }// end of method
 
     /**
-     * Ritorna l'elenco delle funzioni previste per questo servizio
+     * Ritorna l'elenco di tutte le funzioni previste per questo servizio
      * @return le funzioni
      */
     public ArrayList<Funzione> getFunzioni() {
@@ -123,7 +126,26 @@ public class WrapServizio implements Serializable {
     }// end of method
 
 
-    public ArrayList<Wrap> getWrap() {
+    /**
+     * Ritorna l'elenco delle funzioni obbligatorie previste per questo servizio
+     * @return le funzioni obbligatorie
+     */
+    public Funzione[] getFunzioniObbligatorie(){
+        ArrayList<Funzione> funzioniObblig = new ArrayList();
+        for (Wrap w : getWrappers()) {
+            if (w.obbligatoria){
+                funzioniObblig.add(w.funzione);
+            }
+        }
+        return funzioniObblig.toArray(new Funzione[0]);
+    }
+
+
+    /**
+     * Ritorna la lista dei wrappers funzione - obbligatoria
+     * @return la lista dei wrappers
+     */
+    public ArrayList<Wrap> getWrappers() {
         ArrayList<Wrap> lista = null;
 
         if (funzione1 != null) {
