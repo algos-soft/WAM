@@ -31,6 +31,7 @@ import java.net.URI;
 /**
  * Created by Gac on 08 mar 2016.
  */
+@Theme("wam")
 public class WamUI extends UI {
 
     /**
@@ -40,14 +41,14 @@ public class WamUI extends UI {
     protected void init(VaadinRequest request) {
 
 
-        // set theme
-        String themeName;
-        if (Page.getCurrent().getWebBrowser().isTouchDevice()) {
-            themeName = "wam-mob";
-        } else {
-            themeName = "wam";
-        }
-        setTheme(themeName);
+//        // set theme
+//        String themeName;
+//        if (Page.getCurrent().getWebBrowser().isTouchDevice()) {
+//            themeName = "wam-mob";
+//        } else {
+//            themeName = "wam";
+//        }
+//        setTheme(themeName);
 
         // legge la croce
         WamCompany company = leggeCompany();
