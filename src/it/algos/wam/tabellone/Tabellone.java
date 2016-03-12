@@ -251,6 +251,16 @@ public class Tabellone extends VerticalLayout implements View {
             return data;
         }
 
+        public int getNumGiorni() {
+            int numGiorni=0;
+            if (gridTabellone != null) {
+                numGiorni = gridTabellone.getNumGiorni();
+            }
+            return numGiorni;
+        }
+
+
+
         @Override
         public void enter(ViewChangeListener.ViewChangeEvent event) {
 
@@ -265,10 +275,11 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private class TabMenuBar extends MenuBar {
         public TabMenuBar() {
-            MenuItem item = addItem("precedente", FontAwesome.ARROW_LEFT, new MenuBar.Command() {
+            MenuItem item = addItem("precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    creaGrid(tabComponent.getDataStart().minusWeeks(1));
+                    int gg = tabComponent.getNumGiorni();
+                    creaGrid(tabComponent.getDataStart().minusDays(gg), gg);
                 }
             });
 
@@ -280,10 +291,11 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            addItem("successiva", FontAwesome.ARROW_RIGHT, new MenuBar.Command() {
+            addItem("successiva", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    creaGrid(tabComponent.getDataStart().plusWeeks(1));
+                    int gg = tabComponent.getNumGiorni();
+                    creaGrid(tabComponent.getDataStart().plusDays(gg), gg);
                 }
             });
 
@@ -299,17 +311,19 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            menuVai.addItem("giorno precedente", FontAwesome.ARROW_CIRCLE_O_LEFT, new MenuBar.Command() {
+            menuVai.addItem("giorno precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    creaGrid(tabComponent.getDataStart().minusDays(1));
+                    int gg = tabComponent.getNumGiorni();
+                    creaGrid(tabComponent.getDataStart().minusDays(1), gg);
                 }
             });
 
-            menuVai.addItem("giorno successivo", FontAwesome.ARROW_CIRCLE_O_RIGHT, new MenuBar.Command() {
+            menuVai.addItem("giorno successivo", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    creaGrid(tabComponent.getDataStart().plusDays(1));
+                    int gg = tabComponent.getNumGiorni();
+                    creaGrid(tabComponent.getDataStart().plusDays(1), gg);
                 }
             });
 
