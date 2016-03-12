@@ -72,14 +72,11 @@ public class EngineTab {
             if (t != null) {
                 tcomp = creaCompTurno(tab, t);
             } else {
-                InfoNewTurnoWrap wrapper=new InfoNewTurnoWrap(serv, currDate);
-                tcomp = new CNoTurno(tab, wrapper);
+                tcomp = creaCompNoTurno(tab, serv, currDate);
             }
 
             // aggiungo il componente in posizione sul tabellone
             int col = 2 + i;
-            tcomp.setX(col);
-            tcomp.setY(row);
             tab.addComponent(tcomp, col, row);
 
         }
@@ -93,7 +90,7 @@ public class EngineTab {
      * @param turno il turno
      * @return il componente grafico
      */
-    private static TabelloneCell creaCompTurno(GridTabellone tab, Turno turno) {
+    public static TabelloneCell creaCompTurno(GridTabellone tab, Turno turno) {
         Servizio serv = turno.getServizio();
         int numFunzioni = serv.getNumFunzioni();
         CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni, turno);
@@ -140,6 +137,20 @@ public class EngineTab {
 
 
     /**
+     * Crea un componente grafico di assenza turno
+     * <p>
+     * Contiene le informazioni di base per creare un nuovo turno quando cliccato
+     *
+     * @return il componente grafico
+     */
+    public static TabelloneCell creaCompNoTurno(GridTabellone tab, Servizio serv, LocalDate dataInizio){
+        InfoNewTurnoWrap wrapper=new InfoNewTurnoWrap(serv, dataInizio);
+        TabelloneCell tcomp = new CNoTurno(tab, wrapper);
+        return tcomp;
+    }
+
+
+    /**
      * Crea un componente grafico con le funzioni in base al Servizio
      *
      * @param serv il servizio
@@ -175,12 +186,7 @@ public class EngineTab {
         LocalDate d2=d1.plusDays(quantiGiorni-1);
         WTabellone wtab =new WTabellone(d1, d2);
 
-        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
-        ArrayList<Servizio> listaServizi = null;
-
-        if (company != null) {
-            listaServizi = Servizio.findAll(company);
-        }
+        List<Servizio> listaServizi = (List<Servizio>)CompanyQuery.getList(Servizio.class);
 
         if (listaServizi != null && listaServizi.size() > 0) {
             for (Servizio servizio : listaServizi) {

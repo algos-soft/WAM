@@ -98,6 +98,22 @@ public class GridTabellone extends GridLayout implements View {
 
     }
 
+
+    /**
+     * Metodo addComponent sovrascritto per registrare le coordinate
+     * nelle celle che vengono aggiunte al tabellone
+     */
+    @Override
+    public void addComponent(Component comp, int col, int row) throws OverlapsException, OutOfBoundsException {
+        if(comp!=null && comp instanceof TabelloneCell){
+            TabelloneCell tcell=(TabelloneCell)comp;
+            tcell.setX(col);
+            tcell.setY(row);
+        }
+        super.addComponent(comp, col, row);
+    }
+
+
     public LocalDate getDataStart() {
         return dStart;
     }

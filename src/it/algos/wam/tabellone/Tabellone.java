@@ -61,7 +61,7 @@ public class Tabellone extends VerticalLayout implements View {
 
         setMargin(true);
 
-        entityManager= EM.createEntityManager();
+        entityManager = EM.createEntityManager();
 
         tabComponent = new TabComponent();
         creaGrid(LocalDate.now());
@@ -77,8 +77,6 @@ public class Tabellone extends VerticalLayout implements View {
         navigator.addView("search", searchComponent);
         navigator.setErrorView(new TabErrView());
         navigator.navigateTo("tabellone");
-
-        //UI.setCurrent();
 
         // Listener di cambio View nel Navigator.
         // In funzione della pagina in cui stiamo entrando, cambio
@@ -173,7 +171,6 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private void cellClicked(CellType tipo, int col, int row, Object cellObject) {
         Turno turno = null;
-        CTurnoEditor editor;
         switch (tipo) {
             case TURNO:
                 turno = (Turno) cellObject;
@@ -188,9 +185,8 @@ public class Tabellone extends VerticalLayout implements View {
                 break;
         }
 
-
         // assegna il turno al componente editor e naviga al componente
-        editComponent.setTurno(turno);
+        editComponent.setTurno(turno, col, row);
         navigator.navigateTo("edit");
 
     }
@@ -211,6 +207,7 @@ public class Tabellone extends VerticalLayout implements View {
     public Navigator getNavigator() {
         return navigator;
     }
+
 
     /**
      * Componente View con MenuBar comandi tabellone e griglia tabellone.
@@ -240,6 +237,10 @@ public class Tabellone extends VerticalLayout implements View {
             this.gridTabellone = grid;
             gridPlaceholder.removeAllComponents();
             gridPlaceholder.addComponent(grid);
+        }
+
+        public GridTabellone getGridTabellone() {
+            return gridTabellone;
         }
 
         public LocalDate getDataStart() {
@@ -374,8 +375,12 @@ public class Tabellone extends VerticalLayout implements View {
         /**
          * Assegna un Turno a questo componente.
          * Crea l'editor di turno e lo aggiunge graficamente
+         *
+         * @param turno il turno da editare
+         * @param col   la colonna della griglia dove è visualizzato il turno
+         * @param row   la riga della griglia dove è visualizzato il turno
          */
-        public void setTurno(Turno turno) {
+        public void setTurno(Turno turno, int col, int row) {
             removeAllComponents();
             editor = new CTurnoEditor(turno, entityManager);
             addComponent(editor);
@@ -385,6 +390,21 @@ public class Tabellone extends VerticalLayout implements View {
             editor.addDismissListener(new CTurnoEditor.DismissListener() {
                 @Override
                 public void editorDismissed(CTurnoEditor.DismissEvent e) {
+
+                    // se ha salvato o eliminato il turno aggiorna la cella della griglia
+                    if (e.isSaved() | e.isDeleted()) {
+                        GridTabellone grid = tabComponent.getGridTabellone();
+                        grid.removeComponent(col, row);
+                        TabelloneCell cell=null;
+                        if(e.isSaved()){
+                            cell = EngineTab.creaCompTurno(grid, turno);
+                        }
+                        if(e.isDeleted()){
+                            cell = EngineTab.creaCompNoTurno(grid, turno.getServizio(), turno.getData1());
+                        }
+                        grid.addComponent(cell, col, row);
+                    }
+
                     navigator.navigateTo("tabellone");
                 }
             });

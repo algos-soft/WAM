@@ -7,6 +7,9 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.lib.LibWam;
 import it.algos.wam.wrap.Iscrizione;
 import it.algos.wam.wrap.WrapTurno;
+import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.query.AQuery;
@@ -75,33 +78,30 @@ public class Turno extends WamCompanyEntity {
      * Necessario per le specifiche JavaBean
      */
     public Turno() {
-        this(null, null, null);
+        this(null, null);
     }// end of constructor
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
      *
-     * @param company  croce di appartenenza
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
      */
-    public Turno(WamCompany company, Servizio servizio, Date inizio) {
-        this(company, servizio, inizio, null, null, false);
+    public Turno(Servizio servizio, Date inizio) {
+        this(servizio, inizio, null, null, false);
     }// end of constructor
 
     /**
      * Costruttore completo
      *
-     * @param company   croce di appartenenza
      * @param servizio  tipologia di servizio (obbligatoria)
      * @param inizio    giorno, ora e minuto di inizio turno
      * @param fine      giorno, ora e minuto di fine turno
      * @param wrapTurno iscrizioni dei militi/volontari per questo turno
      * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
      */
-    public Turno(WamCompany company, Servizio servizio, Date inizio, Date fine, WrapTurno wrapTurno, boolean assegnato) {
+    public Turno(Servizio servizio, Date inizio, Date fine, WrapTurno wrapTurno, boolean assegnato) {
         super();
-        super.setCompany(company);
         setServizio(servizio);
         setInizio(inizio);
         setFine(fine);
@@ -131,14 +131,16 @@ public class Turno extends WamCompanyEntity {
     /**
      * Recupera una lista di Turni usando la chiave specifica
      *
-     * @param company croce di appartenenza
      * @param chiave  indicizzata per query più veloci e 'mirate' (obbligatoria)
      * @return lista di Turni, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Turno> findAllChiave(WamCompany company, int chiave) {
+    public static ArrayList<Turno> findAllChiave(int chiave) {
+
+        BaseCompany company = CompanySessionLib.getCompany();
+
         ArrayList<Turno> lista = null;
-        List<Turno> listaPerChiave = (List<Turno>) AQuery.queryList(Turno.class, Turno_.chiave, chiave);
+        List<Turno> listaPerChiave = (List<Turno>) CompanyQuery.queryList(Turno.class, Turno_.chiave, chiave);
 
         if (listaPerChiave != null && listaPerChiave.size() > 0) {
             lista = new ArrayList();
@@ -158,20 +160,19 @@ public class Turno extends WamCompanyEntity {
      * Se il servizio è multiplo, ce ne possono essere diversi al giorno (per wamcompany)
      * Se il servizio NON è multiplo, conviene usare la chiamata find (stessi parametri)
      *
-     * @param company  croce di appartenenza
      * @param servizio tipologia di servizio (obbligatoria)
      * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Turno> findAll(WamCompany company, Servizio servizio, int chiave) {
+    public static ArrayList<Turno> findAll(Servizio servizio, int chiave) {
         ArrayList<Turno> lista = null;
 
-        if (company == null || servizio == null || chiave == 0) {
+        if (servizio == null || chiave == 0) {
             return null;
         }// end of if cycle
 
-        lista = findAllChiave(company, chiave);
+        lista = findAllChiave(chiave);
 
         return lista;
     }// end of method
@@ -188,7 +189,7 @@ public class Turno extends WamCompanyEntity {
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<Turno> findAll(WamCompany company, Servizio servizio, Date inizio) {
-        return findAll(company, servizio, LibWam.creaChiave(inizio));
+        return findAll(servizio, LibWam.creaChiave(inizio));
     }// end of method
 
 
@@ -202,7 +203,7 @@ public class Turno extends WamCompanyEntity {
     @SuppressWarnings("unchecked")
     public static Turno findChiave(WamCompany company, int chiave) {
         Turno instance = null;
-        ArrayList<Turno> lista = findAllChiave(company, chiave);
+        ArrayList<Turno> lista = findAllChiave(chiave);
 
         if (lista != null && lista.size() == 1) {
             instance = lista.get(0);
@@ -223,19 +224,19 @@ public class Turno extends WamCompanyEntity {
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Turno find(WamCompany company, Servizio servizio, int chiave) {
+    public static Turno find(Servizio servizio, int chiave) {
         Turno instance = null;
         ArrayList<Turno> listaTurni = null;
         Servizio servizioTmp = null;
 
-        if (company == null || servizio == null || chiave == 0) {
+        if (servizio == null || chiave == 0) {
             return null;
         }// end of if cycle
 
         if (servizio.isMultiplo()) {
             return null;//@todo per ora
         } else {
-            listaTurni = findAll(company, servizio, chiave);
+            listaTurni = findAll(servizio, chiave);
             if (listaTurni != null && listaTurni.size() > 0) {
                 for (Turno turno : listaTurni) {
                     servizioTmp = turno.getServizio();
@@ -255,14 +256,13 @@ public class Turno extends WamCompanyEntity {
      * Se il servizio NON è multiplo, ce ne deve essere SOLO UNO al giorno (per wamcompany)
      * Se il servizio è multiplo, usare la chiamata findAll (stessi parametri)
      *
-     * @param company  croce di appartenenza
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Turno find(WamCompany company, Servizio servizio, Date inizio) {
-        return find(company, servizio, LibWam.creaChiave(inizio));
+    public static Turno find(Servizio servizio, Date inizio) {
+        return find(servizio, LibWam.creaChiave(inizio));
     }// end of method
 
     /**
@@ -272,7 +272,7 @@ public class Turno extends WamCompanyEntity {
      */
     public static int count() {
         int totRec = 0;
-        long totTmp = AQuery.getCount(Turno.class);
+        long totTmp = CompanyQuery.getCount(Turno.class);
 
         if (totTmp > 0) {
             totRec = (int) totTmp;
@@ -287,8 +287,8 @@ public class Turno extends WamCompanyEntity {
      * @return lista di tutte le istanze di Turno
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Turno> findAll() {
-        return (ArrayList<Turno>) AQuery.getLista(Turno.class);
+    public static List<Turno> findAll() {
+        return (ArrayList<Turno>) CompanyQuery.getList(Turno.class);
     }// end of method
 
 
@@ -296,7 +296,6 @@ public class Turno extends WamCompanyEntity {
      * Creazione iniziale di un turno
      * Lo crea SOLO se non esiste
      *
-     * @param company  croce di appartenenza
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
      * @return istanza di turno
@@ -310,7 +309,6 @@ public class Turno extends WamCompanyEntity {
      * Creazione iniziale di un turno
      * Lo crea SOLO se non esiste
      *
-     * @param company   croce di appartenenza
      * @param servizio  tipologia di servizio (obbligatoria)
      * @param inizio    giorno, ora e minuto di inizio turno
      * @param fine      giorno, ora e minuto di fine turno
@@ -321,12 +319,12 @@ public class Turno extends WamCompanyEntity {
     public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, WrapTurno wrapTurno, boolean assegnato) {
         Turno turno = null;
 
-        if (company == null || servizio == null || inizio == null) {
+        if (servizio == null || inizio == null) {
             return null;
         }// end of if cycle
 
         if (!servizio.isMultiplo()) {
-            turno = Turno.find(company, servizio, inizio);
+            turno = Turno.find(servizio, inizio);
         }// end of if cycle
 
         if (turno == null) {
@@ -334,7 +332,8 @@ public class Turno extends WamCompanyEntity {
                 fine = inizio;
             }// end of if cycle
 
-            turno = new Turno(company, servizio, inizio, fine, wrapTurno, assegnato);
+            turno = new Turno(servizio, inizio, fine, wrapTurno, assegnato);
+            turno.setCompany(company);
             turno.save();
         }// end of if cycle
 

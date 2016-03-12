@@ -51,7 +51,7 @@ public class WamQuery {
         predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
         predicates.add(cb.equal(root.get(Turno_.servizio), servizio));
         predicates.add(cb.greaterThanOrEqualTo(root.get(Turno_.inizio), data1));
-        predicates.add(cb.lessThanOrEqualTo(root.get(Turno_.fine), data2));
+        predicates.add(cb.lessThanOrEqualTo(root.get(Turno_.inizio), data2));
         cq.where(predicates.toArray(new Predicate[]{}));
 
         TypedQuery<Turno> q = em.createQuery(cq);

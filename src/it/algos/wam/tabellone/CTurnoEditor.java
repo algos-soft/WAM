@@ -112,11 +112,20 @@ public class CTurnoEditor extends VerticalLayout implements View {
         layout.setMargin(true);
         layout.setSpacing(true);
 
+        Button bElimina = new Button("Elimina turno");
+        bElimina.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                deleteTurno();
+                fireDismissListeners(new DismissEvent(bElimina, false, true));
+            }
+        });
+
         Button bAnnulla = new Button("Annulla");
         bAnnulla.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                fireDismissListeners(new DismissEvent(bAnnulla, false));
+                fireDismissListeners(new DismissEvent(bAnnulla, false, false));
             }
         });
 
@@ -127,11 +136,13 @@ public class CTurnoEditor extends VerticalLayout implements View {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                saveTurno();
-                fireDismissListeners(new DismissEvent(bRegistra, true));
+                if(saveTurno()){
+                    fireDismissListeners(new DismissEvent(bRegistra, true, false));
+                }
             }
         });
 
+        layout.addComponent(bElimina);
         layout.addComponent(bAnnulla);
         layout.addComponent(bRegistra);
 
@@ -139,16 +150,30 @@ public class CTurnoEditor extends VerticalLayout implements View {
     }
 
 
+
     /**
-     * Registra il turno corrente
+     * Registra il turno corrente.
+     * Visualizza una notifica se non riuscito
+     * @return true se riuscito
      */
-    private void saveTurno() {
+    private boolean saveTurno() {
         Iscrizione[] iscrizioni = iscrizioniEditor.getIscrizioni();
         turno.setIscrizioni(iscrizioni);
         turno.save(entityManager);
 
 //        Notification.show("Turno non valido", Notification.Type.ERROR_MESSAGE);
+        return true;
+    }
 
+
+    /**
+     * Elimina il turno corrente.
+     * Visualizza una notifica se non riuscito
+     * @return true se riuscito
+     */
+    private boolean deleteTurno() {
+        turno.delete(entityManager);
+        return true;
     }
 
 
@@ -181,14 +206,20 @@ public class CTurnoEditor extends VerticalLayout implements View {
      */
     public class DismissEvent extends EventObject {
         private boolean saved;
+        private boolean deleted;
 
-        public DismissEvent(Object source, boolean saved) {
+        public DismissEvent(Object source, boolean saved, boolean deleted) {
             super(source);
             this.saved = saved;
+            this.deleted=deleted;
         }
 
         public boolean isSaved() {
             return saved;
+        }
+
+        public boolean isDeleted() {
+            return deleted;
         }
     }
 

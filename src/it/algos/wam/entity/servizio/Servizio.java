@@ -5,6 +5,7 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.wrap.WrapServizio;
+import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -94,25 +95,23 @@ public class Servizio extends WamCompanyEntity {
      * Necessario per le specifiche JavaBean
      */
     public Servizio() {
-        this(null, "", "");
+        this("", "");
     }// end of constructor
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
      *
-     * @param company     croce di appartenenza
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
      */
-    public Servizio(WamCompany company, String sigla, String descrizione) {
-        this(company, 0, sigla, descrizione, 0, 0, 0);
+    public Servizio(String sigla, String descrizione) {
+        this(0, sigla, descrizione, 0, 0, 0);
     }// end of constructor
 
 
     /**
      * Costruttore
      *
-     * @param company     croce di appartenenza
      * @param ordine      di presentazione nel tabellone
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
@@ -120,14 +119,13 @@ public class Servizio extends WamCompanyEntity {
      * @param oraFine     del servizio (facoltativo)
      * @param persone     minime indispensabile allo svolgimento del servizio
      */
-    public Servizio(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone) {
-        this(company, ordine, sigla, descrizione, oraInizio, oraFine, persone, null);
+    public Servizio(int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone) {
+        this(ordine, sigla, descrizione, oraInizio, oraFine, persone, null);
     }// end of constructor
 
     /**
      * Costruttore completo
      *
-     * @param company      croce di appartenenza
      * @param ordine       di presentazione nel tabellone
      * @param sigla        sigla di riferimento interna (obbligatoria)
      * @param descrizione  per il tabellone (obbligatoria)
@@ -136,9 +134,8 @@ public class Servizio extends WamCompanyEntity {
      * @param persone      minime indispensabile allo svolgimento del servizio
      * @param wrapServizio elenco delle funzioni previste (max quattro)
      */
-    public Servizio(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone, WrapServizio wrapServizio) {
+    public Servizio(int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone, WrapServizio wrapServizio) {
         super();
-        super.setCompany(company);
         setOrdine(ordine);
         setSigla(sigla);
         setDescrizione(descrizione);
@@ -192,7 +189,6 @@ public class Servizio extends WamCompanyEntity {
     /**
      * Recupera una istanza di Servizio usando la query di tutte e sole le property obbligatorie
      *
-     * @param company valore della property Company
      * @param sigla   valore della property Sigla
      * @return istanza di Servizio, null se non trovata
      */
@@ -203,9 +199,9 @@ public class Servizio extends WamCompanyEntity {
         List<Servizio> serviziPerSigla = (List<Servizio>) AQuery.queryList(Servizio.class, Servizio_.sigla, sigla);
         if (serviziPerSigla != null && serviziPerSigla.size() > 0) {
             for (Servizio servizio : serviziPerSigla) {
-                if (servizio.getCompany().getId().equals(company.getId())) {
+                if(servizio.getCompany().equals(company)){
                     instance = servizio;
-                }// end of if cycle
+                }
             }// end of for cycle
         }// end of if cycle
 
@@ -235,25 +231,14 @@ public class Servizio extends WamCompanyEntity {
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<Servizio> findAll() {
-        return (ArrayList<Servizio>) AQuery.getLista(Servizio.class);
+        return (ArrayList<Servizio>) AQuery.getList(Servizio.class);
     }// end of method
 
-    /**
-     * Recupera una lista (array) dei records della Entity SOLO per la Company indicata
-     *
-     * @param company valore della property Company
-     * @return lista delle istanze di Servizio di una Company
-     */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Servizio> findAll(WamCompany company) {
-        return (ArrayList<Servizio>) AQuery.queryLista(Servizio.class, WamCompanyEntity_.company, company);
-    }// end of method
 
     /**
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
      *
-     * @param company     croce di appartenenza
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
      * @return istanza di Servizio
@@ -262,7 +247,7 @@ public class Servizio extends WamCompanyEntity {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
-            servizio = new Servizio(company, sigla, descrizione);
+            servizio = new Servizio(sigla, descrizione);
             servizio.save();
         }// end of if cycle
 
@@ -273,7 +258,6 @@ public class Servizio extends WamCompanyEntity {
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
      *
-     * @param company     croce di appartenenza
      * @param ordine      di presentazione nel tabellone
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
@@ -293,7 +277,6 @@ public class Servizio extends WamCompanyEntity {
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
      *
-     * @param company      croce di appartenenza
      * @param ordine       di presentazione nel tabellone
      * @param sigla        sigla di riferimento interna (obbligatoria)
      * @param descrizione  per il tabellone (obbligatoria)
@@ -310,7 +293,8 @@ public class Servizio extends WamCompanyEntity {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
-            servizio = new Servizio(company, ordine, sigla, descrizione, oraInizio, oraFine, persone);
+            servizio = new Servizio(ordine, sigla, descrizione, oraInizio, oraFine, persone);
+            servizio.setCompany(company);
             servizio.setDurata(Math.abs(oraFine - oraInizio));
             servizio.setVisibile(visibile);
             servizio.setOrario(orario);

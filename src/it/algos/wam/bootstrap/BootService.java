@@ -9,6 +9,8 @@ import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.wrap.Iscrizione;
 import it.algos.wam.wrap.WrapServizio;
 import it.algos.wam.wrap.WrapTurno;
+import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibTime;
 
@@ -59,9 +61,8 @@ public abstract class BootService {
      * Creazione iniziale dei dati generali per la croce demo
      * Li crea SOLO se non esistono già
      */
-    private static void creaCroceDemo() {
+    private static WamCompany creaCroceDemo() {
         WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
-
         if (company == null) {
             company = new WamCompany();
             company.setCompanyCode(WAMApp.DEMO_COMPANY_CODE);
@@ -73,6 +74,7 @@ public abstract class BootService {
             company.setVaiSubitoTabellone(true);
             company.save();
         }// end of if cycle
+        return company;
     }// end of static method
 
     /**
@@ -80,7 +82,7 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaMilitiDemo() {
-        WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        WamCompany company =WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
 
         if (company != null) {
             Volontario.crea(company, "Piero", "Bernocchi", null, "335-471824");
@@ -97,7 +99,7 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaFunzioniDemo() {
-        WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        WamCompany company =WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
         Funzione funzione;
         int k = 0;
 
@@ -118,24 +120,22 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaServiziDemo() {
-        WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        WamCompany company =WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
+
         WrapServizio wrap;
         int k = 0;
-
-        if (company != null) {
-            wrap = new WrapServizio(FUNZ_DEMO.get(0), FUNZ_DEMO.get(1), FUNZ_DEMO.get(2));
-            wrap.setObbligatoria1(true);
-            wrap.setObbligatoria2(true);
-            Servizio.crea(company, ++k, "msa-mat", "Automedica mattino", 8, 14, true, true, false, 2, wrap);
-            Servizio.crea(company, ++k, "msa-pom", "Automedica pomeriggio", 14, 20, true, true, false, 2, wrap);
-            Servizio.crea(company, ++k, "msa-not", "Automedica notte", 20, 8, true, true, false, 2, wrap);
-            Servizio.crea(company, ++k, "dia", "Dialisi mattino", 7, 13, true, true, false, 2, wrap);
-            Servizio.crea(company, ++k, "ord-mat", "Ordinario mattino", 7, 12, true, true, false, 3, wrap);
-            Servizio.crea(company, ++k, "ord-pom", "Ordinario pomeriggio", 12, 18, true, true, false, 3, wrap);
-            Servizio.crea(company, ++k, "ord-ser", "Ordinario sera", 18, 24, true, true, false, 2, wrap);
-            Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2, new WrapServizio(FUNZ_DEMO.get(0), FUNZ_DEMO.get(1)));
-            Servizio.crea(company, ++k, "avis", "Servizio AVIS", 0, 0, true, false, false, 1, new WrapServizio(FUNZ_DEMO.get(0)));
-        }// end of if cycle
+        wrap = new WrapServizio(FUNZ_DEMO.get(0), FUNZ_DEMO.get(1), FUNZ_DEMO.get(2));
+        wrap.setObbligatoria1(true);
+        wrap.setObbligatoria2(true);
+        Servizio.crea(company, ++k, "msa-mat", "Automedica mattino", 8, 14, true, true, false, 2, wrap);
+        Servizio.crea(company, ++k, "msa-pom", "Automedica pomeriggio", 14, 20, true, true, false, 2, wrap);
+        Servizio.crea(company, ++k, "msa-not", "Automedica notte", 20, 8, true, true, false, 2, wrap);
+        Servizio.crea(company, ++k, "dia", "Dialisi mattino", 7, 13, true, true, false, 2, wrap);
+        Servizio.crea(company, ++k, "ord-mat", "Ordinario mattino", 7, 12, true, true, false, 3, wrap);
+        Servizio.crea(company, ++k, "ord-pom", "Ordinario pomeriggio", 12, 18, true, true, false, 3, wrap);
+        Servizio.crea(company, ++k, "ord-ser", "Ordinario sera", 18, 24, true, true, false, 2, wrap);
+        Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2, new WrapServizio(FUNZ_DEMO.get(0), FUNZ_DEMO.get(1)));
+        Servizio.crea(company, ++k, "avis", "Servizio AVIS", 0, 0, true, false, false, 1, new WrapServizio(FUNZ_DEMO.get(0)));
     }// end of static method
 
     /**
@@ -143,27 +143,27 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      */
     private static void creaTurniDemo() {
-        WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
+        WamCompany company =WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
+
         Servizio servizio = null;
         Turno turno;
 
-        if (company != null) {
-            servizio = Servizio.find(company, "msa-pom");
-            Turno.crea(company, servizio, LibDate.creaData(14, 8, 2016));
+        servizio = Servizio.find(company, "msa-pom");
+        Turno.crea(company, servizio, LibDate.creaData(14, 8, 2016));
 
-            servizio = Servizio.find(company, "ord-mat");
-            Turno.crea(company, servizio, LibDate.creaData(22, 11, 2015));
+        servizio = Servizio.find(company, "ord-mat");
+        Turno.crea(company, servizio, LibDate.creaData(22, 11, 2015));
 
-            servizio = Servizio.find(company, "avis");
-            Turno.crea(company, servizio, LibDate.creaData(5, 2, 2016));
+        servizio = Servizio.find(company, "avis");
+        Turno.crea(company, servizio, LibDate.creaData(5, 2, 2016));
 
-            servizio = Servizio.find(company, "ext");
-            turno = Turno.crea(company, servizio, LibDate.creaData(17, 4, 2016));
-            turno.setTitoloExtra("Trasferimento");
-            turno.setLocalitàExtra("Padova");
-            turno.setNote("Sedia-Basta un milite");
-            turno.save();
-        }// end of if cycle
+        servizio = Servizio.find(company, "ext");
+        turno = Turno.crea(company, servizio, LibDate.creaData(17, 4, 2016));
+        turno.setTitoloExtra("Trasferimento");
+        turno.setLocalitàExtra("Padova");
+        turno.setNote("Sedia-Basta un milite");
+        turno.save();
+
     }// end of static method
 
 
@@ -171,7 +171,7 @@ public abstract class BootService {
      * Creazione iniziale dei dati generali per la croce test
      * Li crea SOLO se non esistono già
      */
-    private static void creaCroceTest() {
+    private static WamCompany creaCroceTest() {
         WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
 
         if (company == null) {
@@ -184,6 +184,7 @@ public abstract class BootService {
             company.setEmail("info@crocetest.it");
             company.save();
         }// end of if cycle
+        return company;
     }// end of method
 
     /**
@@ -192,15 +193,12 @@ public abstract class BootService {
      */
     private static void creaMilitiTest() {
         WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
-
-        if (company != null) {
-            Volontario.crea(company, "Carlo", "Bagno");
-            Volontario.crea(company, "Renzo", "Cerrato", LibDate.creaData(14, 7, 1995), "340-564738", false);
-            Volontario.crea(company, "Lucia", "Donadoni", LibDate.creaData(11, 3, 1999), "335-5124396", true, false);
-            Volontario.crea(company, "Ambra", "Angeletti");
-            Volontario.crea(company, "Flacio", "Brambilla", LibDate.creaData(27, 10, 1991), "340-6786432");
-            Volontario.crea(company, "Ruggero", "Testa");
-        }// end of if cycle
+        Volontario.crea(company, "Carlo", "Bagno");
+        Volontario.crea(company, "Renzo", "Cerrato", LibDate.creaData(14, 7, 1995), "340-564738", false);
+        Volontario.crea(company, "Lucia", "Donadoni", LibDate.creaData(11, 3, 1999), "335-5124396", true, false);
+        Volontario.crea(company, "Ambra", "Angeletti");
+        Volontario.crea(company, "Flacio", "Brambilla", LibDate.creaData(27, 10, 1991), "340-6786432");
+        Volontario.crea(company, "Ruggero", "Testa");
     }// end of static method
 
 
@@ -212,18 +210,15 @@ public abstract class BootService {
         WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
         Funzione funzione;
         int k = 0;
-
-        if (company != null) {
-            FUNZ_TEST = new ArrayList<>();
-            funzione = Funzione.crea(company, "aut", "Autista", ++k, "Autista emergenze");
-            FUNZ_TEST.add(funzione);
-            funzione = Funzione.crea(company, "aut2", "Autista", ++k, "Autista dimissioni");
-            FUNZ_TEST.add(funzione);
-            funzione = Funzione.crea(company, "sec", "Secondo", ++k, "Soccorritore");
-            FUNZ_TEST.add(funzione);
-            funzione = Funzione.crea(company, "ter", "Aiuto", ++k, "Barelliere in prova");
-            FUNZ_TEST.add(funzione);
-        }// end of if cycle
+        FUNZ_TEST = new ArrayList<>();
+        funzione = Funzione.crea(company, "aut", "Autista", ++k, "Autista emergenze");
+        FUNZ_TEST.add(funzione);
+        funzione = Funzione.crea(company, "aut2", "Autista", ++k, "Autista dimissioni");
+        FUNZ_TEST.add(funzione);
+        funzione = Funzione.crea(company, "sec", "Secondo", ++k, "Soccorritore");
+        FUNZ_TEST.add(funzione);
+        funzione = Funzione.crea(company, "ter", "Aiuto", ++k, "Barelliere in prova");
+        FUNZ_TEST.add(funzione);
     }// end of static method
 
 
@@ -233,21 +228,19 @@ public abstract class BootService {
      */
     private static void creaServiziTest() {
         WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
+
         WrapServizio wrap;
         int k = 0;
-
-        if (company != null) {
-            wrap = new WrapServizio(FUNZ_TEST.get(0), FUNZ_TEST.get(1), FUNZ_TEST.get(2), FUNZ_TEST.get(3));
-            wrap.setObbligatoria1(true);
-            wrap.setObbligatoria2(true);
-            Servizio.crea(company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3, wrap);
-            wrap.setObbligatoria2(false);
-            Servizio.crea(company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 18, true, true, false, 3, wrap);
-            Servizio.crea(company, ++k, "amb-ser", "Ambulanza sera", 18, 24, true, true, false, 2, wrap);
-            wrap.setObbligatoria2(true);
-            Servizio.crea(company, ++k, "dim", "Dimissioni", 0, 0, true, false, false, 2, wrap);
-            Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2, wrap);
-        }// end of if cycle
+        wrap = new WrapServizio(FUNZ_TEST.get(0), FUNZ_TEST.get(1), FUNZ_TEST.get(2), FUNZ_TEST.get(3));
+        wrap.setObbligatoria1(true);
+        wrap.setObbligatoria2(true);
+        Servizio.crea(company,  ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3, wrap);
+        wrap.setObbligatoria2(false);
+        Servizio.crea(company,  ++k, "amb-pom", "Ambulanza pomeriggio", 12, 18, true, true, false, 3, wrap);
+        Servizio.crea(company,  ++k, "amb-ser", "Ambulanza sera", 18, 24, true, true, false, 2, wrap);
+        wrap.setObbligatoria2(true);
+        Servizio.crea(company,  ++k, "dim", "Dimissioni", 0, 0, true, false, false, 2, wrap);
+        Servizio.crea(company,  ++k, "ext", "Extra", 0, 0, true, false, true, 2, wrap);
     }// end of static method
 
     /**
@@ -273,18 +266,18 @@ public abstract class BootService {
             wrap = new WrapTurno(null);
             Turno.crea(company, servizio, data, data, wrap, true);
 
-            servizio = Servizio.find(company, "dim");
+            servizio = Servizio.find(company,  "dim");
             data = LibDate.creaData(4, 3, 2016);
             iscrizione = new Iscrizione(funzione, milite);
             wrap = new WrapTurno(iscrizione);
-            Turno.crea(company, servizio, data, data, wrap, true);
+            Turno.crea(company,servizio, data, data, wrap, true);
 
-            servizio = Servizio.find(company, "amb-pom");
+            servizio = Servizio.find(company,  "amb-pom");
             data = LibDate.creaData(8, 3, 2016);
             iscrizione2 = new Iscrizione(funzione, milite2);
             iscrizione3 = new Iscrizione(funzione, milite3);
             wrap = new WrapTurno(iscrizione2, iscrizione3);
-            Turno.crea(company, servizio, data, data, wrap, true);
+            Turno.crea(company,servizio, data, data, wrap, true);
         }// end of if cycle
     }// end of static method
 
