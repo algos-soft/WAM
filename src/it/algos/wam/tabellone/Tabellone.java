@@ -380,8 +380,12 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private class EditComponent extends VerticalLayout implements View {
 
+        private CTurnoEditor editor;
+
         public EditComponent() {
+
             setSizeFull();
+
         }
 
         /**
@@ -394,7 +398,18 @@ public class Tabellone extends VerticalLayout implements View {
          */
         public void setTurno(Turno turno, int col, int row) {
             removeAllComponents();
-            CTurnoEditor editor = new CTurnoEditor(turno, entityManager);
+
+            // Rimuove tutti i listeners dall'editor precedente
+            // prima di perdere il riferimento e crearne uno nuovo.
+            // Altrimenti il vecchio editor avrebbe un listener registrato
+            // che impedirebbe la garbace collection.
+            // Non posso farlo quando la chiamata parte dal listener
+            // perché avrei una ConcurrentModificationException.
+            if(editor!=null){
+                editor.removeAllDismissListeners();
+            }
+
+            editor = new CTurnoEditor(turno, entityManager);
             addComponent(editor);
             setComponentAlignment(editor, Alignment.MIDDLE_CENTER);
 
@@ -416,10 +431,11 @@ public class Tabellone extends VerticalLayout implements View {
                         }
                         grid.addComponent(cell, col, row);
                     }
-                    editor.removeAllDismissListeners();
                     navigator.navigateTo("tabellone");
                 }
             });
+
+
 
         }
 

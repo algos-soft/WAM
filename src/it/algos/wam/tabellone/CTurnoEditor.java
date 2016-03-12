@@ -13,6 +13,7 @@ import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.wrap.Iscrizione;
 import it.algos.webbase.multiazienda.ERelatedComboField;
+import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.lib.DateConvertUtils;
@@ -72,34 +73,6 @@ public class CTurnoEditor extends VerticalLayout implements View {
         return layout;
     }
 
-//    /**
-//     * Crea il componente che ospita la lista delle iscrizioni
-//     * (un elemento per ogni funzione)
-//     *
-//     * @return il componente iscrizioni
-//     */
-//    private Component creaCompIscrizioni() {
-//        int numFunzioni = turno.getServizio().getNumFunzioni();
-//        ArrayList<Funzione> funzioni = turno.getServizio().getFunzioni();
-//        GridLayout gridlayout = new GridLayout(2, numFunzioni);
-//        gridlayout.setSpacing(true);
-//
-//        for (int i = 0; i < numFunzioni; i++) {
-//
-//            String fn = funzioni.get(i).getSigla();
-//            Label lblFunzione = new Label(fn);
-//            gridlayout.addComponent(lblFunzione, 0, i);
-//            gridlayout.setComponentAlignment(lblFunzione, Alignment.MIDDLE_LEFT);
-//
-//            RelatedComboField combo = new ERelatedComboField(Volontario.class);
-//            gridlayout.addComponent(combo, 1, i);
-//
-////            mappaCombo.put(fn, combo);
-//
-//        }
-//
-//        return gridlayout;
-//    }
 
 
     /**
@@ -116,8 +89,16 @@ public class CTurnoEditor extends VerticalLayout implements View {
         bElimina.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                deleteTurno();
-                fireDismissListeners(new DismissEvent(bElimina, false, true));
+                ConfirmDialog dialog=new ConfirmDialog("Elimina turno","Sei sicuro?",new ConfirmDialog.Listener() {
+                    @Override
+                    public void onClose(ConfirmDialog dialog, boolean confirmed) {
+                        if(confirmed){
+                            deleteTurno();
+                            fireDismissListeners(new DismissEvent(bElimina, false, true));
+                        }
+                    }
+                });
+                dialog.show();
             }
         });
 
@@ -142,7 +123,11 @@ public class CTurnoEditor extends VerticalLayout implements View {
             }
         });
 
-        layout.addComponent(bElimina);
+        // controllo se il turno è persisted
+
+        if(turno.getId()!=null){
+            layout.addComponent(bElimina);
+        }
         layout.addComponent(bAnnulla);
         layout.addComponent(bRegistra);
 
