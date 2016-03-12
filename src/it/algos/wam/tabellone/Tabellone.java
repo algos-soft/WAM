@@ -366,8 +366,6 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private class EditComponent extends VerticalLayout implements View {
 
-        private CTurnoEditor editor;
-
         public EditComponent() {
             setSizeFull();
         }
@@ -382,7 +380,7 @@ public class Tabellone extends VerticalLayout implements View {
          */
         public void setTurno(Turno turno, int col, int row) {
             removeAllComponents();
-            editor = new CTurnoEditor(turno, entityManager);
+            CTurnoEditor editor = new CTurnoEditor(turno, entityManager);
             addComponent(editor);
             setComponentAlignment(editor, Alignment.MIDDLE_CENTER);
 
@@ -404,7 +402,7 @@ public class Tabellone extends VerticalLayout implements View {
                         }
                         grid.addComponent(cell, col, row);
                     }
-
+                    editor.removeAllDismissListeners();
                     navigator.navigateTo("tabellone");
                 }
             });

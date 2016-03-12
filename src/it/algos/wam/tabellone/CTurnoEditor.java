@@ -193,6 +193,9 @@ public class CTurnoEditor extends VerticalLayout implements View {
         dismissListeners.add(l);
     }
 
+    public void removeAllDismissListeners(){
+        dismissListeners.clear();
+    }
 
     /**
      * Listener per editor dismissed
