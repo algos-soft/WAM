@@ -114,24 +114,33 @@ public class EngineTab {
         }
 
 
-        int row=0;
 
-        Iscrizione[] iscrizioni = turno.getIscrizioni();
-        for (Iscrizione iscr : iscrizioni) {
-            String nome = iscr.getVolontario().toString();
-            CIscrizione ci = new CIscrizione(nome);
-            Funzione f = iscr.getFunzione();
-            int pos = serv.getPosFunzione(f);
-            if (pos >= 0) {
-                try {
-                    comp.addComponent(ci, 0, pos);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    //@todo non aggiunge la seconda riga (gac)
-                    //todo perché ci sono 2 autisti sullo stesso servizio - alex
-                }
+//        Iscrizione[] iscrizioni = turno.getIscrizioni();
+//        for (Iscrizione iscr : iscrizioni) {
+//            String nome = iscr.getVolontario().toString();
+//            CIscrizione ci = new CIscrizione(nome);
+//            Funzione f = iscr.getFunzione();
+//            int pos = serv.getPosFunzione(f);
+//            if (pos >= 0) {
+//                comp.addComponent(ci, 0, pos);
+//            }
+//        }
+
+
+        int row=0;
+        for(Funzione f : serv.getFunzioni()){
+            Iscrizione iscr = turno.getIscrizione(f);
+            Component ci;
+            if(iscr!=null){
+                String nome = iscr.getVolontario().toString();
+                ci = new CIscrizione(nome);
+            }else{
+                ci = new CIscrizione("");
             }
+            comp.addComponent(ci, 0, row);
+            row++;
         }
+
         return comp;
     }
 

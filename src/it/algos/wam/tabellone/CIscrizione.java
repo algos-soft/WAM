@@ -13,9 +13,7 @@ public class CIscrizione extends Label {
     public CIscrizione(String nome) {
         super(nome);
 
-        //setWidth("100%");
-        //setWidth("6em");
-        //setHeight("1.5em");
+        setHeight("100%");
 
         addStyleName("ciscrizione");
     }
