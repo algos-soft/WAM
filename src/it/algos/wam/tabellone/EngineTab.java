@@ -20,6 +20,9 @@ import java.util.List;
  */
 public class EngineTab {
 
+    private static int GIORNI_WARNING=4; // turno vicino (giallo)
+    private static int GIORNI_ALERT=1;  // turno molto vicino (rosso)
+
     /**
      * Genera un tabellone da un array di wrapper di riga
      */
@@ -105,7 +108,7 @@ public class EngineTab {
         }else{
             if(LocalDate.now().isBefore(dataTurno)){   // è nel futuro
                 long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
-                if(ggMancanti<=4){
+                if(ggMancanti<=GIORNI_WARNING){
                     String[] styles = coloraTurnoUrgenza(comp, turno);
                     bgStyle=styles[0];
                     fgStyle=styles[1];
@@ -148,7 +151,7 @@ public class EngineTab {
      * - se è valido è comunque verde
      * - se non è valido
      *     - se è vicino è giallo
-     *     - se è vicinissimo è rosso
+     *     - se è molto vicino è rosso
      */
     private static String[] coloraTurnoUrgenza(TabelloneCell cella, Turno turno){
 
@@ -169,7 +172,7 @@ public class EngineTab {
 
             // se il turno è vicino e giallo, se è vicinissimo è rosso, se è lontano resta com'è
             long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
-            if(ggMancanti<=1){
+            if(ggMancanti<=GIORNI_ALERT){
                 bgStyle="cturno-alert";
                 fgStyle="ciscrizione-light";
             }
