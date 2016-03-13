@@ -195,9 +195,20 @@ $v-font-weight: 400;
 
   }
 
+  // colore del giorno feriale
+  $dark: rgb(101, 101, 104);
+  $light: rgba(101, 101, 104, 0.6);
+  .cgiorno {
+    background: $dark;
+    background: -webkit-linear-gradient(top, $dark, $light, $dark);
+    background: -moz-linear-gradient(top, $dark, $light, $dark);
+    background: -o-linear-gradient(top, $dark, $light, $dark);
+    background: linear-gradient(top, $dark, $light, $dark);
+  }
+
   // colore del giorno di oggi
-  $dark: rgb(116, 0, 0);
-  $light: rgba(116, 0, 0, 0.6);
+  $dark: rgba(93, 85, 169, 1);
+  $light: rgba(93, 85, 169, 0.6);
   .cgiorno-today {
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
@@ -206,10 +217,10 @@ $v-font-weight: 400;
     background: linear-gradient(top, $dark, $light, $dark);
   }
 
-  // colore del giorno nel passato
-  $dark: rgb(101, 101, 104);
-  $light: rgba(101, 101, 104, 0.6);
-  .cgiorno-past {
+  // colore dei giorni festivi
+  $dark: rgba(209, 53, 29, 1);
+  $light: rgba(209, 53, 29, 0.6);
+  .cgiorno-festivo {
     background: $dark;
     background: -webkit-linear-gradient(top, $dark, $light, $dark);
     background: -moz-linear-gradient(top, $dark, $light, $dark);
@@ -220,20 +231,36 @@ $v-font-weight: 400;
 
 
 
-  // componente turno
-  //$dark: rgb(9, 116, 83);
-  //$light: rgba(9, 116, 83, 0.6);
+
+
+  // componente turno di base
   .cturno {
     @extend .cbasecell;
-    //background: $dark;
-    //background: -webkit-linear-gradient(top, $dark, $light, $dark);
-    //background: -moz-linear-gradient(top, $dark, $light, $dark);
-    //background: -o-linear-gradient(top, $dark, $light, $dark);
-    //background: linear-gradient(top, $dark, $light, $dark);
     background: rgba(0, 0, 0, 0.15);
     border-radius: 6px;
     cursor: pointer;
   }
+
+  // componente turno di oggi
+  .cturno-today {
+    background: rgba(58, 58, 127, 0.65);
+  }
+
+  // componente turno valido
+  .cturno-ok {
+    background: rgb(0, 140, 13);
+  }
+
+  // componente turno in warning
+  .cturno-warning {
+    background: rgba(237, 237, 0, 0.4);
+  }
+
+  // componente turno in alert
+  .cturno-alert {
+    background: rgba(206, 18, 10, 0.89);
+  }
+
 
 
   // componente no turno
@@ -261,6 +288,17 @@ $v-font-weight: 400;
     padding-right: 0.2em;
 
   }
+
+  // componente iscrizione - testo scuro
+  .ciscrizione-dark {
+    color: black;
+  }
+
+  // componente iscrizione - testo chiaro
+  .ciscrizione-light {
+    color: white;
+  }
+
 
 
 }

@@ -1,13 +1,9 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
-import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.lib.LibWam;
 import it.algos.wam.query.WamQuery;
 import it.algos.wam.wrap.Iscrizione;
 import it.algos.wam.wrap.WrapServizio;
@@ -16,7 +12,6 @@ import it.algos.webbase.multiazienda.CompanyQuery;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -96,37 +91,35 @@ public class EngineTab {
         CTurnoDisplay comp = new CTurnoDisplay(tab, numFunzioni, turno);
 
 
-        // controlla se il turno è valido
-        boolean valido = turno.isValido();
-
-        // se il turno è valido è comunque verde
-        if(valido){
-            comp.addStyleName("turno-green");
-        }else{  // turno non valido
-            // se il turno è vicino e giallo, se è vicinissimo è rosso, se è lontano resta com'è
-            long ggMancanti = ChronoUnit.DAYS.between(turno.getData1(), LocalDate.now());
-            if(ggMancanti<=3){
-                comp.addStyleName("turno-yellow");
+        // Colora lo sfondo del turno
+        // se è nel passato, non colora
+        // se è oggi, colora di azzurro
+        // se è un po' nel futuro, colora in base all'urgenza di completamento
+        // se è molto nel futuro, non colora
+        String bgStyle=null;
+        String fgStyle=null;
+        LocalDate dataTurno=turno.getData1();
+        if(dataTurno.equals(LocalDate.now())){  // è oggi
+            bgStyle="cturno-today";
+            fgStyle="ciscrizione-light";
+        }else{
+            if(LocalDate.now().isBefore(dataTurno)){   // è nel futuro
+                long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
+                if(ggMancanti<=4){
+                    String[] styles = coloraTurnoUrgenza(comp, turno);
+                    bgStyle=styles[0];
+                    fgStyle=styles[1];
+                }
             }
-            if(ggMancanti<=1){
-                comp.addStyleName("turno-red");
-            }
+        }
+        // background dell'intero turno
+        if(bgStyle!=null){
+            comp.addStyleName(bgStyle);
         }
 
 
 
-//        Iscrizione[] iscrizioni = turno.getIscrizioni();
-//        for (Iscrizione iscr : iscrizioni) {
-//            String nome = iscr.getVolontario().toString();
-//            CIscrizione ci = new CIscrizione(nome);
-//            Funzione f = iscr.getFunzione();
-//            int pos = serv.getPosFunzione(f);
-//            if (pos >= 0) {
-//                comp.addComponent(ci, 0, pos);
-//            }
-//        }
-
-
+        // aggiunge le iscrizioni
         int row=0;
         for(Funzione f : serv.getFunzioni()){
             Iscrizione iscr = turno.getIscrizione(f);
@@ -137,6 +130,11 @@ public class EngineTab {
             }else{
                 ci = new CIscrizione("");
             }
+            // foreground dell'iscrizione
+            if(bgStyle!=null){
+                ci.addStyleName(fgStyle);
+            }
+
             comp.addComponent(ci, 0, row);
             row++;
         }
@@ -144,6 +142,42 @@ public class EngineTab {
         return comp;
     }
 
+
+    /**
+     * Colorazione di un turno futuro in funzione dell'urgenza di completamento
+     * - se è valido è comunque verde
+     * - se non è valido
+     *     - se è vicino è giallo
+     *     - se è vicinissimo è rosso
+     */
+    private static String[] coloraTurnoUrgenza(TabelloneCell cella, Turno turno){
+
+        String bgStyle;
+        String fgStyle;
+
+        // controlla se il turno è valido
+        boolean valido = turno.isValido();
+
+        // se il turno è valido è in ogni caso verde
+        if(valido){
+            bgStyle="cturno-ok";
+            fgStyle="ciscrizione-light";
+        }else{  // turno non valido
+
+            bgStyle="cturno-warning";
+            fgStyle="ciscrizione-dark";
+
+            // se il turno è vicino e giallo, se è vicinissimo è rosso, se è lontano resta com'è
+            long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
+            if(ggMancanti<=1){
+                bgStyle="cturno-alert";
+                fgStyle="ciscrizione-light";
+            }
+        }
+
+        return new String[]{bgStyle, fgStyle};
+
+    }
 
     /**
      * Crea un componente grafico di assenza turno
