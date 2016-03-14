@@ -139,16 +139,26 @@ $v-font-weight: 400;
   }
 
   // componente ora nel componente servizio
+  $dark: rgb(101, 101, 104);
+  $light: rgba(101, 101, 104, 0.6);
   .cservizio-ora {
-    background-color: #6e6e6e;
-    color: #f3f3f3;
+
+    background: $dark;
+    background: -webkit-linear-gradient(top, $dark, $light, $dark);
+    background: -moz-linear-gradient(top, $dark, $light, $dark);
+    background: -o-linear-gradient(top, $dark, $light, $dark);
+    background: linear-gradient(top, $dark, $light, $dark);
+
+    color: white;
+    border-radius: 6px;
     font-weight: bold;
     text-align: center;
   }
 
   // componente nome nel componente servizio
   .cservizio-nome {
-    margin-left: 10%;
+    font-weight: bold;
+    //margin-left: 10%;
   }
 
   // componente funzione (singola funzione nel componente CFunzioni)
