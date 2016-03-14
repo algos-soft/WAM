@@ -21,6 +21,7 @@ public class CGiorno extends Label {
         String text = date.format(formatter);
         setValue(text);
 
+        // stile di base
         addStyleName("cgiorno");
 
 
@@ -33,8 +34,6 @@ public class CGiorno extends Label {
         }else{
             if(isFestivo(date)){
                 addStyleName("cgiorno-festivo");
-            }else{
-                addStyleName("cgiorno");
             }
         }
 

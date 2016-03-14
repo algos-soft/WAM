@@ -140,7 +140,10 @@ $v-font-weight: 400;
 
   // componente ora nel componente servizio
   .cservizio-ora {
+    background-color: #6e6e6e;
+    color: #f3f3f3;
     font-weight: bold;
+    text-align: center;
   }
 
   // componente nome nel componente servizio
@@ -177,9 +180,17 @@ $v-font-weight: 400;
     //background: linear-gradient(top, $dark, $light, $dark);
   }
 
-  // componente giorno
-  $dark: rgb(0, 58, 116);
-  $light: rgba(0, 58, 116, 0.6);
+  //// componente base giorno
+  //.cgiorno {
+  //  @extend .cbasecell;
+  //  color: white;
+  //  text-align: center;
+  //  border-radius: 6px;
+  //}
+
+  // colore base del giorno
+  $dark: rgb(101, 101, 104);
+  $light: rgba(101, 101, 104, 0.6);
   .cgiorno {
     @extend .cbasecell;
 
@@ -193,17 +204,6 @@ $v-font-weight: 400;
     text-align: center;
     border-radius: 6px;
 
-  }
-
-  // colore del giorno feriale
-  $dark: rgb(101, 101, 104);
-  $light: rgba(101, 101, 104, 0.6);
-  .cgiorno {
-    background: $dark;
-    background: -webkit-linear-gradient(top, $dark, $light, $dark);
-    background: -moz-linear-gradient(top, $dark, $light, $dark);
-    background: -o-linear-gradient(top, $dark, $light, $dark);
-    background: linear-gradient(top, $dark, $light, $dark);
   }
 
   // colore del giorno di oggi

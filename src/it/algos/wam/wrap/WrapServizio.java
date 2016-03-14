@@ -118,10 +118,18 @@ public class WrapServizio implements Serializable {
      */
     public ArrayList<Funzione> getFunzioni() {
         ArrayList<Funzione> funzioni=new ArrayList<>();
-        funzioni.add(funzione1);
-        funzioni.add(funzione2);
-        funzioni.add(funzione3);
-        funzioni.add(funzione4);
+        if(funzione1!=null){
+            funzioni.add(funzione1);
+        }
+        if(funzione2!=null){
+            funzioni.add(funzione2);
+        }
+        if(funzione3!=null){
+            funzioni.add(funzione3);
+        }
+        if(funzione4!=null){
+            funzioni.add(funzione4);
+        }
         return funzioni;
     }// end of method
 
