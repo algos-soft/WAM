@@ -12,37 +12,6 @@ import it.algos.wam.entity.servizio.Servizio;
 public class CServizio extends VerticalLayout {
 
 
-//    /**
-//     * Costruttore completo
-//     *
-//     * @param servizio tipologia di servizio (obbligatoria)
-//     */
-//    public CServizio(Servizio servizio) {
-//        super();
-//
-//        if (servizio == null) {
-//            return;
-//        }// end of if cycle
-//
-//        setWidth("6em");
-//        setSpacing(false);
-//        setHeight("100%");
-//        addStyleName("cservizio");
-//
-//        Label labelOra = new Label(servizio.getOrario());
-//        labelOra.addStyleName("cservizio-ora");
-//        labelOra.addStyleName("blueBg");
-//        addComponent(labelOra);
-//
-//        Label labelNome = new Label(servizio.getDescrizione());
-//        labelNome.addStyleName("cservizio-nome");
-//        labelNome.addStyleName("greenBg");
-//
-//        labelNome.setHeight("100%");
-//        addComponent(labelNome);
-//
-//        setExpandRatio(labelNome, 1);
-//    }// end of constructor
 
 
 
@@ -55,7 +24,7 @@ public class CServizio extends VerticalLayout {
     public CServizio(String orario, String descrizione) {
         super();
 
-        setWidth("6em");
+        setWidth("7em");
         setSpacing(false);
         setHeight("100%");
         addStyleName("cservizio");
