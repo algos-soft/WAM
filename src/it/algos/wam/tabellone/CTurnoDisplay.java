@@ -1,48 +1,232 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.event.LayoutEvents;
-import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.*;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.wrap.Iscrizione;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 /**
- * Componente grafico che rappresenta un Turno visualizzato
+ * Componente grafico che rappresenta la cella relativa a un Turno visualizzata
  * all'interno del Tabellone.
- * Ospita diverse Iscrizioni.
+ * Ospita un titolo (facoltativo) e un'area con le iscrizioni.
+ * Se non è definito il turno l'area iscrizioni è tratteggiata, se il turno è definito
+ * l'area iscrizioni riporta l'elenco delle iscrizioni.
+ * Se il turno è definito l'area iscrizioni si colora in funzione dell'urgenza di completamento.
+ * Cliccando sull'area iscrizioni si apre l'editor del turno.
+ * Ci sono due costruttori, uno da usare quando il turno esiste, e l'altro quando il turno non è definito.
  * Created by alex on 20/02/16.
  */
-public class CTurnoDisplay extends GridLayout implements TabelloneCell {
+public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
+
+    private static int GIORNI_WARNING = 4; // turno vicino (giallo)
+    private static int GIORNI_ALERT = 1;  // turno molto vicino (rosso)
 
     private GridTabellone tabellone;
     private int x;
     private int y;
     private Turno turno;
+    private Servizio serv;
+    private LocalDate dataInizio;
+
+    private GridLayout gridIscrizioni;
 
     /**
-     * Costruttore
+     * Costruttore per celle con turno
      *
      * @param tabellone il tabellone di riferimento
-     * @param rows      il numero di righe nella griglia
      * @param turno     il turno di riferimento
      */
-    public CTurnoDisplay(GridTabellone tabellone, int rows, Turno turno) {
-        super(1, rows);
+    public CTurnoDisplay(GridTabellone tabellone, Turno turno) {
+        super();
         this.tabellone = tabellone;
-        this.turno=turno;
+        this.turno = turno;
+        this.serv = turno.getServizio();
 
-        setSpacing(false);
-        setWidth(GridTabellone.W_COLONNE_TURNI);
-        setHeight("100%");
-        addStyleName("cturno");
+        // inizializzazioni comuni turno e no-turno
+        init();
 
+        // numero di righe di iscrizione pari al numero delle funzioni previste
+        int rows = turno.getServizio().getNumFunzioni();
 
-        addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+        // crea la griglia delle iscrizioni
+        gridIscrizioni = new GridLayout(1, rows);
+        gridIscrizioni.setSpacing(false);
+        gridIscrizioni.setWidth("100%");
+        gridIscrizioni.setHeight("100%");
+        gridIscrizioni.addStyleName("cturno");
+
+        // listener quando viene cliccata l'area iscrizioni
+        gridIscrizioni.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
             @Override
             public void layoutClick(LayoutEvents.LayoutClickEvent event) {
                 tabellone.cellClicked(CellType.TURNO, x, y, turno);
             }
         });
 
+        // inizializzazioni specifiche se il turno è presente
+        initTurno();
+
+        // aggiunge graficamente la griglia iscrizioni
+        this.addComponent(gridIscrizioni);
+        setExpandRatio(gridIscrizioni, 1);
+
     }
+
+
+    /**
+     * Costruttore per celle vuote
+     *
+     * @param tabellone il tabellone di riferimento
+     * @param serv      il servizio di riferimento
+     */
+    public CTurnoDisplay(GridTabellone tabellone, Servizio serv, LocalDate dataInizio) {
+        this.tabellone = tabellone;
+        this.serv = serv;
+        this.dataInizio = dataInizio;
+
+        // inizializzazioni comuni turno e no-turno
+        init();
+
+        // componente blank visualizzato nell'area iscrizioni
+        VerticalLayout blank = new VerticalLayout();
+        blank.setWidth("100%");
+        blank.setHeight("100%");
+        blank.addStyleName("cnoturno");
+
+        // listener quando viene cliccata l'area iscrizioni
+        blank.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+            @Override
+            public void layoutClick(LayoutEvents.LayoutClickEvent event) {
+                InfoNewTurnoWrap wrapper = new InfoNewTurnoWrap(serv, dataInizio);
+                tabellone.cellClicked(CellType.NO_TURNO, x, y, wrapper);
+            }
+        });
+
+        // aggiunge graficamente il componente
+        this.addComponent(blank);
+        setExpandRatio(blank, 1);
+
+    }
+
+
+    /**
+     * Inizializzazioni comuni ai casi turno-no turno
+     */
+    private void init() {
+        setWidth(GridTabellone.W_COLONNE_TURNI);
+        setHeight("100%");
+
+        if (serv.isOrarioVariabile()) {
+            Label label = new Label("titolo?");
+            label.setWidth("100%");
+            label.addStyleName("cturno-title");
+            this.addComponent(label);
+        }
+
+    }
+
+
+    /**
+     * Inizializzazioni quando esiste il turno.
+     * Colora lo sfondo
+     * Aggiunge le iscrizioni
+     */
+    private void initTurno() {
+
+        // Colora lo sfondo del turno
+        // se è nel passato, non colora
+        // se è oggi, colora di azzurro
+        // se è un po' nel futuro, colora in base all'urgenza di completamento
+        // se è molto nel futuro, non colora
+        String bgStyle = null;
+        String fgStyle = null;
+        LocalDate dataTurno = turno.getData1();
+        if (dataTurno.equals(LocalDate.now())) {  // è oggi
+            bgStyle = "cturno-today";
+            fgStyle = "ciscrizione-light";
+        } else {
+            if (LocalDate.now().isBefore(dataTurno)) {   // è nel futuro
+                long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
+                if (ggMancanti <= GIORNI_WARNING) {
+                    String[] styles = coloraTurnoUrgenza(turno);
+                    bgStyle = styles[0];
+                    fgStyle = styles[1];
+                }
+            }
+        }
+        // background del turno
+        if (bgStyle != null) {
+            gridIscrizioni.addStyleName(bgStyle);
+        }
+
+
+        // aggiunge le iscrizioni
+        int row = 0;
+        for (Funzione f : serv.getFunzioni()) {
+            Iscrizione iscr = turno.getIscrizione(f);
+            Component ci;
+            if (iscr != null) {
+                String nome = iscr.getVolontario().toString();
+                ci = new CIscrizione(nome);
+            } else {
+                ci = new CIscrizione("");
+            }
+            // foreground dell'iscrizione
+            if (bgStyle != null) {
+                ci.addStyleName(fgStyle);
+            }
+
+            gridIscrizioni.addComponent(ci, 0, row);
+            row++;
+        }
+    }
+
+
+    /**
+     * Colorazione di un turno futuro in funzione dell'urgenza di completamento
+     * - se è valido è comunque verde
+     * - se non è valido
+     * - se è vicino è giallo
+     * - se è molto vicino è rosso
+     *
+     * @param turno il turno da esaminare
+     * @return una coppia di stringhe con lo stile di background e lo stile di foreground
+     */
+    private String[] coloraTurnoUrgenza(Turno turno) {
+
+        String bgStyle;
+        String fgStyle;
+
+        // controlla se il turno è valido
+        boolean valido = turno.isValido();
+
+        // se il turno è valido è in ogni caso verde
+        if (valido) {
+            bgStyle = "cturno-ok";
+            fgStyle = "ciscrizione-light";
+        } else {  // turno non valido
+
+            bgStyle = "cturno-warning";
+            fgStyle = "ciscrizione-dark";
+
+            // se il turno è vicino e giallo, se è vicinissimo è rosso, se è lontano resta com'è
+            long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
+            if (ggMancanti <= GIORNI_ALERT) {
+                bgStyle = "cturno-alert";
+                fgStyle = "ciscrizione-light";
+            }
+        }
+
+        return new String[]{bgStyle, fgStyle};
+
+    }
+
+
 
     /**
      * @return x la colonna del tabellone in cui è posizionato questo componente
@@ -72,4 +256,6 @@ public class CTurnoDisplay extends GridLayout implements TabelloneCell {
         this.y = y;
     }
 
+
 }// end of class
+

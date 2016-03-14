@@ -1,34 +1,44 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.event.LayoutEvents;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.GridLayout;
+import it.algos.wam.entity.turno.Turno;
 
 /**
- * Componente grafico che rappresenta l'assenza di turno
+ * Componente grafico che rappresenta un Turno visualizzato
+ * all'interno del Tabellone.
+ * Ospita diverse Iscrizioni.
+ * Created by alex on 20/02/16.
  */
-public class CNoTurno extends VerticalLayout implements TabelloneCell {
+public class CTurnoDisplayOld extends GridLayout implements TabelloneCell {
 
     private GridTabellone tabellone;
-    private InfoNewTurnoWrap wrapper;
     private int x;
     private int y;
+    private Turno turno;
 
+    /**
+     * Costruttore
+     *
+     * @param tabellone il tabellone di riferimento
+     * @param rows      il numero di righe nella griglia
+     * @param turno     il turno di riferimento
+     */
+    public CTurnoDisplayOld(GridTabellone tabellone, int rows, Turno turno) {
+        super(1, rows);
+        this.tabellone = tabellone;
+        this.turno=turno;
 
-    public CNoTurno(GridTabellone tabellone, InfoNewTurnoWrap wrapper) {
-        super();
-        this.tabellone=tabellone;
-        this.wrapper=wrapper;
         setSpacing(false);
         setWidth(GridTabellone.W_COLONNE_TURNI);
         setHeight("100%");
-        addStyleName("cnoturno");
-        //addComponent(new Label("non previsto"));
+        addStyleName("cturno");
+
 
         addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
             @Override
             public void layoutClick(LayoutEvents.LayoutClickEvent event) {
-                tabellone.cellClicked(CellType.NO_TURNO, x, y, wrapper);
+                tabellone.cellClicked(CellType.TURNO, x, y, turno);
             }
         });
 
@@ -61,7 +71,5 @@ public class CNoTurno extends VerticalLayout implements TabelloneCell {
     public void setY(int y) {
         this.y = y;
     }
-
-
 
 }// end of class

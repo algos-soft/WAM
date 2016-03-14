@@ -424,10 +424,11 @@ public class Tabellone extends VerticalLayout implements View {
                         grid.removeComponent(col, row);
                         TabelloneCell cell=null;
                         if(e.isSaved()){
-                            cell = EngineTab.creaCompTurno(grid, turno);
+//                            cell = EngineTab.creaCompTurno(grid, turno);
+                            cell = new CTurnoDisplay(grid, turno);
                         }
                         if(e.isDeleted()){
-                            cell = EngineTab.creaCompNoTurno(grid, turno.getServizio(), turno.getData1());
+                            cell=new CTurnoDisplay(grid, turno.getServizio(), turno.getData1());
                         }
                         grid.addComponent(cell, col, row);
                     }

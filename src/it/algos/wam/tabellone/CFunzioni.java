@@ -1,6 +1,7 @@
 package it.algos.wam.tabellone;
 
 
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -31,7 +32,7 @@ public class CFunzioni extends VerticalLayout {
      * @return il componente grafico aggiuntp
      */
     public Component addFunzione(String nome) {
-        Label label = new Label(nome);
+        Label label = new Label(nome, ContentMode.HTML);
         label.addStyleName("cfunzione");
         addComponent(label);
         return label;
