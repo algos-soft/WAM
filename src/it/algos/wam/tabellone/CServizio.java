@@ -29,9 +29,18 @@ public class CServizio extends VerticalLayout {
         setHeight("100%");
         addStyleName("cservizio");
 
-        if(orario.equals("")){  orario="&nbsp;";}// evita label con testo vuoto, danno problemi
+        String style=null;
+        if(orario.equals("")) {
+            orario = "&nbsp;";
+        }else {
+            style="cservizio-ora";
+        }// evita label con testo vuoto, danno problemi
+
         Label labelOra = new Label(orario, ContentMode.HTML);
-        labelOra.addStyleName("cservizio-ora");
+        if(style!=null){
+            labelOra.addStyleName(style);
+        }
+
         //labelOra.addStyleName("blueBg");
         addComponent(labelOra);
 
