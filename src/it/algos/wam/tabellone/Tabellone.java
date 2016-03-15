@@ -70,7 +70,7 @@ public class Tabellone extends VerticalLayout implements View {
         searchComponent = new SearchComponent();
 
         // creo un Navigator e vi aggiungo i vari componenti che possono
-        // essere presenati dal tabellone
+        // essere presentati dal tabellone
         navigator = new Navigator(UI.getCurrent(), this);
         navigator.addView("tabellone", tabComponent);
         navigator.addView("edit", editComponent);
@@ -375,8 +375,8 @@ public class Tabellone extends VerticalLayout implements View {
 
 
     /**
-     * Componente di alto livello con logica di modifica e registrazione di un turno.
-     * Invocare il metodo setTurno() per inserire un turno.
+     * Componente di alto livello con logica di navigazione in un turno da modificare.
+     * Invocare il metodo setTurno() per inserire un turno da modificare.
      */
     private class EditComponent extends VerticalLayout implements View {
 
@@ -424,7 +424,6 @@ public class Tabellone extends VerticalLayout implements View {
                         grid.removeComponent(col, row);
                         TabelloneCell cell=null;
                         if(e.isSaved()){
-//                            cell = EngineTab.creaCompTurno(grid, turno);
                             cell = new CTurnoDisplay(grid, turno);
                         }
                         if(e.isDeleted()){
