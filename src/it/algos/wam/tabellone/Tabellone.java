@@ -9,13 +9,14 @@ import com.vaadin.server.*;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.login.Login;
+import it.algos.wam.login.LoginComponent;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.field.DateField;
 import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.form.AForm;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.Lib;
-import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.screen.ErrorScreen;
 
 import javax.persistence.EntityManager;
@@ -75,6 +76,7 @@ public class Tabellone extends VerticalLayout implements View {
         navigator.addView("tabellone", tabComponent);
         navigator.addView("edit", editComponent);
         navigator.addView("search", searchComponent);
+        navigator.addView("login", new LoginComponent());
         navigator.setErrorView(new TabErrView());
         navigator.navigateTo("tabellone");
 
@@ -366,6 +368,7 @@ public class Tabellone extends VerticalLayout implements View {
             addItem("Login", FontAwesome.USER, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    Login.login();
                 }
             });
 
