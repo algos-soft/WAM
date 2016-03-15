@@ -1,6 +1,7 @@
 package it.algos.wam.bootstrap;
 
 import it.algos.wam.WAMApp;
+import it.algos.wam.daemons.WamScheduler;
 import it.algos.webbase.web.AlgosApp;
 import it.algos.webbase.web.bootstrap.ABootStrap;
 import it.algos.webbase.web.toolbar.Toolbar;
@@ -54,6 +55,12 @@ public class WAMBootStrap extends ABootStrap {
 //        if (Company.getDemo() == null) {
 //            creaDemoCompany();
 //        }
+
+
+        // avvia lo schedulatore che esegue periodicamente i task sul server
+        WamScheduler scheduler = WamScheduler.getInstance();
+        scheduler.start();
+
 
     }// end of method
 
