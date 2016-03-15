@@ -1,11 +1,9 @@
 package it.algos.wam.entity.companyentity;
 
 import com.vaadin.data.Container;
-import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.MenuBar;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ELazyContainer;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.ATable;

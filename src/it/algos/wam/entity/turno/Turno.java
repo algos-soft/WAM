@@ -1,9 +1,9 @@
 package it.algos.wam.entity.turno;
 
-import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
 import it.algos.wam.wrap.Iscrizione;
 import it.algos.wam.wrap.WrapTurno;
