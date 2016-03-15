@@ -28,9 +28,9 @@ public class CompanyTasks implements Runnable {
      * ATTENZIONE! Questa procedura è invocata da un thread sul server.
      * Quindi non abbiamo sessioni e di conseguenza non abbiamo una company corrente!
      * Pertanto tutte le chiamate che partono da qui devono:
-     * - 1) NON usare mai CompanyQuery perché la company è nulla;
+     * - 1) NON usare mai CompanyQuery perché la company nella sessione è nulla;
      * - 2) Passare sempre esplicitamente la company ai metodi chiamati;
-     * - 3) Assegnare esplicitamente la Company al record se creano dei record.
+     * - 3) Assegnare esplicitamente la company al record se creano dei record.
      */
     @Override
     public void run() {
@@ -69,6 +69,9 @@ public class CompanyTasks implements Runnable {
 
     /**
      * Esegue tutti i tasks per una data company.
+     * - 1) NON usare mai CompanyQuery perché la company nella sessione è nulla;
+     * - 2) Passare sempre esplicitamente la company ai metodi chiamati;
+     * - 3) Assegnare esplicitamente la company al record se creano dei record.
      *
      * @param company la company
      */
