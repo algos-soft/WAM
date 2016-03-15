@@ -58,8 +58,7 @@ public class WAMBootStrap extends ABootStrap {
 
 
         // avvia lo schedulatore che esegue periodicamente i task sul server
-        WamScheduler scheduler = WamScheduler.getInstance();
-        scheduler.start();
+        WamScheduler.getInstance().start();
 
 
     }// end of method
@@ -84,6 +83,10 @@ public class WAMBootStrap extends ABootStrap {
      */
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
+
+        // arresta lo scheduler
+        WamScheduler.getInstance().stop();
+
         super.contextDestroyed(servletContextEvent);
     }// end of method
 
