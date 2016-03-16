@@ -80,11 +80,13 @@ public class WRigaTab {
      */
     public Turno getTurno(LocalDate currDate) {
         Turno turno=null;
-        for(Turno t : turni){
-            LocalDate dStart=DateConvertUtils.asLocalDate(t.getInizio());
-            if(dStart.equals(currDate)){
-                turno=t;
-                break;
+        if(turni!=null){
+            for(Turno t : turni){
+                LocalDate dStart=DateConvertUtils.asLocalDate(t.getInizio());
+                if(dStart.equals(currDate)){
+                    turno=t;
+                    break;
+                }
             }
         }
         return turno;

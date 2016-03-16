@@ -29,6 +29,7 @@ public class CFunzioni extends VerticalLayout {
      */
     public Component addFunzione(String nome) {
         Label label = new Label(nome, ContentMode.HTML);
+        label.setHeight(GridTabellone.H_ISCRIZIONI);
         label.addStyleName("cfunzione");
         addComponent(label);
         return label;

@@ -92,6 +92,9 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         // inizializzazioni comuni turno e no-turno
         init();
 
+        setHeight("100%");
+
+
         // componente blank visualizzato nell'area iscrizioni
         VerticalLayout blank = new VerticalLayout();
         blank.setWidth("100%");
@@ -119,9 +122,9 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
      */
     private void init() {
         setWidth(GridTabellone.W_COLONNE_TURNI);
-        setHeight("100%");
+        //setHeight("100%");
 
-        if (serv.isOrarioVariabile()) {
+        if (!serv.isOrario()) {
             Label label = new Label("titolo?");
             label.setWidth("100%");
             label.addStyleName("cturno-title");

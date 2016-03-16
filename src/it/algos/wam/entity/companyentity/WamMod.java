@@ -45,4 +45,9 @@ public abstract class WamMod extends CompanyModule {
         return new WamTablePortal(this);
     }// end of method
 
+    @Override
+    public void search() {
+        super.search();
+    }
+
 }// end of class

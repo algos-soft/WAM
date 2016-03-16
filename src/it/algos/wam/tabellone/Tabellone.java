@@ -199,11 +199,9 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private void goHome() {
         if (homeURI != null) {
-//            URI uri = URI.create(homeURI + "?skip=1");
-//            Page.getCurrent().setLocation(uri);
-//            Page.getCurrent().reload();
-            this.getUI().getPage().open("http://"+homeURI.toString()+"?skip=1","");
-
+            String addr = homeURI.toString()+"?skip=1";
+            this.getUI().getPage().open(addr, null);
+//            this.getUI().getPage().open("http://"+homeURI.toString()+"?skip=1","");
         }
     }
 
@@ -233,6 +231,21 @@ public class Tabellone extends VerticalLayout implements View {
             setSpacing(true);
             addComponent(menuPlaceholder);
             addComponent(gridPlaceholder);
+
+            // bottone nuovo servizio
+            Button bNuovoServ = new Button("Crea nuovo servizio");
+            addComponent(bNuovoServ);
+            bNuovoServ.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    Servizio serv = new Servizio("extra","servizio extra");
+                    serv.setOrario(false);
+                    serv.save(entityManager);
+                    WRigaTab wRiga = new WRigaTab(serv, null);
+                    EngineTab.addRiga(gridTabellone, wRiga);
+                }
+            });
+
 
         }
 

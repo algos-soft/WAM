@@ -12,6 +12,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import it.algos.wam.entity.funzione.FunzioneMod;
+import it.algos.wam.entity.servizio.ServizioMod;
 import it.algos.wam.entity.turno.TurnoMod;
 import it.algos.wam.entity.volontario.VolontarioMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
@@ -193,6 +194,7 @@ public class WamUI extends UI {
         nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
         nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
         nc.addView(TurnoMod.class, TurnoMod.MENU_ADDRESS, FontAwesome.TASKS);
+        nc.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
 //        nc.setFooter(new Label("Footer text"));
 
         // aggiungo un MenuItem con il tabellone.
@@ -228,7 +230,8 @@ public class WamUI extends UI {
 
     private String getCurrentAddress(){
         URI uri = Page.getCurrent().getLocation();
-        String str = uri.getAuthority()+uri.getPath();
+        String str=uri.getScheme()+":"+uri.getSchemeSpecificPart();
+//        String str = uri.getAuthority()+uri.getPath();
         return str;
     }
 

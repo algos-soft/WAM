@@ -26,7 +26,7 @@ public class CServizio extends VerticalLayout {
 
         setWidth("7em");
         setSpacing(false);
-        setHeight("100%");
+        //setHeight("100%");
         addStyleName("cservizio");
 
         String style=null;

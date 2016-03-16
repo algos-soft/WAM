@@ -13,7 +13,8 @@ public class CIscrizione extends Label {
     public CIscrizione(String nome) {
         super(nome);
 
-        setHeight("100%");
+        //setHeight("100%");
+        setHeight(GridTabellone.H_ISCRIZIONI);
 
         addStyleName("ciscrizione");
     }

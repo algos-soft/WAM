@@ -1,6 +1,7 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
@@ -22,6 +23,7 @@ public class EngineTab {
 
     private static int GIORNI_WARNING = 4; // turno vicino (giallo)
     private static int GIORNI_ALERT = 1;  // turno molto vicino (rosso)
+
 
     /**
      * Genera un tabellone da un array di wrapper di riga
@@ -135,13 +137,19 @@ public class EngineTab {
     /**
      * Crea i wrapper per le righe di tabellone
      * Un wrapper per ogni servizio
+     *
+     * @param d1            la data iniziale
+     * @param quantiGiorni  il numero di giorni da visualizzare
+     * @param entityManager l'entityManager da utilizzare per le operazioni di persistenza
      */
     public static WTabellone creaRighe(LocalDate d1, int quantiGiorni, EntityManager entityManager) {
 
         LocalDate d2 = d1.plusDays(quantiGiorni - 1);
         WTabellone wtab = new WTabellone(d1, d2);
 
-        List<Servizio> listaServizi = (List<Servizio>) CompanyQuery.getList(Servizio.class);
+//        List<Servizio> listaServizi = (List<Servizio>) CompanyQuery.getList(Servizio.class);
+
+        List<Servizio> listaServizi = WamQuery.queryServiziOrari(entityManager);
 
         if (listaServizi != null && listaServizi.size() > 0) {
             for (Servizio servizio : listaServizi) {

@@ -128,8 +128,9 @@ $v-font-weight: 400;
   //$light: rgba(218, 115, 0, 0.6);
   .cservizio {
     @extend .cbasecell;
-    border-bottom-style: solid;
-    border-bottom-width: thin;
+    border-top-style: solid;
+    border-top-width: thin;
+    padding-top: 0.5em;
 
     //background: $dark;
     //background: -webkit-linear-gradient(top, $dark, $light, $dark);

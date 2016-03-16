@@ -1,6 +1,7 @@
 package it.algos.wam.query;
 
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.servizio.Servizio_;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.turno.Turno_;
 import it.algos.webbase.multiazienda.CompanyQuery;
@@ -65,6 +66,43 @@ public class WamQuery {
         return turni;
     }
 
+
+    /**
+     * Tutti i servizi orari da visualizzare nel tabellone (orario=true).
+     *
+     * @param em l'EntityManager da utilizzare (se nullo lo crea qui)
+     * @return la lista dei servizi
+     */
+    public static List<Servizio> queryServiziOrari(EntityManager em) {
+
+        // se non specificato EM, ne crea uno locale
+        boolean localEM = false;
+        if (em == null) {
+            em = EM.createEntityManager();
+            localEM = true;
+        }
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Servizio> cq = cb.createQuery(Servizio.class);
+        Root<Servizio> root = cq.from(Servizio.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
+        predicates.add(cb.equal(root.get(Servizio_.orario), true));
+        cq.where(predicates.toArray(new Predicate[]{}));
+
+        TypedQuery<Servizio> q = em.createQuery(cq);
+        List<Servizio> servizi = q.getResultList();
+
+
+        // eventualmente chiude l'EM locale
+        if (localEM) {
+            em.close();
+        }
+
+        return servizi;
+
+    }
 
 
 }

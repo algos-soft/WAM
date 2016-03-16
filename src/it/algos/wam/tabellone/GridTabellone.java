@@ -16,7 +16,9 @@ import java.util.ArrayList;
  */
 public class GridTabellone extends GridLayout implements View {
 
-    public static final String W_COLONNE_TURNI="7em";   // larghezza fissa delle colonne turni
+    public static final String W_COLONNE_TURNI = "7em";   // larghezza fissa delle colonne turni
+    public static final String H_ISCRIZIONI = "1.6em";   // altezza fissa delle celle iscrizione
+
     private LocalDate dStart;
     private LocalDate dEnd;
 
@@ -56,11 +58,15 @@ public class GridTabellone extends GridLayout implements View {
     /**
      * Metodo addComponent sovrascritto per registrare le coordinate
      * nelle celle che vengono aggiunte al tabellone
+     *
+     * @param comp il componente
+     * @param col  la colonna
+     * @param row  la riga
      */
     @Override
     public void addComponent(Component comp, int col, int row) throws OverlapsException, OutOfBoundsException {
-        if(comp!=null && comp instanceof TabelloneCell){
-            TabelloneCell tcell=(TabelloneCell)comp;
+        if (comp != null && comp instanceof TabelloneCell) {
+            TabelloneCell tcell = (TabelloneCell) comp;
             tcell.setX(col);
             tcell.setY(row);
         }
@@ -118,7 +124,7 @@ public class GridTabellone extends GridLayout implements View {
         private Object cellObject;
 
         public ClickCellEvent(CellType tipo, int col, int row, Object cellObject) {
-            this.tipo=tipo;
+            this.tipo = tipo;
             this.col = col;
             this.row = row;
             this.cellObject = cellObject;
