@@ -17,7 +17,7 @@ import java.util.Date;
 
 /**
  * Created by gac on 25 feb 2016.
- * Classe statica astratta
+ * Classe statica astratta.
  */
 public abstract class BootService {
 
