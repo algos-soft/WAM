@@ -5,15 +5,13 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.query.WamQuery;
-import it.algos.wam.wrap.Iscrizione;
-import it.algos.wam.wrap.WrapServizio;
 import it.algos.webbase.multiazienda.CompanyQuery;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -22,8 +20,8 @@ import java.util.List;
  */
 public class EngineTab {
 
-    private static int GIORNI_WARNING=4; // turno vicino (giallo)
-    private static int GIORNI_ALERT=1;  // turno molto vicino (rosso)
+    private static int GIORNI_WARNING = 4; // turno vicino (giallo)
+    private static int GIORNI_ALERT = 1;  // turno molto vicino (rosso)
 
     /**
      * Genera un tabellone da un array di wrapper di riga
@@ -84,7 +82,6 @@ public class EngineTab {
     }
 
 
-
     /**
      * Crea un componente grafico con le funzioni in base al Servizio
      *
@@ -93,22 +90,44 @@ public class EngineTab {
      */
     private static Component creaCompFunzioni(Servizio serv) {
         CFunzioni cfunzioni = new CFunzioni();
+        Funzione funz;
+        boolean obbligatoria;
+
 
         // se orario variabile, prima riga vuota per allinearsi con i turni che in questo caso avranno un titolo
-        if(serv.isOrarioVariabile()){
+        if (serv.isOrarioVariabile()) {
             Label label = new Label("&nbsp;", ContentMode.HTML);
             cfunzioni.addComponent(label);
         }
 
-        List<WrapServizio.Wrap> wrappers = serv.getWrapServizio().getWrappers();
-        for (WrapServizio.Wrap w : wrappers) {
-            Funzione f = w.funzione;
-            boolean obblig = w.obbligatoria;
-            Component comp = cfunzioni.addFunzione(f.getSigla());
-            if (obblig) {
+        List<ServizioFunzione> lista = serv.getServizioFunzioni();
+        for (ServizioFunzione serFun : lista) {
+            funz = serFun.getFunzione();
+            obbligatoria = serFun.isObbligatoria();
+
+            Component comp = cfunzioni.addFunzione(funz.getSigla());
+            if (obbligatoria) {
                 comp.addStyleName("cfunzioneobblig");
             }
-        }
+        }// end of for cycle
+
+
+//        for (Funzione funz : lista) {
+//            Component comp = cfunzioni.addFunzione(funz.getSigla());
+//            if (funz.is) {
+//                comp.addStyleName("cfunzioneobblig");
+//            }
+//        }// end of for cycle
+//
+//        List<WrapServizio.Wrap> wrappers = serv.getWrapServizio().getWrappers();
+//        for (WrapServizio.Wrap w : wrappers) {
+//            Funzione f = w.funzione;
+//            boolean obblig = w.obbligatoria;
+//            Component comp = cfunzioni.addFunzione(f.getSigla());
+//            if (obblig) {
+//                comp.addStyleName("cfunzioneobblig");
+//            }
+//        }
         return cfunzioni;
     }
 
@@ -119,10 +138,10 @@ public class EngineTab {
      */
     public static WTabellone creaRighe(LocalDate d1, int quantiGiorni, EntityManager entityManager) {
 
-        LocalDate d2=d1.plusDays(quantiGiorni-1);
-        WTabellone wtab =new WTabellone(d1, d2);
+        LocalDate d2 = d1.plusDays(quantiGiorni - 1);
+        WTabellone wtab = new WTabellone(d1, d2);
 
-        List<Servizio> listaServizi = (List<Servizio>)CompanyQuery.getList(Servizio.class);
+        List<Servizio> listaServizi = (List<Servizio>) CompanyQuery.getList(Servizio.class);
 
         if (listaServizi != null && listaServizi.size() > 0) {
             for (Servizio servizio : listaServizi) {

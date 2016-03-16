@@ -8,6 +8,9 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
         <class>it.algos.webbase.web.entity.BaseEntity</class>
+		<class>it.algos.wam.entity.turnoiscrizione.TurnoIscrizione</class>
+		<class>it.algos.wam.entity.serviziofunzione.ServizioFunzione</class>
+		<class>it.algos.wam.entity.volontariofunzione.VolontarioFunzione</class>
         <class>it.algos.webbase.domain.company.BaseCompany</class>
 
         <class>it.algos.webbase.domain.ruolo.Ruolo</class>
@@ -22,6 +25,7 @@
 		<class>it.algos.wam.entity.servizio.Servizio</class>
         <class>it.algos.wam.entity.funzione.Funzione</class>
         <class>it.algos.wam.entity.volontario.Volontario</class>
+        <class>it.algos.wam.entity.iscrizione.Iscrizione</class>
 
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>

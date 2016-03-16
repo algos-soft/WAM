@@ -199,9 +199,11 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private void goHome() {
         if (homeURI != null) {
-            URI uri = URI.create(homeURI + "?skip=1");
-            Page.getCurrent().setLocation(uri);
-            Page.getCurrent().reload();
+//            URI uri = URI.create(homeURI + "?skip=1");
+//            Page.getCurrent().setLocation(uri);
+//            Page.getCurrent().reload();
+            this.getUI().getPage().open("http://"+homeURI.toString()+"?skip=1","");
+
         }
     }
 

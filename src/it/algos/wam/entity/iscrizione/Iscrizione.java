@@ -1,9 +1,12 @@
-package it.algos.wam.wrap;
+package it.algos.wam.entity.iscrizione;
 
+import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontario.Volontario;
 
+import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -12,17 +15,18 @@ import java.sql.Timestamp;
  * Wrapper dei dati relativi ad una singola iscrizione al turno
  * Al massimo ci sono 4 iscrizioni per turno (hardcoded)
  */
-public class Iscrizione implements Serializable{
+@Entity
+public class Iscrizione extends WamCompanyEntity {
 
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
     //--funzione prevista per il tipo di servizio
-    @ManyToOne
+    @OneToOne
     private Funzione funzione = null;
 
     //--volontario assegnato alle funzione prevista per questa iscrizione
-    @ManyToOne
+    @OneToOne
     private Volontario volontario = null;
 
     //--ultima modifica a questa iscrizione, effettuata dal milite/volontario che si è iscritto
@@ -41,6 +45,13 @@ public class Iscrizione implements Serializable{
     private String nota;
 
     /**
+     * Costruttore vuoto
+     */
+    public Iscrizione() {
+        this(null);
+    }// end of constructor
+
+    /**
      * Costruttore con la funzione
      *
      * @param funzione funzione prevista per il tipo di servizio (obbligatorio)
@@ -48,6 +59,7 @@ public class Iscrizione implements Serializable{
     public Iscrizione(Funzione funzione) {
         this(funzione, null);
     }// end of constructor
+// ructor
 
 
     /**

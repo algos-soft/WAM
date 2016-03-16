@@ -1,7 +1,11 @@
 package it.algos.wam.entity.servizio;
 
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.iscrizione.Iscrizione;
+import it.algos.wam.entity.turno.Turno;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 
+import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
@@ -21,4 +25,6 @@ public class Servizio_ extends CompanyEntity_ {
     public static volatile SingularAttribute<Servizio, Boolean> orario;
     public static volatile SingularAttribute<Servizio, Boolean> multiplo;
     public static volatile SingularAttribute<Servizio, Integer> persone;
+    public static volatile ListAttribute<Servizio, Funzione> funzioni;
+
 }// end of entity class

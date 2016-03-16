@@ -1,15 +1,18 @@
 package it.algos.wam.entity.funzione;
 
+import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -264,6 +267,14 @@ public class Funzione extends WamCompanyEntity {
     public void setNote(String note) {
         this.note = note;
     }//end of setter method
+
+//    public List<VolontarioFunzione> getFunzioneVolontari() {
+//        return funzioneVolontari;
+//    }// end of getter method
+//
+//    public void setFunzioneVolontari(List<VolontarioFunzione> funzioneVolontari) {
+//        this.funzioneVolontari = funzioneVolontari;
+//    }//end of setter method
 
     /**
      * Clone di questa istanza

@@ -42,7 +42,6 @@ public class TurnoMod extends WamMod {
                 Turno_.servizio,
                 Turno_.inizio,
                 Turno_.fine,
-                Turno_.wrapTurno,
                 Turno_.titoloExtra,
                 Turno_.localitàExtra,
                 Turno_.note,

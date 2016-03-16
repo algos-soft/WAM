@@ -2,11 +2,12 @@ package it.algos.wam.entity.turno;
 
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.turnoiscrizione.TurnoIscrizione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
-import it.algos.wam.wrap.Iscrizione;
-import it.algos.wam.wrap.WrapTurno;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -14,10 +15,12 @@ import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -47,7 +50,7 @@ public class Turno extends WamCompanyEntity {
 
     //--tipologia di servizio (obbligatoria)
     @NotNull
-    @ManyToOne
+    @OneToOne
     private Servizio servizio;
 
     //--giorno, ora e minuto di inizio turno
@@ -60,8 +63,10 @@ public class Turno extends WamCompanyEntity {
 
     //--iscrizioni dei militi/volontari per questo turno
     //--all'inizio puà essere nullo (per un turno previsto ma ancora senza iscrizioni)
-    private WrapTurno wrapTurno = null;
 
+    @OneToMany(mappedBy = "turno")
+    @CascadeOnDelete
+    private List<TurnoIscrizione> turnoIscrizioni = new ArrayList();
 
     //--motivazione del turno extra
     private String titoloExtra;
@@ -73,23 +78,14 @@ public class Turno extends WamCompanyEntity {
     //--turno previsto (vuoto) oppure assegnato (militi inseriti)
     private boolean assegnato = false;
 
-    /**
-     * Costruttore senza argomenti
-     * Necessario per le specifiche JavaBean
-     */
-    public Turno() {
-        this(null, null);
-    }// end of constructor
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
-     *
-     * @param servizio tipologia di servizio (obbligatoria)
-     * @param inizio   giorno, ora e minuto di inizio turno
      */
-    public Turno(Servizio servizio, Date inizio) {
-        this(servizio, inizio, null, null, false);
+    public Turno() {
+        this(null, null, null, false);
     }// end of constructor
+
 
     /**
      * Costruttore completo
@@ -97,15 +93,13 @@ public class Turno extends WamCompanyEntity {
      * @param servizio  tipologia di servizio (obbligatoria)
      * @param inizio    giorno, ora e minuto di inizio turno
      * @param fine      giorno, ora e minuto di fine turno
-     * @param wrapTurno iscrizioni dei militi/volontari per questo turno
      * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
      */
-    public Turno(Servizio servizio, Date inizio, Date fine, WrapTurno wrapTurno, boolean assegnato) {
+    public Turno(Servizio servizio, Date inizio, Date fine, boolean assegnato) {
         super();
         setServizio(servizio);
         setInizio(inizio);
         setFine(fine);
-        setWrapTurno(wrapTurno);
         setAssegnato(assegnato);
     }// end of constructor
 
@@ -131,7 +125,7 @@ public class Turno extends WamCompanyEntity {
     /**
      * Recupera una lista di Turni usando la chiave specifica
      *
-     * @param chiave  indicizzata per query più veloci e 'mirate' (obbligatoria)
+     * @param chiave indicizzata per query più veloci e 'mirate' (obbligatoria)
      * @return lista di Turni, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -153,7 +147,6 @@ public class Turno extends WamCompanyEntity {
 
         return lista;
     }// end of method
-
 
     /**
      * Recupera una lista di Turni usando la query di tutte e sole le property obbligatorie
@@ -192,7 +185,6 @@ public class Turno extends WamCompanyEntity {
         return findAll(servizio, LibWam.creaChiave(inizio));
     }// end of method
 
-
     /**
      * Recupera una istanza di Turno usando la chiave specifica
      *
@@ -212,13 +204,11 @@ public class Turno extends WamCompanyEntity {
         return instance;
     }// end of static method
 
-
     /**
      * Recupera una istanza di Turno usando la query di tutte e sole le property obbligatorie
      * Se il servizio NON è multiplo, ce ne deve essere SOLO UNO al giorno (per wamcompany)
      * Se il servizio è multiplo, usare la chiamata findAll (stessi parametri)
      *
-     * @param company  croce di appartenenza
      * @param servizio tipologia di servizio (obbligatoria)
      * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
      * @return istanza di Servizio, null se non trovata
@@ -249,7 +239,6 @@ public class Turno extends WamCompanyEntity {
 
         return instance;
     }// end of method
-
 
     /**
      * Recupera una istanza di Turno usando la query di tutte e sole le property obbligatorie
@@ -291,7 +280,6 @@ public class Turno extends WamCompanyEntity {
         return (ArrayList<Turno>) CompanyQuery.getList(Turno.class);
     }// end of method
 
-
     /**
      * Creazione iniziale di un turno
      * Lo crea SOLO se non esiste
@@ -301,9 +289,8 @@ public class Turno extends WamCompanyEntity {
      * @return istanza di turno
      */
     public static Turno crea(WamCompany company, Servizio servizio, Date inizio) {
-        return crea(company, servizio, inizio, null, null, false);
+        return crea(company, servizio, inizio, null, false);
     }// end of static method
-
 
     /**
      * Creazione iniziale di un turno
@@ -312,11 +299,10 @@ public class Turno extends WamCompanyEntity {
      * @param servizio  tipologia di servizio (obbligatoria)
      * @param inizio    giorno, ora e minuto di inizio turno
      * @param fine      giorno, ora e minuto di fine turno
-     * @param wrapTurno iscrizioni dei militi/volontari per questo turno
      * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
      * @return istanza di turno
      */
-    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, WrapTurno wrapTurno, boolean assegnato) {
+    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, boolean assegnato) {
         Turno turno = null;
 
         if (servizio == null || inizio == null) {
@@ -332,7 +318,7 @@ public class Turno extends WamCompanyEntity {
                 fine = inizio;
             }// end of if cycle
 
-            turno = new Turno(servizio, inizio, fine, wrapTurno, assegnato);
+            turno = new Turno(servizio, inizio, fine, assegnato);
             turno.setCompany(company);
             turno.save();
         }// end of if cycle
@@ -340,6 +326,20 @@ public class Turno extends WamCompanyEntity {
         return turno;
     }// end of static method
 
+    public void add(Iscrizione iscrizione) {
+        TurnoIscrizione tunIsc = null;
+
+        if (getCompany() == null) {
+            Exception e = new Exception("Impossibile aggiungere iscrizioni al turno se manca la company");
+            e.printStackTrace();
+            return;
+        }// end of if cycle
+
+        tunIsc = new TurnoIscrizione(this, iscrizione);
+        tunIsc.setCompany(getCompany());
+        turnoIscrizioni.add(tunIsc);
+
+    }// end of method
 
     /**
      * Costruisce (od aggiorna) la chiave di ricerca indicizzata
@@ -374,21 +374,20 @@ public class Turno extends WamCompanyEntity {
         return inizio;
     }// end of getter method
 
+    public void setInizio(Date inizio) {
+        this.inizio = inizio;
+    }//end of setter method
+
     /**
      * Ritorna la data iniziale come LocalDate
      */
     public LocalDate getData1() {
         LocalDate d = null;
-        if(getInizio()!=null){
-            d= DateConvertUtils.asLocalDate(getInizio());
+        if (getInizio() != null) {
+            d = DateConvertUtils.asLocalDate(getInizio());
         }
         return d;
     }// end of getter method
-
-
-    public void setInizio(Date inizio) {
-        this.inizio = inizio;
-    }//end of setter method
 
     public Date getFine() {
         return fine;
@@ -398,13 +397,15 @@ public class Turno extends WamCompanyEntity {
         this.fine = fine;
     }//end of setter method
 
-    public WrapTurno getWrapTurno() {
-        return wrapTurno;
+
+    public List<TurnoIscrizione> getTurnoIscrizioni() {
+        return turnoIscrizioni;
     }// end of getter method
 
-    public void setWrapTurno(WrapTurno wrapTurno) {
-        this.wrapTurno = wrapTurno;
+    public void setTurnoIscrizioni(List<TurnoIscrizione> turnoIscrizioni) {
+        this.turnoIscrizioni = turnoIscrizioni;
     }//end of setter method
+
 
     public String getTitoloExtra() {
         return titoloExtra;
@@ -438,55 +439,80 @@ public class Turno extends WamCompanyEntity {
         this.assegnato = assegnato;
     }//end of setter method
 
-    /**
-     * Ritorna le iscrizioni a questo turno
-     */
-    public Iscrizione[] getIscrizioni() {
-        Iscrizione[] iscrizioni = new Iscrizione[0];
-        WrapTurno wt = getWrapTurno();
-        if (wt != null) {
-            ArrayList<Iscrizione> lista = wt.getIscrizioni();
-            if (lista != null) {
-                iscrizioni = lista.toArray(new Iscrizione[0]);
-            }
-        }
-        return iscrizioni;
-    }
 
+//    /**
+//     * Ritorna le iscrizioni a questo turno
+//     */
+//    public Iscrizione[] getIscrizioni() {
+//        Iscrizione[] iscrizioni = new Iscrizione[0];
+//        WrapTurno wt = getWrapTurno();
+//        if (wt != null) {
+//            ArrayList<Iscrizione> lista = wt.getIscrizioni();
+//            if (lista != null) {
+//                iscrizioni = lista.toArray(new Iscrizione[0]);
+//            }
+//        }
+//        return iscrizioni;
+//    }
+
+//    /**
+//     * Assegna una lista di iscrizioni al turno.
+//     *
+//     * @param iscrizioni le iscrizioni
+//     */
+//    public void setIscrizioni(Iscrizione[] iscrizioni) {
+//        WrapTurno wt = getWrapTurno();
+//        if (wt == null) {
+//            wt = new WrapTurno();
+//            setWrapTurno(wt);
+//        }
+//        wt.setIscrizioni(iscrizioni);
+//    }
 
     /**
      * Controlla se questo turno ha le iscrizioni coperte per tutte le funzioni
      * obbligatorie dichiarate dal relativo Servizio.
+     *
      * @return true se ha le iscrizioni.
      */
     public boolean isValido() {
         boolean valido = true;
-        Funzione[] funzioni = getServizio().getWrapServizio().getFunzioniObbligatorie();
+        List<Funzione> funzioni = getServizio().getFunzioniObbligatorie();
         for (Funzione f : funzioni) {
-            if(getIscrizione(f)==null){
-                valido=false;
+            if (getIscrizione(f) == null) {
+                valido = false;
                 break;
             }
         }
         return valido;
     }
 
-
     /**
      * Controlla se questo turno ha le iscrizioni coperte per tutte le funzioni
      * (obbligatorie e non) dichiarate dal relativo Servizio
+     *
      * @return true se ha le iscrizioni.
      */
     public boolean isCompleto() {
         boolean completo = true;
-        ArrayList<Funzione> funzioni = getServizio().getWrapServizio().getFunzioni();
+        List<Funzione> funzioni = getServizio().getFunzioni();
         for (Funzione f : funzioni) {
-            if(getIscrizione(f)==null){
-                completo=false;
+            if (getIscrizione(f) == null) {
+                completo = false;
                 break;
             }
         }
         return completo;
+    }
+
+
+    public ArrayList<Iscrizione> getIscrizioni() {
+        ArrayList<Iscrizione> iscrizioni = new ArrayList();
+        List<TurnoIscrizione> lista = getTurnoIscrizioni();
+        for (TurnoIscrizione ti : lista) {
+            iscrizioni.add(ti.getIscrizione());
+        }// end of for cycle
+        return iscrizioni;
     }
 
     /**
@@ -507,20 +533,6 @@ public class Turno extends WamCompanyEntity {
     }
 
     /**
-     * Assegna una lista di iscrizioni al turno.
-     * @param iscrizioni le iscrizioni
-     */
-    public void setIscrizioni(Iscrizione[] iscrizioni) {
-        WrapTurno wt = getWrapTurno();
-        if (wt==null){
-            wt=new WrapTurno();
-            setWrapTurno(wt);
-        }
-        wt.setIscrizioni(iscrizioni);
-    }
-
-
-    /**
      * Clone di questa istanza
      * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)
      * È obbligatoria invocare questo metodo all'interno di un codice try/catch
@@ -536,5 +548,16 @@ public class Turno extends WamCompanyEntity {
             throw new CloneNotSupportedException();
         }// fine del blocco try-catch
     }// end of method
+
+
+
+    public void setIscrizioni(ArrayList<Iscrizione> iscrizioni) {
+        this.turnoIscrizioni.clear();
+        for (Iscrizione i : iscrizioni) {
+            this.add(i);
+        }// end of for cycle
+    }
+
+
 
 }// end of domain class

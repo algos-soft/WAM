@@ -5,10 +5,6 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
-import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.wrap.WrapServizio;
-
-import java.util.List;
 
 /**
  * Componente grafico che rappresenta un elenco di funzioni

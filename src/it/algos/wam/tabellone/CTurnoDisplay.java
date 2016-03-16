@@ -5,7 +5,7 @@ import com.vaadin.ui.*;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
-import it.algos.wam.wrap.Iscrizione;
+import it.algos.wam.entity.iscrizione.Iscrizione;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

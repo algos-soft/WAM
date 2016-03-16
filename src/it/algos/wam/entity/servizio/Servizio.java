@@ -1,23 +1,23 @@
 package it.algos.wam.entity.servizio;
 
-import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
-import it.algos.wam.entity.companyentity.WamCompanyEntity_;
-import it.algos.wam.wrap.WrapServizio;
-import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * Entity che descrive un Servizio (tipo di turno)
  * Estende la Entity astratta WamCompany che contiene la property wamcompany
@@ -87,8 +87,11 @@ public class Servizio extends WamCompanyEntity {
 
     //--elenco delle funzioni previste per questo tipo di turno
     //--massimo hardcoded di 4
-    private WrapServizio wrapServizio = null;
+//    private WrapServizio wrapServizio = null;
 
+    @OneToMany(mappedBy = "servizio")
+    @CascadeOnDelete
+    private List<ServizioFunzione> servizioFunzioni = new ArrayList();
 
     /**
      * Costruttore senza argomenti
@@ -110,7 +113,7 @@ public class Servizio extends WamCompanyEntity {
 
 
     /**
-     * Costruttore
+     * Costruttore completo
      *
      * @param ordine      di presentazione nel tabellone
      * @param sigla       sigla di riferimento interna (obbligatoria)
@@ -120,21 +123,6 @@ public class Servizio extends WamCompanyEntity {
      * @param persone     minime indispensabile allo svolgimento del servizio
      */
     public Servizio(int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone) {
-        this(ordine, sigla, descrizione, oraInizio, oraFine, persone, null);
-    }// end of constructor
-
-    /**
-     * Costruttore completo
-     *
-     * @param ordine       di presentazione nel tabellone
-     * @param sigla        sigla di riferimento interna (obbligatoria)
-     * @param descrizione  per il tabellone (obbligatoria)
-     * @param oraInizio    del servizio (facoltativo)
-     * @param oraFine      del servizio (facoltativo)
-     * @param persone      minime indispensabile allo svolgimento del servizio
-     * @param wrapServizio elenco delle funzioni previste (max quattro)
-     */
-    public Servizio(int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone, WrapServizio wrapServizio) {
         super();
         setOrdine(ordine);
         setSigla(sigla);
@@ -142,7 +130,6 @@ public class Servizio extends WamCompanyEntity {
         setOraInizio(oraInizio);
         setOraFine(oraFine);
         setPersone(persone);
-        setWrapServizio(wrapServizio);
     }// end of constructor
 
 
@@ -189,7 +176,7 @@ public class Servizio extends WamCompanyEntity {
     /**
      * Recupera una istanza di Servizio usando la query di tutte e sole le property obbligatorie
      *
-     * @param sigla   valore della property Sigla
+     * @param sigla valore della property Sigla
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -199,7 +186,7 @@ public class Servizio extends WamCompanyEntity {
         List<Servizio> serviziPerSigla = (List<Servizio>) AQuery.queryList(Servizio.class, Servizio_.sigla, sigla);
         if (serviziPerSigla != null && serviziPerSigla.size() > 0) {
             for (Servizio servizio : serviziPerSigla) {
-                if(servizio.getCompany().equals(company)){
+                if (servizio.getCompany().equals(company)) {
                     instance = servizio;
                 }
             }// end of for cycle
@@ -254,6 +241,7 @@ public class Servizio extends WamCompanyEntity {
         return servizio;
     }// end of static method
 
+
     /**
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
@@ -270,26 +258,6 @@ public class Servizio extends WamCompanyEntity {
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone) {
-        return crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile, orario, multiplo, persone, null);
-    }// end of static method
-
-    /**
-     * Creazione iniziale di un servizio
-     * Lo crea SOLO se non esiste già
-     *
-     * @param ordine       di presentazione nel tabellone
-     * @param sigla        sigla di riferimento interna (obbligatoria)
-     * @param descrizione  per il tabellone (obbligatoria)
-     * @param oraInizio    del servizio (facoltativo)
-     * @param oraFine      del servizio (facoltativo)
-     * @param visibile     nel tabellone
-     * @param orario       servizio ad orario prefissato e fisso ogni giorno
-     * @param multiplo     servizio suscettibile di essere effettuato diverse volte nella giornata
-     * @param persone      minime indispensabile allo svolgimento del servizio
-     * @param wrapServizio elenco delle funzioni previste (max quattro)
-     * @return istanza di Servizio
-     */
-    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone, WrapServizio wrapServizio) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
@@ -299,7 +267,6 @@ public class Servizio extends WamCompanyEntity {
             servizio.setVisibile(visibile);
             servizio.setOrario(orario);
             servizio.setMultiplo(multiplo);
-            servizio.setWrapServizio(wrapServizio);
             servizio.save();
         }// end of if cycle
 
@@ -309,31 +276,57 @@ public class Servizio extends WamCompanyEntity {
 
     /**
      * Ritorna l'elenco delle funzioni previste per questo servizio
+     *
      * @return le funzioni
      */
     public ArrayList<Funzione> getFunzioni() {
-        return wrapServizio.getFunzioni();
+        ArrayList<Funzione> lista = new ArrayList<>();
+
+        for (ServizioFunzione serFun : servizioFunzioni) {
+            lista.add(serFun.getFunzione());
+        }// end of for cycle
+
+        return lista;
+    }
+
+    /**
+     * Ritorna l'elenco delle funzioni obbligatorie previste per questo servizio
+     *
+     * @return le funzioni obbligatorie
+     */
+    public ArrayList<Funzione> getFunzioniObbligatorie() {
+        ArrayList<Funzione> lista = new ArrayList<>();
+
+        for (ServizioFunzione serFun : servizioFunzioni) {
+            if (serFun.isObbligatoria()) {
+                lista.add(serFun.getFunzione());
+            }// end of if cycle
+
+        }// end of for cycle
+
+        return lista;
     }
 
     /**
      * Ritorna il numero di funzioni previste per questo servizio
      */
-    public int getNumFunzioni(){
+    public int getNumFunzioni() {
         return getFunzioni().size();
     }
 
     /**
      * Restituisce la posizione di una data funzione tra le funzioni previste per il turno.
+     *
      * @param f la funzione
      * @return la posizione, -1 se non trovata
      */
-    public int getPosFunzione(Funzione f){
+    public int getPosFunzione(Funzione f) {
         int pos = -1;
         ArrayList<Funzione> funzioni = getFunzioni();
-        for(int i=0; i<funzioni.size(); i++){
-            Funzione currFun=funzioni.get(i);
-            if(currFun.getSigla().equals(f.getSigla())){
-                pos=i;
+        for (int i = 0; i < funzioni.size(); i++) {
+            Funzione currFun = funzioni.get(i);
+            if (currFun.getSigla().equals(f.getSigla())) {
+                pos = i;
                 break;
             }
         }
@@ -341,17 +334,15 @@ public class Servizio extends WamCompanyEntity {
     }
 
 
-
-
-    public ArrayList<String> getSigleFunzioni() {
-        ArrayList<String> lista = null;
-
-        if (wrapServizio != null) {
-            lista = wrapServizio.getSigleFunzioni();
-        }// end of if cycle
-
-        return lista;
-    }// end of method
+//    public ArrayList<String> getSigleFunzioni() {
+//        ArrayList<String> lista = null;
+//
+//        if (wrapServizio != null) {
+//            lista = wrapServizio.getSigleFunzioni();
+//        }// end of if cycle
+//
+//        return lista;
+//    }// end of method
 
     @Override
     public String toString() {
@@ -489,20 +480,42 @@ public class Servizio extends WamCompanyEntity {
         this.persone = funzioniObbligatorie;
     }//end of setter method
 
-    public WrapServizio getWrapServizio() {
-        return wrapServizio;
+
+    public List<ServizioFunzione> getServizioFunzioni() {
+        return servizioFunzioni;
     }// end of getter method
 
-    public void setWrapServizio(WrapServizio wrapServizio) {
-        this.wrapServizio = wrapServizio;
+    public void setServizioFunzioni(List<ServizioFunzione> servizioFunzioni) {
+        this.servizioFunzioni = servizioFunzioni;
     }//end of setter method
+
+    public void add(Funzione funzione) {
+        add(funzione, false);
+    }// end of method
+
+    public void add(Funzione funzione, boolean obbligatoria) {
+        ServizioFunzione serFun = null;
+
+        if (getCompany() == null) {
+            Exception e = new Exception("Impossibile aggiungere funzioni al servizio se manca la company");
+            e.printStackTrace();
+            return;
+        }// end of if cycle
+
+        if (servizioFunzioni != null) {
+            serFun = new ServizioFunzione(this, funzione);
+            serFun.setCompany(getCompany());
+            serFun.setObbligatoria(obbligatoria);
+            servizioFunzioni.add(serFun);
+        }// end of if cycle
+    }// end of method
 
 
     /**
      * @return true se questo servizio prevede orari variabili, quindi nel tabellone
      * non appare l'orario in corrispondenza del servizio, ma appare un titolo sopra ogni turno
      */
-    public boolean isOrarioVariabile(){
+    public boolean isOrarioVariabile() {
         return isMultiplo();    //?? alex
     }
 

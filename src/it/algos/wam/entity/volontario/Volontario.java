@@ -1,15 +1,19 @@
 package it.algos.wam.entity.volontario;
 
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +58,10 @@ public class Volontario extends WamCompanyEntity {
     //--dati dell'associazione
     private boolean dipendente = false;
     private boolean attivo = true;
+
+    @OneToMany(mappedBy = "volontario")
+    @CascadeOnDelete
+    private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 
     //--scadenza certificati
     //--data di scadenza del certificato BSD
@@ -125,7 +133,6 @@ public class Volontario extends WamCompanyEntity {
      * Recupera una istanza di Volontario usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
-     *
      * @return istanza di Volontario, null se non trovata
      */
     public static Volontario find(long id) {
@@ -147,7 +154,6 @@ public class Volontario extends WamCompanyEntity {
      * @param company valore della property Company
      * @param nome    valore della property Nome
      * @param cognome valore della property Cognome
-     *
      * @return istanza di Volontario, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -212,7 +218,6 @@ public class Volontario extends WamCompanyEntity {
      * @param company croce di appartenenza
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
-     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, String nome, String cognome) {
@@ -228,7 +233,6 @@ public class Volontario extends WamCompanyEntity {
      * @param cognome     del volontario/milite (obbligatorio)
      * @param dataNascita del volontario/milite (facoltativo)
      * @param cellulare   del volontario/milite (facoltativo)
-     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare) {
@@ -245,7 +249,6 @@ public class Volontario extends WamCompanyEntity {
      * @param dataNascita del volontario/milite (facoltativo)
      * @param cellulare   del volontario/milite (facoltativo)
      * @param dipendente  dell'associazione NON volontario
-     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
@@ -263,7 +266,6 @@ public class Volontario extends WamCompanyEntity {
      * @param cellulare   del volontario/milite (facoltativo)
      * @param dipendente  dell'associazione NON volontario
      * @param attivo      all'interno dell'associazione
-     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente, boolean attivo) {
@@ -367,6 +369,41 @@ public class Volontario extends WamCompanyEntity {
     public void setAttivo(boolean attivo) {
         this.attivo = attivo;
     }//end of setter method
+
+    public List<VolontarioFunzione> getVolontarioFunzioni() {
+        return volontarioFunzioni;
+    }// end of getter method
+
+    public void setVolontarioFunzioni(List<VolontarioFunzione> volontarioFunzioni) {
+        this.volontarioFunzioni = volontarioFunzioni;
+    }//end of setter method
+
+    public void add(Funzione funzione) {
+        VolontarioFunzione volFun = null;
+
+        if (getCompany() == null) {
+            Exception e = new Exception("Impossibile aggiungere funzioni al volontario se manca la croce");
+            e.printStackTrace();
+            return;
+        }// end of if cycle
+
+        if (volontarioFunzioni != null) {
+            volFun = new VolontarioFunzione(this, funzione);
+            volFun.setCompany(getCompany());
+            volontarioFunzioni.add(volFun);
+        }// end of if cycle
+    }// end of method
+
+//    public void add(WamCompany company, Funzione funzione) {
+//        VolontarioFunzione volFun = null;
+//
+//        if (volontarioFunzioni != null) {
+//            volFun = new VolontarioFunzione(this, funzione);
+//            volFun.setCompany(company);
+//            volontarioFunzioni.add(volFun);
+//        }// end of if cycle
+//
+//    }// end of method
 
     /**
      * Clone di questa istanza

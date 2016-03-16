@@ -11,7 +11,7 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
-import it.algos.wam.wrap.Iscrizione;
+import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.field.IntegerField;
@@ -142,7 +142,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
      * @return true se riuscito
      */
     private boolean saveTurno() {
-        Iscrizione[] iscrizioni = iscrizioniEditor.getIscrizioni();
+        ArrayList<Iscrizione>iscrizioni = iscrizioniEditor.getIscrizioni();
         turno.setIscrizioni(iscrizioni);
         turno.save(entityManager);
 
@@ -276,7 +276,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
          * (tutte quelle che hanno un volontario)
          * @return l'elenco delle iscrizioni
          */
-        public Iscrizione[] getIscrizioni() {
+        public ArrayList<Iscrizione> getIscrizioni() {
             ArrayList<Iscrizione> iscrizioni = new ArrayList();
             for(IscrizioneEditor ie : iEditors){
                 Iscrizione i = ie.getIscrizione();
@@ -284,7 +284,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
                     iscrizioni.add(i);
                 }
             }
-            return iscrizioni.toArray(new Iscrizione[0]);
+            return iscrizioni;
         }
 
     }

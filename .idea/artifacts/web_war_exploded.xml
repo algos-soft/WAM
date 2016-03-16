@@ -8,8 +8,8 @@
           <element id="module-output" name="WAM" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="webbase" />
           <element id="library" level="module" name="IvyIDEA" module-name="WAM" />
+          <element id="library" level="project" name="webbase" />
         </element>
       </element>
       <element id="directory" name="VAADIN">
