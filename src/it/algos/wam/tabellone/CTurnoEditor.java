@@ -144,6 +144,8 @@ public class CTurnoEditor extends VerticalLayout implements View {
      */
     private boolean saveTurno() {
 
+//        entityManager.getTransaction().begin();
+
         if(entityManager.contains(turno)){
             entityManager.refresh(turno);
         }
@@ -164,6 +166,9 @@ public class CTurnoEditor extends VerticalLayout implements View {
 
         // registra il turno
         turno.save(entityManager);
+
+//        entityManager.flush();
+//        entityManager.getTransaction().commit();
 
         return true;
     }

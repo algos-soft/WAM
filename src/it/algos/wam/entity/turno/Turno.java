@@ -43,7 +43,7 @@ public class Turno extends WamCompanyEntity {
 
     //--iscrizioni dei militi/volontari per questo turno
     //--all'inizio puà essere nullo (per un turno previsto ma ancora senza iscrizioni)
-    @OneToMany(mappedBy = "turno")
+    @OneToMany(mappedBy = "turno", cascade=CascadeType.ALL)
     @CascadeOnDelete
     private List<Iscrizione> iscrizioni = new ArrayList();
 
