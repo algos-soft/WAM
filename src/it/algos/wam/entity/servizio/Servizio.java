@@ -3,6 +3,7 @@ package it.algos.wam.entity.servizio;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
@@ -31,6 +32,15 @@ import java.util.List;
 public class Servizio extends WamCompanyEntity {
 
     private static final long serialVersionUID = 1L;
+
+    @OneToMany(mappedBy = "servizio")
+    @CascadeOnDelete
+    private List<Turno> turni = new ArrayList();
+
+    @OneToMany(mappedBy = "servizio")
+    @CascadeOnDelete
+    private List<ServizioFunzione> servizioFunzioni = new ArrayList();
+
 
     //--sigla di riferimento interna (obbligatoria)
     @NotEmpty
@@ -89,9 +99,6 @@ public class Servizio extends WamCompanyEntity {
     //--massimo hardcoded di 4
 //    private WrapServizio wrapServizio = null;
 
-    @OneToMany(mappedBy = "servizio")
-    @CascadeOnDelete
-    private List<ServizioFunzione> servizioFunzioni = new ArrayList();
 
     /**
      * Costruttore senza argomenti
@@ -294,14 +301,13 @@ public class Servizio extends WamCompanyEntity {
      *
      * @return le funzioni obbligatorie
      */
-    public ArrayList<Funzione> getFunzioniObbligatorie() {
-        ArrayList<Funzione> lista = new ArrayList<>();
+    public ArrayList<ServizioFunzione> getFunzioniObbligatorie() {
+        ArrayList<ServizioFunzione> lista = new ArrayList<>();
 
         for (ServizioFunzione serFun : servizioFunzioni) {
             if (serFun.isObbligatoria()) {
-                lista.add(serFun.getFunzione());
+                lista.add(serFun);
             }// end of if cycle
-
         }// end of for cycle
 
         return lista;
@@ -510,6 +516,14 @@ public class Servizio extends WamCompanyEntity {
         }// end of if cycle
     }// end of method
 
+
+    public List<Turno> getTurni() {
+        return turni;
+    }
+
+    public void setTurni(List<Turno> turni) {
+        this.turni = turni;
+    }
 
     /**
      * @return true se questo servizio prevede orari variabili, quindi nel tabellone

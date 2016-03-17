@@ -4,6 +4,7 @@ import com.vaadin.event.LayoutEvents;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 
@@ -170,8 +171,8 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
 
         // aggiunge le iscrizioni
         int row = 0;
-        for (Funzione f : serv.getFunzioni()) {
-            Iscrizione iscr = turno.getIscrizione(f);
+        for (ServizioFunzione sf : serv.getServizioFunzioni()) {
+            Iscrizione iscr = turno.getIscrizione(sf);
             Component ci;
             if (iscr != null) {
                 String nome = iscr.getVolontario().toString();

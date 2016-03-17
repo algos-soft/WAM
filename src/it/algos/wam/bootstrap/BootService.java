@@ -324,18 +324,18 @@ public abstract class BootService {
 
             servizio = Servizio.find(company, "dim");
             data = LibDate.creaData(4, 3, 2016);
-            iscrizione = new Iscrizione(funzione, milite);
-            lista = new ArrayList<>();
-            lista.add(iscrizione);
+//            iscrizione = new Iscrizione(funzione, milite);
+//            lista = new ArrayList<>();
+//            lista.add(iscrizione);
             Turno.crea(company, servizio, data, data, true);
 
             servizio = Servizio.find(company, "amb-pom");
             data = LibDate.creaData(8, 3, 2016);
-            iscrizione2 = new Iscrizione(funzione, milite2);
-            iscrizione3 = new Iscrizione(funzione, milite3);
-            lista = new ArrayList<>();
-            lista.add(iscrizione2);
-            lista.add(iscrizione3);
+//            iscrizione2 = new Iscrizione(funzione, milite2);
+//            iscrizione3 = new Iscrizione(funzione, milite3);
+//            lista = new ArrayList<>();
+//            lista.add(iscrizione2);
+//            lista.add(iscrizione3);
             Turno.crea(company, servizio, data, data, true);
         }// end of if cycle
     }// end of static method

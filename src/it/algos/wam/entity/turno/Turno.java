@@ -1,11 +1,9 @@
 package it.algos.wam.entity.turno;
 
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
-import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
-import it.algos.wam.entity.turnoiscrizione.TurnoIscrizione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
 import it.algos.webbase.domain.company.BaseCompany;
@@ -18,10 +16,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,31 +37,35 @@ public class Turno extends WamCompanyEntity {
 
     private static final long serialVersionUID = 1L;
 
+    // servizio di riferimento
+    @ManyToOne
+    private Servizio servizio;
+
+    //--iscrizioni dei militi/volontari per questo turno
+    //--all'inizio puà essere nullo (per un turno previsto ma ancora senza iscrizioni)
+    @OneToMany(mappedBy = "turno")
+    @CascadeOnDelete
+    private List<Iscrizione> iscrizioni = new ArrayList();
+
     //--chiave indicizzata per query più veloci e 'mirate' (obbligatoria)
     //--annoX1000 + giorno nell'anno
     @NotNull
     @Index
     private long chiave;
 
-    //--tipologia di servizio (obbligatoria)
-    @NotNull
-    @OneToOne
-    private Servizio servizio;
+
 
     //--giorno, ora e minuto di inizio turno
     @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Date inizio;
 
     //--giorno, ora e minuto di fine turno
     //--i servizi senza orario (fisso) vengono creati solo con la data di inizio; la data di fine viene aggiunata dopo
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fine;
 
-    //--iscrizioni dei militi/volontari per questo turno
-    //--all'inizio puà essere nullo (per un turno previsto ma ancora senza iscrizioni)
 
-    @OneToMany(mappedBy = "turno")
-    @CascadeOnDelete
-    private List<TurnoIscrizione> turnoIscrizioni = new ArrayList();
 
     //--motivazione del turno extra
     private String titoloExtra;
@@ -327,17 +326,19 @@ public class Turno extends WamCompanyEntity {
     }// end of static method
 
     public void add(Iscrizione iscrizione) {
-        TurnoIscrizione tunIsc = null;
+//        TurnoIscrizione tunIsc = null;
 
-        if (getCompany() == null) {
-            Exception e = new Exception("Impossibile aggiungere iscrizioni al turno se manca la company");
-            e.printStackTrace();
-            return;
-        }// end of if cycle
+//        if (getCompany() == null) {
+//            Exception e = new Exception("Impossibile aggiungere iscrizioni al turno se manca la company");
+//            e.printStackTrace();
+//            return;
+//        }// end of if cycle
 
-        tunIsc = new TurnoIscrizione(this, iscrizione);
-        tunIsc.setCompany(getCompany());
-        turnoIscrizioni.add(tunIsc);
+        iscrizioni.add(iscrizione);
+
+//        tunIsc = new TurnoIscrizione(this, iscrizione);
+//        tunIsc.setCompany(getCompany());
+
 
     }// end of method
 
@@ -398,13 +399,13 @@ public class Turno extends WamCompanyEntity {
     }//end of setter method
 
 
-    public List<TurnoIscrizione> getTurnoIscrizioni() {
-        return turnoIscrizioni;
-    }// end of getter method
+//    public List<TurnoIscrizione> getTurnoIscrizioni() {
+//        return turnoIscrizioni;
+//    }// end of getter method
 
-    public void setTurnoIscrizioni(List<TurnoIscrizione> turnoIscrizioni) {
-        this.turnoIscrizioni = turnoIscrizioni;
-    }//end of setter method
+//    public void setTurnoIscrizioni(List<TurnoIscrizione> turnoIscrizioni) {
+//        this.turnoIscrizioni = turnoIscrizioni;
+//    }//end of setter method
 
 
     public String getTitoloExtra() {
@@ -477,9 +478,9 @@ public class Turno extends WamCompanyEntity {
      */
     public boolean isValido() {
         boolean valido = true;
-        List<Funzione> funzioni = getServizio().getFunzioniObbligatorie();
-        for (Funzione f : funzioni) {
-            if (getIscrizione(f) == null) {
+        List<ServizioFunzione> funzioni = getServizio().getFunzioniObbligatorie();
+        for (ServizioFunzione sf : funzioni) {
+            if (getIscrizione(sf) == null) {
                 valido = false;
                 break;
             }
@@ -495,9 +496,9 @@ public class Turno extends WamCompanyEntity {
      */
     public boolean isCompleto() {
         boolean completo = true;
-        List<Funzione> funzioni = getServizio().getFunzioni();
-        for (Funzione f : funzioni) {
-            if (getIscrizione(f) == null) {
+        List<ServizioFunzione> lista = getServizio().getServizioFunzioni();
+        for (ServizioFunzione sf : lista) {
+            if (getIscrizione(sf) == null) {
                 completo = false;
                 break;
             }
@@ -506,27 +507,41 @@ public class Turno extends WamCompanyEntity {
     }
 
 
-    public ArrayList<Iscrizione> getIscrizioni() {
-        ArrayList<Iscrizione> iscrizioni = new ArrayList();
-        List<TurnoIscrizione> lista = getTurnoIscrizioni();
-        for (TurnoIscrizione ti : lista) {
-            iscrizioni.add(ti.getIscrizione());
-        }// end of for cycle
+    public List<Iscrizione> getIscrizioni() {
+//        ArrayList<Iscrizione> iscrizioni = new ArrayList();
+//        List<TurnoIscrizione> lista = getTurnoIscrizioni();
+//        for (TurnoIscrizione ti : lista) {
+//            iscrizioni.add(ti.getIscrizione());
+//        }// end of for cycle
         return iscrizioni;
     }
+
+
+    public void setIscrizioni(ArrayList<Iscrizione> iscrizioni) {
+//        this.turnoIscrizioni.clear();
+//        for (Iscrizione i : iscrizioni) {
+//            this.add(i);
+//        }// end of for cycle
+        this.iscrizioni=iscrizioni;
+    }
+
+
 
     /**
      * Recupera la eventuale iscrizione a una data funzione.
      *
-     * @param f la funzione
+     * @param sf il ServizioFunzione
      * @return l'iscrizione
      */
-    public Iscrizione getIscrizione(Funzione f) {
+    public Iscrizione getIscrizione(ServizioFunzione sf) {
         Iscrizione iscrizione = null;
         for (Iscrizione i : getIscrizioni()) {
-            if (i.getFunzione().equals(f)) {
-                iscrizione = i;
-                break;
+            ServizioFunzione s = i.getServizioFunzione();
+            if(s!=null){
+                if (s.equals(sf)) {
+                    iscrizione = i;
+                    break;
+                }
             }
         }
         return iscrizione;
@@ -551,12 +566,6 @@ public class Turno extends WamCompanyEntity {
 
 
 
-    public void setIscrizioni(ArrayList<Iscrizione> iscrizioni) {
-        this.turnoIscrizioni.clear();
-        for (Iscrizione i : iscrizioni) {
-            this.add(i);
-        }// end of for cycle
-    }
 
 
 

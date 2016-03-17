@@ -233,7 +233,7 @@ public class Tabellone extends VerticalLayout implements View {
             addComponent(gridPlaceholder);
 
             // bottone nuovo servizio
-            Button bNuovoServ = new Button("Crea nuovo servizio");
+            Button bNuovoServ = new Button("Crea nuovo servizio", FontAwesome.PLUS_CIRCLE);
             addComponent(bNuovoServ);
             bNuovoServ.addClickListener(new Button.ClickListener() {
                 @Override

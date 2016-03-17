@@ -3,6 +3,8 @@ package it.algos.wam.entity.wamcompany;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.WAMApp;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.webbase.domain.company.BaseCompany;
@@ -10,8 +12,10 @@ import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.query.AQuery;
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +36,21 @@ public class WamCompany extends BaseCompany {
     // servono per creare le foreign key sul db
     // che consentono la cancellazione a cascata
 
-//    @OneToMany(mappedBy = "wamcompany")
-//    @CascadeOnDelete
-//    private List<Milite> militi;
+    @OneToMany(mappedBy = "company")
+    @CascadeOnDelete
+    private List<Servizio> servizi;
+
+    @OneToMany(mappedBy = "company")
+    @CascadeOnDelete
+    private List<Funzione> funzioni;
+
+    @OneToMany(mappedBy = "company")
+    @CascadeOnDelete
+    private List<Volontario> volontari;
+
+    // le altre tabelle sono cancellate a cascata a partire da queste
+
+
 
 //    @OneToMany(mappedBy = "wamcompany", targetEntity=Evento.class)
 //    @CascadeOnDelete

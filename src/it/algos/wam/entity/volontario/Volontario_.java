@@ -1,9 +1,6 @@
 package it.algos.wam.entity.volontario;
 
 import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.turno.Turno;
-import it.algos.wam.entity.turnoiscrizione.TurnoIscrizione;
-import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 
 import javax.persistence.metamodel.ListAttribute;

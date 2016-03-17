@@ -1,19 +1,20 @@
 package it.algos.wam.entity.iscrizione;
 
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
-import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 /**
  * Created by gac on 28 feb 2016.
- * Wrapper dei dati relativi ad una singola iscrizione al turno
- * Al massimo ci sono 4 iscrizioni per turno (hardcoded)
+ * Entity che rappresenta una iscrizione di un volontario in un turno.
+ * L'iscrizione è relativa a una certa funzione tra quelle disponibili nel servizio.
  */
 @Entity
 public class Iscrizione extends WamCompanyEntity {
@@ -21,13 +22,26 @@ public class Iscrizione extends WamCompanyEntity {
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
-    //--funzione prevista per il tipo di servizio
-    @OneToOne
-    private Funzione funzione = null;
+    // turno di riferimento
+    @ManyToOne
+    private Turno turno;
 
-    //--volontario assegnato alle funzione prevista per questa iscrizione
+//    // funzione prevista per il tipo di servizio
+//    @OneToOne
+//    private Funzione funzione = null;
+
+    // volontario assegnato alle funzione prevista per questa iscrizione
     @OneToOne
     private Volontario volontario = null;
+
+    // a quale funzione del servizio il volontario si iscrive
+    @OneToOne
+    private ServizioFunzione servizioFunzione = null;
+
+
+//    @OneToOne(optional=false, mappedBy="iscrizione", orphanRemoval=true, cascade={CascadeType.ALL})
+//    private TurnoIscrizione turnoIscrizione=null;
+
 
     //--ultima modifica a questa iscrizione, effettuata dal milite/volontario che si è iscritto
     //--serve per bloccare le modifiche dopo un determinato intervallo di tempo
@@ -48,56 +62,59 @@ public class Iscrizione extends WamCompanyEntity {
      * Costruttore vuoto
      */
     public Iscrizione() {
-        this(null);
+         this(null, null,null);
     }// end of constructor
 
-    /**
-     * Costruttore con la funzione
-     *
-     * @param funzione funzione prevista per il tipo di servizio (obbligatorio)
-     */
-    public Iscrizione(Funzione funzione) {
-        this(funzione, null);
-    }// end of constructor
-// ructor
+//    /**
+//     * Costruttore con la funzione
+//     *
+//     * @param funzione funzione prevista per il tipo di servizio (obbligatorio)
+//     */
+//    public Iscrizione(Funzione funzione) {
+//        this(funzione, null);
+//    }// end of constructor
 
 
     /**
      * Costruttore con la funzione e il volontario
      *
-     * @param funzione funzione prevista per il tipo di servizio (obbligatorio)
-     * @param milite   milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
+     * @param turno     turno di riferimento
+     * @param serFun     a quale funzione del servizio il volontario si iscrive
+     * @param volontario milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
      */
-    public Iscrizione(Funzione funzione, Volontario milite) {
-        this(funzione, milite, null, 0, false, "");
+    public Iscrizione(Turno turno, Volontario volontario, ServizioFunzione serFun) {
+        setTurno(turno);
+        setVolontario(volontario);
+        setServizioFunzione(serFun);
     }// end of constructor
 
-    /**
-     * Costruttore completo
-     *
-     * @param funzione       funzione prevista per il tipo di servizio (obbligatorio)
-     * @param milite         milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
-     * @param lastModifica   ultima modifica a questa iscrizione, effettuata dal milite/volontario che si è iscritto
-     * @param oreEffettive   durata effettiva del turno del milite/volontario di questa iscrizione
-     * @param esisteProblema eventuali problemi di presenza del milite/volontario di questa iscrizione nel turno
-     * @param nota           eventuale nota associata al milite/volontario
-     */
-    public Iscrizione(Funzione funzione, Volontario milite, Timestamp lastModifica, int oreEffettive, boolean esisteProblema, String nota) {
-        setFunzione(funzione);
-        setVolontario(milite);
-        setLastModifica(lastModifica);
-        setOreEffettive(oreEffettive);
-        setEsisteProblema(esisteProblema);
-        setNota(nota);
-    }// end of constructor
+//    /**
+//     * Costruttore completo
+//     *
+//     * @param serFun         a quale funzione del servizio il volontario si iscrive
+//     * @param milite         milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
+//     * @param lastModifica   ultima modifica a questa iscrizione, effettuata dal milite/volontario che si è iscritto
+//     * @param oreEffettive   durata effettiva del turno del milite/volontario di questa iscrizione
+//     * @param esisteProblema eventuali problemi di presenza del milite/volontario di questa iscrizione nel turno
+//     * @param nota           eventuale nota associata al milite/volontario
+//     */
+//    public Iscrizione(ServizioFunzione serFun, Volontario milite, Timestamp lastModifica, int oreEffettive, boolean esisteProblema, String nota) {
+////        setFunzione(funzione);
+//        setVolontario(milite);
+//        setServizioFunzione(serFun);
+//        setLastModifica(lastModifica);
+//        setOreEffettive(oreEffettive);
+//        setEsisteProblema(esisteProblema);
+//        setNota(nota);
+//    }// end of constructor
 
-    public Funzione getFunzione() {
-        return funzione;
-    }// end of getter method
-
-    public void setFunzione(Funzione funzione) {
-        this.funzione = funzione;
-    }//end of setter method
+//    public Funzione getFunzione() {
+//        return funzione;
+//    }// end of getter method
+//
+//    public void setFunzione(Funzione funzione) {
+//        this.funzione = funzione;
+//    }//end of setter method
 
     public Volontario getVolontario() {
         return volontario;
@@ -106,6 +123,14 @@ public class Iscrizione extends WamCompanyEntity {
     public void setVolontario(Volontario milite) {
         this.volontario = milite;
     }//end of setter method
+
+    public ServizioFunzione getServizioFunzione() {
+        return servizioFunzione;
+    }
+
+    public void setServizioFunzione(ServizioFunzione servizioFunzione) {
+        this.servizioFunzione = servizioFunzione;
+    }
 
     public Timestamp getLastModifica() {
         return lastModifica;
@@ -138,4 +163,21 @@ public class Iscrizione extends WamCompanyEntity {
     public void setNota(String nota) {
         this.nota = nota;
     }//end of setter method
+
+    public Turno getTurno() {
+        return turno;
+    }
+
+    public void setTurno(Turno turno) {
+        this.turno = turno;
+    }
+
+
+    //    public TurnoIscrizione getTurnoIscrizione() {
+//        return turnoIscrizione;
+//    }
+//
+//    public void setTurnoIscrizione(TurnoIscrizione turnoIscrizione) {
+//        this.turnoIscrizione = turnoIscrizione;
+//    }
 }// end of class

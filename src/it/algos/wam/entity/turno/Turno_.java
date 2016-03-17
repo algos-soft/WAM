@@ -2,7 +2,6 @@ package it.algos.wam.entity.turno;
 
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.entity.turnoiscrizione.TurnoIscrizione;
 import it.algos.webbase.web.entity.BaseEntity_;
 
 import javax.persistence.metamodel.ListAttribute;

@@ -8,9 +8,6 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
         <class>it.algos.webbase.web.entity.BaseEntity</class>
-		<class>it.algos.wam.entity.turnoiscrizione.TurnoIscrizione</class>
-		<class>it.algos.wam.entity.serviziofunzione.ServizioFunzione</class>
-		<class>it.algos.wam.entity.volontariofunzione.VolontarioFunzione</class>
         <class>it.algos.webbase.domain.company.BaseCompany</class>
 
         <class>it.algos.webbase.domain.ruolo.Ruolo</class>
@@ -26,6 +23,9 @@
         <class>it.algos.wam.entity.funzione.Funzione</class>
         <class>it.algos.wam.entity.volontario.Volontario</class>
         <class>it.algos.wam.entity.iscrizione.Iscrizione</class>
+
+        <class>it.algos.wam.entity.serviziofunzione.ServizioFunzione</class>
+        <class>it.algos.wam.entity.volontariofunzione.VolontarioFunzione</class>
 
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
@@ -44,6 +44,12 @@
 
             <!--per vedere l'SQL di tutte le query-->
             <!--<property name="eclipselink.logging.level" value="FINE"/>-->
+
+            <!--per generare il DDL su file-->
+            <!--<property name="eclipselink.ddl-generation.output-mode" value="sql-script" />-->
+            <!--<property name="eclipselink.create-ddl-jdbc-file-name" value="ddl.sql" />-->
+            <!--<property name="eclipselink.application-location" value="/Users/Gac" />-->
+
 
         </properties>
     </persistence-unit>

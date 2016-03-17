@@ -9,6 +9,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.iscrizione.Iscrizione;
@@ -142,11 +143,28 @@ public class CTurnoEditor extends VerticalLayout implements View {
      * @return true se riuscito
      */
     private boolean saveTurno() {
+
+        if(entityManager.contains(turno)){
+            entityManager.refresh(turno);
+        }
+
+        // cancella le iscrizioni correnti
+        for(Iscrizione i : turno.getIscrizioni()){
+            i.delete(entityManager);
+        }
+
+        // pulisce la lista iscrizioni del turno
+        turno.getIscrizioni().clear();
+
+        // recupera le nuove iscrizioni e le aggiunge
         ArrayList<Iscrizione>iscrizioni = iscrizioniEditor.getIscrizioni();
-        turno.setIscrizioni(iscrizioni);
+        for(Iscrizione i : iscrizioni){
+            turno.add(i);
+        }
+
+        // registra il turno
         turno.save(entityManager);
 
-//        Notification.show("Turno non valido", Notification.Type.ERROR_MESSAGE);
         return true;
     }
 
@@ -224,13 +242,13 @@ public class CTurnoEditor extends VerticalLayout implements View {
             setSpacing(true);
 
             // crea gli editor di iscrizione e li aggiunge
-            for (Funzione f : turno.getServizio().getFunzioni()) {
+            for (ServizioFunzione sf : turno.getServizio().getServizioFunzioni()) {
 
-                Iscrizione i = turno.getIscrizione(f);
+                Iscrizione i = turno.getIscrizione(sf);
 
                 // se l'iscrizione on esiste la crea ora
                 if (i == null) {
-                    i = new Iscrizione(f);
+                    i = new Iscrizione(turno, null, sf);
                 }
 
                 IscrizioneEditor ie = new IscrizioneEditor(i, this);
@@ -311,7 +329,7 @@ public class CTurnoEditor extends VerticalLayout implements View {
             this.parent = parent;
             setSpacing(true);
 
-            String label = iscrizione.getFunzione().getDescrizione();
+            String label = iscrizione.getServizioFunzione().getFunzione().getDescrizione();
             fVolontario = new ERelatedComboField(Volontario.class, label);
             fVolontario.setWidth("10em");
             if(iscrizione.getVolontario()!=null){
