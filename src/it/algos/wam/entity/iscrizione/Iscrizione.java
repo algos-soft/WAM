@@ -13,8 +13,8 @@ import java.sql.Timestamp;
 
 /**
  * Created by gac on 28 feb 2016.
- * Entity che rappresenta una iscrizione di un volontario in un turno.
- * L'iscrizione è relativa a una certa funzione tra quelle disponibili nel servizio.
+ * Entity che rappresenta una iscrizione di un volontario a un turno.
+ * L'iscrizione è relativa a una certa funzione tra quelle previste nel servizio.
  */
 @Entity
 public class Iscrizione extends WamCompanyEntity {
@@ -26,22 +26,13 @@ public class Iscrizione extends WamCompanyEntity {
     @ManyToOne
     private Turno turno;
 
-//    // funzione prevista per il tipo di servizio
-//    @OneToOne
-//    private Funzione funzione = null;
-
-    // volontario assegnato alle funzione prevista per questa iscrizione
+    // volontario che si iscrive
     @OneToOne
     private Volontario volontario = null;
 
     // a quale funzione del servizio il volontario si iscrive
     @OneToOne
     private ServizioFunzione servizioFunzione = null;
-
-
-//    @OneToOne(optional=false, mappedBy="iscrizione", orphanRemoval=true, cascade={CascadeType.ALL})
-//    private TurnoIscrizione turnoIscrizione=null;
-
 
     //--ultima modifica a questa iscrizione, effettuata dal milite/volontario che si è iscritto
     //--serve per bloccare le modifiche dopo un determinato intervallo di tempo
@@ -65,16 +56,6 @@ public class Iscrizione extends WamCompanyEntity {
          this(null, null,null);
     }// end of constructor
 
-//    /**
-//     * Costruttore con la funzione
-//     *
-//     * @param funzione funzione prevista per il tipo di servizio (obbligatorio)
-//     */
-//    public Iscrizione(Funzione funzione) {
-//        this(funzione, null);
-//    }// end of constructor
-
-
     /**
      * Costruttore con la funzione e il volontario
      *
@@ -87,34 +68,6 @@ public class Iscrizione extends WamCompanyEntity {
         setVolontario(volontario);
         setServizioFunzione(serFun);
     }// end of constructor
-
-//    /**
-//     * Costruttore completo
-//     *
-//     * @param serFun         a quale funzione del servizio il volontario si iscrive
-//     * @param milite         milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
-//     * @param lastModifica   ultima modifica a questa iscrizione, effettuata dal milite/volontario che si è iscritto
-//     * @param oreEffettive   durata effettiva del turno del milite/volontario di questa iscrizione
-//     * @param esisteProblema eventuali problemi di presenza del milite/volontario di questa iscrizione nel turno
-//     * @param nota           eventuale nota associata al milite/volontario
-//     */
-//    public Iscrizione(ServizioFunzione serFun, Volontario milite, Timestamp lastModifica, int oreEffettive, boolean esisteProblema, String nota) {
-////        setFunzione(funzione);
-//        setVolontario(milite);
-//        setServizioFunzione(serFun);
-//        setLastModifica(lastModifica);
-//        setOreEffettive(oreEffettive);
-//        setEsisteProblema(esisteProblema);
-//        setNota(nota);
-//    }// end of constructor
-
-//    public Funzione getFunzione() {
-//        return funzione;
-//    }// end of getter method
-//
-//    public void setFunzione(Funzione funzione) {
-//        this.funzione = funzione;
-//    }//end of setter method
 
     public Volontario getVolontario() {
         return volontario;
@@ -172,12 +125,4 @@ public class Iscrizione extends WamCompanyEntity {
         this.turno = turno;
     }
 
-
-    //    public TurnoIscrizione getTurnoIscrizione() {
-//        return turnoIscrizione;
-//    }
-//
-//    public void setTurnoIscrizione(TurnoIscrizione turnoIscrizione) {
-//        this.turnoIscrizione = turnoIscrizione;
-//    }
 }// end of class
