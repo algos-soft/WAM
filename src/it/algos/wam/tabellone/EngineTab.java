@@ -83,39 +83,6 @@ public class EngineTab {
     }
 
 
-    /**
-     * Crea un componente grafico con le funzioni in base al Servizio
-     *
-     * @param serv il servizio
-     * @return il componente grafico con le funzioni
-     */
-    private static Component creaCompFunzioni(Servizio serv) {
-        CFunzioni cfunzioni = new CFunzioni();
-        Funzione funz;
-        boolean obbligatoria;
-
-
-        // se orario variabile, prima riga vuota per allinearsi con i turni che in questo caso avranno un titolo
-        if (serv.isOrarioVariabile()) {
-            Label label = new Label("&nbsp;", ContentMode.HTML);
-            cfunzioni.addComponent(label);
-        }
-
-        List<ServizioFunzione> lista = serv.getServizioFunzioni();
-        Collections.sort(lista);
-        for (ServizioFunzione serFun : lista) {
-            funz = serFun.getFunzione();
-            obbligatoria = serFun.isObbligatoria();
-
-            Component comp = cfunzioni.addFunzione(funz.getSigla());
-            if (obbligatoria) {
-                comp.addStyleName("cfunzioneobblig");
-            }
-        }
-
-
-        return cfunzioni;
-    }
 
 
     /**

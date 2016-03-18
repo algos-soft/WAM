@@ -525,58 +525,6 @@ public class Tabellone extends VerticalLayout implements View {
             setSizeFull();
         }
 
-//        /**
-//         * Assegna un Turno a questo componente.
-//         * Crea l'editor di turno e lo aggiunge graficamente
-//         *
-//         * @param turno il turno da editare
-//         * @param col   la colonna della griglia dove è visualizzato il turno
-//         * @param row   la riga della griglia dove è visualizzato il turno
-//         */
-//        public void setTurno(Turno turno, int col, int row) {
-//            removeAllComponents();
-//
-//            // Rimuove tutti i listeners dall'editor precedente
-//            // prima di perdere il riferimento e crearne uno nuovo.
-//            // Altrimenti il vecchio editor avrebbe un listener registrato
-//            // che impedirebbe la garbace collection.
-//            // Non posso farlo quando la chiamata parte dal listener
-//            // perché avrei una ConcurrentModificationException.
-//            if(editor!=null){
-//                editor.removeAllDismissListeners();
-//            }
-//
-//            editor = new CTurnoEditor(turno, entityManager);
-//            addComponent(editor);
-//            setComponentAlignment(editor, Alignment.MIDDLE_CENTER);
-//
-//            // quando si dismette l'editor, torna al tabellone
-//            editor.addDismissListener(new CTurnoEditor.DismissListener() {
-//                @Override
-//                public void editorDismissed(CTurnoEditor.DismissEvent e) {
-//
-//                    // se ha salvato o eliminato il turno aggiorna la cella della griglia
-//                    if (e.isSaved() | e.isDeleted()) {
-//                        GridTabellone grid = tabComponent.getGridTabellone();
-//                        grid.removeComponent(col, row);
-//                        TabelloneCell cell=null;
-//                        if(e.isSaved()){
-//                            cell = new CTurnoDisplay(grid, turno);
-//                        }
-//                        if(e.isDeleted()){
-//                            cell=new CTurnoDisplay(grid, turno.getServizio(), turno.getData1());
-//                        }
-//                        grid.addComponent(cell, col, row);
-//                    }
-//                    navigator.navigateTo(ADDR_TABELLONE);
-//                }
-//            });
-//
-//
-//
-//        }
-
-
         /**
          * Assegna un Editor a questo componente.
          * e lo aggiunge graficamente
@@ -593,7 +541,6 @@ public class Tabellone extends VerticalLayout implements View {
         @Override
         public void enter(ViewChangeListener.ViewChangeEvent event) {
         }
-
 
     }
 
