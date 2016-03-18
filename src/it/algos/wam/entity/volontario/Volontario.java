@@ -36,6 +36,10 @@ public class Volontario extends WamCompanyEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @OneToMany(mappedBy = "volontario")
+    @CascadeOnDelete
+    private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
+
     //--nome del volontario (obbligatorio)
     @NotEmpty
     @Column(length = 20)
@@ -59,9 +63,6 @@ public class Volontario extends WamCompanyEntity {
     private boolean dipendente = false;
     private boolean attivo = true;
 
-    @OneToMany(mappedBy = "volontario")
-    @CascadeOnDelete
-    private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 
     //--scadenza certificati
     //--data di scadenza del certificato BSD

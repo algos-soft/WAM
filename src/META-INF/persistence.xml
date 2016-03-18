@@ -7,6 +7,7 @@
     <persistence-unit name="MySqlUnit">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
+        <!--Le entity astratte (@MappedSuperclass) vanno obbligatoriamente listate-->
         <class>it.algos.webbase.web.entity.BaseEntity</class>
         <class>it.algos.webbase.domain.company.BaseCompany</class>
 
@@ -18,17 +19,16 @@
         <class>it.algos.webbase.domain.pref.Pref</class>
 
         <class>it.algos.wam.entity.wamcompany.WamCompany</class>
+        <class>it.algos.wam.entity.servizio.Servizio</class>
 		<class>it.algos.wam.entity.turno.Turno</class>
-		<class>it.algos.wam.entity.servizio.Servizio</class>
         <class>it.algos.wam.entity.funzione.Funzione</class>
+        <class>it.algos.wam.entity.serviziofunzione.ServizioFunzione</class>
         <class>it.algos.wam.entity.volontario.Volontario</class>
+        <class>it.algos.wam.entity.volontariofunzione.VolontarioFunzione</class>
         <class>it.algos.wam.entity.iscrizione.Iscrizione</class>
 
-        <class>it.algos.wam.entity.serviziofunzione.ServizioFunzione</class>
-        <class>it.algos.wam.entity.volontariofunzione.VolontarioFunzione</class>
-
-        <class>it.algos.wam.entity.test.TestTurno</class>
-        <class>it.algos.wam.entity.test.TestIscrizione</class>
+        <!--<class>it.algos.wam.entity.test.TestTurno</class>-->
+        <!--<class>it.algos.wam.entity.test.TestIscrizione</class>-->
 
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>

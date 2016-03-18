@@ -3,7 +3,7 @@ package it.algos.wam.entity.servizio;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
-import it.algos.wam.entity.test.TestTurno;
+//import it.algos.wam.entity.test.TestTurno;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -34,9 +34,9 @@ public class Servizio extends WamCompanyEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(mappedBy = "servizio")
-    @CascadeOnDelete
-    private List<TestTurno> testturni = new ArrayList();
+//    @OneToMany(mappedBy = "servizio")
+//    @CascadeOnDelete
+//    private List<TestTurno> testturni = new ArrayList();
 
     @OneToMany(mappedBy = "servizio")
     @CascadeOnDelete

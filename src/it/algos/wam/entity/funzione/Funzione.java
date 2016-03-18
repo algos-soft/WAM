@@ -33,8 +33,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
     private static final long serialVersionUID = 1L;
 
     @OneToMany(mappedBy = "funzione")
-    //@CascadeOnDelete questa non deve essere CASCADE ma RESTRICT - lascio il default del db che è RESTRICT
+    @CascadeOnDelete
     private List<ServizioFunzione> servizioFunzioni = new ArrayList();
+
+    @OneToMany(mappedBy = "funzione")
+    @CascadeOnDelete
+    private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 
     //--sigla di riferimento interna (obbligatoria)
     @NotEmpty
@@ -242,6 +246,14 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
     public void setServizioFunzioni(List<ServizioFunzione> servizioFunzioni) {
         this.servizioFunzioni = servizioFunzioni;
+    }
+
+    public List<VolontarioFunzione> getVolontarioFunzioni() {
+        return volontarioFunzioni;
+    }
+
+    public void setVolontarioFunzioni(List<VolontarioFunzione> volontarioFunzioni) {
+        this.volontarioFunzioni = volontarioFunzioni;
     }
 
     @Override
