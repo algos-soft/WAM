@@ -41,6 +41,14 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
         setSpacing(true);
         addStyleName("cservizio");
 
+        // listener quando viene cliccato il servizio
+        addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+            @Override
+            public void layoutClick(LayoutEvents.LayoutClickEvent event) {
+                tabellone.cellClicked(CellType.SERVIZIO, x, y, servizio);
+            }
+        });
+
         addComponent(new CompServizio());
         addComponent(new CompFunzioni());
 
@@ -109,13 +117,6 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
             setExpandRatio(labelNome, 1);
 
 
-            // listener quando viene cliccato il servizio
-            addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
-                @Override
-                public void layoutClick(LayoutEvents.LayoutClickEvent event) {
-                    tabellone.cellClicked(CellType.SERVIZIO, x, y, servizio);
-                }
-            });
         }
     }
 
