@@ -20,10 +20,6 @@ import java.util.List;
  */
 public class EngineTab {
 
-    private static int GIORNI_WARNING = 4; // turno vicino (giallo)
-    private static int GIORNI_ALERT = 1;  // turno molto vicino (rosso)
-
-
     /**
      * Genera un tabellone da un array di wrapper di riga
      */
@@ -53,10 +49,6 @@ public class EngineTab {
         Servizio serv = riga.getServizio();
         CServizioDisplay s = new CServizioDisplay(tab, serv);
         tab.addComponent(s, 0, row);
-
-//        // crea e aggiunge il componente grafico dele funzioni
-//        Component cfunzioni = creaCompFunzioni(serv);
-//        tab.addComponent(cfunzioni, 1, row);
 
         // crea e aggiunge i componenti grafici per i turni
         int totGiorni = tab.getNumGiorni();
@@ -97,8 +89,6 @@ public class EngineTab {
 
         LocalDate d2 = d1.plusDays(quantiGiorni - 1);
         WTabellone wtab = new WTabellone(d1, d2);
-
-//        List<Servizio> listaServizi = (List<Servizio>) CompanyQuery.getList(Servizio.class);
 
         List<Servizio> listaServizi = WamQuery.queryServiziOrari(entityManager);
 
