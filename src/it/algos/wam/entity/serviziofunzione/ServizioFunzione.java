@@ -9,6 +9,7 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 
@@ -21,7 +22,7 @@ import java.util.ArrayList;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
-public class ServizioFunzione extends WamCompanyEntity {
+public class ServizioFunzione extends WamCompanyEntity implements Comparable<ServizioFunzione> {
 
     private static final long serialVersionUID = 1L;
 
@@ -157,5 +158,16 @@ public class ServizioFunzione extends WamCompanyEntity {
             throw new CloneNotSupportedException();
         }// fine del blocco try-catch
     }// end of method
+
+    /**
+     * Compara per sequenza della relativa funzione
+     */
+    @Override
+    public int compareTo(ServizioFunzione other) {
+        Funzione fnQuesto=getFunzione();
+        Funzione fnAltro=other.getFunzione();
+        return fnQuesto.compareTo(fnAltro);
+    }
+
 
 }// end of domain class

@@ -143,34 +143,36 @@ public class CTurnoEditor extends VerticalLayout implements View {
      * @return true se riuscito
      */
     private boolean saveTurno() {
+        boolean success=false;
+        entityManager.getTransaction().begin();
 
-//        entityManager.getTransaction().begin();
+        try {
 
-        if(entityManager.contains(turno)){
-            entityManager.refresh(turno);
+            //cancella le iscrizioni correnti dal db
+            for(Iscrizione i : turno.getIscrizioni()){
+                entityManager.remove(i);
+            }
+
+            // pulisce la lista iscrizioni del turno
+            turno.getIscrizioni().clear();
+
+            // recupera le nuove iscrizioni e le aggiunge
+            ArrayList<Iscrizione>iscrizioni = iscrizioniEditor.getIscrizioni();
+            for(Iscrizione i : iscrizioni){
+                turno.add(i);
+            }
+
+            // registra il turno
+            entityManager.persist(turno);
+            entityManager.getTransaction().commit();
+            success=true;
+
+        }catch (Exception e){
+            entityManager.getTransaction().rollback();
+            e.printStackTrace();
         }
 
-        // cancella le iscrizioni correnti
-        for(Iscrizione i : turno.getIscrizioni()){
-            i.delete(entityManager);
-        }
-
-        // pulisce la lista iscrizioni del turno
-        turno.getIscrizioni().clear();
-
-        // recupera le nuove iscrizioni e le aggiunge
-        ArrayList<Iscrizione>iscrizioni = iscrizioniEditor.getIscrizioni();
-        for(Iscrizione i : iscrizioni){
-            turno.add(i);
-        }
-
-        // registra il turno
-        turno.save(entityManager);
-
-//        entityManager.flush();
-//        entityManager.getTransaction().commit();
-
-        return true;
+        return success;
     }
 
 

@@ -1,9 +1,9 @@
-package it.algos.wam.entity.turno;
+package it.algos.wam.entity.test;
 
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
-import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.turno.Turno_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
 import it.algos.webbase.domain.company.BaseCompany;
@@ -24,16 +24,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Entity che descrive un Turno
- * <p>
- * 1) la classe deve avere un costruttore senza argomenti
- * 2) le proprietà devono essere private e accessibili solo con get, set e is (usato per i boolena al posto di get)
- * 3) la classe deve implementare l'interfaccia Serializable (la fa nella superclasse)
- * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
+ * Entity per fare dei test sulle relazioni.
  */
 @Entity
-public class Turno extends WamCompanyEntity {
+public class TestTurno extends WamCompanyEntity {
 
+    // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
     // servizio di riferimento
@@ -43,7 +39,7 @@ public class Turno extends WamCompanyEntity {
     // iscrizioni dei volontari a questo turno
     @OneToMany(mappedBy = "turno", cascade=CascadeType.ALL)
     @CascadeOnDelete
-    private List<Iscrizione> iscrizioni = new ArrayList();
+    private List<TestIscrizione> iscrizioni = new ArrayList();
 
 
     //--chiave indicizzata per query più veloci e 'mirate' (obbligatoria)
@@ -74,14 +70,12 @@ public class Turno extends WamCompanyEntity {
     //--turno previsto (vuoto) oppure assegnato (militi inseriti)
     private boolean assegnato = false;
 
-
     /**
-     * Costruttore minimo con tutte le properties obbligatorie
+     * Costruttore vuoto
      */
-    public Turno() {
+    public TestTurno() {
         this(null, null, null, false);
     }// end of constructor
-
 
     /**
      * Costruttore completo
@@ -91,7 +85,7 @@ public class Turno extends WamCompanyEntity {
      * @param fine      giorno, ora e minuto di fine turno
      * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
      */
-    public Turno(Servizio servizio, Date inizio, Date fine, boolean assegnato) {
+    public TestTurno(Servizio servizio, Date inizio, Date fine, boolean assegnato) {
         super();
         setServizio(servizio);
         setInizio(inizio);
@@ -99,19 +93,27 @@ public class Turno extends WamCompanyEntity {
         setAssegnato(assegnato);
     }// end of constructor
 
+
+    public void setIscrizioni(List<TestIscrizione> iscrizioni) {
+        this.iscrizioni = iscrizioni;
+    }
+
+
+
+
     /**
-     * Recupera una istanza di Turno usando la query standard della Primary Key
+     * Recupera una istanza di TestTurno usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
-     * @return istanza di Turno, null se non trovata
+     * @return istanza di TestTurno, null se non trovata
      */
-    public static Turno find(long id) {
-        Turno instance = null;
-        BaseEntity entity = AQuery.queryById(Turno.class, id);
+    public static TestTurno find(long id) {
+        TestTurno instance = null;
+        BaseEntity entity = AQuery.queryById(TestTurno.class, id);
 
         if (entity != null) {
-            if (entity instanceof Turno) {
-                instance = (Turno) entity;
+            if (entity instanceof TestTurno) {
+                instance = (TestTurno) entity;
             }// end of if cycle
         }// end of if cycle
 
@@ -125,16 +127,16 @@ public class Turno extends WamCompanyEntity {
      * @return lista di Turni, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Turno> findAllChiave(int chiave) {
+    public static ArrayList<TestTurno> findAllChiave(int chiave) {
 
         BaseCompany company = CompanySessionLib.getCompany();
 
-        ArrayList<Turno> lista = null;
-        List<Turno> listaPerChiave = (List<Turno>) CompanyQuery.queryList(Turno.class, Turno_.chiave, chiave);
+        ArrayList<TestTurno> lista = null;
+        List<TestTurno> listaPerChiave = (List<TestTurno>) CompanyQuery.queryList(TestTurno.class, Turno_.chiave, chiave);
 
         if (listaPerChiave != null && listaPerChiave.size() > 0) {
             lista = new ArrayList();
-            for (Turno turno : listaPerChiave) {
+            for (TestTurno turno : listaPerChiave) {
                 if (turno.getCompany().getId().equals(company.getId())) {
                     lista.add(turno);
                 }// end of if cycle
@@ -154,8 +156,8 @@ public class Turno extends WamCompanyEntity {
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Turno> findAll(Servizio servizio, int chiave) {
-        ArrayList<Turno> lista = null;
+    public static ArrayList<TestTurno> findAll(Servizio servizio, int chiave) {
+        ArrayList<TestTurno> lista = null;
 
         if (servizio == null || chiave == 0) {
             return null;
@@ -177,21 +179,21 @@ public class Turno extends WamCompanyEntity {
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Turno> findAll(WamCompany company, Servizio servizio, Date inizio) {
+    public static ArrayList<TestTurno> findAll(WamCompany company, Servizio servizio, Date inizio) {
         return findAll(servizio, LibWam.creaChiave(inizio));
     }// end of method
 
     /**
-     * Recupera una istanza di Turno usando la chiave specifica
+     * Recupera una istanza di TestTurno usando la chiave specifica
      *
      * @param company croce di appartenenza
      * @param chiave  indicizzata per query più veloci e 'mirate' (obbligatoria)
-     * @return istanza di Turno, null se non trovata
+     * @return istanza di TestTurno, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Turno findChiave(WamCompany company, int chiave) {
-        Turno instance = null;
-        ArrayList<Turno> lista = findAllChiave(chiave);
+    public static TestTurno findChiave(WamCompany company, int chiave) {
+        TestTurno instance = null;
+        ArrayList<TestTurno> lista = findAllChiave(chiave);
 
         if (lista != null && lista.size() == 1) {
             instance = lista.get(0);
@@ -201,7 +203,7 @@ public class Turno extends WamCompanyEntity {
     }// end of static method
 
     /**
-     * Recupera una istanza di Turno usando la query di tutte e sole le property obbligatorie
+     * Recupera una istanza di TestTurno usando la query di tutte e sole le property obbligatorie
      * Se il servizio NON è multiplo, ce ne deve essere SOLO UNO al giorno (per wamcompany)
      * Se il servizio è multiplo, usare la chiamata findAll (stessi parametri)
      *
@@ -210,9 +212,9 @@ public class Turno extends WamCompanyEntity {
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Turno find(Servizio servizio, int chiave) {
-        Turno instance = null;
-        ArrayList<Turno> listaTurni = null;
+    public static TestTurno find(Servizio servizio, int chiave) {
+        TestTurno instance = null;
+        ArrayList<TestTurno> listaTurni = null;
         Servizio servizioTmp = null;
 
         if (servizio == null || chiave == 0) {
@@ -224,7 +226,7 @@ public class Turno extends WamCompanyEntity {
         } else {
             listaTurni = findAll(servizio, chiave);
             if (listaTurni != null && listaTurni.size() > 0) {
-                for (Turno turno : listaTurni) {
+                for (TestTurno turno : listaTurni) {
                     servizioTmp = turno.getServizio();
                     if (servizioTmp != null && servizioTmp.getId().equals(servizio.getId())) {
                         instance = turno;
@@ -237,7 +239,7 @@ public class Turno extends WamCompanyEntity {
     }// end of method
 
     /**
-     * Recupera una istanza di Turno usando la query di tutte e sole le property obbligatorie
+     * Recupera una istanza di TestTurno usando la query di tutte e sole le property obbligatorie
      * Se il servizio NON è multiplo, ce ne deve essere SOLO UNO al giorno (per wamcompany)
      * Se il servizio è multiplo, usare la chiamata findAll (stessi parametri)
      *
@@ -246,7 +248,7 @@ public class Turno extends WamCompanyEntity {
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Turno find(Servizio servizio, Date inizio) {
+    public static TestTurno find(Servizio servizio, Date inizio) {
         return find(servizio, LibWam.creaChiave(inizio));
     }// end of method
 
@@ -257,7 +259,7 @@ public class Turno extends WamCompanyEntity {
      */
     public static int count() {
         int totRec = 0;
-        long totTmp = CompanyQuery.getCount(Turno.class);
+        long totTmp = CompanyQuery.getCount(TestTurno.class);
 
         if (totTmp > 0) {
             totRec = (int) totTmp;
@@ -269,11 +271,11 @@ public class Turno extends WamCompanyEntity {
     /**
      * Recupera una lista (array) di tutti i records della Entity
      *
-     * @return lista di tutte le istanze di Turno
+     * @return lista di tutte le istanze di TestTurno
      */
     @SuppressWarnings("unchecked")
-    public static List<Turno> findAll() {
-        return (ArrayList<Turno>) CompanyQuery.getList(Turno.class);
+    public static List<TestTurno> findAll() {
+        return (ArrayList<TestTurno>) CompanyQuery.getList(TestTurno.class);
     }// end of method
 
     /**
@@ -284,7 +286,7 @@ public class Turno extends WamCompanyEntity {
      * @param inizio   giorno, ora e minuto di inizio turno
      * @return istanza di turno
      */
-    public static Turno crea(WamCompany company, Servizio servizio, Date inizio) {
+    public static TestTurno crea(WamCompany company, Servizio servizio, Date inizio) {
         return crea(company, servizio, inizio, null, false);
     }// end of static method
 
@@ -298,15 +300,15 @@ public class Turno extends WamCompanyEntity {
      * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
      * @return istanza di turno
      */
-    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, boolean assegnato) {
-        Turno turno = null;
+    public static TestTurno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, boolean assegnato) {
+        TestTurno turno = null;
 
         if (servizio == null || inizio == null) {
             return null;
         }// end of if cycle
 
         if (!servizio.isMultiplo()) {
-            turno = Turno.find(servizio, inizio);
+            turno = TestTurno.find(servizio, inizio);
         }// end of if cycle
 
         if (turno == null) {
@@ -314,7 +316,7 @@ public class Turno extends WamCompanyEntity {
                 fine = inizio;
             }// end of if cycle
 
-            turno = new Turno(servizio, inizio, fine, assegnato);
+            turno = new TestTurno(servizio, inizio, fine, assegnato);
             turno.setCompany(company);
             turno.save();
         }// end of if cycle
@@ -322,7 +324,7 @@ public class Turno extends WamCompanyEntity {
         return turno;
     }// end of static method
 
-    public void add(Iscrizione iscrizione) {
+    public void add(TestIscrizione iscrizione) {
 //        TurnoIscrizione tunIsc = null;
 
 //        if (getCompany() == null) {
@@ -475,12 +477,12 @@ public class Turno extends WamCompanyEntity {
     }
 
 
-    public List<Iscrizione> getIscrizioni() {
+    public List<TestIscrizione> getIscrizioni() {
         return iscrizioni;
     }
 
 
-    public void setIscrizioni(ArrayList<Iscrizione> iscrizioni) {
+    public void setIscrizioni(ArrayList<TestIscrizione> iscrizioni) {
         this.iscrizioni=iscrizioni;
     }
 
@@ -492,9 +494,9 @@ public class Turno extends WamCompanyEntity {
      * @param sf il ServizioFunzione
      * @return l'iscrizione
      */
-    public Iscrizione getIscrizione(ServizioFunzione sf) {
-        Iscrizione iscrizione = null;
-        for (Iscrizione i : getIscrizioni()) {
+    public TestIscrizione getIscrizione(ServizioFunzione sf) {
+        TestIscrizione iscrizione = null;
+        for (TestIscrizione i : getIscrizioni()) {
             ServizioFunzione s = i.getServizioFunzione();
             if(s!=null){
                 if (s.equals(sf)) {
@@ -506,26 +508,16 @@ public class Turno extends WamCompanyEntity {
         return iscrizione;
     }
 
-    /**
-     * Clone di questa istanza
-     * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)
-     * È obbligatoria invocare questo metodo all'interno di un codice try/catch
-     *
-     * @return nuova istanza di Turno con gli stessi valori dei parametri di questa istanza
-     */
+
+
     @Override
     @SuppressWarnings("all")
-    public Turno clone() throws CloneNotSupportedException {
+    public TestTurno clone() throws CloneNotSupportedException {
         try {
-            return (Turno) BeanUtils.cloneBean(this);
+            return (TestTurno) BeanUtils.cloneBean(this);
         } catch (Exception ex) {
             throw new CloneNotSupportedException();
         }// fine del blocco try-catch
     }// end of method
 
-
-
-
-
-
-}// end of domain class
+}// end of class

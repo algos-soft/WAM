@@ -27,6 +27,9 @@
         <class>it.algos.wam.entity.serviziofunzione.ServizioFunzione</class>
         <class>it.algos.wam.entity.volontariofunzione.VolontarioFunzione</class>
 
+        <class>it.algos.wam.entity.test.TestTurno</class>
+        <class>it.algos.wam.entity.test.TestIscrizione</class>
+
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

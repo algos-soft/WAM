@@ -1,5 +1,6 @@
 package it.algos.wam.entity.funzione;
 
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
@@ -27,9 +28,13 @@ import java.util.List;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
-public class Funzione extends WamCompanyEntity {
+public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
     private static final long serialVersionUID = 1L;
+
+    @OneToMany(mappedBy = "funzione")
+    //@CascadeOnDelete questa non deve essere CASCADE ma RESTRICT - lascio il default del db che è RESTRICT
+    private List<ServizioFunzione> servizioFunzioni = new ArrayList();
 
     //--sigla di riferimento interna (obbligatoria)
     @NotEmpty
@@ -231,6 +236,14 @@ public class Funzione extends WamCompanyEntity {
         return funzione;
     }// end of static method
 
+    public List<ServizioFunzione> getServizioFunzioni() {
+        return servizioFunzioni;
+    }
+
+    public void setServizioFunzioni(List<ServizioFunzione> servizioFunzioni) {
+        this.servizioFunzioni = servizioFunzioni;
+    }
+
     @Override
     public String toString() {
         return sigla;
@@ -268,13 +281,6 @@ public class Funzione extends WamCompanyEntity {
         this.note = note;
     }//end of setter method
 
-//    public List<VolontarioFunzione> getFunzioneVolontari() {
-//        return funzioneVolontari;
-//    }// end of getter method
-//
-//    public void setFunzioneVolontari(List<VolontarioFunzione> funzioneVolontari) {
-//        this.funzioneVolontari = funzioneVolontari;
-//    }//end of setter method
 
     /**
      * Clone di questa istanza
@@ -293,16 +299,16 @@ public class Funzione extends WamCompanyEntity {
         }// fine del blocco try-catch
     }// end of method
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//
-//        Funzione funzione = (Funzione) o;
-//
-//        return sigla.equals(funzione.sigla);
-//
-//    }
+    /**
+     * Compara per sequenza della funzione
+     */
+    @Override
+    public int compareTo(Funzione other) {
+        Integer ordQuesto=getOrdine();
+        Integer ordAltro=other.getOrdine();
+        return ordQuesto.compareTo(ordAltro);
+    }
+
 
 
 }// end of domain class

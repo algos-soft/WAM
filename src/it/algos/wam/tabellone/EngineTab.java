@@ -13,6 +13,7 @@ import it.algos.webbase.multiazienda.CompanyQuery;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -103,6 +104,7 @@ public class EngineTab {
         }
 
         List<ServizioFunzione> lista = serv.getServizioFunzioni();
+        Collections.sort(lista);
         for (ServizioFunzione serFun : lista) {
             funz = serFun.getFunzione();
             obbligatoria = serFun.isObbligatoria();
@@ -111,25 +113,9 @@ public class EngineTab {
             if (obbligatoria) {
                 comp.addStyleName("cfunzioneobblig");
             }
-        }// end of for cycle
+        }
 
 
-//        for (Funzione funz : lista) {
-//            Component comp = cfunzioni.addFunzione(funz.getSigla());
-//            if (funz.is) {
-//                comp.addStyleName("cfunzioneobblig");
-//            }
-//        }// end of for cycle
-//
-//        List<WrapServizio.Wrap> wrappers = serv.getWrapServizio().getWrappers();
-//        for (WrapServizio.Wrap w : wrappers) {
-//            Funzione f = w.funzione;
-//            boolean obblig = w.obbligatoria;
-//            Component comp = cfunzioni.addFunzione(f.getSigla());
-//            if (obblig) {
-//                comp.addStyleName("cfunzioneobblig");
-//            }
-//        }
         return cfunzioni;
     }
 
