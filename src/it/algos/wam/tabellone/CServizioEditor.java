@@ -4,10 +4,12 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 
 /**
  * Componente per presentare e modificare un Servizio nel Tabellone.
@@ -85,9 +87,7 @@ public class CServizioEditor extends CTabelloneEditor {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-//                if(saveTurno()){
-//                    fireDismissListeners(new DismissEvent(bRegistra, true, false));
-//                }
+                servizio.save(entityManager);
                 fireDismissListeners(new DismissEvent(bRegistra, true, false));
             }
         });
@@ -101,6 +101,8 @@ public class CServizioEditor extends CTabelloneEditor {
 
         return layout;
     }
+
+
 
 
 
