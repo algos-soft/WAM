@@ -2,17 +2,14 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
-import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.field.IntegerField;
@@ -23,25 +20,19 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.EventObject;
 
 /**
  * Componente per presentare e modificare un turno nel Tabellone.
  * Created by alex on 05/03/16.
  */
-public class CTurnoEditor extends VerticalLayout implements View {
+public class CTurnoEditor extends CTabelloneEditor {
 
     private Turno turno;
-    private ArrayList<DismissListener> dismissListeners = new ArrayList();
     private IscrizioniEditor iscrizioniEditor;
-    private EntityManager entityManager;
 
     public CTurnoEditor(Turno turno, EntityManager entityManager) {
-
+        super(entityManager);
         this.turno = turno;
-        this.entityManager=entityManager;
-
-        setSizeUndefined();
 
         addComponent(creaCompTitolo());
         iscrizioniEditor = new IscrizioniEditor();
@@ -187,54 +178,6 @@ public class CTurnoEditor extends VerticalLayout implements View {
     }
 
 
-    private void fireDismissListeners(DismissEvent e) {
-        for (DismissListener l : dismissListeners) {
-            l.editorDismissed(e);
-        }
-    }
-
-
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-
-    }
-
-    public void addDismissListener(DismissListener l) {
-        dismissListeners.add(l);
-    }
-
-    public void removeAllDismissListeners(){
-        dismissListeners.clear();
-    }
-
-    /**
-     * Listener per editor dismissed
-     */
-    public interface DismissListener {
-        public void editorDismissed(DismissEvent e);
-    }
-
-    /**
-     * Evento editor dismissed
-     */
-    public class DismissEvent extends EventObject {
-        private boolean saved;
-        private boolean deleted;
-
-        public DismissEvent(Object source, boolean saved, boolean deleted) {
-            super(source);
-            this.saved = saved;
-            this.deleted=deleted;
-        }
-
-        public boolean isSaved() {
-            return saved;
-        }
-
-        public boolean isDeleted() {
-            return deleted;
-        }
-    }
 
 
     /**

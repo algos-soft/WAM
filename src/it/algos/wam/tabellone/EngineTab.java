@@ -1,7 +1,6 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
@@ -9,7 +8,6 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.query.WamQuery;
-import it.algos.webbase.multiazienda.CompanyQuery;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -53,12 +51,12 @@ public class EngineTab {
 
         // crea e aggiunge componente grafico del servizio
         Servizio serv = riga.getServizio();
-        CServizio s = new CServizio(serv.getOrario(), serv.getDescrizione());
+        CServizioDisplay s = new CServizioDisplay(tab, serv);
         tab.addComponent(s, 0, row);
 
-        // crea e aggiunge il componente grafico dele funzioni
-        Component cfunzioni = creaCompFunzioni(serv);
-        tab.addComponent(cfunzioni, 1, row);
+//        // crea e aggiunge il componente grafico dele funzioni
+//        Component cfunzioni = creaCompFunzioni(serv);
+//        tab.addComponent(cfunzioni, 1, row);
 
         // crea e aggiunge i componenti grafici per i turni
         int totGiorni = tab.getNumGiorni();
@@ -77,7 +75,7 @@ public class EngineTab {
             }
 
             // aggiungo il componente in posizione sul tabellone
-            int col = 2 + i;
+            int col = 1 + i;
             tab.addComponent(tcomp, col, row);
 
         }

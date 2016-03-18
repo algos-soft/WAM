@@ -129,8 +129,12 @@ $v-font-weight: 400;
   .cservizio {
     @extend .cbasecell;
     border-top-style: solid;
-    border-top-width: thin;
-    padding-top: 0.5em;
+    border-top-width: 0.1em;
+    border-top-left-radius: 6px;
+    border-color: rgb(101, 101, 104);
+
+    //padding-top: 0.5em;
+    cursor: pointer;
 
     //background: $dark;
     //background: -webkit-linear-gradient(top, $dark, $light, $dark);
@@ -151,7 +155,8 @@ $v-font-weight: 400;
     background: linear-gradient(top, $dark, $light, $dark);
 
     color: white;
-    border-radius: 6px;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
     font-weight: bold;
     text-align: center;
   }
@@ -169,6 +174,7 @@ $v-font-weight: 400;
     @extend .cbasecell;
     border-bottom-style: solid;
     border-bottom-width: thin;
+    border-color: rgb(101, 101, 104);
 
     //background: $dark;
     //background: -webkit-linear-gradient(top, $dark, $light, $dark);
@@ -249,6 +255,7 @@ $v-font-weight: 400;
     @extend .cbasecell;
     background: rgba(0, 0, 0, 0.15);
     border-radius: 6px;
+    //padding-top: 0.5em;
     cursor: pointer;
   }
 

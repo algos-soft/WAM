@@ -41,7 +41,7 @@ public class GridTabellone extends GridLayout implements View {
         int giorni = (int) ChronoUnit.DAYS.between(this.dStart, this.dEnd) + 1;
 
         // dimensiona il layout
-        setColumns(2 + giorni);     // prima colonna nome servizio, seconda colonna i ruoli, le successive i turni
+        setColumns(1 + giorni);     // prima colonna nome servizio, seconda colonna i ruoli, le successive i turni
 
         setRows(1);    // la prima riga per i giorni, le successive per i servizi
 
@@ -49,7 +49,7 @@ public class GridTabellone extends GridLayout implements View {
         LocalDate d1 = dStart;
         for (int i = 0; i < giorni; i++) {
             LocalDate d = d1.plusDays(i);
-            addComponent(new CGiorno(d), i + 2, 0);
+            addComponent(new CGiorno(d), i + 1, 0);
         }
 
     }
@@ -73,6 +73,28 @@ public class GridTabellone extends GridLayout implements View {
         super.addComponent(comp, col, row);
     }
 
+    /**
+     * Metodo removeRow sovrascritto per scalare di 1 verso l'alto
+     * l'indice di riga di tutte le celle che restano nel tabellone
+     * nelle righe successive a quella cancellata
+     *
+     * @param row  la riga
+     */
+    @Override
+    public void removeRow(int row) {
+        int maxRow = getRows();
+        int maxCol = getColumns();
+        for(int r=row+1; r<maxRow; r++){
+            for(int c=0; c<maxCol; c++){
+                Component comp = getComponent(c, r);
+                if (comp != null && comp instanceof TabelloneCell) {
+                    TabelloneCell tcell = (TabelloneCell) comp;
+                    tcell.setY(tcell.getY()-1);
+                }
+            }
+        }
+        super.removeRow(row);
+    }
 
     public LocalDate getDataStart() {
         return dStart;

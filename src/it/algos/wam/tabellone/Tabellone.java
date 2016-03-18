@@ -20,7 +20,6 @@ import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.screen.ErrorScreen;
 
 import javax.persistence.EntityManager;
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -29,7 +28,7 @@ import java.util.Date;
  * <p>
  * Contiene la business logic e gestisce la navigazione e l'interazione tra i componenti grafici di alto livello.
  * Il componente tabComponent ospita una menubar con i comandi di spostamento e la griglia del tabellone.
- * Il componente editComponent presenta il form con i dati di un turno e permette di modificarli.
+ * Il componente editTurnoComponent presenta il form con i dati di un turno e permette di modificarli.
  * Il componente searchComponent presenta il dialogo per impostare le conizioni di
  * ricerca per visualizzare un tabellone custom.
  */
@@ -42,10 +41,18 @@ public class Tabellone extends VerticalLayout implements View {
 
     private EntityManager entityManager;
     private TabComponent tabComponent;
-    private EditComponent editComponent;
+    private EditorPage editorPage;
     private SearchComponent searchComponent;
     private Navigator navigator;
     private String homeURI;
+
+
+    // Indirizzi delle pagine interne per la navigazione del Navigator
+    private static final String ADDR_TABELLONE="tabellone";
+    private static final String ADDR_EDIT_TURNO="turno";
+    private static final String ADDR_EDIT_SERVIZIO="servizio";
+    private static final String ADDR_SEARCH="ricerca";
+    private static final String ADDR_LOGIN="login";
 
     /**
      * Costruttore.
@@ -67,18 +74,19 @@ public class Tabellone extends VerticalLayout implements View {
         tabComponent = new TabComponent();
         creaGrid(LocalDate.now());
 
-        editComponent = new EditComponent();
+        editorPage = new EditorPage();
         searchComponent = new SearchComponent();
 
         // creo un Navigator e vi aggiungo i vari componenti che possono
         // essere presentati dal tabellone
         navigator = new Navigator(UI.getCurrent(), this);
-        navigator.addView("tabellone", tabComponent);
-        navigator.addView("edit", editComponent);
-        navigator.addView("search", searchComponent);
-        navigator.addView("login", new LoginComponent());
+        navigator.addView(ADDR_TABELLONE, tabComponent);
+        navigator.addView(ADDR_EDIT_TURNO, editorPage);
+        navigator.addView(ADDR_EDIT_SERVIZIO, editorPage);
+        navigator.addView(ADDR_SEARCH, searchComponent);
+        navigator.addView(ADDR_LOGIN, new LoginComponent());
         navigator.setErrorView(new TabErrView());
-        navigator.navigateTo("tabellone");
+        navigator.navigateTo(ADDR_TABELLONE);
 
         // Listener di cambio View nel Navigator.
         // In funzione della pagina in cui stiamo entrando, cambio
@@ -89,13 +97,16 @@ public class Tabellone extends VerticalLayout implements View {
                 String name = event.getViewName();
                 boolean cont = true;
                 switch (name) {
-                    case "tabellone":
+                    case ADDR_TABELLONE:
                         setSizeUndefined();
                         break;
-                    case "search":
+                    case ADDR_SEARCH:
                         setSizeFull();
                         break;
-                    case "edit":
+                    case ADDR_EDIT_TURNO:
+                        setSizeFull();
+                        break;
+                    case ADDR_EDIT_SERVIZIO:
                         setSizeFull();
                         break;
                     default:
@@ -172,10 +183,12 @@ public class Tabellone extends VerticalLayout implements View {
      * @param cellObject l'oggetto specifico trasportato nella cella
      */
     private void cellClicked(CellType tipo, int col, int row, Object cellObject) {
-        Turno turno = null;
+        Turno turno;
+
         switch (tipo) {
             case TURNO:
                 turno = (Turno) cellObject;
+                editCellTurno(turno, col, row);
                 break;
             case NO_TURNO:
                 InfoNewTurnoWrap wrapper = (InfoNewTurnoWrap) cellObject;
@@ -184,19 +197,95 @@ public class Tabellone extends VerticalLayout implements View {
                 turno = new Turno();
                 turno.setInizio(DateConvertUtils.asUtilDate(dInizio));
                 turno.setServizio(serv);
+                editCellTurno(turno, col, row);
                 break;
+            case SERVIZIO:
+                Servizio servizio = (Servizio)cellObject;
+                editCellServizio(servizio, col, row);
+                break;
+
         }
 
-        // assegna il turno al componente editor e naviga al componente
-        editComponent.setTurno(turno, col, row);
-        navigator.navigateTo("edit");
 
     }
 
 
     /**
-     * Manda il browser all'indirizzo definito nella homeURI (se esiste)
+     * Edita una cella di tipo Turno
      */
+    private void editCellTurno(final Turno turno, int col, int row){
+
+        // crea un editor per il turno
+        // quando si dismette l'editor, tornerà al tabellone
+        CTurnoEditor editor = new CTurnoEditor(turno, entityManager);
+        editor.addDismissListener(new CTabelloneEditor.DismissListener() {
+            @Override
+            public void editorDismissed(CTabelloneEditor.DismissEvent e) {
+
+                // se ha salvato o eliminato, aggiorna la cella della griglia
+                if (e.isSaved() | e.isDeleted()) {
+                    GridTabellone grid = tabComponent.getGridTabellone();
+                    grid.removeComponent(col, row);
+                    TabelloneCell cell = null;
+                    if (e.isSaved()) {
+                        cell = new CTurnoDisplay(grid, turno);
+                    }
+                    if (e.isDeleted()) {
+                        cell = new CTurnoDisplay(grid, turno.getServizio(), turno.getData1());
+                    }
+                    grid.addComponent(cell, col, row);
+                }
+                navigator.navigateTo(ADDR_TABELLONE);
+            }
+        });
+
+
+        // assegna l'editor e naviga alla editor view
+        editorPage.setEditor(editor);
+        navigator.navigateTo(ADDR_EDIT_TURNO);
+    }
+
+
+    /**
+     * Edita una cella di tipo Servizio
+     */
+    private void editCellServizio(final Servizio servizio, int col, int row){
+        // crea un editor per il servizio
+        // quando si dismette l'editor, tornerà al tabellone
+        CServizioEditor editor = new CServizioEditor(servizio, entityManager);
+        editor.addDismissListener(new CTabelloneEditor.DismissListener() {
+            @Override
+            public void editorDismissed(CTabelloneEditor.DismissEvent e) {
+
+                // se ha salvato o eliminato, aggiorna la cella della griglia
+                if (e.isSaved() | e.isDeleted()) {
+                    GridTabellone grid = tabComponent.getGridTabellone();
+                    TabelloneCell cell = null;
+                    if (e.isSaved()) {
+                        grid.removeComponent(col, row);
+                        cell = new CServizioDisplay(grid, servizio);
+                        grid.addComponent(cell, col, row);
+                    }
+                    if (e.isDeleted()) {
+                        grid.removeRow(row);
+                    }
+                }
+                navigator.navigateTo(ADDR_TABELLONE);
+            }
+        });
+
+
+        // assegna l'editor e naviga alla editor view
+        editorPage.setEditor(editor);
+        navigator.navigateTo(ADDR_EDIT_SERVIZIO);
+
+    }
+
+
+
+        /**
+         * Manda il browser all'indirizzo definito nella homeURI (se esiste)
+         */
     private void goHome() {
         if (homeURI != null) {
             String addr = homeURI.toString()+"?skip=1";
@@ -292,7 +381,7 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private class TabMenuBar extends MenuBar {
         public TabMenuBar() {
-            MenuItem item = addItem("precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
+            MenuItem item = addItem("indietro", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
@@ -308,7 +397,18 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            addItem("successiva", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
+            addItem("lunedì", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    LocalDate d1 = LocalDate.now();
+                    int numDow = d1.getDayOfWeek().getValue();
+                    LocalDate d2 = d1.minusDays(numDow - 1);
+                    creaGrid(d2);
+                }
+            });
+
+
+            addItem("avanti", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
@@ -318,15 +418,6 @@ public class Tabellone extends VerticalLayout implements View {
 
             MenuItem menuVai = addItem("vai", FontAwesome.ARROW_CIRCLE_DOWN, null);
 
-            menuVai.addItem("settimana da lunedì", FontAwesome.CALENDAR_O, new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    LocalDate d1 = LocalDate.now();
-                    int numDow = d1.getDayOfWeek().getValue();
-                    LocalDate d2 = d1.minusDays(numDow - 1);
-                    creaGrid(d2);
-                }
-            });
 
             menuVai.addItem("giorno precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
                 @Override
@@ -347,7 +438,7 @@ public class Tabellone extends VerticalLayout implements View {
             menuVai.addItem("cerca", FontAwesome.SEARCH, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    navigator.navigateTo("search");
+                    navigator.navigateTo(ADDR_SEARCH);
                 }
             });
 
@@ -393,82 +484,92 @@ public class Tabellone extends VerticalLayout implements View {
 
 
     /**
-     * Componente di alto livello con logica di navigazione in un turno da modificare.
+     * Componente di alto livello con logica di navigazione in un turno/servizio da modificare.
      * Invocare il metodo setTurno() per inserire un turno da modificare.
      */
-    private class EditComponent extends VerticalLayout implements View {
+    private class EditorPage extends VerticalLayout implements View {
 
-        private CTurnoEditor editor;
-
-        public EditComponent() {
-
+        public EditorPage() {
             setSizeFull();
-
         }
 
+//        /**
+//         * Assegna un Turno a questo componente.
+//         * Crea l'editor di turno e lo aggiunge graficamente
+//         *
+//         * @param turno il turno da editare
+//         * @param col   la colonna della griglia dove è visualizzato il turno
+//         * @param row   la riga della griglia dove è visualizzato il turno
+//         */
+//        public void setTurno(Turno turno, int col, int row) {
+//            removeAllComponents();
+//
+//            // Rimuove tutti i listeners dall'editor precedente
+//            // prima di perdere il riferimento e crearne uno nuovo.
+//            // Altrimenti il vecchio editor avrebbe un listener registrato
+//            // che impedirebbe la garbace collection.
+//            // Non posso farlo quando la chiamata parte dal listener
+//            // perché avrei una ConcurrentModificationException.
+//            if(editor!=null){
+//                editor.removeAllDismissListeners();
+//            }
+//
+//            editor = new CTurnoEditor(turno, entityManager);
+//            addComponent(editor);
+//            setComponentAlignment(editor, Alignment.MIDDLE_CENTER);
+//
+//            // quando si dismette l'editor, torna al tabellone
+//            editor.addDismissListener(new CTurnoEditor.DismissListener() {
+//                @Override
+//                public void editorDismissed(CTurnoEditor.DismissEvent e) {
+//
+//                    // se ha salvato o eliminato il turno aggiorna la cella della griglia
+//                    if (e.isSaved() | e.isDeleted()) {
+//                        GridTabellone grid = tabComponent.getGridTabellone();
+//                        grid.removeComponent(col, row);
+//                        TabelloneCell cell=null;
+//                        if(e.isSaved()){
+//                            cell = new CTurnoDisplay(grid, turno);
+//                        }
+//                        if(e.isDeleted()){
+//                            cell=new CTurnoDisplay(grid, turno.getServizio(), turno.getData1());
+//                        }
+//                        grid.addComponent(cell, col, row);
+//                    }
+//                    navigator.navigateTo(ADDR_TABELLONE);
+//                }
+//            });
+//
+//
+//
+//        }
+
+
         /**
-         * Assegna un Turno a questo componente.
-         * Crea l'editor di turno e lo aggiunge graficamente
+         * Assegna un Editor a questo componente.
+         * e lo aggiunge graficamente
          *
-         * @param turno il turno da editare
-         * @param col   la colonna della griglia dove è visualizzato il turno
-         * @param row   la riga della griglia dove è visualizzato il turno
+         * @param editor l'editor da mostrare nella pagina
          */
-        public void setTurno(Turno turno, int col, int row) {
+        public void setEditor(CTabelloneEditor editor) {
             removeAllComponents();
-
-            // Rimuove tutti i listeners dall'editor precedente
-            // prima di perdere il riferimento e crearne uno nuovo.
-            // Altrimenti il vecchio editor avrebbe un listener registrato
-            // che impedirebbe la garbace collection.
-            // Non posso farlo quando la chiamata parte dal listener
-            // perché avrei una ConcurrentModificationException.
-            if(editor!=null){
-                editor.removeAllDismissListeners();
-            }
-
-            editor = new CTurnoEditor(turno, entityManager);
             addComponent(editor);
             setComponentAlignment(editor, Alignment.MIDDLE_CENTER);
-
-            // quando si dismette l'editor, torna al tabellone
-            editor.addDismissListener(new CTurnoEditor.DismissListener() {
-                @Override
-                public void editorDismissed(CTurnoEditor.DismissEvent e) {
-
-                    // se ha salvato o eliminato il turno aggiorna la cella della griglia
-                    if (e.isSaved() | e.isDeleted()) {
-                        GridTabellone grid = tabComponent.getGridTabellone();
-                        grid.removeComponent(col, row);
-                        TabelloneCell cell=null;
-                        if(e.isSaved()){
-                            cell = new CTurnoDisplay(grid, turno);
-                        }
-                        if(e.isDeleted()){
-                            cell=new CTurnoDisplay(grid, turno.getServizio(), turno.getData1());
-                        }
-                        grid.addComponent(cell, col, row);
-                    }
-                    navigator.navigateTo("tabellone");
-                }
-            });
-
-
-
         }
 
 
         @Override
         public void enter(ViewChangeListener.ViewChangeEvent event) {
-
         }
 
 
     }
 
 
+
+
     /**
-     * Componente View con MenuBar comandi ricerca perdiodo.
+     * Componente View con MenuBar comandi ricerca periodo.
      */
     private class SearchComponent extends VerticalLayout implements View {
 
@@ -519,7 +620,7 @@ public class Tabellone extends VerticalLayout implements View {
             addFormListener(new FormListener() {
                 @Override
                 public void cancel_() {
-                    navigator.navigateTo("tabellone");
+                    navigator.navigateTo(ADDR_TABELLONE);
                 }
 
                 @Override
@@ -529,7 +630,7 @@ public class Tabellone extends VerticalLayout implements View {
                         LocalDate data = getDataInizio();
                         if (data != null) {
                             creaGrid(data, numGiorni);
-                            navigator.navigateTo("tabellone");
+                            navigator.navigateTo(ADDR_TABELLONE);
                         } else {
                             Notification.show("La data non può essere nulla.", Notification.Type.WARNING_MESSAGE);
                         }
@@ -581,4 +682,6 @@ public class Tabellone extends VerticalLayout implements View {
 
         }
     }
+
+
 }
