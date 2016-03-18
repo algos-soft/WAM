@@ -345,6 +345,25 @@ public class Servizio extends WamCompanyEntity {
     }
 
 
+    /**
+     * Recupera il ServizioFunzione relativo a una data funzione
+     * @param f la funzione
+     * @return il ServizioFunzione con la funzione, null se non trovato
+     */
+    public ServizioFunzione getServizioFunzione(Funzione f){
+        ServizioFunzione sfOut = null;
+        for(ServizioFunzione sf : getServizioFunzioni()){
+            if(sf.getFunzione().equals(f)){
+                sfOut=sf;
+                break;
+            }
+
+        }
+        return sfOut;
+
+    }
+
+
 //    public ArrayList<String> getSigleFunzioni() {
 //        ArrayList<String> lista = null;
 //

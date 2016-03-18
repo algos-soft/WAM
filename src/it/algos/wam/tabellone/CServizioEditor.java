@@ -7,6 +7,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 
@@ -31,6 +32,7 @@ public class CServizioEditor extends CTabelloneEditor {
         addComponent(creaCompTitolo());
         addComponent(creaCompDetail());
         addComponent(creaPanComandi());
+
 
 
     }
@@ -70,7 +72,8 @@ public class CServizioEditor extends CTabelloneEditor {
         lFunc.setCaption("Funzioni previste");
 
         for(Funzione f : lista){
-            lFunc.addComponent(new EditorFunzione(f));
+            EditorFunzione ef = new EditorFunzione(f);
+            lFunc.addComponent(ef);
         }
 
         layout.addComponent(lFunc);
@@ -145,6 +148,7 @@ public class CServizioEditor extends CTabelloneEditor {
         private Funzione funzione;
         private CheckBox checkSel;
         private CheckBox checkObbl;
+        private ServizioFunzione serFun;
 
 
         public EditorFunzione(Funzione funzione) {
@@ -171,6 +175,15 @@ public class CServizioEditor extends CTabelloneEditor {
 
             addComponent(checkSel);
             addComponent(checkObbl);
+
+            // recupera il ServizioFunzione relativo a questa funzione, se c'è
+            // se c'è accende anche il checkbox
+            serFun  = servizio.getServizioFunzione(funzione);
+            if(serFun!=null){
+                checkSel.setValue(true);
+            }
+
+
         }
 
         public Funzione getFunzione() {
