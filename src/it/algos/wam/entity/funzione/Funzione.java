@@ -258,7 +258,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
     @Override
     public String toString() {
-        return sigla;
+        return descrizione;
     }// end of method
 
     public String getSigla() {

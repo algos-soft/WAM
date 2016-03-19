@@ -2,6 +2,7 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -9,9 +10,11 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,6 +25,7 @@ import java.util.List;
 public class CServizioEditor extends CTabelloneEditor {
 
     private Servizio servizio;
+    private VerticalLayout lFunc;
 
     public CServizioEditor(Servizio servizio, EntityManager entityManager) {
         super(entityManager);
@@ -65,18 +69,26 @@ public class CServizioEditor extends CTabelloneEditor {
         fDescrizione.setWidth("20em");
         layout.addComponent(fDescrizione);
 
-        List<Funzione> lista=(List<Funzione>)CompanyQuery.getList(Funzione.class);
-        Collections.sort(lista);
-
-        VerticalLayout lFunc = new VerticalLayout();
+        lFunc = new VerticalLayout();
         lFunc.setCaption("Funzioni previste");
+        lFunc.setSpacing(true);
 
-        for(Funzione f : lista){
-            EditorFunzione ef = new EditorFunzione(f);
-            lFunc.addComponent(ef);
+        // aggiunge gli editor per le funzioni esistenti
+        for(ServizioFunzione sf : servizio.getServizioFunzioni()){
+            lFunc.addComponent(new EditorSF(sf));
         }
-
         layout.addComponent(lFunc);
+
+        // aggiunge un bottone per creare nuove funzioni
+        Button bNuova=new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
+        bNuova.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                lFunc.addComponent(new EditorSF(null));
+            }
+        });
+        layout.addComponent(bNuova);
+
 
         return layout;
     }
@@ -141,57 +153,49 @@ public class CServizioEditor extends CTabelloneEditor {
 
 
     /**
-     * Editor di una singola funzione
+     * Editor di una singola funzione del servizio
      */
-    private class EditorFunzione extends HorizontalLayout {
+    private class EditorSF extends HorizontalLayout {
 
-        private Funzione funzione;
-        private CheckBox checkSel;
-        private CheckBox checkObbl;
         private ServizioFunzione serFun;
+        private CheckBox checkSel;
+        private ERelatedComboField comboFunzioni;
+        private CheckBox checkObbl;
 
 
-        public EditorFunzione(Funzione funzione) {
+        public EditorSF(ServizioFunzione serFun) {
 
-            this.funzione=funzione;
+            this.serFun=serFun;
 
-            checkSel=new CheckBox(funzione.getDescrizione());
-            checkSel.setWidth("10em");
-            checkSel.addValueChangeListener(new Property.ValueChangeListener() {
-                @Override
-                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                    checkObbl.setEnabled(checkSel.getValue());
-                    if (!checkSel.getValue()) {
-                        checkObbl.setValue(false);
-                    }
-                }
-            });
+            setSpacing(true);
 
-            checkObbl=new CheckBox("obbligatoria");
-            checkSel.setWidth("10em");
-
-            checkSel.setValue(!checkSel.getValue());    // inverte il valore per forzare un value change
-            checkSel.setValue(false);   // all'inizio spegne il check
-
-            addComponent(checkSel);
-            addComponent(checkObbl);
-
-            // recupera il ServizioFunzione relativo a questa funzione, se c'è
-            // se c'è accende anche il checkbox
-            serFun  = servizio.getServizioFunzione(funzione);
+            comboFunzioni = new ERelatedComboField(Funzione.class);
+            comboFunzioni.setWidth("12em");
             if(serFun!=null){
-                checkSel.setValue(true);
+                Funzione f = serFun.getFunzione();
+                if(f!=null){
+                    comboFunzioni.setValue(f.getId());
+                }
             }
 
 
-        }
+            checkObbl=new CheckBox("obbligatoria");
+            // imposta il checkbox obbligatorio
+            if(serFun!=null){
+                checkObbl.setValue(this.serFun.isObbligatoria());
+            }
 
-        public Funzione getFunzione() {
-            return funzione;
-        }
+            Button bElimina=new Button("Elimina", FontAwesome.TRASH_O);
 
-        public boolean isSelezionata() {
-            return checkSel.getValue();
+            addComponent(comboFunzioni);
+            addComponent(checkObbl);
+            addComponent(bElimina);
+            setComponentAlignment(comboFunzioni, Alignment.MIDDLE_LEFT);
+            setComponentAlignment(checkObbl, Alignment.MIDDLE_LEFT);
+            setComponentAlignment(bElimina, Alignment.MIDDLE_LEFT);
+
+
+
         }
 
         public boolean isObbligatoria() {
