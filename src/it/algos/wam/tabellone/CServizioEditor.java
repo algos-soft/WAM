@@ -74,7 +74,9 @@ public class CServizioEditor extends CTabelloneEditor {
         lFunc.setSpacing(true);
 
         // aggiunge gli editor per le funzioni esistenti
-        for(ServizioFunzione sf : servizio.getServizioFunzioni()){
+        List<ServizioFunzione> listaSF = servizio.getServizioFunzioni();
+        Collections.sort(listaSF);
+        for(ServizioFunzione sf : listaSF){
             lFunc.addComponent(new EditorSF(sf));
         }
         layout.addComponent(lFunc);
