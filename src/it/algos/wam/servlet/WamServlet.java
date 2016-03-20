@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Theme("valo")
-@WebServlet(value = "/wam/*", asyncSupported = true, displayName = "Wam")
+@WebServlet(urlPatterns = { "/wam/*" , "/VAADIN/*" }, asyncSupported = true, displayName = "Wam")
 @VaadinServletConfiguration(productionMode = false, ui = WamUI.class)
 public class WamServlet extends AlgosServlet {
 
