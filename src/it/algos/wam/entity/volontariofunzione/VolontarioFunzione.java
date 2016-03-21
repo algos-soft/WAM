@@ -9,9 +9,9 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe di tipo JavaBean.
@@ -44,6 +44,9 @@ public class VolontarioFunzione extends WamCompanyEntity {
 
     /**
      * Costruttore completo
+     *
+     * @param volontario di riferimento
+     * @param funzione   di riferimento
      */
     public VolontarioFunzione(Volontario volontario, Funzione funzione) {
         super();
@@ -55,6 +58,7 @@ public class VolontarioFunzione extends WamCompanyEntity {
      * Recupera una istanza di VolontarioFunzione usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
+     *
      * @return istanza di VolontarioFunzione, null se non trovata
      */
     public static VolontarioFunzione find(long id) {
@@ -73,17 +77,23 @@ public class VolontarioFunzione extends WamCompanyEntity {
     /**
      * Recupera una istanza di VolontarioFunzione usando la query di una property specifica
      *
-     * @param sigla valore della property Sigla
+     * @param volontario di riferimento
+     * @param funzione   di riferimento
+     *
      * @return istanza di VolontarioFunzione, null se non trovata
      */
-    public static VolontarioFunzione findByv(String sigla) {
+    @SuppressWarnings("all")
+    public static VolontarioFunzione findByVolFun(Volontario volontario, Funzione funzione) {
         VolontarioFunzione instance = null;
-        BaseEntity entity = AQuery.queryOne(VolontarioFunzione.class, VolontarioFunzione_.sigla, sigla);
 
-        if (entity != null) {
-            if (entity instanceof VolontarioFunzione) {
-                instance = (VolontarioFunzione) entity;
-            }// end of if cycle
+        //@todo da migliorare
+        List<VolontarioFunzione> volontari = (List<VolontarioFunzione>) AQuery.queryList(VolontarioFunzione.class, VolontarioFunzione_.volontario, volontario);
+        if (volontari != null && volontari.size() > 0) {
+            for (VolontarioFunzione vol : volontari) {
+                if (vol.getFunzione().getId().equals(funzione.getId())) {
+                    instance = vol;
+                }// end of if cycle
+            }// end of for cycle
         }// end of if cycle
 
         return instance;
@@ -104,6 +114,26 @@ public class VolontarioFunzione extends WamCompanyEntity {
 
         return totRec;
     }// end of method
+
+    /**
+     * Creazione iniziale di un record della tavola d'incrocio
+     * Lo crea SOLO se non esiste già
+     *
+     * @param volontario di riferimento
+     * @param funzione   di riferimento
+     *
+     * @return istanza di VolontarioFunzione
+     */
+    public static VolontarioFunzione crea(Volontario volontario, Funzione funzione) {
+        VolontarioFunzione volFun = VolontarioFunzione.findByVolFun(volontario, funzione);
+
+        if (volFun == null) {
+            volFun = new VolontarioFunzione(volontario, funzione);
+            volFun.save();
+        }// end of if cycle
+
+        return volFun;
+    }// end of static method
 
     /**
      * Recupera una lista (array) di tutti i records della Entity

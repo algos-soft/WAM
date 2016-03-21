@@ -63,7 +63,6 @@ public class Volontario extends WamCompanyEntity {
     private boolean dipendente = false;
     private boolean attivo = true;
 
-
     //--scadenza certificati
     //--data di scadenza del certificato BSD
     //--se non valorizzata, il milite non ha acquisito il certificato
@@ -134,6 +133,7 @@ public class Volontario extends WamCompanyEntity {
      * Recupera una istanza di Volontario usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
+     *
      * @return istanza di Volontario, null se non trovata
      */
     public static Volontario find(long id) {
@@ -155,6 +155,7 @@ public class Volontario extends WamCompanyEntity {
      * @param company valore della property Company
      * @param nome    valore della property Nome
      * @param cognome valore della property Cognome
+     *
      * @return istanza di Volontario, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -173,6 +174,7 @@ public class Volontario extends WamCompanyEntity {
 //        }// end of if cycle
 
 //        ArrayList<Volontario> militiPerCognome = (ArrayList<Milite>) AQuery.queryList(Volontario.class, Milite_.cognome, cognome);
+        //@todo da migliorare
         List<Volontario> militiPerCognome = (List<Volontario>) AQuery.queryList(Volontario.class, Volontario_.cognome, cognome);
         if (militiPerCognome != null && militiPerCognome.size() > 0) {
             for (Volontario milite : militiPerCognome) {
@@ -219,66 +221,57 @@ public class Volontario extends WamCompanyEntity {
      * @param company croce di appartenenza
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
+     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, String nome, String cognome) {
-        return crea(company, nome, cognome, null, "");
+        return crea(company, nome, cognome, new ArrayList<Funzione>());
     }// end of static method
 
     /**
      * Creazione iniziale di un volontario
      * Lo crea SOLO se non esiste già
      *
-     * @param company     croce di appartenenza
-     * @param nome        del volontario/milite (obbligatorio)
-     * @param cognome     del volontario/milite (obbligatorio)
-     * @param dataNascita del volontario/milite (facoltativo)
-     * @param cellulare   del volontario/milite (facoltativo)
+     * @param company       croce di appartenenza
+     * @param nome          del volontario/milite (obbligatorio)
+     * @param cognome       del volontario/milite (obbligatorio)
+     * @param listaFunzioni lista delle funzioni (facoltativa)
+     *
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare) {
-        return crea(company, nome, cognome, dataNascita, cellulare, false);
+    public static Volontario crea(WamCompany company, String nome, String cognome, ArrayList<Funzione> listaFunzioni) {
+        return crea(company, nome, cognome, listaFunzioni.toArray(new Funzione[listaFunzioni.size()]));
     }// end of static method
 
     /**
      * Creazione iniziale di un volontario
      * Lo crea SOLO se non esiste già
      *
-     * @param company     croce di appartenenza
-     * @param nome        del volontario/milite (obbligatorio)
-     * @param cognome     del volontario/milite (obbligatorio)
-     * @param dataNascita del volontario/milite (facoltativo)
-     * @param cellulare   del volontario/milite (facoltativo)
-     * @param dipendente  dell'associazione NON volontario
-     * @return istanza di Volontario
-     */
-    public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
-        return crea(company, nome, cognome, dataNascita, cellulare, dipendente, true);
-    }// end of static method
-
-    /**
-     * Creazione iniziale di un volontario
-     * Lo crea SOLO se non esiste già
+     * @param company  croce di appartenenza
+     * @param nome     del volontario/milite (obbligatorio)
+     * @param cognome  del volontario/milite (obbligatorio)
+     * @param funzioni lista delle funzioni (facoltativa)
      *
-     * @param company     croce di appartenenza
-     * @param nome        del volontario/milite (obbligatorio)
-     * @param cognome     del volontario/milite (obbligatorio)
-     * @param dataNascita del volontario/milite (facoltativo)
-     * @param cellulare   del volontario/milite (facoltativo)
-     * @param dipendente  dell'associazione NON volontario
-     * @param attivo      all'interno dell'associazione
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente, boolean attivo) {
-        Volontario milite = Volontario.find(company, nome, cognome);
+    public static Volontario crea(WamCompany company, String nome, String cognome, Funzione... funzioni) {
+        Volontario vol = Volontario.find(company, nome, cognome);
 
-        if (milite == null) {
-            milite = new Volontario(company, nome, cognome, dataNascita, cellulare, dipendente);
-            milite.setAttivo(attivo);
-            milite.save();
+        if (vol == null) {
+            vol = new Volontario(company, nome, cognome);
+            vol.setDipendente(false);
+            vol.setAttivo(true);
+
+//            if (funzioni != null) {
+//                for (Funzione funz : funzioni) {
+//                    VolontarioFunzione.crea(vol, funz);
+//                } // fine del ciclo for-each
+//            }// fine del blocco if
+
+            vol.save();
         }// end of if cycle
 
-        return milite;
+        return vol;
     }// end of static method
 
     /**
@@ -422,7 +415,6 @@ public class Volontario extends WamCompanyEntity {
             throw new CloneNotSupportedException();
         }// fine del blocco try-catch
     }// end of method
-
 
     @Override
     public boolean equals(Object o) {

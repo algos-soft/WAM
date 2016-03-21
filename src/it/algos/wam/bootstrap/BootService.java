@@ -8,7 +8,6 @@ import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.lib.LibDate;
-import it.algos.webbase.web.lib.LibTime;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,11 +18,9 @@ import java.util.Date;
  */
 public abstract class BootService {
 
-
     private static ArrayList<Funzione> FUNZ_DEMO;
     private static ArrayList<Funzione> FUNZ_TEST;
     private static ArrayList<Servizio> SER_DEMO;
-
 
     /**
      * Creazione iniziale di una croce demo
@@ -32,11 +29,14 @@ public abstract class BootService {
      * La crea SOLO se non esiste già
      */
     public static void creaCompanyDemo() {
-        creaCroceDemo();
-        creaFunzioniDemo();
-        creaMilitiDemo();
-        creaServiziDemo();
-        creaTurniDemo();
+        WamCompany company;
+        ArrayList<Funzione> listaFunzioni = new ArrayList<>();
+
+        company = creaCroceDemo();
+        listaFunzioni = creaFunzioni(company);
+        creaVolontari(company, listaFunzioni);
+//        creaServiziDemo();
+//        creaTurniDemo();
     }// end of static method
 
     /**
@@ -54,88 +54,84 @@ public abstract class BootService {
         creaTurniTest();
     }// end of static method
 
-
     /**
      * Creazione iniziale dei dati generali per la croce demo
      * Li crea SOLO se non esistono già
      */
     private static WamCompany creaCroceDemo() {
         WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
+
         if (company == null) {
-            company = new WamCompany();
-            company.setCompanyCode(WAMApp.DEMO_COMPANY_CODE);
-            company.setName("Demo");
+            company = new WamCompany(WAMApp.DEMO_COMPANY_CODE,"Demo");
             company.setAddress1("Via Turati, 12");
             company.setAddress1("20199 Garbagnate Milanese");
             company.setContact("Mario Bianchi");
             company.setEmail("info@crocedemo.it");
-
             company.setVaiSubitoTabellone(true);
             company.save();
         }// end of if cycle
         return company;
     }// end of static method
 
+//    /**
+//     * Creazione iniziale di alcune funzioni per la croce demo
+//     * Li crea SOLO se non esistono già
+//     */
+//    private static void creaFunzioniDemo() {
+//        WamCompany company = WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
+//        Funzione funzione;
+//        int k = 0;
+//
+//        if (company != null) {
+//            FUNZ_DEMO = new ArrayList<>();
+//            funzione = Funzione.crea(company, "aut", "Autista", ++k, "Autista patentato 118");
+//            FUNZ_DEMO.add(funzione);
+//            funzione = Funzione.crea(company, "soc", "Soccorritore", ++k, "Soccorritore 118");
+//            FUNZ_DEMO.add(funzione);
+//            funzione = Funzione.crea(company, "bar", "Barelliere", ++k, "Barelliere");
+//            FUNZ_DEMO.add(funzione);
+//            funzione = Funzione.crea(company, "pro", "Bar prova", ++k, "Soccorritore in prova");
+//            FUNZ_DEMO.add(funzione);
+//        }// end of if cycle
+//    }// end of static method
+
     /**
      * Creazione iniziale di alcuni militi per la croce demo
      * Li crea SOLO se non esistono già
      */
-    private static void creaMilitiDemo() {
+    private static void creaMilitiDemo2() {
         WamCompany company = WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
         Funzione funz1 = FUNZ_DEMO.get(0);
         Funzione funz2 = FUNZ_DEMO.get(1);
         Funzione funz3 = FUNZ_DEMO.get(2);
         Volontario vol;
 
-        if (company != null) {
-            vol = Volontario.crea(company, "Piero", "Bernocchi", null, "335-471824");
-            vol.add(funz1);
-            vol.save();
-            vol = Volontario.crea(company, "Maria", "Cavazzini");
-            vol.add(funz1);
-            vol.save();
-            vol = Volontario.crea(company, "Francesco", "Mantovani", LibTime.adesso(), "338-679115");
-            vol.add(funz1);
-            vol.add(funz2);
-            vol.save();
-            vol = Volontario.crea(company, "Giulia", "Politi");
-            vol = Volontario.crea(company, "Maria", "Rovescala", LibDate.getPrimoGennaio(1987), "340-453728", true, true);
-            vol.add(funz1);
-            vol.add(funz2);
-            vol.add(funz3);
-            vol.save();
-            vol = Volontario.crea(company, "Aldo", "Vaccari");
-        }// end of if cycle
+//        if (company != null) {
+//            vol = Volontario.crea(company, "Piero", "Bernocchi", null, "335-471824");
+//            vol.add(funz1);
+//            vol.save();
+//            vol = Volontario.crea(company, "Maria", "Cavazzini");
+//            vol.add(funz1);
+//            vol.save();
+//            vol = Volontario.crea(company, "Francesco", "Mantovani", LibTime.adesso(), "338-679115");
+//            vol.add(funz1);
+//            vol.add(funz2);
+//            vol.save();
+//            vol = Volontario.crea(company, "Giulia", "Politi");
+//            vol = Volontario.crea(company, "Maria", "Rovescala", LibDate.getPrimoGennaio(1987), "340-453728", true, true);
+//            vol.add(funz1);
+//            vol.add(funz2);
+//            vol.add(funz3);
+//            vol.save();
+//            vol = Volontario.crea(company, "Aldo", "Vaccari");
+//        }// end of if cycle
     }// end of static method
-
-    /**
-     * Creazione iniziale di alcune funzioni per la croce demo
-     * Li crea SOLO se non esistono già
-     */
-    private static void creaFunzioniDemo() {
-        WamCompany company = WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
-        Funzione funzione;
-        int k = 0;
-
-        if (company != null) {
-            FUNZ_DEMO = new ArrayList<>();
-            funzione = Funzione.crea(company, "aut", "Autista", ++k, "Autista patentato 118");
-            FUNZ_DEMO.add(funzione);
-            funzione = Funzione.crea(company, "soc", "Soccorritore", ++k, "Soccorritore 118");
-            FUNZ_DEMO.add(funzione);
-            funzione = Funzione.crea(company, "bar", "Barelliere", ++k, "Barelliere");
-            FUNZ_DEMO.add(funzione);
-            funzione = Funzione.crea(company, "pro", "Bar prova", ++k, "Soccorritore in prova");
-            FUNZ_DEMO.add(funzione);
-        }// end of if cycle
-    }// end of static method
-
 
     /**
      * Creazione iniziale di alcuni servizi per la croce demo
      * Li crea SOLO se non esistono già
      */
-    private static void creaServiziDemo() {
+    private static void creaServiziDemo2() {
         WamCompany company = WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
         Servizio servizio;
         Funzione funz1 = FUNZ_DEMO.get(0);
@@ -211,10 +207,10 @@ public abstract class BootService {
         Turno turno;
 
         servizio = Servizio.find(company, "msa-pom");
-        turno =  Turno.crea(company, servizio, LibDate.creaData(14, 8, 2016));
+        turno = Turno.crea(company, servizio, LibDate.creaData(14, 8, 2016));
 
         servizio = Servizio.find(company, "ord-mat");
-        turno =  Turno.crea(company, servizio, LibDate.creaData(22, 11, 2015));
+        turno = Turno.crea(company, servizio, LibDate.creaData(22, 11, 2015));
 
         servizio = Servizio.find(company, "avis");
         turno = Turno.crea(company, servizio, LibDate.creaData(5, 2, 2016));
@@ -227,7 +223,6 @@ public abstract class BootService {
         turno.save();
 
     }// end of static method
-
 
     /**
      * Creazione iniziale dei dati generali per la croce test
@@ -255,14 +250,13 @@ public abstract class BootService {
      */
     private static void creaMilitiTest() {
         WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
-        Volontario.crea(company, "Carlo", "Bagno");
-        Volontario.crea(company, "Renzo", "Cerrato", LibDate.creaData(14, 7, 1995), "340-564738", false);
-        Volontario.crea(company, "Lucia", "Donadoni", LibDate.creaData(11, 3, 1999), "335-5124396", true, false);
-        Volontario.crea(company, "Ambra", "Angeletti");
-        Volontario.crea(company, "Flacio", "Brambilla", LibDate.creaData(27, 10, 1991), "340-6786432");
-        Volontario.crea(company, "Ruggero", "Testa");
+//        Volontario.crea(company, "Carlo", "Bagno");
+//        Volontario.crea(company, "Renzo", "Cerrato", LibDate.creaData(14, 7, 1995), "340-564738", false);
+//        Volontario.crea(company, "Lucia", "Donadoni", LibDate.creaData(11, 3, 1999), "335-5124396", true, false);
+//        Volontario.crea(company, "Ambra", "Angeletti");
+//        Volontario.crea(company, "Flacio", "Brambilla", LibDate.creaData(27, 10, 1991), "340-6786432");
+//        Volontario.crea(company, "Ruggero", "Testa");
     }// end of static method
-
 
     /**
      * Creazione iniziale di alcune funzioni per la croce test
@@ -282,7 +276,6 @@ public abstract class BootService {
         funzione = Funzione.crea(company, "ter", "Aiuto", ++k, "Barelliere in prova");
         FUNZ_TEST.add(funzione);
     }// end of static method
-
 
     /**
      * Creazione iniziale di alcuni servizi per la croce test
@@ -337,6 +330,80 @@ public abstract class BootService {
 //            lista.add(iscrizione2);
 //            lista.add(iscrizione3);
             Turno.crea(company, servizio, data, data, true);
+        }// end of if cycle
+    }// end of static method
+
+    /**
+     * Creazione iniziale di alcune funzioni per la croce selezionata
+     * Li crea SOLO se non esistono già
+     *
+     * @param company croce selezionata
+     *
+     * @return lista delle funzioni create
+     */
+    private static ArrayList<Funzione> creaFunzioni(WamCompany company) {
+        ArrayList<Funzione> listaFunzioni = new ArrayList<>();
+        Funzione funzione;
+        int k = 0;
+
+        if (company != null) {
+            funzione = Funzione.crea(company, "aut", "Autista118", ++k, "Autista patentato 118");
+            listaFunzioni.add(funzione);
+            funzione = Funzione.crea(company, "aut2", "Autista", ++k, "Autista");
+            listaFunzioni.add(funzione);
+            funzione = Funzione.crea(company, "soc", "Soccorritore", ++k, "Soccorritore 118");
+            listaFunzioni.add(funzione);
+            funzione = Funzione.crea(company, "sec", "Secondo", ++k, "Soccorritore");
+            listaFunzioni.add(funzione);
+            funzione = Funzione.crea(company, "ter", "Terzo", ++k, "Soccorritore in prova");
+            listaFunzioni.add(funzione);
+            funzione = Funzione.crea(company, "bar", "Barelliere", ++k, "Barelliere");
+            listaFunzioni.add(funzione);
+        }// end of if cycle
+
+        return listaFunzioni;
+    }// end of static method
+
+    /**
+     * Creazione iniziale di alcuni volontari per la croce selezionata
+     * Li crea SOLO se non esistono già
+     *
+     * @param company croce selezionata
+     */
+    private static void creaVolontari(WamCompany company) {
+        creaVolontari(company, null);
+    }// end of static method
+
+    /**
+     * Creazione iniziale di alcuni volontari per la croce selezionata
+     * Li crea SOLO se non esistono già
+     *
+     * @param company       croce selezionata
+     * @param listaFunzioni della company
+     */
+    private static void creaVolontari(WamCompany company, ArrayList<Funzione> listaFunzioni) {
+
+        if (company != null) {
+            Volontario.crea(company, "Mario", "Brambilla");
+            Volontario.crea(company, "Giovanna", "Durante", listaFunzioni);
+
+//            vol = Volontario.crea(company, "Piero", "Bernocchi",listaFunzioni);
+//            vol.add(funz1);
+//            vol.save();
+//            vol = Volontario.crea(company, "Maria", "Cavazzini");
+//            vol.add(funz1);
+//            vol.save();
+//            vol = Volontario.crea(company, "Francesco", "Mantovani", LibTime.adesso(), "338-679115");
+//            vol.add(funz1);
+//            vol.add(funz2);
+//            vol.save();
+//            vol = Volontario.crea(company, "Giulia", "Politi");
+//            vol = Volontario.crea(company, "Maria", "Rovescala", LibDate.getPrimoGennaio(1987), "340-453728", true, true);
+//            vol.add(funz1);
+//            vol.add(funz2);
+//            vol.add(funz3);
+//            vol.save();
+//            vol = Volontario.crea(company, "Aldo", "Vaccari");
         }// end of if cycle
     }// end of static method
 

@@ -19,15 +19,13 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
 @DefaultSort({"companyCode"})
 public class WamCompany extends BaseCompany {
 
     private static final long serialVersionUID = 1L;
 
-    public static String DEMO_COMPANY_CODE="demo";
-
+    public static String DEMO_COMPANY_CODE = "demo";
 
     //--mostra il tabellone alla partenza; in caso contrario va alla home
     private boolean vaiSubitoTabellone = true;
@@ -50,48 +48,27 @@ public class WamCompany extends BaseCompany {
 
     // le altre tabelle sono cancellate a cascata a partire da queste
 
+//    public WamCompany() {
+//        super();
+//    }// end of constructor
 
-
-//    @OneToMany(mappedBy = "wamcompany", targetEntity=Evento.class)
-//    @CascadeOnDelete
-//    private List<Evento> eventi;
-//
-//    @OneToMany(mappedBy = "wamcompany")
-//    @CascadeOnDelete
-//    private List<Insegnante> insegnanti;
-//
-//    @OneToMany(mappedBy = "wamcompany")
-//    @CascadeOnDelete
-//    private List<Lettera> lettere;
-//
-//    @OneToMany(mappedBy = "wamcompany")
-//    @CascadeOnDelete
-//    private List<Allegato> allegati;
-//
-//    @OneToMany(mappedBy = "wamcompany")
-//    @CascadeOnDelete
-//    private List<ModoPagamento> modiPagamento;
-//
-//    @OneToMany(mappedBy = "wamcompany")
-//    @CascadeOnDelete
-//    private List<Progetto> progetti;
-//
-//    @OneToMany(mappedBy = "wamcompany")
-//    @CascadeOnDelete
-//    private List<Sala> sale;
-//
-//    @OneToMany(mappedBy = "wamcompany")
-//    @CascadeOnDelete
-//    private List<Scuola> scuola;
-//
-//    @OneToMany(mappedBy = "wamcompany", targetEntity=PrefEventoEntity.class)
-//    @CascadeOnDelete
-//    private List<PrefEventoEntity> prefs;
-
+    /**
+     * Costruttore senza argomenti
+     * Necessario per le specifiche JavaBean
+     */
     public WamCompany() {
-        super();
+        this("", "");
     }// end of constructor
 
+    /**
+     * Costruttore minimo con tutte le properties obbligatorie
+     *
+     * @param companyCode sigla di riferimento interna (obbligatoria)
+     * @param name        descrizione della company (obbligatoria)
+     */
+    public WamCompany(String companyCode, String name) {
+        super(companyCode, name);
+    }// end of constructor
 
 //	public void createDemoData(){
 //		DemoDataGenerator.createDemoData(this);
@@ -101,6 +78,7 @@ public class WamCompany extends BaseCompany {
      * Recupera una istanza di Company usando la query di una property specifica
      *
      * @param code valore della property code
+     *
      * @return istanza di Company, null se non trovata
      */
     public static WamCompany findByCode(String code) {
@@ -129,6 +107,7 @@ public class WamCompany extends BaseCompany {
      * Ritorna la Demo Company
      *
      * @return la Demo Company, null se non esiste
+     *
      * @deprecated
      */
     public static WamCompany getDemoCompanyOld() {
@@ -150,7 +129,6 @@ public class WamCompany extends BaseCompany {
     public static ArrayList<WamCompany> findAll() {
         return (ArrayList<WamCompany>) AQuery.getLista(WamCompany.class);
     }// end of method
-
 
     @Override
     public String toString() {
@@ -202,7 +180,6 @@ public class WamCompany extends BaseCompany {
 //		AQuery.delete(PrefEventoEntity.class, CompanyEntity_.wamcompany, this);
 
     }
-
 
 }// end of entity class
 
