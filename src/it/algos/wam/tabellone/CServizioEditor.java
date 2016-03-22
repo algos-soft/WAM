@@ -1,6 +1,5 @@
 package it.algos.wam.tabellone;
 
-import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -9,12 +8,10 @@ import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
-import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,7 +22,7 @@ import java.util.List;
 public class CServizioEditor extends CTabelloneEditor {
 
     private Servizio servizio;
-    private VerticalLayout lFunc;
+    private VerticalLayout layoutFunc;
 
     public CServizioEditor(Servizio servizio, EntityManager entityManager) {
         super(entityManager);
@@ -69,24 +66,24 @@ public class CServizioEditor extends CTabelloneEditor {
         fDescrizione.setWidth("20em");
         layout.addComponent(fDescrizione);
 
-        lFunc = new VerticalLayout();
-        lFunc.setCaption("Funzioni previste");
-        lFunc.setSpacing(true);
+        layoutFunc = new VerticalLayout();
+        layoutFunc.setCaption("Funzioni previste");
+        layoutFunc.setSpacing(true);
 
         // aggiunge gli editor per le funzioni esistenti
         List<ServizioFunzione> listaSF = servizio.getServizioFunzioni();
         Collections.sort(listaSF);
         for(ServizioFunzione sf : listaSF){
-            lFunc.addComponent(new EditorSF(sf));
+            layoutFunc.addComponent(new EditorSF(sf));
         }
-        layout.addComponent(lFunc);
+        layout.addComponent(layoutFunc);
 
         // aggiunge un bottone per creare nuove funzioni
         Button bNuova=new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
         bNuova.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                lFunc.addComponent(new EditorSF(null));
+                layoutFunc.addComponent(new EditorSF(null));
             }
         });
         layout.addComponent(bNuova);
@@ -188,6 +185,21 @@ public class CServizioEditor extends CTabelloneEditor {
             }
 
             Button bElimina=new Button("Elimina", FontAwesome.TRASH_O);
+            bElimina.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    String messaggio="Vuoi eliminare la funzione "+serFun.getFunzione().getDescrizione()+"?";
+                    new ConfirmDialog(null, messaggio, new ConfirmDialog.Listener() {
+                        @Override
+                        public void onClose(ConfirmDialog dialog, boolean confirmed) {
+                            if(confirmed){
+                                layoutFunc.removeComponent(EditorSF.this);
+                            }
+                        }
+                    }).show();
+                }
+            });
+
 
             addComponent(comboFunzioni);
             addComponent(checkObbl);
