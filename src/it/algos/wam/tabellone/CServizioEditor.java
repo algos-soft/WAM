@@ -6,8 +6,10 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.query.WamQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 
@@ -33,7 +35,6 @@ public class CServizioEditor extends CTabelloneEditor {
         addComponent(creaCompTitolo());
         addComponent(creaCompDetail());
         addComponent(creaPanComandi());
-
 
 
     }
@@ -73,16 +74,19 @@ public class CServizioEditor extends CTabelloneEditor {
         // aggiunge gli editor per le funzioni esistenti
         List<ServizioFunzione> listaSF = servizio.getServizioFunzioni();
         Collections.sort(listaSF);
-        for(ServizioFunzione sf : listaSF){
+        for (ServizioFunzione sf : listaSF) {
             layoutFunc.addComponent(new EditorSF(sf));
         }
         layout.addComponent(layoutFunc);
 
         // aggiunge un bottone per creare nuove funzioni
-        Button bNuova=new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
+        Button bNuova = new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
         bNuova.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
+//                ServizioFunzione sf = new ServizioFunzione();
+//                sf.setServizio(servizio);
+//                servizio.getServizioFunzioni().add(sf);
                 layoutFunc.addComponent(new EditorSF(null));
             }
         });
@@ -107,6 +111,7 @@ public class CServizioEditor extends CTabelloneEditor {
         bElimina.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+
                 ConfirmDialog dialog = new ConfirmDialog("Elimina servizio", "Sei sicuro?", new ConfirmDialog.Listener() {
                     @Override
                     public void onClose(ConfirmDialog dialog, boolean confirmed) {
@@ -135,8 +140,16 @@ public class CServizioEditor extends CTabelloneEditor {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                servizio.save(entityManager);
-                fireDismissListeners(new DismissEvent(bRegistra, true, false));
+
+                // controlla se questo servizio è eliminabile
+                String err = checkServizioRegistrabile();
+                if(err.isEmpty()){
+                    servizio.save(entityManager);
+                    fireDismissListeners(new DismissEvent(bRegistra, true, false));
+                }else{
+                    Notification.show(null, err, Notification.Type.WARNING_MESSAGE);
+                }
+
             }
         });
 
@@ -148,6 +161,32 @@ public class CServizioEditor extends CTabelloneEditor {
         layout.addComponent(bRegistra);
 
         return layout;
+    }
+
+
+    /**
+     * Controlla se questo servizio è registrabile
+     * @return stringa vuota se registrabile, motivo se non registrabile
+     */
+    private String checkServizioRegistrabile() {
+        String err="";
+
+        // deve avere delle funzioni
+        if(servizio.getServizioFunzioni().size()==0){
+            if(!err.isEmpty()){err+="\n";}
+            err+="Non ci sono funzioni";
+        }
+
+        // le funzioni devono essere tutte specificate
+        for(ServizioFunzione sf : servizio.getServizioFunzioni()){
+            if (sf.getFunzione()==null){
+                if(!err.isEmpty()){err+="\n";}
+                err+="Ci sono funzioni non specificate";
+                break;
+            }
+        }
+
+        return err;
     }
 
 
@@ -164,39 +203,54 @@ public class CServizioEditor extends CTabelloneEditor {
 
         public EditorSF(ServizioFunzione serFun) {
 
-            this.serFun=serFun;
+            this.serFun = serFun;
 
             setSpacing(true);
 
             comboFunzioni = new ERelatedComboField(Funzione.class);
             comboFunzioni.setWidth("12em");
-            if(serFun!=null){
+            if (serFun != null) {
                 Funzione f = serFun.getFunzione();
-                if(f!=null){
+                if (f != null) {
                     comboFunzioni.setValue(f.getId());
                 }
             }
 
 
-            checkObbl=new CheckBox("obbligatoria");
+            checkObbl = new CheckBox("obbligatoria");
             // imposta il checkbox obbligatorio
-            if(serFun!=null){
+            if (serFun != null) {
                 checkObbl.setValue(this.serFun.isObbligatoria());
             }
 
-            Button bElimina=new Button("Elimina", FontAwesome.TRASH_O);
+            Button bElimina = new Button("Elimina", FontAwesome.TRASH_O);
             bElimina.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
-                    String messaggio="Vuoi eliminare la funzione "+serFun.getFunzione().getDescrizione()+"?";
-                    new ConfirmDialog(null, messaggio, new ConfirmDialog.Listener() {
-                        @Override
-                        public void onClose(ConfirmDialog dialog, boolean confirmed) {
-                            if(confirmed){
-                                layoutFunc.removeComponent(EditorSF.this);
-                            }
+
+                    if (serFun != null) {
+                        List<Iscrizione> iscrizioni = WamQuery.queryIscrizioniServizioFunzione(entityManager, serFun);
+
+                        if (iscrizioni.size() == 0) {
+
+                            String messaggio = "Vuoi eliminare la funzione " + serFun.getFunzione().getDescrizione() + "?";
+                            new ConfirmDialog(null, messaggio, new ConfirmDialog.Listener() {
+                                @Override
+                                public void onClose(ConfirmDialog dialog, boolean confirmed) {
+                                    if (confirmed) {
+                                        doDelete();// elimino componente e relativo ServizioFunzione
+                                    }
+                                }
+                            }).show();
+
+                        } else {
+                            Notification.show(null, "Questa funzione ha già delle iscrizioni, non si può cancellare", Notification.Type.WARNING_MESSAGE);
                         }
-                    }).show();
+
+                    } else {  // ServizioFunzione null, procedo alla eliminazione del componente
+                        doDelete();
+                    }
+
                 }
             });
 
@@ -209,11 +263,17 @@ public class CServizioEditor extends CTabelloneEditor {
             setComponentAlignment(bElimina, Alignment.MIDDLE_LEFT);
 
 
-
         }
 
         public boolean isObbligatoria() {
             return checkObbl.getValue();
+        }
+
+        /**
+         * Eliminazione effettiva di questo componente e del relativo ServizioFunzione
+         */
+        private void doDelete() {
+            layoutFunc.removeComponent(EditorSF.this);
         }
 
     }

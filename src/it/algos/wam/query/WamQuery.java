@@ -1,7 +1,10 @@
 package it.algos.wam.query;
 
+import it.algos.wam.entity.iscrizione.Iscrizione;
+import it.algos.wam.entity.iscrizione.Iscrizione_;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.servizio.Servizio_;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.turno.Turno_;
 import it.algos.webbase.multiazienda.CompanyQuery;
@@ -103,6 +106,46 @@ public class WamQuery {
         return servizi;
 
     }
+
+
+
+    /**
+     * Tutte le iscrizioni relative a un dato ServizioFunzione.
+     *
+     * @param em l'EntityManager da utilizzare (se nullo lo crea qui)
+     * @return la lista delle iscrizioni
+     */
+    public static List<Iscrizione> queryIscrizioniServizioFunzione(EntityManager em, ServizioFunzione sf) {
+
+        // se non specificato EM, ne crea uno locale
+        boolean localEM = false;
+        if (em == null) {
+            em = EM.createEntityManager();
+            localEM = true;
+        }
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Iscrizione> cq = cb.createQuery(Iscrizione.class);
+        Root<Iscrizione> root = cq.from(Iscrizione.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
+        predicates.add(cb.equal(root.get(Iscrizione_.servizioFunzione), sf));
+        cq.where(predicates.toArray(new Predicate[]{}));
+
+        TypedQuery<Iscrizione> q = em.createQuery(cq);
+        List<Iscrizione> lista = q.getResultList();
+
+
+        // eventualmente chiude l'EM locale
+        if (localEM) {
+            em.close();
+        }
+
+        return lista;
+
+    }
+
 
 
 }
