@@ -14,6 +14,7 @@ import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class CServizioEditor extends CTabelloneEditor {
 
     private Servizio servizio;
     private VerticalLayout layoutFunc;
+    private ArrayList<EditorSF> sfEditors=new ArrayList();
 
     public CServizioEditor(Servizio servizio, EntityManager entityManager) {
         super(entityManager);
@@ -75,7 +77,9 @@ public class CServizioEditor extends CTabelloneEditor {
         List<ServizioFunzione> listaSF = servizio.getServizioFunzioni();
         Collections.sort(listaSF);
         for (ServizioFunzione sf : listaSF) {
-            layoutFunc.addComponent(new EditorSF(sf));
+            EditorSF editor = new EditorSF(sf);
+            layoutFunc.addComponent(editor);
+            sfEditors.add(editor);
         }
         layout.addComponent(layoutFunc);
 
@@ -84,10 +88,9 @@ public class CServizioEditor extends CTabelloneEditor {
         bNuova.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-//                ServizioFunzione sf = new ServizioFunzione();
-//                sf.setServizio(servizio);
-//                servizio.getServizioFunzioni().add(sf);
-                layoutFunc.addComponent(new EditorSF(null));
+                EditorSF editor = new EditorSF(null);
+                layoutFunc.addComponent(editor);
+                sfEditors.add(editor);
             }
         });
         layout.addComponent(bNuova);
@@ -141,13 +144,14 @@ public class CServizioEditor extends CTabelloneEditor {
             @Override
             public void buttonClick(Button.ClickEvent event) {
 
-                // controlla se questo servizio è eliminabile
+                // controlla se questo servizio è registrabile
                 String err = checkServizioRegistrabile();
                 if(err.isEmpty()){
-                    servizio.save(entityManager);
+                    saveServizio();
                     fireDismissListeners(new DismissEvent(bRegistra, true, false));
                 }else{
-                    Notification.show(null, err, Notification.Type.WARNING_MESSAGE);
+                    String msg="Impossibile registrare il servizio.\n"+err;
+                    Notification.show(null, msg, Notification.Type.WARNING_MESSAGE);
                 }
 
             }
@@ -172,14 +176,14 @@ public class CServizioEditor extends CTabelloneEditor {
         String err="";
 
         // deve avere delle funzioni
-        if(servizio.getServizioFunzioni().size()==0){
+        if(sfEditors.size()==0){
             if(!err.isEmpty()){err+="\n";}
             err+="Non ci sono funzioni";
         }
 
         // le funzioni devono essere tutte specificate
-        for(ServizioFunzione sf : servizio.getServizioFunzioni()){
-            if (sf.getFunzione()==null){
+        for(EditorSF editor : sfEditors){
+            if (editor.getFunzione()==null){
                 if(!err.isEmpty()){err+="\n";}
                 err+="Ci sono funzioni non specificate";
                 break;
@@ -187,6 +191,69 @@ public class CServizioEditor extends CTabelloneEditor {
         }
 
         return err;
+    }
+
+
+    /**
+     * Registra il servizio correntemente in editing.
+     * Aggiorna i ServizioFunzione esistenti, cancella quelli inesistenti e crea quelli mancanti.
+     */
+    private void saveServizio(){
+
+        entityManager.getTransaction().begin();
+
+        try{
+
+            // aggiorna quelli esistenti e aggiunge i nuovi
+            for(EditorSF editor : sfEditors){
+                ServizioFunzione sf = editor.getServizioFunzione();
+                if(sf==null){
+                    sf = new ServizioFunzione(servizio, null);
+                    sf.setServizio(servizio);
+                }
+                sf.setFunzione(editor.getFunzione());
+                sf.setObbligatoria(editor.isObbligatoria());
+
+                // aggiunge se nuovo
+                if(!servizio.getServizioFunzioni().contains(sf)){
+                    servizio.getServizioFunzioni().add(sf);
+                    entityManager.persist(sf);
+                }
+            }
+
+            // todo questo cancella anche il nuovo record!
+            // trovare un modo migliore per cancellare quelli che non ci sono
+            // più nell'editor.
+            // alex 24-3-16
+            // cancella quelli esistenti nel servizio ma inesistenti nell'editor
+//            for(int i=servizio.getServizioFunzioni().size()-1 ; i>=0; i--){
+//                ServizioFunzione sf = servizio.getServizioFunzioni().get(i);
+//                boolean found=false;
+//                for(EditorSF editor : sfEditors){
+//                    if(editor.getServizioFunzione()!=null){
+//                        if(editor.getServizioFunzione().equals(sf)){
+//                            found=true;
+//                            break;
+//                        }
+//                    }
+//                }
+//                if(!found){
+//                    entityManager.remove(sf);
+//                    servizio.getServizioFunzioni().remove(i);
+//                }
+//            }
+
+            entityManager.merge(servizio);
+
+            entityManager.getTransaction().commit();
+
+        }catch (Exception e){
+            entityManager.getTransaction().rollback();
+            e.printStackTrace();;
+        }
+
+
+
     }
 
 
@@ -273,8 +340,43 @@ public class CServizioEditor extends CTabelloneEditor {
          * Eliminazione effettiva di questo componente e del relativo ServizioFunzione
          */
         private void doDelete() {
-            layoutFunc.removeComponent(EditorSF.this);
+            layoutFunc.removeComponent(this);
+            sfEditors.remove(this);
         }
+
+        /**
+         * Ritorna la funzione correntemente selezionata nel popup
+         * @return la funzione selezionata
+         */
+        public Funzione getFunzione() {
+            Funzione f=null;
+            Object obj=comboFunzioni.getSelectedBean();
+            if(obj!=null && obj instanceof Funzione){
+                f=(Funzione)obj;
+            }
+            return f;
+        }
+
+        public ServizioFunzione getServizioFunzione() {
+            return serFun;
+        }
+
+        /**
+         * Ritorna il ServizioFunzione aggiornato in base all'editing corrente.
+         * Se il ServizioFunzione è presente lo aggiorna, altrimenti lo crea ora.
+         * @return il ServizioFunzione aggiornato
+         */
+        public ServizioFunzione getServizioFunzioneAggiornato() {
+            ServizioFunzione sf=serFun;
+            if(sf==null){
+                sf = new ServizioFunzione(servizio, null);
+            }
+            sf.setFunzione(getFunzione());
+            sf.setObbligatoria(isObbligatoria());
+            return serFun;
+        }
+
+
 
     }
 
