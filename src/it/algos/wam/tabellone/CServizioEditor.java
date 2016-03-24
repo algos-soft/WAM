@@ -146,11 +146,11 @@ public class CServizioEditor extends CTabelloneEditor {
 
                 // controlla se questo servizio è registrabile
                 String err = checkServizioRegistrabile();
-                if(err.isEmpty()){
+                if (err.isEmpty()) {
                     saveServizio();
                     fireDismissListeners(new DismissEvent(bRegistra, true, false));
-                }else{
-                    String msg="Impossibile registrare il servizio.\n"+err;
+                } else {
+                    String msg = "Impossibile registrare il servizio.\n" + err;
                     Notification.show(null, msg, Notification.Type.WARNING_MESSAGE);
                 }
 
@@ -196,55 +196,65 @@ public class CServizioEditor extends CTabelloneEditor {
 
     /**
      * Registra il servizio correntemente in editing.
-     * Aggiorna i ServizioFunzione esistenti, cancella quelli inesistenti e crea quelli mancanti.
+     * Sincronizza i ServizioFunzione esistenti: modifica quelli esistenti,
+     * cancella quelli inesistenti e crea quelli nuovi.
      */
     private void saveServizio(){
 
+        // avvia una transazione
         entityManager.getTransaction().begin();
 
         try{
 
-            // aggiorna quelli esistenti e aggiunge i nuovi
+            // modifica quelli esistenti e aggiunge i nuovi
             for(EditorSF editor : sfEditors){
                 ServizioFunzione sf = editor.getServizioFunzione();
-                if(sf==null){
+                if(sf==null){    // se è nuovo lo crea ora
                     sf = new ServizioFunzione(servizio, null);
                     sf.setServizio(servizio);
                 }
+                // aggiorna l'entity dall'editor
                 sf.setFunzione(editor.getFunzione());
                 sf.setObbligatoria(editor.isObbligatoria());
 
-                // aggiunge se nuovo
-                if(!servizio.getServizioFunzioni().contains(sf)){
+                // se nuovo, lo aggiunge al servizio
+                if(sf.getId()==null){
                     servizio.getServizioFunzioni().add(sf);
-                    entityManager.persist(sf);
                 }
             }
 
-            // todo questo cancella anche il nuovo record!
-            // trovare un modo migliore per cancellare quelli che non ci sono
-            // più nell'editor.
-            // alex 24-3-16
-            // cancella quelli esistenti nel servizio ma inesistenti nell'editor
-//            for(int i=servizio.getServizioFunzioni().size()-1 ; i>=0; i--){
-//                ServizioFunzione sf = servizio.getServizioFunzioni().get(i);
-//                boolean found=false;
-//                for(EditorSF editor : sfEditors){
-//                    if(editor.getServizioFunzione()!=null){
-//                        if(editor.getServizioFunzione().equals(sf)){
-//                            found=true;
-//                            break;
-//                        }
-//                    }
-//                }
-//                if(!found){
-//                    entityManager.remove(sf);
-//                    servizio.getServizioFunzioni().remove(i);
-//                }
-//            }
+            // Solo se non sono nuovi:
+            // cancella quelli inesistenti nell'editor (sono stati cancellati).
+            // Dato che elimina elementi della stessa lista che viene iterata, esegue
+            // l'iterazione partendo dal fondo
+            for(int i=servizio.getServizioFunzioni().size()-1 ; i>=0; i--){
+                ServizioFunzione sf = servizio.getServizioFunzioni().get(i);
+                if(sf.getId()!=null){   // non considera quelli senza id, sono i nuovi!
+                    boolean found=false;
+                    for(EditorSF editor : sfEditors){
+                        if(editor.getServizioFunzione()!=null){
+                            if(editor.getServizioFunzione().equals(sf)){
+                                found=true;
+                                break;
+                            }
+                        }
+                    }
+                    if(!found){
+                        entityManager.remove(sf);       //todo QUESTA E' DA VERIFICARE SE SI PUO' TOGLIERE!! alex 24-03
+                        servizio.getServizioFunzioni().remove(i);
+                    }
+                }
 
-            entityManager.merge(servizio);
+            }
 
+            // crea o aggiorna il servizio
+            if(servizio.getId()==null){
+                entityManager.persist(servizio);
+            }else{
+                entityManager.merge(servizio);
+            }
+
+            // conclude la transazione
             entityManager.getTransaction().commit();
 
         }catch (Exception e){

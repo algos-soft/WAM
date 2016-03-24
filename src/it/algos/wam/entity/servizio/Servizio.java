@@ -13,6 +13,7 @@ import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -42,7 +43,7 @@ public class Servizio extends WamCompanyEntity {
     @CascadeOnDelete
     private List<Turno> turni = new ArrayList();
 
-    @OneToMany(mappedBy = "servizio")
+    @OneToMany(mappedBy = "servizio", cascade = CascadeType.PERSIST)
     @CascadeOnDelete
     private List<ServizioFunzione> servizioFunzioni = new ArrayList();
 
