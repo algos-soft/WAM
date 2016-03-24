@@ -43,7 +43,10 @@ public class Servizio extends WamCompanyEntity {
     @CascadeOnDelete
     private List<Turno> turni = new ArrayList();
 
-    @OneToMany(mappedBy = "servizio", cascade = CascadeType.PERSIST)
+    // CascadeType.PERSIST: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti alla lista e non ancora registrati
+    // orphanRemoval = true: quando registro il padre, cancella tutti i figli eventualmente rimasti orfani.
+    // CascadeOnDelete: instaura l'integrità referenziale a livello di database (foreign key on delete cascade)
+    @OneToMany(mappedBy = "servizio", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @CascadeOnDelete
     private List<ServizioFunzione> servizioFunzioni = new ArrayList();
 

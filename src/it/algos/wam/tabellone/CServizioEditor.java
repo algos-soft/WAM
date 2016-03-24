@@ -240,7 +240,6 @@ public class CServizioEditor extends CTabelloneEditor {
                         }
                     }
                     if(!found){
-                        entityManager.remove(sf);       //todo QUESTA E' DA VERIFICARE SE SI PUO' TOGLIERE!! alex 24-03
                         servizio.getServizioFunzioni().remove(i);
                     }
                 }
