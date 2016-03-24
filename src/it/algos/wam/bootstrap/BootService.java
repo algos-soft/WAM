@@ -34,8 +34,8 @@ public abstract class BootService {
 
         company = creaCroceDemo();
         listaFunzioni = creaFunzioni(company);
-        creaVolontari(company, listaFunzioni);
-//        creaServiziDemo();
+        creaServizi(company);
+//        creaVolontari(company, listaFunzioni);
 //        creaTurniDemo();
     }// end of static method
 
@@ -47,11 +47,12 @@ public abstract class BootService {
      * La crea SOLO se non esiste già
      */
     public static void creaCompanyTest() {
-        creaCroceTest();
-        creaFunzioniTest();
-        creaMilitiTest();
-        creaServiziTest();
-        creaTurniTest();
+        WamCompany company;
+        ArrayList<Funzione> listaFunzioni = new ArrayList<>();
+
+        company = creaCroceTest();
+        listaFunzioni = creaFunzioni(company);
+        creaServizi(company);
     }// end of static method
 
     /**
@@ -62,7 +63,7 @@ public abstract class BootService {
         WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
         if (company == null) {
-            company = new WamCompany(WAMApp.DEMO_COMPANY_CODE,"Demo");
+            company = new WamCompany(WAMApp.DEMO_COMPANY_CODE, "Demo");
             company.setAddress1("Via Turati, 12");
             company.setAddress1("20199 Garbagnate Milanese");
             company.setContact("Mario Bianchi");
@@ -342,26 +343,43 @@ public abstract class BootService {
      * @return lista delle funzioni create
      */
     private static ArrayList<Funzione> creaFunzioni(WamCompany company) {
-        ArrayList<Funzione> listaFunzioni = new ArrayList<>();
-        Funzione funzione;
+        ArrayList<Funzione> listaFunz = new ArrayList<>();
         int k = 0;
 
         if (company != null) {
-            funzione = Funzione.crea(company, "aut", "Autista118", ++k, "Autista patentato 118");
-            listaFunzioni.add(funzione);
-            funzione = Funzione.crea(company, "aut2", "Autista", ++k, "Autista");
-            listaFunzioni.add(funzione);
-            funzione = Funzione.crea(company, "soc", "Soccorritore", ++k, "Soccorritore 118");
-            listaFunzioni.add(funzione);
-            funzione = Funzione.crea(company, "sec", "Secondo", ++k, "Soccorritore");
-            listaFunzioni.add(funzione);
-            funzione = Funzione.crea(company, "ter", "Terzo", ++k, "Soccorritore in prova");
-            listaFunzioni.add(funzione);
-            funzione = Funzione.crea(company, "bar", "Barelliere", ++k, "Barelliere");
-            listaFunzioni.add(funzione);
+            addFunz(listaFunz, company, "aut", "Autista118", ++k, "Autista patentato 118");
+            addFunz(listaFunz, company, "aut2", "Autista", ++k, "Autista");
+            addFunz(listaFunz, company, "soc", "Soccorritore", ++k, "Soccorritore 118");
+            addFunz(listaFunz, company, "sec", "Secondo", ++k, "Soccorritore in prova");
+            addFunz(listaFunz, company, "ter", "Terzo", ++k, "Autista patentato 118");
+            addFunz(listaFunz, company, "bar", "Barelliere", ++k, "Barelliere");
         }// end of if cycle
 
-        return listaFunzioni;
+        return listaFunz;
+    }// end of static method
+
+    /**
+     * Creazione iniziale di alcuni servizi per la croce selezionata
+     * Li crea SOLO se non esistono già
+     *
+     * @param company croce selezionata
+     *
+     * @return lista dei servizi creati
+     */
+    private static void creaServizi(WamCompany company) {
+        int k = 0;
+
+        if (company != null) {
+            Servizio.crea(company, ++k, "med-mat", "Automedica mattino", 8, 12, true, true, false, 3);
+            Servizio.crea(company, ++k, "med-pom", "Automedica pomeriggio", 12, 18, true, true, false, 3);
+            Servizio.crea(company, ++k, "med-sera", "Automedica sera", 18, 22, true, true, false, 2);
+            Servizio.crea(company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3);
+            Servizio.crea(company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 20, true, true, false, 3);
+            Servizio.crea(company, ++k, "amb-notte", "Ambulanza notte", 20, 8, true, true, false, 2);
+            Servizio.crea(company, ++k, "dim", "Dimissioni", 0, 0, true, false, false, 2);
+            Servizio.crea(company, ++k, "ext", "Extra", 0, 0, true, false, true, 2);
+        }// end of if cycle
+
     }// end of static method
 
     /**
@@ -370,6 +388,7 @@ public abstract class BootService {
      *
      * @param company croce selezionata
      */
+
     private static void creaVolontari(WamCompany company) {
         creaVolontari(company, null);
     }// end of static method
@@ -405,6 +424,27 @@ public abstract class BootService {
 //            vol.save();
 //            vol = Volontario.crea(company, "Aldo", "Vaccari");
         }// end of if cycle
+    }// end of static method
+
+    /**
+     * Creazione iniziale di alcune funzioni per la croce selezionata
+     * Li crea SOLO se non esistono già
+     *
+     * @param listaFunzioni create
+     * @param company       croce di appartenenza
+     * @param sigla         sigla di riferimento interna (obbligatoria)
+     * @param descrizione   per il tabellone (obbligatoria)
+     * @param ordine        di presentazione nelle liste
+     * @param note          di spiegazione (facoltative)
+     */
+    private static void addFunz(ArrayList<Funzione> listaFunzioni, WamCompany company, String sigla, String descrizione, int ordine, String note) {
+        Funzione funzione;
+
+        if (listaFunzioni != null && company != null) {
+            funzione = Funzione.crea(company, sigla, descrizione, ordine, note);
+            listaFunzioni.add(funzione);
+        }// end of if cycle
+
     }// end of static method
 
 }// end of abstract static class
