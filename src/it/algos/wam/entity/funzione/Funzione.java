@@ -1,9 +1,9 @@
 package it.algos.wam.entity.funzione;
 
+import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
