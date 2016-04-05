@@ -20,7 +20,6 @@ import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.screen.ErrorScreen;
 
 import javax.persistence.EntityManager;
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -320,21 +319,7 @@ public class Tabellone extends VerticalLayout implements View {
      * Manda il browser all'indirizzo definito nella homeURI (se esiste)
      */
     private void goHome() {
-//        String query = null;
-//        String addr = "";
-//
-//        if (homeURI != null) {
-//            URI uri = URI.create(homeURI);
-//            query = uri.getQuery();
-//
-//            if (query != null && !query.isEmpty()) {
-//                addr = homeURI.toString() + "&skip=1";
-//            } else {
-//                addr = homeURI.toString() + "?skip=1";
-//            }// end of if/else cycle
-//
-            this.getUI().getPage().open(homeURI.toString(), null);
-//        }
+        this.getUI().getPage().open(homeURI.toString(), null);
     }
 
 
