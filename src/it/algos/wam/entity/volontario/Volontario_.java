@@ -1,6 +1,7 @@
 package it.algos.wam.entity.volontario;
 
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 
 import javax.persistence.metamodel.ListAttribute;
@@ -19,6 +20,6 @@ public class Volontario_ extends CompanyEntity_ {
     public static volatile SingularAttribute<Volontario, Date> dataNascita;
     public static volatile SingularAttribute<Volontario, Boolean> dipendente;
     public static volatile SingularAttribute<Volontario, Boolean> attivo;
-    public static volatile ListAttribute<Volontario, Funzione> funzioni;
+    public static volatile ListAttribute<Volontario, VolontarioFunzione> funzioni;
 
 }// end of entity class

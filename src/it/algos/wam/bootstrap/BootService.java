@@ -9,6 +9,7 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.lib.LibDate;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by gac on 25 feb 2016.
@@ -216,11 +217,13 @@ public abstract class BootService {
      * @param company croce selezionata
      */
     private static void creaTurni(WamCompany company, ArrayList<Servizio> listaServizi) {
+        Date oggi = LibDate.today();
 
-        for (Servizio serv : listaServizi) {
-            Turno.crea(company, serv, LibDate.creaData(14, 8, 2016));
+        for (int k = 0; k < 30; k++) {
+            for (Servizio serv : listaServizi) {
+                Turno.crea(company, serv, LibDate.add(oggi, k));
+            }// end of for cycle
         }// end of for cycle
-
 
     }// end of static method
 
