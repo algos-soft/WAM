@@ -35,9 +35,6 @@ public class Servizio extends WamCompanyEntity {
 
     private static final long serialVersionUID = 1L;
 
-//    @OneToMany(mappedBy = "servizio")
-//    @CascadeOnDelete
-//    private List<TestTurno> testturni = new ArrayList();
 
     @OneToMany(mappedBy = "servizio")
     @CascadeOnDelete

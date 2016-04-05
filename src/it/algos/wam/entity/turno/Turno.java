@@ -41,7 +41,7 @@ public class Turno extends WamCompanyEntity {
     private Servizio servizio;
 
     // iscrizioni dei volontari a questo turno
-    @OneToMany(mappedBy = "turno", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "turno", cascade=CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<Iscrizione> iscrizioni = new ArrayList();
 
@@ -67,7 +67,7 @@ public class Turno extends WamCompanyEntity {
     //--motivazione del turno extra
     private String titoloExtra;
     //--nome evidenziato della località per turni extra
-    private String localitàExtra;
+    private String localitaExtra;
     //--descrizione dei viaggi extra
     private String note;
 
@@ -413,12 +413,12 @@ public class Turno extends WamCompanyEntity {
         this.titoloExtra = titoloExtra;
     }//end of setter method
 
-    public String getLocalitàExtra() {
-        return localitàExtra;
+    public String getLocalitaExtra() {
+        return localitaExtra;
     }// end of getter method
 
-    public void setLocalitàExtra(String localitàExtra) {
-        this.localitàExtra = localitàExtra;
+    public void setLocalitaExtra(String localitaExtra) {
+        this.localitaExtra = localitaExtra;
     }//end of setter method
 
     public String getNote() {

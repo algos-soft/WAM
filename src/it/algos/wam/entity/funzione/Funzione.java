@@ -11,6 +11,7 @@ import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -32,11 +33,11 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(mappedBy = "funzione")
+    @OneToMany(mappedBy = "funzione", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @CascadeOnDelete
     private List<ServizioFunzione> servizioFunzioni = new ArrayList();
 
-    @OneToMany(mappedBy = "funzione")
+    @OneToMany(mappedBy = "funzione", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 

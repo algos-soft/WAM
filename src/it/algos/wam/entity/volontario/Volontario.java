@@ -11,6 +11,7 @@ import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -36,7 +37,7 @@ public class Volontario extends WamCompanyEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(mappedBy = "volontario")
+    @OneToMany(mappedBy = "volontario", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 

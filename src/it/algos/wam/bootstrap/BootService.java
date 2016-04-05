@@ -219,7 +219,7 @@ public abstract class BootService {
         servizio = Servizio.find(company, "ext");
         turno = Turno.crea(company, servizio, LibDate.creaData(17, 4, 2016));
         turno.setTitoloExtra("Trasferimento");
-        turno.setLocalitàExtra("Padova");
+        turno.setLocalitaExtra("Padova");
         turno.setNote("Sedia-Basta un milite");
         turno.save();
 
