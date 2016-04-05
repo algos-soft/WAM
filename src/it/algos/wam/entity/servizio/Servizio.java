@@ -36,7 +36,7 @@ public class Servizio extends WamCompanyEntity {
     private static final long serialVersionUID = 1L;
 
 
-    @OneToMany(mappedBy = "servizio")
+    @OneToMany(mappedBy = "servizio", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @CascadeOnDelete
     private List<Turno> turni = new ArrayList();
 
