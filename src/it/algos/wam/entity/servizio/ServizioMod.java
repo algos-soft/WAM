@@ -1,9 +1,11 @@
 package it.algos.wam.entity.servizio;
 
 
+import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.webbase.web.form.ModuleForm;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -49,6 +51,11 @@ public class ServizioMod extends WamMod {
                 Servizio_.multiplo,
                 Servizio_.persone};
     }// end of method
+
+    @Override
+    public ModuleForm createForm(Item item) {
+        return new ServizioForm(item, this);
+    }
 
 }// end of class
 

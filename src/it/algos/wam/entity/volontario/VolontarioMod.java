@@ -4,6 +4,7 @@ package it.algos.wam.entity.volontario;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.webbase.web.search.SearchManager;
 
 import javax.persistence.metamodel.Attribute;
 

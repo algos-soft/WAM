@@ -46,7 +46,7 @@
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
 
             <!--per vedere l'SQL di tutte le query-->
-            <!--<property name="eclipselink.logging.level" value="FINE"/>-->
+            <property name="eclipselink.logging.level" value="FINE"/>
 
             <!--per generare il DDL su file-->
             <!--<property name="eclipselink.ddl-generation.output-mode" value="sql-script" />-->
