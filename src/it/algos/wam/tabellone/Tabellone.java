@@ -5,7 +5,7 @@ import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.*;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
@@ -20,6 +20,7 @@ import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.screen.ErrorScreen;
 
 import javax.persistence.EntityManager;
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -34,25 +35,22 @@ import java.util.Date;
  */
 public class Tabellone extends VerticalLayout implements View {
 
+    // Indirizzi delle pagine interne per la navigazione del Navigator
+    private static final String ADDR_TABELLONE = "tabellone";
+    private static final String ADDR_EDIT_TURNO = "turno";
+    private static final String ADDR_EDIT_SERVIZIO = "servizio";
+    private static final String ADDR_SEARCH = "ricerca";
+    private static final String ADDR_LOGIN = "login";
     /**
      * numero massimo di giorni visualizzabili nel tabellone
      */
     private static int MAX_GG_TAB = 60;
-
     private EntityManager entityManager;
     private TabComponent tabComponent;
     private EditorPage editorPage;
     private SearchComponent searchComponent;
     private Navigator navigator;
     private String homeURI;
-
-
-    // Indirizzi delle pagine interne per la navigazione del Navigator
-    private static final String ADDR_TABELLONE="tabellone";
-    private static final String ADDR_EDIT_TURNO="turno";
-    private static final String ADDR_EDIT_SERVIZIO="servizio";
-    private static final String ADDR_SEARCH="ricerca";
-    private static final String ADDR_LOGIN="login";
 
     /**
      * Costruttore.
@@ -200,7 +198,7 @@ public class Tabellone extends VerticalLayout implements View {
                 editCellTurno(turno, col, row);
                 break;
             case SERVIZIO:
-                Servizio servizio = (Servizio)cellObject;
+                Servizio servizio = (Servizio) cellObject;
                 editCellServizio(servizio, col, row);
                 break;
 
@@ -213,7 +211,7 @@ public class Tabellone extends VerticalLayout implements View {
     /**
      * Edita una cella di tipo Turno
      */
-    private void editCellTurno(final Turno turno, int col, int row){
+    private void editCellTurno(final Turno turno, int col, int row) {
 
         // crea un editor per il turno
         // quando si dismette l'editor, tornerà al tabellone
@@ -249,7 +247,7 @@ public class Tabellone extends VerticalLayout implements View {
     /**
      * Edita una cella di tipo Servizio
      */
-    private void editCellServizio(final Servizio servizio, int col, int row){
+    private void editCellServizio(final Servizio servizio, int col, int row) {
         // crea un editor per il servizio
         // quando si dismette l'editor, tornerà al tabellone
         CServizioEditor editor = new CServizioEditor(servizio, entityManager);
@@ -286,10 +284,10 @@ public class Tabellone extends VerticalLayout implements View {
      * Se registrato, aggiunge una riga con il servizio al tabellone.
      * Invocato dal bottone Crea Nuovo Servizio nel Tabellone
      */
-    public void nuovoServizio(){
+    public void nuovoServizio() {
 
         // crea un nuovo servizio
-        Servizio servizio = new Servizio("extra","servizio extra");
+        Servizio servizio = new Servizio("extra", "servizio extra");
         servizio.setOrario(false);
 
         // crea un editor per il servizio
@@ -318,16 +316,25 @@ public class Tabellone extends VerticalLayout implements View {
     }
 
 
-
-        /**
-         * Manda il browser all'indirizzo definito nella homeURI (se esiste)
-         */
+    /**
+     * Manda il browser all'indirizzo definito nella homeURI (se esiste)
+     */
     private void goHome() {
-        if (homeURI != null) {
-            String addr = homeURI.toString()+"?skip=1";
-            this.getUI().getPage().open(addr, null);
-//            this.getUI().getPage().open("http://"+homeURI.toString()+"?skip=1","");
-        }
+//        String query = null;
+//        String addr = "";
+//
+//        if (homeURI != null) {
+//            URI uri = URI.create(homeURI);
+//            query = uri.getQuery();
+//
+//            if (query != null && !query.isEmpty()) {
+//                addr = homeURI.toString() + "&skip=1";
+//            } else {
+//                addr = homeURI.toString() + "?skip=1";
+//            }// end of if/else cycle
+//
+            this.getUI().getPage().open(homeURI.toString(), null);
+//        }
     }
 
 
@@ -390,13 +397,12 @@ public class Tabellone extends VerticalLayout implements View {
         }
 
         public int getNumGiorni() {
-            int numGiorni=0;
+            int numGiorni = 0;
             if (gridTabellone != null) {
                 numGiorni = gridTabellone.getNumGiorni();
             }
             return numGiorni;
         }
-
 
 
         @Override
@@ -543,8 +549,6 @@ public class Tabellone extends VerticalLayout implements View {
         }
 
     }
-
-
 
 
     /**

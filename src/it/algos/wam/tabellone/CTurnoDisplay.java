@@ -54,6 +54,10 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         // numero di righe di iscrizione pari al numero delle funzioni previste
         int rows = turno.getServizio().getNumFunzioni();
 
+        if (rows==0) {
+            rows++;
+        }// end of if cycle
+
         // crea la griglia delle iscrizioni
         gridIscrizioni = new GridLayout(1, rows);
         gridIscrizioni.setSpacing(false);

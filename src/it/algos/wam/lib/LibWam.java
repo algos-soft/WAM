@@ -1,5 +1,6 @@
 package it.algos.wam.lib;
 
+import com.vaadin.server.VaadinRequest;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibDate;
 
@@ -31,7 +32,7 @@ public abstract class LibWam {
         }// end of if cycle
 
         return chiave;
-    }// end of method
+    }// end of static method
 
 
     /**
@@ -40,9 +41,30 @@ public abstract class LibWam {
     public static int creaChiave(LocalDate data) {
         Date d = DateConvertUtils.asUtilDate(data);
         return creaChiave(d);
-    }
+    }// end of static method
 
 
+    /**
+     * Elabora l'URL della Request per controllare se esiste il parametro ''skip''
+     * Se c'è questo parametro non va al tabellone (ma non funziona, vedi goHome() in Tabellone)
+     * Il parametro serve (patch) quando si ritorna qui per la seconda (o successiva) volta, proveniendo dal tabellone
+     * Elimina il parametro, per evitare che nei passaggi successivi al secondo si accumulino diversi ''skip''
+     *
+     * @param request the Vaadin request that caused this UI to be created
+     */
+    private static boolean leggeSkip(VaadinRequest request) {
+        boolean esisteSkip = false;
+        String skip = request.getParameter("skip");
+
+        if (skip == null || skip.isEmpty()) {
+            esisteSkip = false;
+        } else {
+            esisteSkip = true;
+
+        }// end of if/else cycle
+
+        return esisteSkip;
+    }// end of method
 
 
 }// end of abstract static class

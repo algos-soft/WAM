@@ -1,14 +1,10 @@
 package it.algos.wam.ui;
 
 import com.vaadin.annotations.Theme;
-import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import it.algos.wam.entity.funzione.FunzioneMod;
@@ -22,11 +18,8 @@ import it.algos.wam.tabellone.Tabellone;
 import it.algos.webbase.domain.ruolo.Ruolo;
 import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.CompanySessionLib;
-import it.algos.webbase.web.lib.Lib;
-import it.algos.webbase.web.lib.LibText;
-import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.screen.ErrorScreen;
-import it.algos.webbase.web.ui.AlgosUI;
 
 import java.net.URI;
 
@@ -52,6 +45,9 @@ public class WamUI extends UI {
 //        }
 //        setTheme(themeName);
 
+        // controlla l'accesso come programmatore
+        leggeBackdoor(request);
+
         // legge la croce
         WamCompany company = leggeCompany();
 
@@ -64,10 +60,9 @@ public class WamUI extends UI {
 
             //--controlla la property della croce, per sapere se far partire subito il tabellone
             if (company.isVaiSubitoTabellone()) {  // mostra subito il tabellone senza login
-                String skip = request.getParameter("skip");// se c'è questo parametro non va al tabellone (ma non funziona, vedi goHome() in Tabellone)
-                if (skip==null || skip.isEmpty()) {
+                if (checkFirstTime()) {
                     comp = new Tabellone(getCurrentAddress());
-                }else{
+                } else {
                     comp = creaCompPerRuolo();
                 }
             } else {
@@ -85,6 +80,40 @@ public class WamUI extends UI {
         }// end of if/else cycle
 
         this.setContent(comp);
+
+    }// end of method
+
+    /**
+     * Controlla se è la prima volta che passa di qui, nell'ambito della sessione
+     * Registra la condizione nella sessione corrente
+     */
+    private boolean checkFirstTime() {
+        boolean primaVolta = false;
+
+        if (LibSession.isFirstTime()) {
+            primaVolta = true;
+        }// end of if/else cycle
+        LibSession.setFirstTime(false);
+
+        return primaVolta;
+    }// end of method
+
+    /**
+     * Elabora l'URL della Request ed estrae (se esiste) il parametro programmatore
+     * Se non trova nulla, di default parte come utente normale
+     * È sempre possibile effettuare il login
+     * Registra la condizione (di Prog) nella Sessione corrente
+     *
+     * @param request the Vaadin request that caused this UI to be created
+     */
+    private void leggeBackdoor(VaadinRequest request) {
+        String prog = request.getParameter("prog");
+
+        if (prog != null && !prog.isEmpty()) {
+            if (prog.equals("gac") || prog.equals("alex")) {
+                LibSession.setDeveloper(true);
+            }// end of if cycle
+        }// end of if cycle
 
     }// end of method
 
@@ -228,9 +257,9 @@ public class WamUI extends UI {
     private void configGuest(NavComponent baseComp) {
     }
 
-    private String getCurrentAddress(){
+    private String getCurrentAddress() {
         URI uri = Page.getCurrent().getLocation();
-        String str=uri.getScheme()+":"+uri.getSchemeSpecificPart();
+        String str = uri.getScheme() + ":" + uri.getSchemeSpecificPart();
 //        String str = uri.getAuthority()+uri.getPath();
         return str;
     }
