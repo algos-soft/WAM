@@ -107,7 +107,7 @@ public class WamUI extends UI {
      * @param request the Vaadin request that caused this UI to be created
      */
     private void leggeBackdoor(VaadinRequest request) {
-        String prog = request.getParameter("prog");
+        String prog = request.getParameter(WamRuoli.developer.getNome());
 
         if (prog != null && !prog.isEmpty()) {
             if (prog.equals("gac") || prog.equals("alex")) {
@@ -172,7 +172,12 @@ public class WamUI extends UI {
         String nomeRuolo = ruolo.getNome();
         WamRuoli eRuolo = WamRuoli.get(nomeRuolo);
 
-        eRuolo = WamRuoli.developer;  // provvisorio
+        // provvisorio
+        if (LibSession.isDeveloper()) {
+            eRuolo = WamRuoli.developer;
+        } else {
+            eRuolo = WamRuoli.user;
+        }// end of if/else cycle
 
         switch (eRuolo) {
             case developer:
@@ -185,7 +190,7 @@ public class WamUI extends UI {
 
                 break;
             case user:
-
+                comp = creaCompUtente();
                 break;
             default: // caso non definito
                 break;
@@ -223,6 +228,41 @@ public class WamUI extends UI {
         nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
         nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
         nc.addView(TurnoMod.class, TurnoMod.MENU_ADDRESS, FontAwesome.TASKS);
+        nc.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
+//        nc.setFooter(new Label("Footer text"));
+
+        // aggiungo un MenuItem con il tabellone.
+        // volendo posso anche aggiungerlo nella posizione desiderata
+        MenuBar mb = nc.getMenuBar();
+        mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                Tabellone tab = new Tabellone(getCurrentAddress());
+                setContent(tab);
+            }
+        }, item);
+
+        // da chiamare dopo che ho aggiunto tutti i MenuItems,
+        // configura il Navigator in base alla MenuBar
+        nc.setup();
+
+        return nc;
+
+    }
+
+    /**
+     * Crea il componente per l'utente
+     *
+     * @return il componente creato
+     */
+    private Component creaCompUtente() {
+
+        // creo un componente standard di navigazione
+        NavComponent nc = new NavComponent(this);
+
+        // aggiungo le view - la menubar viene riempita automaticamente
+        MenuBar.MenuItem item = nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
+        nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
         nc.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
 //        nc.setFooter(new Label("Footer text"));
 
