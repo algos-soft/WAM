@@ -56,6 +56,7 @@ public class VolontarioMod extends WamMod {
     protected Attribute<?, ?>[] creaFieldsForm() {
         return new Attribute[]{
                 WamCompanyEntity_.company,
+                Volontario_.funzioni,
                 Volontario_.nome,
                 Volontario_.cognome,
                 Volontario_.cellulare,

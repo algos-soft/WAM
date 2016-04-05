@@ -3,7 +3,6 @@ package it.algos.wam.entity.servizio;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
-//import it.algos.wam.entity.test.TestTurno;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -20,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+
+//import it.algos.wam.entity.test.TestTurno;
 
 /**
  * Entity che descrive un Servizio (tipo di turno)
@@ -190,6 +191,7 @@ public class Servizio extends WamCompanyEntity {
     /**
      * Recupera una istanza di Servizio usando la query di tutte e sole le property obbligatorie
      *
+     * @param company     selezionata
      * @param sigla valore della property Sigla
      * @return istanza di Servizio, null se non trovata
      */
@@ -240,6 +242,7 @@ public class Servizio extends WamCompanyEntity {
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
      *
+     * @param company     selezionata
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
      * @return istanza di Servizio
@@ -260,6 +263,7 @@ public class Servizio extends WamCompanyEntity {
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
      *
+     * @param company     selezionata
      * @param ordine      di presentazione nel tabellone
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
@@ -349,14 +353,15 @@ public class Servizio extends WamCompanyEntity {
 
     /**
      * Recupera il ServizioFunzione relativo a una data funzione
+     *
      * @param f la funzione
      * @return il ServizioFunzione con la funzione, null se non trovato
      */
-    public ServizioFunzione getServizioFunzione(Funzione f){
+    public ServizioFunzione getServizioFunzione(Funzione f) {
         ServizioFunzione sfOut = null;
-        for(ServizioFunzione sf : getServizioFunzioni()){
-            if(sf.getFunzione().equals(f)){
-                sfOut=sf;
+        for (ServizioFunzione sf : getServizioFunzioni()) {
+            if (sf.getFunzione().equals(f)) {
+                sfOut = sf;
                 break;
             }
 
