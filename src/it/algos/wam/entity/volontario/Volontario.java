@@ -262,11 +262,12 @@ public class Volontario extends WamCompanyEntity {
             vol.setDipendente(false);
             vol.setAttivo(true);
 
-//            if (funzioni != null) {
-//                for (Funzione funz : funzioni) {
+            if (funzioni != null) {
+                for (Funzione funz : funzioni) {
+                    vol.volontarioFunzioni.add(new VolontarioFunzione(vol,funz));
 //                    VolontarioFunzione.crea(vol, funz);
-//                } // fine del ciclo for-each
-//            }// fine del blocco if
+                } // fine del ciclo for-each
+            }// fine del blocco if
 
             vol.save();
         }// end of if cycle

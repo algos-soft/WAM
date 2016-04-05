@@ -35,7 +35,7 @@ public abstract class BootService {
         company = creaCroceDemo();
         listaFunzioni = creaFunzioni(company);
         creaServizi(company);
-//        creaVolontari(company, listaFunzioni);
+        creaVolontari(company, listaFunzioni);
 //        creaTurniDemo();
     }// end of static method
 
