@@ -43,7 +43,7 @@ public class TurnoMod extends WamMod {
                 Turno_.inizio,
                 Turno_.fine,
                 Turno_.titoloExtra,
-                Turno_.localitàExtra,
+                Turno_.localitaExtra,
                 Turno_.note,
                 Turno_.assegnato};
     }// end of method

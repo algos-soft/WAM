@@ -17,7 +17,7 @@ public class Turno_ extends BaseEntity_ {
     public static volatile SingularAttribute<Turno, Date> fine;
     public static volatile ListAttribute<Turno, Iscrizione> iscrizioni;
     public static volatile SingularAttribute<Turno, String> titoloExtra;
-    public static volatile SingularAttribute<Turno, String> localitàExtra;
+    public static volatile SingularAttribute<Turno, String> localitaExtra;
     public static volatile SingularAttribute<Turno, String> note;
     public static volatile SingularAttribute<Turno, Boolean> assegnato;
 }// end of entity class
