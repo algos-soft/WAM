@@ -16,6 +16,7 @@ import it.algos.webbase.web.form.AForm;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.module.ModulePop;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -130,6 +131,11 @@ public class ServizioForm extends ModuleForm {
         return saved;
     }
 
+    @Override
+    public void postCommit() {
+    }
+
+
 
     /**
      * Controlla se questo servizio è registrabile
@@ -174,7 +180,7 @@ public class ServizioForm extends ModuleForm {
                 ServizioFunzione sf = editor.getServizioFunzione();
                 if(sf==null){    // se è nuovo lo crea ora
                     sf = new ServizioFunzione(getServizio(), null);
-                    sf.setServizio(getServizio());
+                    //sf.setServizio(getServizio());
                 }
                 // aggiorna l'entity dall'editor
                 sf.setFunzione(editor.getFunzione());
@@ -182,7 +188,7 @@ public class ServizioForm extends ModuleForm {
 
                 // se nuovo, lo aggiunge al servizio
                 if(sf.getId()==null){
-                    getServizio().getServizioFunzioni().add(sf);
+                    getServizio().add(sf);
                 }
             }
 
@@ -314,8 +320,10 @@ public class ServizioForm extends ModuleForm {
          * Eliminazione effettiva di questo componente e del relativo ServizioFunzione
          */
         private void doDelete() {
+            Servizio s = getServizio();
             layoutFunc.removeComponent(this);
             sfEditors.remove(this);
+            int a = 87;
         }
 
         /**

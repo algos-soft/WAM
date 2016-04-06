@@ -43,7 +43,7 @@ public class Servizio extends WamCompanyEntity {
     // alla lista e non ancora registrati
     // orphanRemoval = true: quando registro il padre, cancella tutti i figli eventualmente rimasti orfani.
     // CascadeOnDelete: instaura l'integrità referenziale a livello di database (foreign key on delete cascade)
-    @OneToMany(mappedBy = "servizio", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "servizio", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<ServizioFunzione> servizioFunzioni = new ArrayList();
 
@@ -368,6 +368,15 @@ public class Servizio extends WamCompanyEntity {
 
     }
 
+
+    /**
+     * Aggiunge un ServizioFunzione a questo servizio.
+     * Regola automaticamente il link al Servizio.
+     */
+    public void add(ServizioFunzione sf){
+        sf.setServizio(this);
+        getServizioFunzioni().add(sf);
+    }
 
 //    public ArrayList<String> getSigleFunzioni() {
 //        ArrayList<String> lista = null;

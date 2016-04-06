@@ -5,6 +5,7 @@ import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.form.ModuleForm;
 
 import javax.persistence.metamodel.Attribute;
@@ -56,6 +57,27 @@ public class ServizioMod extends WamMod {
     public ModuleForm createForm(Item item) {
         return new ServizioForm(item, this);
     }
+
+    @Override
+    protected boolean preDelete(BaseEntity bEntity) {
+        return super.preDelete(bEntity);
+    }
+
+
+    @Override
+    /**
+     * Override di delete per controllare che non ci siano iscrizioni
+     */
+    public void delete() {
+        boolean cont=true;
+        final Object[] ids = getTable().getSelectedIds();
+        for(Object id : ids){
+
+        }
+        super.delete();
+    }
+
+
 
 }// end of class
 
