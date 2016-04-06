@@ -33,13 +33,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(mappedBy = "funzione", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @CascadeOnDelete
-    private List<ServizioFunzione> servizioFunzioni = new ArrayList();
-
-    @OneToMany(mappedBy = "funzione", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @CascadeOnDelete
-    private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 
     //--sigla di riferimento interna (obbligatoria)
     @NotEmpty
@@ -50,6 +43,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
     //--descrizione per il tabellone (obbligatoria)
     @NotEmpty
+    @Column(length = 100)
+    @Index
     private String descrizione;
 
 
@@ -59,7 +54,20 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
 
     //--note di spiegazione (facoltative)
+    @Column(columnDefinition = "text")
     private String note;
+
+
+    //--tavola di incrocio
+    @OneToMany(mappedBy = "funzione", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @CascadeOnDelete
+    private List<ServizioFunzione> servizioFunzioni = new ArrayList();
+
+
+    //--tavola di incrocio
+    @OneToMany(mappedBy = "funzione", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @CascadeOnDelete
+    private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 
 
     /**

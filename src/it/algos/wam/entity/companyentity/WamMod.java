@@ -39,13 +39,13 @@ public abstract class WamMod extends CompanyModule {
 
 
     /**
-     * Crea i campi visibili nella lista (table)
+     * Aggiunge il campo company
      * <p>
      * in caso di developer, aggiunge (a sinistra) la colonna della company
      * aggiunge tutte le altre property, definite nella sottoclasse
      * Chiamato dalla sottoclasse
      */
-    protected Attribute<?, ?>[] creaFieldsListWam(Attribute... elenco) {
+    protected Attribute<?, ?>[] addCompanyField(Attribute... elenco) {
         ArrayList<Attribute> lista = new ArrayList<>();
 
         if (LibSession.isDeveloper()) {

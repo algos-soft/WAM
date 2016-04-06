@@ -9,8 +9,11 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.servizio.ServizioMod;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzioneMod;
 import it.algos.wam.entity.turno.TurnoMod;
 import it.algos.wam.entity.volontario.VolontarioMod;
+import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
+import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
@@ -23,6 +26,7 @@ import it.algos.webbase.domain.utente.UtenteModulo;
 import it.algos.webbase.domain.vers.VersMod;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.screen.ErrorScreen;
 
 import java.net.URI;
@@ -228,25 +232,28 @@ public class WamUI extends UI {
 
         /* creo un componente standard di navigazione */
         NavComponent nc = new NavComponent(this);
+        MenuBar mb = nc.getMenuBar();
 
         // aggiungo le view - la menubar viene riempita automaticamente
         nc.addMod(new UtenteModulo("User"));
         nc.addMod(new VersMod());
         nc.addMod(new LogMod());
         nc.addMod(new PrefMod());
-        itemIncroci = nc.getMenuBar().addItem("Incroci", null, null);
 
         itemCroce = nc.addMod(new WamCompanyMod());
-        nc.addMod(new VolontarioMod());
         nc.addMod(new FunzioneMod());
         nc.addMod(new ServizioMod());
+        nc.addMod(new VolontarioMod());
+
+        itemIncroci = nc.getMenuBar().addItem("Incroci", null, null);
+        addSottoMenuIncroci(mb,itemIncroci);
+
         nc.addMod(new TurnoMod());
 
 //        nc.setFooter(new Label("Footer text"));
 
         // aggiungo un MenuItem con il tabellone.
         // volendo posso anche aggiungerlo nella posizione desiderata
-        MenuBar mb = nc.getMenuBar();
         mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -338,8 +345,14 @@ public class WamUI extends UI {
      *
      * @param menuItem principale del modulo
      */
-    public void addSottoMenuIncroci(MenuBar.MenuItem menuItem) {
-        //@todo
+    public void addSottoMenuIncroci(MenuBar menuBar,MenuBar.MenuItem menuItem) {
+
+        MenuCommand cmd = new MenuCommand(menuBar, new ServizioFunzioneMod());
+        menuItem.addItem(ServizioFunzioneMod.MENU_ADDRESS, null, cmd);
+
+        MenuCommand cmd2 = new MenuCommand(menuBar, new VolontarioFunzioneMod());
+        menuItem.addItem(VolontarioFunzioneMod.MENU_ADDRESS, null, cmd2);
+
     }// end of method
 
     private void configCustode(NavComponent baseComp) {
