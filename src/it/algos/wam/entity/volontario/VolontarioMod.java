@@ -4,7 +4,7 @@ package it.algos.wam.entity.volontario;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
-import it.algos.wam.entity.servizio.Servizio_;
+import it.algos.webbase.web.search.SearchManager;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -26,7 +26,7 @@ public class VolontarioMod extends WamMod {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public VolontarioMod() {
-        super(Volontario.class, MENU_ADDRESS, FontAwesome.USER);
+        super(Volontario.class, MENU_ADDRESS, FontAwesome.GEAR);
     }// end of constructor
 
     /**
@@ -37,15 +37,14 @@ public class VolontarioMod extends WamMod {
      * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
      */
     protected Attribute<?, ?>[] creaFieldsList() {
-
-        return super.creaFieldsListWam(
+        return new Attribute[]{
+                WamCompanyEntity_.company,
                 Volontario_.nome,
                 Volontario_.cognome,
                 Volontario_.dataNascita,
                 Volontario_.cellulare,
                 Volontario_.dipendente,
-                Volontario_.attivo);
-
+                Volontario_.attivo};
     }// end of method
 
     /**
