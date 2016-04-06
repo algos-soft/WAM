@@ -224,6 +224,7 @@ public class WamUI extends UI {
      */
     private Component creaCompProgrammatore() {
         MenuBar.MenuItem itemCroce;
+        MenuBar.MenuItem itemIncroci;
 
         /* creo un componente standard di navigazione */
         NavComponent nc = new NavComponent(this);
@@ -233,11 +234,14 @@ public class WamUI extends UI {
         nc.addMod(new VersMod());
         nc.addMod(new LogMod());
         nc.addMod(new PrefMod());
+        itemIncroci = nc.getMenuBar().addItem("Incroci", null, null);
+
         itemCroce = nc.addMod(new WamCompanyMod());
         nc.addMod(new VolontarioMod());
         nc.addMod(new FunzioneMod());
         nc.addMod(new ServizioMod());
         nc.addMod(new TurnoMod());
+
 //        nc.setFooter(new Label("Footer text"));
 
         // aggiungo un MenuItem con il tabellone.
@@ -327,6 +331,16 @@ public class WamUI extends UI {
         return nc;
 
     }
+
+    /**
+     * Crea i sottomenu specifici per le tavole di incrocio (solo per developer, ovviamente)
+     * <p>
+     *
+     * @param menuItem principale del modulo
+     */
+    public void addSottoMenuIncroci(MenuBar.MenuItem menuItem) {
+        //@todo
+    }// end of method
 
     private void configCustode(NavComponent baseComp) {
     }
