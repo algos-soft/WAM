@@ -4,14 +4,14 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,7 @@ import java.util.List;
 public class ServizioFunzione extends WamCompanyEntity implements Comparable<ServizioFunzione> {
 
     private static final long serialVersionUID = 1L;
+
 
     @NotNull
     @ManyToOne

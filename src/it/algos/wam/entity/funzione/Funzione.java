@@ -59,13 +59,13 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
 
     //--tavola di incrocio
-    @OneToMany(mappedBy = "funzione", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "funzione", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<ServizioFunzione> servizioFunzioni = new ArrayList();
 
 
     //--tavola di incrocio
-    @OneToMany(mappedBy = "funzione", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "funzione", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 

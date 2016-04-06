@@ -37,7 +37,7 @@ public class Volontario extends WamCompanyEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(mappedBy = "volontario", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "volontario", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 

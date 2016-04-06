@@ -35,12 +35,12 @@ public class Servizio extends WamCompanyEntity {
     private static final long serialVersionUID = 1L;
 
 
-    @OneToMany(mappedBy = "servizio", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "servizio", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<Turno> turni = new ArrayList();
 
-    // CascadeType.PERSIST: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
-    // alla lista e non ancora registrati
+    // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
+    // alla lista e non ancora registrati (e così per tutte le operazioni dell'EntityManager)
     // orphanRemoval = true: quando registro il padre, cancella tutti i figli eventualmente rimasti orfani.
     // CascadeOnDelete: instaura l'integrità referenziale a livello di database (foreign key on delete cascade)
     @OneToMany(mappedBy = "servizio", cascade = CascadeType.ALL, orphanRemoval = true)
