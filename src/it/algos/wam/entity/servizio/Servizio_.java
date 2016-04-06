@@ -13,7 +13,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 
 @StaticMetamodel(Servizio.class)
 public class Servizio_ extends CompanyEntity_ {
-    public static volatile ListAttribute<Servizio, Funzione> turni;
+    public static volatile ListAttribute<Servizio, Turno> turni;
     public static volatile ListAttribute<Servizio, ServizioFunzione> servizioFunzioni;
     public static volatile SingularAttribute<Servizio, String> sigla;
     public static volatile SingularAttribute<Servizio, String> descrizione;
