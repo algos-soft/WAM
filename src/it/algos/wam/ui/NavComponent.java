@@ -8,6 +8,7 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import it.algos.webbase.web.menu.AMenuBar;
+import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.navigator.AlgosNavigator;
 import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.navigator.NavPlaceholder;
@@ -102,6 +103,7 @@ public class NavComponent extends VerticalLayout {
      * @param viewClass the view class to instantiate
      * @param label     the text for the menu item
      * @param icon      the icon for the menu item
+     * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, String label, Resource icon) {
         return addView(viewClass, true, label, icon);
@@ -120,6 +122,7 @@ public class NavComponent extends VerticalLayout {
      * @param viewCached true to instantiated only once, false to instantiate each time
      * @param label      the text for the menu item
      * @param icon       the icon for the menu item
+     * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
 
@@ -133,7 +136,6 @@ public class NavComponent extends VerticalLayout {
         return menuItem;
 
     }
-
 
     /**
      * Create the MenuBar Item for this view
@@ -151,6 +153,73 @@ public class NavComponent extends VerticalLayout {
         menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);
         return menuItem;
     }
+
+    /**
+     * Aggiunge un modulo alla UI
+     * <p/>
+     * Il modulo può essere aggiunto come istanza già creata
+     * Tipicamente un ModulePop
+     *
+     * @param modulo da visualizzare nel placeholder alla pressione del bottone di menu
+     * @return menuItem appena creato
+     */
+    public MenuBar.MenuItem addMod(ModulePop modulo) {
+        MenuBar.MenuItem menuItem = null;
+        String menuLabel;
+        Resource menuIcon = null;
+
+        if (modulo != null) {
+            menuLabel = modulo.getMenuLabel();
+            menuIcon = modulo.getMenuIcon();
+            menuItem = addVista(modulo, menuLabel, menuIcon);
+
+            if (menuItem != null) {
+                modulo.addSottoMenu(menuItem);
+            }// end of if cycle
+        }// end of if cycle
+
+        return menuItem;
+    }// end of method
+
+
+    /**
+     * Aggiunge una view alla UI
+     * <p/>
+     * La view può essere aggiunto come istanza già creata
+     * Qualunque oggetto grafico che implementi l'interfaccia View
+     *
+     * @param vista     da visualizzare nel placeholder alla pressione del bottone di menu
+     * @param menuLabel etichetta visibile nella menu bar
+     * @param menuIcon  icona del menu
+     */
+    public MenuBar.MenuItem addVista(View vista, String menuLabel, Resource menuIcon) {
+        String keyModulo = "";
+        MenuBar.MenuItem menuItem = createMenuItem(vista, menuLabel, menuIcon);
+
+        if (menuItem != null) {
+            keyModulo = vista.getClass().getSimpleName();
+            mappaItem.put(keyModulo, menuItem);
+        }// end of if cycle
+
+        return menuItem;
+    }// end of method
+
+    /**
+     * Create the MenuBar Item for this view
+     * <p>
+     *
+     * @param vista    da visualizzare nel placeholder alla pressione del bottone di menu
+     * @param menuIcon del menu
+     * @return menuItem appena creato
+     */
+    private MenuBar.MenuItem createMenuItem(View vista, String menuAddress, Resource menuIcon) {
+        MenuBar.MenuItem menuItem;
+        MenuCommand cmd = new MenuCommand(menuBar, vista);
+        menuItem = menuBar.addItem(menuAddress, menuIcon, cmd);
+        menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);
+
+        return menuItem;
+    }// end of method
 
     /**
      * Ritorna il Navigator

@@ -3,8 +3,11 @@ package it.algos.wam.entity.companyentity;
 
 import com.vaadin.server.Resource;
 import it.algos.webbase.multiazienda.CompanyModule;
-import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.table.TablePortal;
+
+import javax.persistence.metamodel.Attribute;
+import java.util.ArrayList;
 
 /**
  * Modulo astratto per implementare la creazione della WamTablePortal
@@ -36,13 +39,44 @@ public abstract class WamMod extends CompanyModule {
 
 
     /**
+     * Crea i campi visibili nella lista (table)
+     * <p>
+     * in caso di developer, aggiunge (a sinistra) la colonna della company
+     * aggiunge tutte le altre property, definite nella sottoclasse
+     * Chiamato dalla sottoclasse
+     */
+    protected Attribute<?, ?>[] creaFieldsListWam(Attribute... elenco) {
+        ArrayList<Attribute> lista = new ArrayList<>();
+
+        if (LibSession.isDeveloper()) {
+            lista.add(WamCompanyEntity_.company);
+        }// end of if cycle
+
+        for (Attribute attr : elenco) {
+            lista.add(attr);
+        }// end of for cycle
+
+        return lista.toArray(new Attribute[lista.size()]);
+    }// end of method
+
+
+    /**
      * Create the Table Portal
+     * <p>
+     * in caso di developer, portale specifico col menu di selezione della company
+     * in caso di admin e utente normale, portale standard
      *
      * @return the TablePortal
      */
     @Override
     public TablePortal createTablePortal() {
-        return new WamTablePortal(this);
+
+        if (LibSession.isDeveloper()) {
+            return new WamTablePortal(this);
+        } else {
+            return super.createTablePortal();
+        }// end of if/else cycle
+
     }// end of method
 
     @Override

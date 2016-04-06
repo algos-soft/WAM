@@ -21,7 +21,7 @@ public class WamCompanyMod extends ModulePop {
 
 
     // indirizzo interno del modulo - etichetta del menu
-    public static String MENU_ADDRESS = "Croce";
+    public static String MENU_ADDRESS = "Croci";
 
     /**
      * Costruttore senza parametri
@@ -32,7 +32,7 @@ public class WamCompanyMod extends ModulePop {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public WamCompanyMod() {
-        super(WamCompany.class, MENU_ADDRESS, FontAwesome.BARS);
+        super(WamCompany.class, MENU_ADDRESS, FontAwesome.AMBULANCE);
     }// end of constructor
 
 

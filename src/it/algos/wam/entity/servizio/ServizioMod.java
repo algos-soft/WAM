@@ -4,6 +4,7 @@ package it.algos.wam.entity.servizio;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.webbase.web.lib.LibSession;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -25,19 +26,20 @@ public class ServizioMod extends WamMod {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public ServizioMod() {
-        super(Servizio.class, MENU_ADDRESS, FontAwesome.GEAR);
+        super(Servizio.class, MENU_ADDRESS, FontAwesome.TASKS);
     }// end of constructor
 
     /**
      * Crea i campi visibili nella lista (table)
-     * <p/>
+     * <p>
      * Come default spazzola tutti i campi della Entity <br>
      * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
      * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
      */
+    @Override
     protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{
-                WamCompanyEntity_.company,
+
+        return super.creaFieldsListWam(
                 Servizio_.ordine,
                 Servizio_.sigla,
                 Servizio_.descrizione,
@@ -47,8 +49,11 @@ public class ServizioMod extends WamMod {
                 Servizio_.visibile,
                 Servizio_.orario,
                 Servizio_.multiplo,
-                Servizio_.persone};
+                Servizio_.persone);
+
     }// end of method
+
+
 
 }// end of class
 

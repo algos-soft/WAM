@@ -26,7 +26,7 @@ public class TurnoMod extends WamMod {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public TurnoMod() {
-        super(Turno.class, MENU_ADDRESS, FontAwesome.BARS);
+        super(Turno.class, MENU_ADDRESS, FontAwesome.TASKS);
     }// end of constructor
 
 

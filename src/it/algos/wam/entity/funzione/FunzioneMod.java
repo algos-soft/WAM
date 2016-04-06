@@ -4,6 +4,7 @@ package it.algos.wam.entity.funzione;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.wam.entity.volontario.Volontario_;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -25,7 +26,7 @@ public class FunzioneMod extends WamMod {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public FunzioneMod() {
-        super(Funzione.class, MENU_ADDRESS, FontAwesome.GEAR);
+        super(Funzione.class, MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
     }// end of constructor
 
     /**
@@ -36,12 +37,13 @@ public class FunzioneMod extends WamMod {
      * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
      */
     protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{
-                WamCompanyEntity_.company,
+
+        return super.creaFieldsListWam(
                 Funzione_.ordine,
                 Funzione_.sigla,
                 Funzione_.descrizione,
-                Funzione_.note};
+                Funzione_.note);
+
     }// end of method
 
 }// end of class

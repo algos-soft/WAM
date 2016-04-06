@@ -15,8 +15,12 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
 import it.algos.wam.tabellone.Tabellone;
+import it.algos.webbase.domain.log.LogMod;
+import it.algos.webbase.domain.pref.PrefMod;
 import it.algos.webbase.domain.ruolo.Ruolo;
 import it.algos.webbase.domain.utente.Utente;
+import it.algos.webbase.domain.utente.UtenteModulo;
+import it.algos.webbase.domain.vers.VersMod;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.screen.ErrorScreen;
@@ -219,16 +223,21 @@ public class WamUI extends UI {
      * @return il componente creato
      */
     private Component creaCompProgrammatore() {
+        MenuBar.MenuItem itemCroce;
 
-        // creo un componente standard di navigazione
+        /* creo un componente standard di navigazione */
         NavComponent nc = new NavComponent(this);
 
         // aggiungo le view - la menubar viene riempita automaticamente
-        MenuBar.MenuItem item = nc.addView(WamCompanyMod.class, WamCompanyMod.MENU_ADDRESS, FontAwesome.AMBULANCE);
-        nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
-        nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
-        nc.addView(TurnoMod.class, TurnoMod.MENU_ADDRESS, FontAwesome.TASKS);
-        nc.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
+        nc.addMod(new UtenteModulo("User"));
+        nc.addMod(new VersMod());
+        nc.addMod(new LogMod());
+        nc.addMod(new PrefMod());
+        itemCroce = nc.addMod(new WamCompanyMod());
+        nc.addMod(new VolontarioMod());
+        nc.addMod(new FunzioneMod());
+        nc.addMod(new ServizioMod());
+        nc.addMod(new TurnoMod());
 //        nc.setFooter(new Label("Footer text"));
 
         // aggiungo un MenuItem con il tabellone.
@@ -240,15 +249,14 @@ public class WamUI extends UI {
                 Tabellone tab = new Tabellone(getCurrentAddress());
                 setContent(tab);
             }
-        }, item);
+        }, itemCroce);
 
         // da chiamare dopo che ho aggiunto tutti i MenuItems,
         // configura il Navigator in base alla MenuBar
         nc.setup();
 
         return nc;
-
-    }
+    }// end of method
 
     /**
      * Crea il componente per l'utente
@@ -256,6 +264,41 @@ public class WamUI extends UI {
      * @return il componente creato
      */
     private Component creaCompUtente() {
+        MenuBar.MenuItem itemVolontari;
+
+        /* creo un componente standard di navigazione */
+        NavComponent nc = new NavComponent(this);
+
+        // aggiungo le view - la menubar viene riempita automaticamente
+        itemVolontari = nc.addMod(new VolontarioMod());
+        nc.addMod(new FunzioneMod());
+        nc.addMod(new ServizioMod());
+//        nc.setFooter(new Label("Footer text"));
+
+        // aggiungo un MenuItem con il tabellone.
+        // volendo posso anche aggiungerlo nella posizione desiderata
+        MenuBar mb = nc.getMenuBar();
+        mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                Tabellone tab = new Tabellone(getCurrentAddress());
+                setContent(tab);
+            }
+        }, itemVolontari);
+
+        // da chiamare dopo che ho aggiunto tutti i MenuItems,
+        // configura il Navigator in base alla MenuBar
+        nc.setup();
+
+        return nc;
+    }// end of method
+
+    /**
+     * Crea il componente per l'utente
+     *
+     * @return il componente creato
+     */
+    private Component creaCompUtenteOld() {
 
         // creo un componente standard di navigazione
         NavComponent nc = new NavComponent(this);
