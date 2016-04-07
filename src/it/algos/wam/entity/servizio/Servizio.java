@@ -5,6 +5,7 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.query.WamQuery;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -12,10 +13,7 @@ import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -144,6 +142,15 @@ public class Servizio extends WamCompanyEntity {
         setOraFine(oraFine);
         setPersone(persone);
     }// end of constructor
+
+
+    @PrePersist
+    protected void prePersist() {
+        if(getOrdine()==0){
+            int max = WamQuery.queryMaxOrdineServizio(null);
+            setOrdine(max+1);
+        }
+    }
 
 
     /**
@@ -569,6 +576,24 @@ public class Servizio extends WamCompanyEntity {
      */
     public boolean isOrarioVariabile() {
         return isMultiplo();    //?? alex
+    }
+
+    /**
+     * Ritorna una stringa che rappresenta l'orario dalle... alle...
+     */
+    public String getStrOrario(){
+        return strHM(oraInizio)+":"+strHM(minutiInizio)+" - "+strHM(oraFine)+":"+strHM(minutiFine);
+    }
+
+    /**
+     * @return il numero di ore o minuti formattato su 2 caratteri fissi
+     */
+    private String strHM(int num){
+        String s = ""+num;
+        if(s.length()==1){
+            s="0"+s;
+        }
+        return s;
     }
 
     /**

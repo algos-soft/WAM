@@ -14,6 +14,8 @@ import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.query.CQuery;
+import it.algos.webbase.web.table.ATable;
+import it.algos.webbase.web.table.TablePortal;
 
 import javax.persistence.metamodel.Attribute;
 import java.util.List;
@@ -64,6 +66,16 @@ public class ServizioMod extends WamMod {
     @Override
     public ModuleForm createForm(Item item) {
         return new ServizioForm(item, this);
+    }
+
+    @Override
+    public TablePortal createTablePortal() {
+        return new ServizioTablePortal(this);
+    }
+
+    @Override
+    public ATable createTable() {
+        return new ServizioTable(this);
     }
 
     @Override

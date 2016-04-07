@@ -10,6 +10,7 @@ import it.algos.wam.entity.turno.Turno_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.DateConvertUtils;
+import it.algos.webbase.web.lib.Lib;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -108,7 +109,6 @@ public class WamQuery {
     }
 
 
-
     /**
      * Tutte le iscrizioni relative a un dato ServizioFunzione.
      *
@@ -146,6 +146,98 @@ public class WamQuery {
 
     }
 
+
+    /**
+     * Il servizio adiacente ad un dato servizio (per numero d'ordine).
+     *
+     * @param em       l'EntityManager da utilizzare
+     * @param servizio il servizio di riferimento
+     * @param sopra    true per cercare sopra, false per cercare sotto
+     * @return il servizio adiacente, null se non trovato
+     */
+    public static Servizio queryServizioAdiacente(EntityManager em, Servizio servizio, boolean sopra) {
+
+        Servizio adiacente = null;
+
+        // se non specificato EM, ne crea uno locale
+        boolean localEM = false;
+        if (em == null) {
+            em = EM.createEntityManager();
+            localEM = true;
+        }
+
+        int numOrdine = servizio.getOrdine();
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Servizio> cq = cb.createQuery(Servizio.class);
+        Root<Servizio> root = cq.from(Servizio.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
+        if (sopra) {
+            predicates.add(cb.lessThan(root.get(Servizio_.ordine), numOrdine));
+            cq.orderBy(cb.desc(root.get(Servizio_.ordine)));
+        } else {
+            predicates.add(cb.greaterThan(root.get(Servizio_.ordine), numOrdine));
+            cq.orderBy(cb.asc(root.get(Servizio_.ordine)));
+        }
+        cq.where(predicates.toArray(new Predicate[]{}));
+
+        TypedQuery<Servizio> q = em.createQuery(cq);
+        q.setMaxResults(1);
+        List<Servizio> lista = q.getResultList();
+        if (lista.size() > 0) {
+            adiacente = lista.get(0);
+        }
+
+        // eventualmente chiude l'EM locale
+        if (localEM) {
+            em.close();
+        }
+
+        return adiacente;
+
+    }
+
+
+    /**
+     * Recupera il massimo numero d'ordine di servizio fino ad ora attribuito.
+     *
+     * @param em       l'EntityManager da utilizzare
+     * @return il massimo numero d'ordine, 0 se non ce ne sono
+     */
+    public static int queryMaxOrdineServizio(EntityManager em) {
+        int maxOrdine=0;
+
+        // se non specificato EM, ne crea uno locale
+        boolean localEM = false;
+        if (em == null) {
+            em = EM.createEntityManager();
+            localEM = true;
+        }
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery cq = cb.createQuery(Integer.class);
+        Root root = cq.from(Servizio.class);
+        cq.select(cb.max(root.get(Servizio_.ordine)));
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
+        cq.where(predicates.toArray(new Predicate[]{}));
+
+        Object result = em.createQuery(cq).getSingleResult();
+        if(result!=null && result instanceof Number){
+            maxOrdine=Lib.getInt(result);
+        }
+
+        // eventualmente chiude l'EM locale
+        if (localEM) {
+            em.close();
+        }
+
+        return maxOrdine;
+    }
 
 
 }

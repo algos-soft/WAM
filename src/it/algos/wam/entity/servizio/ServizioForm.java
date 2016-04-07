@@ -133,8 +133,6 @@ public class ServizioForm extends ModuleForm {
     @Override
     protected boolean save() {
         boolean saved=super.save();
-        Field field = getBinder().getField(Servizio_.sigla.getName());
-        Object value = field.getValue();
         return saved;
     }
 
