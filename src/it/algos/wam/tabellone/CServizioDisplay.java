@@ -86,7 +86,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
             setSpacing(false);
             //setHeight("100%");
 
-            String orario=servizio.getOrario();
+            String orario=servizio.getStrOrario();
             String style = null;
             if (orario.equals("")) {
                 orario = "&nbsp;";

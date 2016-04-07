@@ -385,33 +385,24 @@ public class Servizio extends WamCompanyEntity {
         getServizioFunzioni().add(sf);
     }
 
-//    public ArrayList<String> getSigleFunzioni() {
-//        ArrayList<String> lista = null;
-//
-//        if (wrapServizio != null) {
-//            lista = wrapServizio.getSigleFunzioni();
-//        }// end of if cycle
-//
-//        return lista;
-//    }// end of method
 
     @Override
     public String toString() {
         return sigla;
     }// end of method
 
-    /**
-     * @return intervallo fine - inizio
-     */
-    public String getOrario() {
-        String orario = "";
-
-        if (oraInizio > 0 && oraFine > 0) {
-            orario = oraInizio + "-" + oraFine;
-        }// end of if cycle
-
-        return orario;
-    }// end of getter method
+//    /**
+//     * @return intervallo fine - inizio
+//     */
+//    public String getOrario() {
+//        String orario = "";
+//
+//        if (oraInizio > 0 && oraFine > 0) {
+//            orario = oraInizio + "-" + oraFine;
+//        }// end of if cycle
+//
+//        return orario;
+//    }// end of getter method
 
     /**
      * @return the nome

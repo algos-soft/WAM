@@ -49,7 +49,7 @@ public class CServizioEditor extends CTabelloneEditor {
      */
     private Component creaCompTitolo() {
         VerticalLayout layout = new VerticalLayout();
-        layout.addComponent(new Label(servizio.getOrario()));
+        layout.addComponent(new Label(servizio.getStrOrario()));
         layout.addComponent(new Label("<strong>" + servizio.getDescrizione() + "</strong>", ContentMode.HTML));
 
         return layout;

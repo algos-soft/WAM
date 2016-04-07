@@ -73,6 +73,7 @@ public class WamQuery {
 
     /**
      * Tutti i servizi orari da visualizzare nel tabellone (orario=true).
+     * Elencati nell'ordine di apparizione
      *
      * @param em l'EntityManager da utilizzare (se nullo lo crea qui)
      * @return la lista dei servizi
@@ -94,6 +95,8 @@ public class WamQuery {
         predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
         predicates.add(cb.equal(root.get(Servizio_.orario), true));
         cq.where(predicates.toArray(new Predicate[]{}));
+        cq.orderBy(cb.asc(root.get(Servizio_.ordine)));
+
 
         TypedQuery<Servizio> q = em.createQuery(cq);
         List<Servizio> servizi = q.getResultList();
