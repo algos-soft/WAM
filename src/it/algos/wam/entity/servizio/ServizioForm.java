@@ -12,6 +12,7 @@ import it.algos.wam.query.WamQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.form.ModuleForm;
+import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.util.ArrayList;
@@ -23,11 +24,13 @@ import java.util.List;
  */
 public class ServizioForm extends ModuleForm {
 
-    private VerticalLayout layoutFunc;
+    private VerticalLayout placeholderFunc;
     private ArrayList<EditorSF> sfEditors;
 
+    private HorizontalLayout placeholderOrario;
     private OreMinuti oraInizio;
     private OreMinuti oraFine;
+    private Field fOrarioPredefinito;
 
 
     public ServizioForm(Item item, ModulePop module) {
@@ -37,30 +40,9 @@ public class ServizioForm extends ModuleForm {
     @Override
     protected void init() {
         super.init();
-        loadValues();
+        servizioToUi();
     }
 
-    /**
-     * Carica i valori dall'Item alla UI
-     */
-    private void loadValues() {
-        Property<Integer> pi;
-        int h, m;
-
-        pi = getItem().getItemProperty(Servizio_.oraInizio.getName());
-        h = pi.getValue();
-        pi = getItem().getItemProperty(Servizio_.minutiInizio.getName());
-        m = pi.getValue();
-        oraInizio.setTime(h, m);
-
-        pi = getItem().getItemProperty(Servizio_.oraFine.getName());
-        h = pi.getValue();
-        pi = getItem().getItemProperty(Servizio_.minutiFine.getName());
-        m = pi.getValue();
-        oraFine.setTime(h, m);
-
-
-    }
 
 
     @Override
@@ -102,25 +84,29 @@ public class ServizioForm extends ModuleForm {
         hl.setSpacing(true);
         layout.addComponent(hl);
 
+        fOrarioPredefinito = getField(Servizio_.orario);
+        fOrarioPredefinito.setCaption("Orario predefinito");
+        layout.addComponent(fOrarioPredefinito);
+        fOrarioPredefinito.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                placeholderOrario.setVisible(isOrarioPredefinito());
+            }
+        });
+
+        // aggiunge il placeholder per l'orario di inizio e fine
         oraInizio = new OreMinuti("Ora inizio");
         oraFine = new OreMinuti("Ora fine");
-        HorizontalLayout hl2 = new HorizontalLayout(oraInizio, oraFine);
-        hl2.setSpacing(true);
-        layout.addComponent(hl2);
+        placeholderOrario = new HorizontalLayout(oraInizio, oraFine);
+        placeholderOrario.setSpacing(true);
+        layout.addComponent(placeholderOrario);
+        placeholderOrario.setVisible(isOrarioPredefinito());
 
-        layoutFunc = new VerticalLayout();
-        layoutFunc.setCaption("Funzioni previste");
-        layoutFunc.setSpacing(true);
-
-        // aggiunge gli editor per le funzioni esistenti
-        List<ServizioFunzione> listaSF = getServizio().getServizioFunzioni();
-        Collections.sort(listaSF);
-        for (ServizioFunzione sf : listaSF) {
-            EditorSF editor = new EditorSF(sf);
-            layoutFunc.addComponent(editor);
-            sfEditors.add(editor);
-        }
-        layout.addComponent(layoutFunc);
+        // aggiunge il placeholder per le funzioni previste
+        placeholderFunc = new VerticalLayout();
+        placeholderFunc.setCaption("Funzioni previste");
+        placeholderFunc.setSpacing(true);
+        layout.addComponent(placeholderFunc);
 
         // aggiunge un bottone per creare nuove funzioni
         Button bNuova = new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
@@ -128,7 +114,7 @@ public class ServizioForm extends ModuleForm {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 EditorSF editor = new EditorSF(null);
-                layoutFunc.addComponent(editor);
+                placeholderFunc.addComponent(editor);
                 sfEditors.add(editor);
             }
         });
@@ -146,25 +132,32 @@ public class ServizioForm extends ModuleForm {
 
     @Override
     protected boolean save() {
-        boolean saved = false;
-
-        // controlla se questo servizio è registrabile
-        String err = checkServizioRegistrabile();
-        if (err.isEmpty()) {
-            saveServizio();
-            saved = true;
-        } else {
-            String msg = "Impossibile registrare il servizio.\n" + err;
-            Notification.show(null, msg, Notification.Type.WARNING_MESSAGE);
-        }
-
+        boolean saved=super.save();
+        Field field = getBinder().getField(Servizio_.sigla.getName());
+        Object value = field.getValue();
         return saved;
     }
 
+
+
     @Override
     public void postCommit() {
+        uiToServizio();
+        super.postCommit();
     }
 
+    @Override
+    protected ArrayList<String> isValid() {
+        ArrayList<String> errs = super.isValid();
+
+        // controlla se questo servizio è registrabile
+        String err = checkServizioRegistrabile();
+        if (!err.isEmpty()) {
+            errs.add(err);
+        }
+
+        return errs;
+    }
 
     /**
      * Controlla se questo servizio è registrabile
@@ -174,15 +167,27 @@ public class ServizioForm extends ModuleForm {
     private String checkServizioRegistrabile() {
         String err = "";
 
-        // deve avere delle funzioni
+        // se orario predefinito, deve avere ora inizio e ora fine valide
+        if(isOrarioPredefinito()){
+            if(!oraInizio.isValid()){
+                if (!err.isEmpty()) {err += "\n";}
+                err += "Orario di inizio servizio non valido";
+            }
+            if(!oraFine.isValid()){
+                if (!err.isEmpty()) {err += "\n";}
+                err += "Orario di fine servizio non valido";
+            }
+        }
+
+        // deve avere delle funzioni previste
         if (sfEditors.size() == 0) {
             if (!err.isEmpty()) {
                 err += "\n";
             }
-            err += "Non ci sono funzioni";
+            err += "Non ci sono funzioni previste";
         }
 
-        // le funzioni devono essere tutte specificate
+        // le funzioni previste devono essere tutte specificate
         for (EditorSF editor : sfEditors) {
             if (editor.getFunzione() == null) {
                 if (!err.isEmpty()) {
@@ -198,53 +203,62 @@ public class ServizioForm extends ModuleForm {
 
 
     /**
-     * Registra il servizio correntemente in editing.
-     * Sincronizza i ServizioFunzione esistenti: modifica quelli esistenti,
-     * cancella quelli inesistenti e crea quelli nuovi.
+     * Carica i valori dal servizio alla UI
      */
-    private void saveServizio() {
+    private void servizioToUi() {
+        Property<Integer> pi;
+        int h, m;
 
-        // avvia una transazione
-        getEntityManager().getTransaction().begin();
+        pi = getItem().getItemProperty(Servizio_.oraInizio.getName());
+        h = pi.getValue();
+        pi = getItem().getItemProperty(Servizio_.minutiInizio.getName());
+        m = pi.getValue();
+        oraInizio.setTime(h, m);
 
-        try {
+        pi = getItem().getItemProperty(Servizio_.oraFine.getName());
+        h = pi.getValue();
+        pi = getItem().getItemProperty(Servizio_.minutiFine.getName());
+        m = pi.getValue();
+        oraFine.setTime(h, m);
 
-            int h,m;
-            h = oraInizio.getHour();
-            getServizio().setOraInizio(h);
-            m = oraInizio.getMinute();
-            getServizio().setMinutiInizio(m);
-
-            h = oraFine.getHour();
-            getServizio().setOraFine(h);
-            m = oraFine.getMinute();
-            getServizio().setMinutiFine(m);
-
-
-            // sincronizza le funzioni del servizio con quelle dell'editor di funzioni
-            syncFunzioni();
-
-            // crea o aggiorna il servizio
-            if (getServizio().getId() == null) {
-                getEntityManager().persist(getServizio());
-            } else {
-                getEntityManager().merge(getServizio());
-            }
-
-            // conclude la transazione
-            getEntityManager().getTransaction().commit();
-
-        } catch (Exception e) {
-            getEntityManager().getTransaction().rollback();
-            e.printStackTrace();
+        // aggiunge gli editor per le funzioni esistenti
+        List<ServizioFunzione> listaSF = getServizio().getServizioFunzioni();
+        Collections.sort(listaSF);
+        for (ServizioFunzione sf : listaSF) {
+            EditorSF editor = new EditorSF(sf);
+            placeholderFunc.addComponent(editor);
+            sfEditors.add(editor);
         }
 
 
     }
 
+    /**
+     * Sincronizza il servizio con quanto contenuto attualmente nella UI.
+     */
+    private void uiToServizio() {
+
+        int h,m;
+        h = oraInizio.getHour();
+        getServizio().setOraInizio(h);
+        m = oraInizio.getMinute();
+        getServizio().setMinutiInizio(m);
+
+        h = oraFine.getHour();
+        getServizio().setOraFine(h);
+        m = oraFine.getMinute();
+        getServizio().setMinutiFine(m);
+
+
+        // sincronizza le funzioni del servizio con quelle dell'editor di funzioni
+        syncFunzioni();
+
+    }
+
 
     /**
-     * Sincronizza le funzioni del servizio
+     * Sincronizza i ServizioFunzione esistenti: modifica quelli esistenti,
+     * cancella quelli inesistenti e crea quelli nuovi.
      */
     private void syncFunzioni(){
         // modifica quelli esistenti e aggiunge i nuovi
@@ -287,6 +301,14 @@ public class ServizioForm extends ModuleForm {
 
         }
 
+    }
+
+
+    /**
+     * Ritorna il valore del check Orario Predefinito
+     */
+    private boolean isOrarioPredefinito(){
+        return Lib.getBool(fOrarioPredefinito.getValue());
     }
 
 
@@ -374,7 +396,7 @@ public class ServizioForm extends ModuleForm {
          */
         private void doDelete() {
             Servizio s = getServizio();
-            layoutFunc.removeComponent(this);
+            placeholderFunc.removeComponent(this);
             sfEditors.remove(this);
             int a = 87;
         }
@@ -455,12 +477,21 @@ public class ServizioForm extends ModuleForm {
 
         /**
          * Returns the hour
-         * @return the hour
+         * @return the hour, -1 if not selected
          */
         public int getHour() {
-            return Integer.parseInt(getValue().toString());
+            int num=-1;
+            Object value = getValue();
+            if(value!=null){
+                num=Integer.parseInt(value.toString());
+            }
+            return num;
         }
 
+        @Override
+        public boolean isValid() {
+            return (getHour()!=-1);
+        }
     }
 
     /**
@@ -503,11 +534,22 @@ public class ServizioForm extends ModuleForm {
 
         /**
          * Returns the minute
-         * @return the minute
+         * @return the minute, -1 if not selected
          */
         public int getMinute() {
-            return Integer.parseInt(getValue().toString());
+            int num=-1;
+            Object value = getValue();
+            if(value!=null){
+                num=Integer.parseInt(value.toString());
+            }
+            return num;
         }
+
+        @Override
+        public boolean isValid() {
+            return (getMinute()!=-1);
+        }
+
 
     }
 
@@ -551,6 +593,10 @@ public class ServizioForm extends ModuleForm {
 
         public int getMinute() {
             return cm.getMinute();
+        }
+
+        public boolean isValid(){
+            return (ch.isValid() && cm.isValid());
         }
 
     }
