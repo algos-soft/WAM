@@ -2,6 +2,7 @@ package it.algos.wam.entity.volontario;
 
 
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.webbase.web.search.SearchManager;
@@ -17,6 +18,9 @@ public class VolontarioMod extends WamMod {
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Volontari";
 
+    // icona del modulo
+    public static Resource ICON = FontAwesome.USER;
+
     /**
      * Costruttore senza parametri
      * <p>
@@ -26,7 +30,7 @@ public class VolontarioMod extends WamMod {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public VolontarioMod() {
-        super(Volontario.class, MENU_ADDRESS, FontAwesome.GEAR);
+        super(Volontario.class, MENU_ADDRESS, ICON);
     }// end of constructor
 
     /**

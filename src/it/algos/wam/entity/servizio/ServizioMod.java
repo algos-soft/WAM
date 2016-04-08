@@ -3,6 +3,7 @@ package it.algos.wam.entity.servizio;
 
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Resource;
 import com.vaadin.ui.Notification;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
@@ -29,6 +30,9 @@ public class ServizioMod extends WamMod {
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Servizi";
 
+    // icona del modulo
+    public static Resource ICON = FontAwesome.TASKS;
+
     /**
      * Costruttore senza parametri
      * <p>
@@ -38,7 +42,7 @@ public class ServizioMod extends WamMod {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public ServizioMod() {
-        super(Servizio.class, MENU_ADDRESS, FontAwesome.GEAR);
+        super(Servizio.class, MENU_ADDRESS, ICON);
     }// end of constructor
 
 
