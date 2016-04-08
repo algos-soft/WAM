@@ -29,7 +29,7 @@ public class WamQuery {
 
     /**
      * Tutti i turni relativi a un dato servizio, che hanno data di inizio compresa in un certo periodo.
-     * La lista è ordinata per data inizio turno.
+     * La lista è ordinata per data inizio turno, e sotto per id (sequenza creazione)
      *
      * @param em       l'EntityManager da utilizzare (se nullo lo crea qui)
      * @param servizio il servizio di riferimento
@@ -59,7 +59,11 @@ public class WamQuery {
         predicates.add(cb.greaterThanOrEqualTo(root.get(Turno_.inizio), data1));
         predicates.add(cb.lessThanOrEqualTo(root.get(Turno_.inizio), data2));
         cq.where(predicates.toArray(new Predicate[]{}));
-        cq.orderBy(cb.asc(root.get(Turno_.inizio)));
+
+        List<Order> orderList = new ArrayList();
+        orderList.add(cb.asc(root.get(Turno_.inizio)));
+        orderList.add(cb.asc(root.get(Turno_.id)));
+        cq.orderBy(orderList);
 
         TypedQuery<Turno> q = em.createQuery(cq);
         List<Turno> turni = q.getResultList();

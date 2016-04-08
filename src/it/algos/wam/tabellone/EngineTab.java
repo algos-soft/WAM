@@ -8,6 +8,7 @@ import it.algos.wam.query.WamQuery;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -57,6 +58,12 @@ public class EngineTab {
         // crea e aggiunge componente grafico del servizio
         Servizio serv = riga.getServizio();
         CServizioDisplay s = new CServizioDisplay(tab, serv);
+
+        // per righe a orario variabile: solo l'ultima riga ha la possibilità di crearne altre
+        if(!serv.isOrario()){
+            s.setCreaNuova(riga.isUltimaDelGruppo());
+        }
+
         tab.addComponent(s, 0, row);
 
         // crea e aggiunge i componenti grafici per i turni
@@ -114,6 +121,7 @@ public class EngineTab {
 
         List<Servizio> listaServizi;
 
+        // aggiunge una riga per ogni servizio con orario prestabilito
         listaServizi = WamQuery.queryServizi(entityManager, true);
         if (listaServizi != null && listaServizi.size() > 0) {
             for (Servizio servizio : listaServizi) {
@@ -122,19 +130,16 @@ public class EngineTab {
             }
         }
 
-
+        // aggiunge una o più righe per ogni servizio con orario variabile
         listaServizi = WamQuery.queryServizi(entityManager, false);
         if (listaServizi != null && listaServizi.size() > 0) {
             for (Servizio servizio : listaServizi) {
-                List<Turno> turni = WamQuery.queryTurni(entityManager, servizio, d1, d2);
-
-
-
-                wtab.add(new WRigaTab(servizio, turni.toArray(new Turno[0])));
+                WRigaTab[] righe = creaRighe(entityManager, servizio, d1, d2);
+                for(WRigaTab riga : righe){
+                    wtab.add(riga);
+                }
             }
         }
-
-
 
         return wtab;
 
@@ -145,19 +150,53 @@ public class EngineTab {
      * Potrebbero essere più di uno se ci sono più turni nello stesso giorno.
      * In questo caso crea righe aggiuntive per mostrare tutti i turni.
      */
-    private WRigaTab[] creaRighe(EntityManager em, Servizio serv, LocalDate d1, LocalDate d2){
+    private static WRigaTab[] creaRighe(EntityManager em, Servizio serv, LocalDate d1, LocalDate d2){
         ArrayList<WRigaTab> righe = new ArrayList<>();
-        List<Turno> turni = WamQuery.queryTurni(em, serv, d1, d2);  // tutti i turni in ordine di data inizio
+
+        // recupera tutti i turni del servizio, in ordine di data inizio
+        List<Turno> turni = WamQuery.queryTurni(em, serv, d1, d2);
+
+        ArrayList<ArrayList<Turno>> gruppiTurni = new ArrayList();
         LocalDate currDate=LocalDate.of(1900, 1, 1);
+        int numGruppo=0;
         for(Turno turno : turni){
             LocalDate dataTurno = turno.getData1();
-            if(dataTurno.equals(currDate)){
 
+            // trova il numero della lista da usare
+            ArrayList<Turno> lista;
+            if(!dataTurno.equals(currDate)){
+                numGruppo=0;
             }else{
-
+                numGruppo++;
             }
+
+            // crea la lista se manca
+            if(gruppiTurni.size()<(numGruppo+1)){
+                gruppiTurni.add(new ArrayList<Turno>()); // la prima lista di turni
+            }
+
+            // aggiunge il turno alla lista
+            lista = gruppiTurni.get(numGruppo);
+            lista.add(turno);
+
+            // aggiorna la data corrente
+            currDate=dataTurno;
+
         }
-        return null;
+
+        // crea un wrapper di riga per ogni gruppo di turni creato
+        // solo l'ultimo wrapper avrà il flag UltimaDelGruppo=true
+        for(int i=0; i<gruppiTurni.size();i++){
+            ArrayList<Turno> gruppo = gruppiTurni.get(i);
+            WRigaTab wrapper = new WRigaTab(serv, gruppo.toArray(new Turno[0]));
+            if(i<gruppiTurni.size()-1){
+                wrapper.setUltimaDelGruppo(false);
+            }
+            righe.add(wrapper);
+        }
+
+        return righe.toArray(new WRigaTab[0]);
+
     }
 
 

@@ -17,9 +17,14 @@ public class WRigaTab {
     private Servizio servizio;
     private Turno[] turni;
 
+    // se è l'ultima di un gruppo di righe dello stesso servizio variabile
+    // serve per abilitare il bottone crea nuovo servizio solo sull'ultima riga del gruppo
+    private boolean ultimaDelGruppo=false;
+
     public WRigaTab(Servizio servizio, Turno[] turni) {
         this.servizio = servizio;
         this.turni = turni;
+        this.ultimaDelGruppo=true;
     }
 
     public Servizio getServizio() {
@@ -92,4 +97,11 @@ public class WRigaTab {
         return turno;
     }
 
+    public boolean isUltimaDelGruppo() {
+        return ultimaDelGruppo;
+    }
+
+    public void setUltimaDelGruppo(boolean ultimaDelGruppo) {
+        this.ultimaDelGruppo = ultimaDelGruppo;
+    }
 }
