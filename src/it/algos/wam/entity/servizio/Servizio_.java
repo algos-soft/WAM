@@ -18,16 +18,9 @@ public class Servizio_ extends CompanyEntity_ {
     public static volatile SingularAttribute<Servizio, String> sigla;
     public static volatile SingularAttribute<Servizio, String> descrizione;
     public static volatile SingularAttribute<Servizio, Integer> ordine;
-    public static volatile SingularAttribute<Servizio, Integer> durata;
     public static volatile SingularAttribute<Servizio, Integer> oraInizio;
     public static volatile SingularAttribute<Servizio, Integer> minutiInizio;
     public static volatile SingularAttribute<Servizio, Integer> oraFine;
     public static volatile SingularAttribute<Servizio, Integer> minutiFine;
-    public static volatile SingularAttribute<Servizio, Boolean> primo;
-    public static volatile SingularAttribute<Servizio, Boolean> fineGiornoSuccessivo;
-    public static volatile SingularAttribute<Servizio, Boolean> visibile;
     public static volatile SingularAttribute<Servizio, Boolean> orario;
-    public static volatile SingularAttribute<Servizio, Boolean> multiplo;
-    public static volatile SingularAttribute<Servizio, Integer> persone;
-
 }// end of entity class

@@ -219,7 +219,7 @@ public class Turno extends WamCompanyEntity {
             return null;
         }// end of if cycle
 
-        if (servizio.isMultiplo()) {
+        if (!servizio.isOrario()) {
             return null;//@todo per ora
         } else {
             listaTurni = findAll(servizio, chiave);
@@ -228,10 +228,10 @@ public class Turno extends WamCompanyEntity {
                     servizioTmp = turno.getServizio();
                     if (servizioTmp != null && servizioTmp.getId().equals(servizio.getId())) {
                         instance = turno;
-                    }// end of if cycle
-                }// end of for cycle
-            }// end of if cycle
-        }// end of if/else cycle
+                    }
+                }
+            }
+        }
 
         return instance;
     }// end of method
@@ -305,7 +305,7 @@ public class Turno extends WamCompanyEntity {
             return null;
         }// end of if cycle
 
-        if (!servizio.isMultiplo()) {
+        if (servizio.isOrario()) {
             turno = Turno.find(servizio, inizio);
         }// end of if cycle
 

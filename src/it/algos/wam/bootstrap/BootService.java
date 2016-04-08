@@ -129,14 +129,14 @@ public abstract class BootService {
         int k = 0;
 
         if (company != null) {
-            addServ(listaServ, company, ++k, "med-mat", "Automedica mattino", 8, 12, true, true, false, 3);
-            addServ(listaServ, company, ++k, "med-pom", "Automedica pomeriggio", 12, 18, true, true, false, 3);
-            addServ(listaServ, company, ++k, "med-sera", "Automedica sera", 18, 22, true, true, false, 2);
-            addServ(listaServ, company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3);
-            addServ(listaServ, company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 20, true, true, false, 3);
-            addServ(listaServ, company, ++k, "amb-notte", "Ambulanza notte", 20, 8, true, true, false, 2);
-            addServ(listaServ, company, ++k, "dim", "Dimissioni", 0, 0, true, false, false, 2);
-            addServ(listaServ, company, ++k, "ext", "Extra", 0, 0, true, false, true, 2);
+            addServ(listaServ, company, ++k, "med-mat", "Automedica mattino", 8, 12, true);
+            addServ(listaServ, company, ++k, "med-pom", "Automedica pomeriggio", 12, 18, true);
+            addServ(listaServ, company, ++k, "med-sera", "Automedica sera", 18, 22, true);
+            addServ(listaServ, company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true);
+            addServ(listaServ, company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 20, true);
+            addServ(listaServ, company, ++k, "amb-notte", "Ambulanza notte", 20, 8, true);
+            addServ(listaServ, company, ++k, "dim", "Dimissioni", 0, 0, true);
+            addServ(listaServ, company, ++k, "ext", "Extra", 0, 0, true);
         }// end of if cycle
 
         return listaServ;
@@ -195,16 +195,13 @@ public abstract class BootService {
      * @param descrizione  per il tabellone (obbligatoria)
      * @param oraInizio    del servizio (facoltativo)
      * @param oraFine      del servizio (facoltativo)
-     * @param visibile     nel tabellone
      * @param orario       servizio ad orario prefissato e fisso ogni giorno
-     * @param multiplo     servizio suscettibile di essere effettuato diverse volte nella giornata
-     * @param persone      minime indispensabile allo svolgimento del servizio
      */
-    private static void addServ(ArrayList<Servizio> listaServizi, WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone) {
+    private static void addServ(ArrayList<Servizio> listaServizi, WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario) {
         Servizio servizio;
 
         if (listaServizi != null && company != null) {
-            servizio = Servizio.crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile, orario, multiplo, persone);
+            servizio = Servizio.crea(company, ordine, sigla, descrizione, oraInizio, oraFine, orario);
             listaServizi.add(servizio);
         }// end of if cycle
 

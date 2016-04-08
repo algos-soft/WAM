@@ -61,8 +61,8 @@ public class Servizio extends WamCompanyEntity {
     @NotNull
     private int ordine = 0;
 
-    //--durata del turno (in ore)
-    private int durata = 0;
+//    //--durata del turno (in ore)
+//    private int durata = 0;
 
     //--ora prevista (normale) di inizio turno
     private int oraInizio;
@@ -78,31 +78,8 @@ public class Servizio extends WamCompanyEntity {
     //--nella GUI la scelta viene bloccata ai quarti d'ora
     private int minutiFine = 0;
 
-    //--ultimo turno di un eventuale raggruppamento a video (nel tabellone)
-    //boolean ultimo = false
-
-    //--Primo turno di un eventuale raggruppamento a video (nel tabellone)
-    private boolean primo = false;
-
-    //--turno a cavallo della mezzanotte - termina il giorno successivo
-    private boolean fineGiornoSuccessivo = false;
-
-    //--visibilità nel tabellone
-    private boolean visibile = true;
-
     //--orario predefinito (avis, centralino ed extra non ce l'hanno)
     private boolean orario = true;
-
-    //--possibilità di occorrenze multiple (extra)
-    private boolean multiplo = false;
-
-    //--numero di volntari/militi/funzioni obbligatorie
-    private int persone = 0;
-
-    //--elenco delle funzioni previste per questo tipo di turno
-    //--massimo hardcoded di 4
-//    private WrapServizio wrapServizio = null;
-
 
     /**
      * Costruttore senza argomenti
@@ -119,7 +96,7 @@ public class Servizio extends WamCompanyEntity {
      * @param descrizione per il tabellone (obbligatoria)
      */
     public Servizio(String sigla, String descrizione) {
-        this(0, sigla, descrizione, 0, 0, 0);
+        this(0, sigla, descrizione, 0, 0);
     }// end of constructor
 
 
@@ -131,16 +108,14 @@ public class Servizio extends WamCompanyEntity {
      * @param descrizione per il tabellone (obbligatoria)
      * @param oraInizio   del servizio (facoltativo)
      * @param oraFine     del servizio (facoltativo)
-     * @param persone     minime indispensabile allo svolgimento del servizio
      */
-    public Servizio(int ordine, String sigla, String descrizione, int oraInizio, int oraFine, int persone) {
+    public Servizio(int ordine, String sigla, String descrizione, int oraInizio, int oraFine) {
         super();
         setOrdine(ordine);
         setSigla(sigla);
         setDescrizione(descrizione);
         setOraInizio(oraInizio);
         setOraFine(oraFine);
-        setPersone(persone);
     }// end of constructor
 
 
@@ -274,22 +249,17 @@ public class Servizio extends WamCompanyEntity {
      * @param descrizione per il tabellone (obbligatoria)
      * @param oraInizio   del servizio (facoltativo)
      * @param oraFine     del servizio (facoltativo)
-     * @param visibile    nel tabellone
      * @param orario      servizio ad orario prefissato e fisso ogni giorno
-     * @param multiplo    servizio suscettibile di essere effettuato diverse volte nella giornata
-     * @param persone     minime indispensabile allo svolgimento del servizio
      * @return istanza di Servizio
      */
-    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone) {
+    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario) {
         Servizio servizio = Servizio.find(company, sigla);
 
+
         if (servizio == null) {
-            servizio = new Servizio(ordine, sigla, descrizione, oraInizio, oraFine, persone);
+            servizio = new Servizio(ordine, sigla, descrizione, oraInizio, oraFine);
             servizio.setCompany(company);
-            servizio.setDurata(Math.abs(oraFine - oraInizio));
-            servizio.setVisibile(visibile);
             servizio.setOrario(orario);
-            servizio.setMultiplo(multiplo);
             servizio.save();
         }// end of if cycle
 
@@ -391,18 +361,6 @@ public class Servizio extends WamCompanyEntity {
         return sigla;
     }// end of method
 
-//    /**
-//     * @return intervallo fine - inizio
-//     */
-//    public String getOrario() {
-//        String orario = "";
-//
-//        if (oraInizio > 0 && oraFine > 0) {
-//            orario = oraInizio + "-" + oraFine;
-//        }// end of if cycle
-//
-//        return orario;
-//    }// end of getter method
 
     /**
      * @return the nome
@@ -432,14 +390,6 @@ public class Servizio extends WamCompanyEntity {
 
     public void setOrdine(int ordine) {
         this.ordine = ordine;
-    }//end of setter method
-
-    public int getDurata() {
-        return durata;
-    }// end of getter method
-
-    public void setDurata(int durata) {
-        this.durata = durata;
     }//end of setter method
 
     public int getOraInizio() {
@@ -474,30 +424,6 @@ public class Servizio extends WamCompanyEntity {
         this.minutiFine = minutiFine;
     }//end of setter method
 
-    public boolean isPrimo() {
-        return primo;
-    }// end of getter method
-
-    public void setPrimo(boolean primo) {
-        this.primo = primo;
-    }//end of setter method
-
-    public boolean isFineGiornoSuccessivo() {
-        return fineGiornoSuccessivo;
-    }// end of getter method
-
-    public void setFineGiornoSuccessivo(boolean fineGiornoSuccessivo) {
-        this.fineGiornoSuccessivo = fineGiornoSuccessivo;
-    }//end of setter method
-
-    public boolean isVisibile() {
-        return visibile;
-    }// end of getter method
-
-    public void setVisibile(boolean visibile) {
-        this.visibile = visibile;
-    }//end of setter method
-
     public boolean isOrario() {
         return orario;
     }// end of getter method
@@ -505,23 +431,6 @@ public class Servizio extends WamCompanyEntity {
     public void setOrario(boolean orario) {
         this.orario = orario;
     }//end of setter method
-
-    public boolean isMultiplo() {
-        return multiplo;
-    }// end of getter method
-
-    public void setMultiplo(boolean multiplo) {
-        this.multiplo = multiplo;
-    }//end of setter method
-
-    public int getPersone() {
-        return persone;
-    }// end of getter method
-
-    public void setPersone(int funzioniObbligatorie) {
-        this.persone = funzioniObbligatorie;
-    }//end of setter method
-
 
     public List<ServizioFunzione> getServizioFunzioni() {
         return servizioFunzioni;
@@ -559,14 +468,6 @@ public class Servizio extends WamCompanyEntity {
 
     public void setTurni(List<Turno> turni) {
         this.turni = turni;
-    }
-
-    /**
-     * @return true se questo servizio prevede orari variabili, quindi nel tabellone
-     * non appare l'orario in corrispondenza del servizio, ma appare un titolo sopra ogni turno
-     */
-    public boolean isOrarioVariabile() {
-        return isMultiplo();    //?? alex
     }
 
     /**

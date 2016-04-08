@@ -139,7 +139,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
 
 
             // se orario variabile, prima riga vuota per allinearsi con i turni che in questo caso avranno un titolo
-            if (servizio.isOrarioVariabile()) {
+            if (!servizio.isOrario()) {
                 Label label = new Label("&nbsp;", ContentMode.HTML);
                 addComponent(label);
             }

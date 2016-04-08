@@ -41,27 +41,27 @@ public class ServizioMod extends WamMod {
         super(Servizio.class, MENU_ADDRESS, FontAwesome.GEAR);
     }// end of constructor
 
-    /**
-     * Crea i campi visibili nella lista (table)
-     * <p/>
-     * Come default spazzola tutti i campi della Entity <br>
-     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-     * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
-     */
-    protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{
-                WamCompanyEntity_.company,
-                Servizio_.ordine,
-                Servizio_.sigla,
-                Servizio_.descrizione,
-                Servizio_.durata,
-                Servizio_.oraInizio,
-                Servizio_.oraFine,
-                Servizio_.visibile,
-                Servizio_.orario,
-                Servizio_.multiplo,
-                Servizio_.persone};
-    }// end of method
+//    /**
+//     * Crea i campi visibili nella lista (table)
+//     * <p/>
+//     * Come default spazzola tutti i campi della Entity <br>
+//     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+//     * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
+//     */
+//    protected Attribute<?, ?>[] creaFieldsList() {
+//        return new Attribute[]{
+//                WamCompanyEntity_.company,
+//                Servizio_.ordine,
+//                Servizio_.sigla,
+//                Servizio_.descrizione,
+//                Servizio_.durata,
+//                Servizio_.oraInizio,
+//                Servizio_.oraFine,
+//                Servizio_.visibile,
+//                Servizio_.orario,
+//                Servizio_.multiplo,
+//                Servizio_.persone};
+//    }// end of method
 
     @Override
     public ModuleForm createForm(Item item) {
