@@ -28,13 +28,14 @@ public class WamQuery {
 
 
     /**
-     * Tutti i turni relativi a un dato servizio, che iniziano in un certo periodo.
+     * Tutti i turni relativi a un dato servizio, che hanno data di inizio compresa in un certo periodo.
+     * La lista è ordinata per data inizio turno.
      *
      * @param em       l'EntityManager da utilizzare (se nullo lo crea qui)
      * @param servizio il servizio di riferimento
-     * @param d1       la data iniziale
-     * @param d1       la data finale
-     * @return la lista dei turni
+     * @param d1       la data di inizio periodo
+     * @param d1       la data di fine periodo
+     * @return la lista dei turni in ordine di data inizio
      */
     public static List<Turno> queryTurni(EntityManager em, Servizio servizio, LocalDate d1, LocalDate d2) {
 
@@ -58,6 +59,7 @@ public class WamQuery {
         predicates.add(cb.greaterThanOrEqualTo(root.get(Turno_.inizio), data1));
         predicates.add(cb.lessThanOrEqualTo(root.get(Turno_.inizio), data2));
         cq.where(predicates.toArray(new Predicate[]{}));
+        cq.orderBy(cb.asc(root.get(Turno_.inizio)));
 
         TypedQuery<Turno> q = em.createQuery(cq);
         List<Turno> turni = q.getResultList();
@@ -75,10 +77,11 @@ public class WamQuery {
      * Tutti i servizi orari da visualizzare nel tabellone (orario=true).
      * Elencati nell'ordine di apparizione
      *
-     * @param em l'EntityManager da utilizzare (se nullo lo crea qui)
+     * @param em     l'EntityManager da utilizzare (se nullo lo crea qui)
+     * @param orario true per i servizi orari, false per i servizi variabili
      * @return la lista dei servizi
      */
-    public static List<Servizio> queryServiziOrari(EntityManager em) {
+    public static List<Servizio> queryServizi(EntityManager em, boolean orario) {
 
         // se non specificato EM, ne crea uno locale
         boolean localEM = false;
@@ -93,7 +96,7 @@ public class WamQuery {
 
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
-        predicates.add(cb.equal(root.get(Servizio_.orario), true));
+        predicates.add(cb.equal(root.get(Servizio_.orario), orario));
         cq.where(predicates.toArray(new Predicate[]{}));
         cq.orderBy(cb.asc(root.get(Servizio_.ordine)));
 
@@ -206,11 +209,11 @@ public class WamQuery {
     /**
      * Recupera il massimo numero d'ordine di servizio fino ad ora attribuito.
      *
-     * @param em       l'EntityManager da utilizzare
+     * @param em l'EntityManager da utilizzare
      * @return il massimo numero d'ordine, 0 se non ce ne sono
      */
     public static int queryMaxOrdineServizio(EntityManager em) {
-        int maxOrdine=0;
+        int maxOrdine = 0;
 
         // se non specificato EM, ne crea uno locale
         boolean localEM = false;
@@ -230,8 +233,8 @@ public class WamQuery {
         cq.where(predicates.toArray(new Predicate[]{}));
 
         Object result = em.createQuery(cq).getSingleResult();
-        if(result!=null && result instanceof Number){
-            maxOrdine=Lib.getInt(result);
+        if (result != null && result instanceof Number) {
+            maxOrdine = Lib.getInt(result);
         }
 
         // eventualmente chiude l'EM locale

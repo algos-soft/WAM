@@ -1,17 +1,13 @@
 package it.algos.wam.tabellone;
 
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.query.WamQuery;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,10 +36,23 @@ public class EngineTab {
      * @param riga la riga da aggiungere
      */
     public static void addRiga(GridTabellone tab, WRigaTab riga) {
+        insertRiga(tab, riga, tab.getRows());
+    }
+
+
+    /**
+     * Inserisce una riga in un tabellone esistente
+     * Tutte le celle successive vengono spostate in basso di 1
+     *
+     * @param tab  il tabellone
+     * @param riga la riga da aggiungere
+     * @param pos  l'indice della riga prima della quale aggiungere la nuova riga
+     */
+    public static void insertRiga(GridTabellone tab, WRigaTab riga, int pos) {
 
         // aggiunge una riga al tabellone
-        int row = tab.getRows();
-        tab.setRows(row + 1);
+        tab.insertRow(pos);
+        int row = pos;
 
         // crea e aggiunge componente grafico del servizio
         Servizio serv = riga.getServizio();
@@ -72,9 +81,22 @@ public class EngineTab {
 
         }
 
+        // spazzola tutte le celle successive e aumenta di 1
+        // il numero di riga memorizzato nella cella
+        int numRows=tab.getRows();
+        int numCols=tab.getColumns();
+        for(int r=pos+1;r<numRows;r++){
+            for(int c=0; c<numCols; c++){
+                Component comp = tab.getComponent(c, r);
+                if(comp instanceof TabelloneCell){
+                    TabelloneCell cell = (TabelloneCell)comp;
+                    cell.setY(cell.getY()+1);
+                }
+            }
+        }
+
+
     }
-
-
 
 
     /**
@@ -90,8 +112,9 @@ public class EngineTab {
         LocalDate d2 = d1.plusDays(quantiGiorni - 1);
         WTabellone wtab = new WTabellone(d1, d2);
 
-        List<Servizio> listaServizi = WamQuery.queryServiziOrari(entityManager);
+        List<Servizio> listaServizi;
 
+        listaServizi = WamQuery.queryServizi(entityManager, true);
         if (listaServizi != null && listaServizi.size() > 0) {
             for (Servizio servizio : listaServizi) {
                 List<Turno> turni = WamQuery.queryTurni(entityManager, servizio, d1, d2);
@@ -99,8 +122,42 @@ public class EngineTab {
             }
         }
 
+
+        listaServizi = WamQuery.queryServizi(entityManager, false);
+        if (listaServizi != null && listaServizi.size() > 0) {
+            for (Servizio servizio : listaServizi) {
+                List<Turno> turni = WamQuery.queryTurni(entityManager, servizio, d1, d2);
+
+
+
+                wtab.add(new WRigaTab(servizio, turni.toArray(new Turno[0])));
+            }
+        }
+
+
+
         return wtab;
 
+    }
+
+    /**
+     * Dati un servizio e un periodo, ritorna un wrapper per ogni riga di tabellone da creare.
+     * Potrebbero essere più di uno se ci sono più turni nello stesso giorno.
+     * In questo caso crea righe aggiuntive per mostrare tutti i turni.
+     */
+    private WRigaTab[] creaRighe(EntityManager em, Servizio serv, LocalDate d1, LocalDate d2){
+        ArrayList<WRigaTab> righe = new ArrayList<>();
+        List<Turno> turni = WamQuery.queryTurni(em, serv, d1, d2);  // tutti i turni in ordine di data inizio
+        LocalDate currDate=LocalDate.of(1900, 1, 1);
+        for(Turno turno : turni){
+            LocalDate dataTurno = turno.getData1();
+            if(dataTurno.equals(currDate)){
+
+            }else{
+
+            }
+        }
+        return null;
     }
 
 

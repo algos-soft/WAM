@@ -1,6 +1,7 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.event.LayoutEvents;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -24,6 +25,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
     private Servizio servizio;
     private int x;
     private int y;
+    private CompServizio compServizio;
 
 
     /**
@@ -41,20 +43,20 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
         setSpacing(true);
         addStyleName("cservizio");
 
-        // listener quando viene cliccato il servizio
-        addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
-            @Override
-            public void layoutClick(LayoutEvents.LayoutClickEvent event) {
-                tabellone.cellClicked(CellType.SERVIZIO, x, y, servizio);
-            }
-        });
-
-        addComponent(new CompServizio());
+        compServizio=new CompServizio();
+        addComponent(compServizio);
         addComponent(new CompFunzioni());
 
     }
 
-
+    /**
+     * Mostra o nasconde il bottone che consente di creare una nuova riga
+     * (significativo solo per servizi a orario variabile)
+     * @param crea true per mostrare il bottone, false per nasconderlo
+     */
+    public void setCreaNuova(boolean crea){
+        compServizio.setCreaNuova(crea);
+    }
 
     @Override
     public int getX() {
@@ -77,39 +79,50 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
     }
 
 
+
     /**
      * Componente con la descrizione del servizio
      */
     private class CompServizio extends VerticalLayout {
+
+        private Label labelTitolo;
+        private HorizontalLayout layoutTitle;
+
+        private LayoutEvents.LayoutClickListener listener = new LayoutEvents.LayoutClickListener() {
+            @Override
+            public void layoutClick(LayoutEvents.LayoutClickEvent layoutClickEvent) {
+                tabellone.cellClicked(CellType.SERVIZIO, x, y, servizio);
+                setCreaNuova(false);    // una volta che ho creato la nuova riga, questa riga perde la possibilità di crearne altre
+            }
+        };
+
         public CompServizio() {
             setWidth("7em");
             setSpacing(false);
-            //setHeight("100%");
 
-            String orario=servizio.getStrOrario();
-            String style = null;
-            if (orario.equals("")) {
-                orario = "&nbsp;";
-            } else {
-                style = "cservizio-ora";
-            }// evita label con testo vuoto, danno problemi
-
-            Label labelOra = new Label(orario, ContentMode.HTML);
-            if (style != null) {
-                labelOra.addStyleName(style);
+            layoutTitle=new HorizontalLayout();// layout con dentro la label, serve per poterci attaccare il clicklistener
+            layoutTitle.setWidth("100%");
+            labelTitolo = new Label();
+            labelTitolo.setContentMode(ContentMode.HTML);
+            if(servizio.isOrario()) {
+                labelTitolo.setValue(servizio.getStrOrario());
+                labelTitolo.addStyleName("cservizio-ora");
+            }else{
+                labelTitolo.addStyleName("cservizio-variabile");
+                setCreaNuova(true);
             }
 
-            //labelOra.addStyleName("blueBg");
-            addComponent(labelOra);
+            layoutTitle.addComponent(labelTitolo);
+            addComponent(layoutTitle);
+
 
 
             String descrizione=servizio.getDescrizione();
             if (descrizione.equals("")) {
-                descrizione = "&nbsp;";
-            }// evita label con testo vuoto, danno problemi
+                descrizione = "&nbsp;";// evita label con testo vuoto, danno problemi
+            }
             Label labelNome = new Label(descrizione, ContentMode.HTML);
             labelNome.addStyleName("cservizio-nome");
-            //labelNome.addStyleName("greenBg");
 
             labelNome.setHeight("100%");
             addComponent(labelNome);
@@ -118,6 +131,25 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
 
 
         }
+
+
+        /**
+         * Mostra o nasconde il bottone che consente di creare una nuova riga
+         * (significativo solo per servizi a orario variabile)
+         * @param crea true per mostrare il bottone, false per nasconderlo
+         */
+        public void setCreaNuova(boolean crea){
+            if(crea){
+                labelTitolo.setValue(FontAwesome.PLUS_CIRCLE.getHtml() + " crea nuovo");
+                layoutTitle.addLayoutClickListener(listener);
+                layoutTitle.addStyleName("cpointer");
+            }else{
+                labelTitolo.setValue("&nbsp;");
+                layoutTitle.removeLayoutClickListener(listener);
+                layoutTitle.removeStyleName("cpointer");
+            }
+        }
+
     }
 
     /**

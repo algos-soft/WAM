@@ -198,7 +198,8 @@ public class Tabellone extends VerticalLayout implements View {
                 break;
             case SERVIZIO:
                 Servizio servizio = (Servizio) cellObject;
-                editCellServizio(servizio, col, row);
+//                editCellServizio(servizio, col, row);
+                addRigaServizio(servizio, col, row);
                 break;
 
         }
@@ -277,6 +278,18 @@ public class Tabellone extends VerticalLayout implements View {
         navigator.navigateTo(ADDR_EDIT_SERVIZIO);
 
     }
+
+
+    /**
+     * Aggiunge una ulteriore riga per un dato servizio.
+     * La riga viene aggiunta dopo quella specificata in row
+     */
+    private void addRigaServizio(final Servizio servizio, int col, int row){
+        GridTabellone grid = tabComponent.getGridTabellone();
+        WRigaTab riga = new WRigaTab(servizio, new Turno[0]);
+        EngineTab.insertRiga(grid, riga, row+1);
+    }
+
 
     /**
      * Crea un nuovo servizio e lo presenta nell'editor.
