@@ -9,7 +9,6 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.web.lib.LibColor;
-import org.vaadin.cssinject.CSSInject;
 
 import java.util.Collections;
 import java.util.List;

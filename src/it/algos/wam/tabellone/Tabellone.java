@@ -18,7 +18,6 @@ import it.algos.webbase.web.form.AForm;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.screen.ErrorScreen;
-import org.vaadin.cssinject.CSSInject;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -61,12 +60,6 @@ public class Tabellone extends VerticalLayout implements View {
 
         this.homeURI = homeURI;
 
-        UI ui = UI.getCurrent();
-        CSSInject css = new CSSInject(ui);
-        css.setStyles(".custom-style { background: rgb(100, 200, 0); }");
-
-
-        //addStyleName("greenBg");
 
         setSizeUndefined();
 
