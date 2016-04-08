@@ -61,9 +61,10 @@ public class CTurnoEditor extends CTabelloneEditor {
         Servizio serv = turno.getServizio();
         LocalDate dataInizio = DateConvertUtils.asLocalDate(turno.getInizio());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d LLLL YYYY");
-        String sData = dataInizio.format(formatter);
-        String sOra = turno.getServizio().getStrOrario();
-        String dataOra = sData + ", ore " + sOra;
+        String dataOra = dataInizio.format(formatter);
+        if(serv.isOrario()){
+            dataOra+=", ore " + serv.getStrOrario();
+        }
 
         layout.addComponent(new Label(dataOra));
         layout.addComponent(new Label("<strong>" + serv.getDescrizione() + "</strong>", ContentMode.HTML));

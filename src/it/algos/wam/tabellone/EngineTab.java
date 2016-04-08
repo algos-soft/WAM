@@ -184,6 +184,11 @@ public class EngineTab {
 
         }
 
+        // se non ci sono turni, crea sempre almeno una riga per il servizio
+        if(gruppiTurni.size()==0){
+            gruppiTurni.add(new ArrayList<Turno>());
+        }
+
         // crea un wrapper di riga per ogni gruppo di turni creato
         // solo l'ultimo wrapper avrà il flag UltimaDelGruppo=true
         for(int i=0; i<gruppiTurni.size();i++){
