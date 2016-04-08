@@ -2,14 +2,14 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.webbase.web.lib.LibColor;
+import org.vaadin.cssinject.CSSInject;
 
 import java.util.Collections;
 import java.util.List;
@@ -86,7 +86,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
     private class CompServizio extends VerticalLayout {
 
         private Label labelTitolo;
-        private HorizontalLayout layoutTitle;
+        private CssLayout layoutTitle;
 
         private LayoutEvents.LayoutClickListener listener = new LayoutEvents.LayoutClickListener() {
             @Override
@@ -100,15 +100,14 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
             setWidth("7em");
             setSpacing(false);
 
-            layoutTitle=new HorizontalLayout();// layout con dentro la label, serve per poterci attaccare il clicklistener
+            layoutTitle=new TitleLayout();// layout con dentro la label, serve per poterci attaccare il clicklistener e regolare il css
             layoutTitle.setWidth("100%");
             labelTitolo = new Label();
+            labelTitolo.addStyleName("cservizio-titolo");
             labelTitolo.setContentMode(ContentMode.HTML);
-            if(servizio.isOrario()) {
+            if (servizio.isOrario()) {
                 labelTitolo.setValue(servizio.getStrOrario());
-                labelTitolo.addStyleName("cservizio-ora");
             }else{
-                labelTitolo.addStyleName("cservizio-variabile");
                 setCreaNuova(true);
             }
 
@@ -150,6 +149,28 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
             }
         }
 
+    }
+
+    /**
+     * CSS Layout che contiene la label con il titolo
+     * Serve per regolare dinamicamente il colore tramite CSS
+     * in base al colore definito nel Servizio
+     */
+    private class TitleLayout extends CssLayout {
+        @Override
+        protected String getCss(Component c) {
+
+            if (c instanceof Label) {
+                Color bg=new Color(servizio.getColore());
+                Color fg=LibColor.getForeground(bg);
+                String bgHex = Integer.toHexString(bg.getRGB()).substring(2);
+                String fgHex = Integer.toHexString(fg.getRGB()).substring(2);
+                String css="background: #" + bgHex+"; color: #"+fgHex+";";
+                return css;
+            }
+            return null;
+
+        }
     }
 
     /**

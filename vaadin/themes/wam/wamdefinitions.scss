@@ -143,16 +143,17 @@ $v-font-weight: 400;
     //background: linear-gradient(top, $dark, $light, $dark);
   }
 
-  // titolo servizio a orario predefinito
-  $dark: rgb(101, 101, 104);
-  $light: rgba(101, 101, 104, 0.6);
-  .cservizio-ora {
+  // titolo servizio nel tabellone
+  // (il colore di background è iniettato dinamicamente)
+  //$dark: rgb(101, 101, 104);
+  //$light: rgba(101, 101, 104, 0.6);
+  .cservizio-titolo {
 
-    background: $dark;
-    background: -webkit-linear-gradient(top, $dark, $light, $dark);
-    background: -moz-linear-gradient(top, $dark, $light, $dark);
-    background: -o-linear-gradient(top, $dark, $light, $dark);
-    background: linear-gradient(top, $dark, $light, $dark);
+    //background: $dark;
+    //background: -webkit-linear-gradient(top, $dark, $light, $dark);
+    //background: -moz-linear-gradient(top, $dark, $light, $dark);
+    //background: -o-linear-gradient(top, $dark, $light, $dark);
+    //background: linear-gradient(top, $dark, $light, $dark);
 
     color: white;
     border-top-left-radius: 6px;
@@ -163,17 +164,17 @@ $v-font-weight: 400;
   }
 
 
-  // titolo servizio a orario variabile
-  $dark: rgb(186, 180, 0);
-  $light: rgba(186, 180, 0, 0.6);
-  .cservizio-variabile {
-    @extend .cservizio-ora;
-    background: $dark;
-    background: -webkit-linear-gradient(top, $dark, $light, $dark);
-    background: -moz-linear-gradient(top, $dark, $light, $dark);
-    background: -o-linear-gradient(top, $dark, $light, $dark);
-    background: linear-gradient(top, $dark, $light, $dark);
-  }
+  //// titolo servizio a orario variabile
+  //$dark: rgb(186, 180, 0);
+  //$light: rgba(186, 180, 0, 0.6);
+  //.cservizio-variabile {
+  //  @extend .cservizio-ora;
+  //  background: $dark;
+  //  background: -webkit-linear-gradient(top, $dark, $light, $dark);
+  //  background: -moz-linear-gradient(top, $dark, $light, $dark);
+  //  background: -o-linear-gradient(top, $dark, $light, $dark);
+  //  background: linear-gradient(top, $dark, $light, $dark);
+  //}
 
   .cpointer {
     cursor: pointer;
@@ -302,7 +303,11 @@ $v-font-weight: 400;
 
   // titolo del turno
   .cturno-title{
+    font-size: small;
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   // componente no turno

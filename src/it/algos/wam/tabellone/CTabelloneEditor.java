@@ -19,7 +19,8 @@ public abstract class CTabelloneEditor extends VerticalLayout implements View {
 
     public CTabelloneEditor(EntityManager entityManager) {
         this.entityManager=entityManager;
-        setSizeUndefined();;
+        setSizeUndefined();
+        setSpacing(true);
     }
 
 

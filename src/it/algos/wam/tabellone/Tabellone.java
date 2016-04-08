@@ -18,6 +18,7 @@ import it.algos.webbase.web.form.AForm;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.screen.ErrorScreen;
+import org.vaadin.cssinject.CSSInject;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -59,6 +60,11 @@ public class Tabellone extends VerticalLayout implements View {
     public Tabellone(String homeURI) {
 
         this.homeURI = homeURI;
+
+        UI ui = UI.getCurrent();
+        CSSInject css = new CSSInject(ui);
+        css.setStyles(".custom-style { background: rgb(100, 200, 0); }");
+
 
         //addStyleName("greenBg");
 
@@ -244,40 +250,40 @@ public class Tabellone extends VerticalLayout implements View {
     }
 
 
-    /**
-     * Edita una cella di tipo Servizio
-     */
-    private void editCellServizio(final Servizio servizio, int col, int row) {
-        // crea un editor per il servizio
-        // quando si dismette l'editor, tornerà al tabellone
-        CServizioEditor editor = new CServizioEditor(servizio, entityManager);
-        editor.addDismissListener(new CTabelloneEditor.DismissListener() {
-            @Override
-            public void editorDismissed(CTabelloneEditor.DismissEvent e) {
-
-                // se ha salvato o eliminato, aggiorna la cella della griglia
-                if (e.isSaved() | e.isDeleted()) {
-                    GridTabellone grid = tabComponent.getGridTabellone();
-                    TabelloneCell cell = null;
-                    if (e.isSaved()) {
-                        grid.removeComponent(col, row);
-                        cell = new CServizioDisplay(grid, servizio);
-                        grid.addComponent(cell, col, row);
-                    }
-                    if (e.isDeleted()) {
-                        grid.removeRow(row);
-                    }
-                }
-                navigator.navigateTo(ADDR_TABELLONE);
-            }
-        });
-
-
-        // assegna l'editor e naviga alla editor view
-        editorPage.setEditor(editor);
-        navigator.navigateTo(ADDR_EDIT_SERVIZIO);
-
-    }
+//    /**
+//     * Edita una cella di tipo Servizio
+//     */
+//    private void editCellServizio(final Servizio servizio, int col, int row) {
+//        // crea un editor per il servizio
+//        // quando si dismette l'editor, tornerà al tabellone
+//        CServizioEditor editor = new CServizioEditor(servizio, entityManager);
+//        editor.addDismissListener(new CTabelloneEditor.DismissListener() {
+//            @Override
+//            public void editorDismissed(CTabelloneEditor.DismissEvent e) {
+//
+//                // se ha salvato o eliminato, aggiorna la cella della griglia
+//                if (e.isSaved() | e.isDeleted()) {
+//                    GridTabellone grid = tabComponent.getGridTabellone();
+//                    TabelloneCell cell = null;
+//                    if (e.isSaved()) {
+//                        grid.removeComponent(col, row);
+//                        cell = new CServizioDisplay(grid, servizio);
+//                        grid.addComponent(cell, col, row);
+//                    }
+//                    if (e.isDeleted()) {
+//                        grid.removeRow(row);
+//                    }
+//                }
+//                navigator.navigateTo(ADDR_TABELLONE);
+//            }
+//        });
+//
+//
+//        // assegna l'editor e naviga alla editor view
+//        editorPage.setEditor(editor);
+//        navigator.navigateTo(ADDR_EDIT_SERVIZIO);
+//
+//    }
 
 
     /**
@@ -291,41 +297,41 @@ public class Tabellone extends VerticalLayout implements View {
     }
 
 
-    /**
-     * Crea un nuovo servizio e lo presenta nell'editor.
-     * Se registrato, aggiunge una riga con il servizio al tabellone.
-     * Invocato dal bottone Crea Nuovo Servizio nel Tabellone
-     */
-    public void nuovoServizio() {
-
-        // crea un nuovo servizio
-        Servizio servizio = new Servizio("extra", "servizio extra");
-        servizio.setOrario(false);
-
-        // crea un editor per il servizio
-        // quando si dismette l'editor, tornerà al tabellone
-        CServizioEditor editor = new CServizioEditor(servizio, entityManager);
-        editor.addDismissListener(new CTabelloneEditor.DismissListener() {
-            @Override
-            public void editorDismissed(CTabelloneEditor.DismissEvent e) {
-
-                // se ha salvato aggiunge una nuova riga col servizio
-                if (e.isSaved()) {
-                    if (e.isSaved()) {
-                        WRigaTab wRiga = new WRigaTab(servizio, null);
-                        EngineTab.addRiga(tabComponent.getGridTabellone(), wRiga);
-                    }
-                }
-                navigator.navigateTo(ADDR_TABELLONE);
-            }
-        });
-
-
-        // assegna l'editor e naviga alla editor view
-        editorPage.setEditor(editor);
-        navigator.navigateTo(ADDR_EDIT_SERVIZIO);
-
-    }
+//    /**
+//     * Crea un nuovo servizio e lo presenta nell'editor.
+//     * Se registrato, aggiunge una riga con il servizio al tabellone.
+//     * Invocato dal bottone Crea Nuovo Servizio nel Tabellone
+//     */
+//    public void nuovoServizio() {
+//
+//        // crea un nuovo servizio
+//        Servizio servizio = new Servizio("extra", "servizio extra");
+//        servizio.setOrario(false);
+//
+//        // crea un editor per il servizio
+//        // quando si dismette l'editor, tornerà al tabellone
+//        CServizioEditor editor = new CServizioEditor(servizio, entityManager);
+//        editor.addDismissListener(new CTabelloneEditor.DismissListener() {
+//            @Override
+//            public void editorDismissed(CTabelloneEditor.DismissEvent e) {
+//
+//                // se ha salvato aggiunge una nuova riga col servizio
+//                if (e.isSaved()) {
+//                    if (e.isSaved()) {
+//                        WRigaTab wRiga = new WRigaTab(servizio, null);
+//                        EngineTab.addRiga(tabComponent.getGridTabellone(), wRiga);
+//                    }
+//                }
+//                navigator.navigateTo(ADDR_TABELLONE);
+//            }
+//        });
+//
+//
+//        // assegna l'editor e naviga alla editor view
+//        editorPage.setEditor(editor);
+//        navigator.navigateTo(ADDR_EDIT_SERVIZIO);
+//
+//    }
 
 
     /**
@@ -362,15 +368,15 @@ public class Tabellone extends VerticalLayout implements View {
             addComponent(menuPlaceholder);
             addComponent(gridPlaceholder);
 
-            // bottone nuovo servizio
-            Button bNuovoServ = new Button("Crea nuovo servizio", FontAwesome.PLUS_CIRCLE);
-            addComponent(bNuovoServ);
-            bNuovoServ.addClickListener(new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent clickEvent) {
-                    nuovoServizio();
-                }
-            });
+//            // bottone nuovo servizio
+//            Button bNuovoServ = new Button("Crea nuovo servizio", FontAwesome.PLUS_CIRCLE);
+//            addComponent(bNuovoServ);
+//            bNuovoServ.addClickListener(new Button.ClickListener() {
+//                @Override
+//                public void buttonClick(Button.ClickEvent clickEvent) {
+//                    nuovoServizio();
+//                }
+//            });
 
 
         }

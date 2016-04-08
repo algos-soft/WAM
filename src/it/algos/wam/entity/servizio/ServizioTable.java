@@ -4,10 +4,14 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.ColorPicker;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
+import com.vaadin.ui.components.colorpicker.ColorChangeListener;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibBean;
@@ -26,6 +30,10 @@ public class ServizioTable extends ETable {
 
     // id della colonna generata "funzioni"
     protected static final String COL_FUNZIONI = "funzioni";
+
+    // id della colonna generata "colore"
+    protected static final String COL_COLORE = "colore";
+
 
 
     public ServizioTable(ModulePop module) {
@@ -49,6 +57,7 @@ public class ServizioTable extends ETable {
         setColumnExpandRatio(Servizio_.descrizione, 2);
         setColumnExpandRatio(COL_DURATA, 1);
         setColumnExpandRatio(COL_FUNZIONI, 2);
+        setColumnExpandRatio(COL_COLORE, 1);
 
         setColumnAlignment(COL_DURATA, Align.LEFT);
     }
@@ -59,7 +68,8 @@ public class ServizioTable extends ETable {
                 Servizio_.sigla,
                 Servizio_.descrizione,
                 COL_DURATA,
-                COL_FUNZIONI
+                COL_FUNZIONI,
+                COL_COLORE
         };
 
 
@@ -70,6 +80,7 @@ public class ServizioTable extends ETable {
     protected void createAdditionalColumns() {
         addGeneratedColumn(COL_DURATA, new DurataColumnGenerator());
         addGeneratedColumn(COL_FUNZIONI, new FunzioniColumnGenerator());
+        addGeneratedColumn(COL_COLORE, new ColoreColumnGenerator());
     }
 
 
@@ -124,6 +135,37 @@ public class ServizioTable extends ETable {
                 if(sf.isObbligatoria()){s+="</strong>";}
             }
             return new Label(s, ContentMode.HTML);
+        }
+    }
+
+    /**
+     * Colonna generata: colore.
+     */
+    private class ColoreColumnGenerator implements ColumnGenerator {
+
+        /**
+         * Genera la cella del colore.
+         */
+        public Component generateCell(Table source, Object itemId, Object columnId) {
+            Property prop;
+            Item item = source.getItem(itemId);
+            prop = item.getItemProperty(Servizio_.colore.getName());
+            int codColore = (Integer)prop.getValue();
+            ColorPicker picker = new ServizioColorPicker();
+            picker.setColor(new Color(codColore));
+            picker.setCaption("&#8203;"); //zero-width space
+            picker.addColorChangeListener(new ColorChangeListener() {
+                @Override
+                public void colorChanged(ColorChangeEvent colorChangeEvent) {
+                    BeanItem bi = LibBean.fromItem(item);
+                    Servizio serv = (Servizio)bi.getBean();
+                    int colorcode=colorChangeEvent.getColor().getRGB();
+                    serv.setColore(colorcode);
+                    serv.save();
+                }
+            });
+//            picker.setReadOnly(true);
+            return picker;
         }
     }
 

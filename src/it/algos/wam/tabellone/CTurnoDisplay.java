@@ -1,6 +1,7 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.event.LayoutEvents;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
@@ -130,7 +131,16 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         //setHeight("100%");
 
         if (!serv.isOrario()) {
-            Label label = new Label("titolo?");
+
+            String note=null;
+            if(turno!=null){
+                note=turno.getNote();
+            }
+            if(note==null || note.isEmpty()){
+                note = "&nbsp;";
+            }
+            Label label = new Label(note, ContentMode.HTML);
+//            label.setWidthUndefined();
             label.setWidth("100%");
             label.addStyleName("cturno-title");
             this.addComponent(label);

@@ -1,5 +1,6 @@
 package it.algos.wam.entity.servizio;
 
+import com.vaadin.shared.ui.colorpicker.Color;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -60,6 +61,9 @@ public class Servizio extends WamCompanyEntity {
     //--ordine di presentazione nel tabellone
     @NotNull
     private int ordine = 0;
+
+    // colore del servizio
+    private int colore=new Color(128,128,128).getRGB();
 
 //    //--durata del turno (in ore)
 //    private int durata = 0;
@@ -391,6 +395,14 @@ public class Servizio extends WamCompanyEntity {
     public void setOrdine(int ordine) {
         this.ordine = ordine;
     }//end of setter method
+
+    public int getColore() {
+        return colore;
+    }
+
+    public void setColore(int colore) {
+        this.colore = colore;
+    }
 
     public int getOraInizio() {
         return oraInizio;

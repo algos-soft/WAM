@@ -29,12 +29,19 @@ public class CTurnoEditor extends CTabelloneEditor {
 
     private Turno turno;
     private IscrizioniEditor iscrizioniEditor;
+    private TextField fieldNote;
 
     public CTurnoEditor(Turno turno, EntityManager entityManager) {
         super(entityManager);
         this.turno = turno;
 
         addComponent(creaCompTitolo());
+
+        Component comp=creaCompDettaglio();
+        if(comp!=null){
+            addComponent(comp);
+        }
+
         iscrizioniEditor = new IscrizioniEditor();
         addComponent(iscrizioniEditor);
         addComponent(creaPanComandi());
@@ -50,7 +57,6 @@ public class CTurnoEditor extends CTabelloneEditor {
      */
     private Component creaCompTitolo() {
         VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
 
         Servizio serv = turno.getServizio();
         LocalDate dataInizio = DateConvertUtils.asLocalDate(turno.getInizio());
@@ -64,6 +70,26 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         return layout;
     }
+
+
+    /**
+     * Crea il componente che visualizza i dettagli del turno
+     * (nome ecc..)
+     *
+     * @return il componente di dettaglio
+     */
+    private Component creaCompDettaglio() {
+        Servizio serv = turno.getServizio();
+        if(!serv.isOrario()){
+            fieldNote = new TextField("note");
+            fieldNote.setWidth("100%");
+            fieldNote.setValue(turno.getNote());
+        }
+        return fieldNote;
+    }
+
+
+
 
 
 
@@ -139,6 +165,9 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         try {
 
+            // Registra le note
+            turno.setNote(getNote());
+
             //cancella le iscrizioni correnti dal db
             for(Iscrizione i : turno.getIscrizioni()){
                 entityManager.remove(i);
@@ -175,6 +204,18 @@ public class CTurnoEditor extends CTabelloneEditor {
     private boolean deleteTurno() {
         turno.delete(entityManager);
         return true;
+    }
+
+
+    /**
+     * Ritorna il testo correntemente presente nel campo note
+     */
+    private String getNote(){
+        String note="";
+        if(fieldNote!=null){
+            note=fieldNote.getValue();
+        }
+        return note;
     }
 
 

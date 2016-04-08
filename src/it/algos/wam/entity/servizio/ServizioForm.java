@@ -3,8 +3,12 @@ package it.algos.wam.entity.servizio;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -31,6 +35,7 @@ public class ServizioForm extends ModuleForm {
     private OreMinuti oraInizio;
     private OreMinuti oraFine;
     private Field fOrarioPredefinito;
+    private ColorPicker picker;
 
 
     public ServizioForm(Item item, ModulePop module) {
@@ -80,7 +85,12 @@ public class ServizioForm extends ModuleForm {
         fsigla.setWidth("8em");
         Field fdesc = getField(Servizio_.descrizione);
         fdesc.setWidth("16em");
-        HorizontalLayout hl = new HorizontalLayout(fsigla, fdesc);
+
+        picker = new ServizioColorPicker();
+
+        HorizontalLayout hl = new HorizontalLayout(fsigla, fdesc,picker);
+        hl.setComponentAlignment(picker, Alignment.BOTTOM_CENTER);
+
         hl.setSpacing(true);
         layout.addComponent(hl);
 
@@ -219,6 +229,11 @@ public class ServizioForm extends ModuleForm {
         m = pi.getValue();
         oraFine.setTime(h, m);
 
+        pi = getItem().getItemProperty(Servizio_.colore.getName());
+        int colorcode=pi.getValue();
+        Color color = new Color(colorcode);
+        picker.setColor(color);
+
         // aggiunge gli editor per le funzioni esistenti
         List<ServizioFunzione> listaSF = getServizio().getServizioFunzioni();
         Collections.sort(listaSF);
@@ -247,6 +262,8 @@ public class ServizioForm extends ModuleForm {
         m = oraFine.getMinute();
         getServizio().setMinutiFine(m);
 
+        int col = picker.getColor().getRGB();
+        getServizio().setColore(col);
 
         // sincronizza le funzioni del servizio con quelle dell'editor di funzioni
         syncFunzioni();
