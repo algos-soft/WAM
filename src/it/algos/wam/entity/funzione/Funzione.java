@@ -4,6 +4,7 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.query.WamQuery;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -11,10 +12,7 @@ import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,24 +36,24 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
     @NotEmpty
     @Column(length = 20)
     @Index
-    private String sigla;
+    private String sigla="";
 
 
     //--descrizione per il tabellone (obbligatoria)
     @NotEmpty
     @Column(length = 100)
     @Index
-    private String descrizione;
+    private String descrizione="";
 
 
     //--ordine di presentazione nelle liste
     @Index
-    private int ordine;
+    private int ordine=0;
 
 
     //--note di spiegazione (facoltative)
     @Column(columnDefinition = "text")
-    private String note;
+    private String note="";
 
 
     //--tavola di incrocio
@@ -75,38 +73,47 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
      * Necessario per le specifiche JavaBean
      */
     public Funzione() {
-        this(null, "", "");
+//        this(null, "", "");
     }// end of constructor
 
-    /**
-     * Costruttore minimo con tutte le properties obbligatorie
-     *
-     * @param company     croce di appartenenza
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
-     */
-    public Funzione(WamCompany company, String sigla, String descrizione) {
-        this(company, sigla, descrizione, 0, "");
-    }// end of constructor
+//    /**
+//     * Costruttore minimo con tutte le properties obbligatorie
+//     *
+//     * @param company     croce di appartenenza
+//     * @param sigla       sigla di riferimento interna (obbligatoria)
+//     * @param descrizione per il tabellone (obbligatoria)
+//     */
+//    public Funzione(WamCompany company, String sigla, String descrizione) {
+//        this(company, sigla, descrizione, 0, "");
+//    }// end of constructor
 
 
-    /**
-     * Costruttore completo
-     *
-     * @param company     croce di appartenenza
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @param ordine      di presentazione nelle liste
-     * @param note        di spiegazione (facoltative)
-     */
-    public Funzione(WamCompany company, String sigla, String descrizione, int ordine, String note) {
-        super();
-        this.setCompany(company);
-        this.setSigla(sigla);
-        this.setDescrizione(descrizione);
-        this.setOrdine(ordine);
-        this.setNote(note);
-    }// end of constructor
+//    /**
+//     * Costruttore completo
+//     *
+//     * @param company     croce di appartenenza
+//     * @param sigla       sigla di riferimento interna (obbligatoria)
+//     * @param descrizione per il tabellone (obbligatoria)
+//     * @param ordine      di presentazione nelle liste
+//     * @param note        di spiegazione (facoltative)
+//     */
+//    public Funzione(WamCompany company, String sigla, String descrizione, int ordine, String note) {
+//        super();
+//        this.setCompany(company);
+//        this.setSigla(sigla);
+//        this.setDescrizione(descrizione);
+//        this.setOrdine(ordine);
+//        this.setNote(note);
+//    }// end of constructor
+
+
+    @PrePersist
+    protected void prePersist() {
+        if(getOrdine()==0){
+            int max = WamQuery.queryMaxOrdineFunzione(null);
+            setOrdine(max+1);
+        }
+    }
 
     /**
      * Recupera una istanza di Funzione usando la query standard della Primary Key
@@ -242,7 +249,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
         Funzione funzione = Funzione.find(company, sigla);
 
         if (funzione == null) {
-            funzione = new Funzione(company, sigla, descrizione, ordine, note);
+            funzione = new Funzione();
+            funzione.setCompany(company);
+            funzione.setSigla(sigla);
+            funzione.setDescrizione(descrizione);
+            funzione.setOrdine(ordine);
+            funzione.setNote(note);
             funzione.save();
         }// end of if cycle
 
@@ -320,8 +332,9 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
         }// fine del blocco try-catch
     }// end of method
 
+
     /**
-     * Compara per sequenza della funzione
+     * Compara per ordine della funzione
      */
     @Override
     public int compareTo(Funzione other) {

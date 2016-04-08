@@ -1,5 +1,7 @@
 package it.algos.wam.query;
 
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.iscrizione.Iscrizione_;
 import it.algos.wam.entity.servizio.Servizio;
@@ -211,6 +213,59 @@ public class WamQuery {
 
 
     /**
+     * La funzione adiacente ad una data funzione (per numero d'ordine).
+     *
+     * @param em       l'EntityManager da utilizzare
+     * @param funzione la funzione di riferimento
+     * @param sopra    true per cercare sopra, false per cercare sotto
+     * @return la funzione adiacente, null se non trovata
+     */
+    public static Funzione queryFunzioneAdiacente(EntityManager em, Funzione funzione, boolean sopra) {
+
+        Funzione adiacente = null;
+
+        // se non specificato EM, ne crea uno locale
+        boolean localEM = false;
+        if (em == null) {
+            em = EM.createEntityManager();
+            localEM = true;
+        }
+
+        int numOrdine = funzione.getOrdine();
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Funzione> cq = cb.createQuery(Funzione.class);
+        Root<Funzione> root = cq.from(Funzione.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
+        if (sopra) {
+            predicates.add(cb.lessThan(root.get(Funzione_.ordine), numOrdine));
+            cq.orderBy(cb.desc(root.get(Funzione_.ordine)));
+        } else {
+            predicates.add(cb.greaterThan(root.get(Funzione_.ordine), numOrdine));
+            cq.orderBy(cb.asc(root.get(Funzione_.ordine)));
+        }
+        cq.where(predicates.toArray(new Predicate[]{}));
+
+        TypedQuery<Funzione> q = em.createQuery(cq);
+        q.setMaxResults(1);
+        List<Funzione> lista = q.getResultList();
+        if (lista.size() > 0) {
+            adiacente = lista.get(0);
+        }
+
+        // eventualmente chiude l'EM locale
+        if (localEM) {
+            em.close();
+        }
+
+        return adiacente;
+
+    }
+
+
+    /**
      * Recupera il massimo numero d'ordine di servizio fino ad ora attribuito.
      *
      * @param em l'EntityManager da utilizzare
@@ -248,6 +303,49 @@ public class WamQuery {
 
         return maxOrdine;
     }
+
+
+
+
+    /**
+     * Recupera il massimo numero d'ordine di funzione fino ad ora attribuito.
+     *
+     * @param em l'EntityManager da utilizzare
+     * @return il massimo numero d'ordine, 0 se non ce ne sono
+     */
+    public static int queryMaxOrdineFunzione(EntityManager em) {
+        int maxOrdine = 0;
+
+        // se non specificato EM, ne crea uno locale
+        boolean localEM = false;
+        if (em == null) {
+            em = EM.createEntityManager();
+            localEM = true;
+        }
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery cq = cb.createQuery(Integer.class);
+        Root root = cq.from(Funzione.class);
+        cq.select(cb.max(root.get(Funzione_.ordine)));
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
+        cq.where(predicates.toArray(new Predicate[]{}));
+
+        Object result = em.createQuery(cq).getSingleResult();
+        if (result != null && result instanceof Number) {
+            maxOrdine = Lib.getInt(result);
+        }
+
+        // eventualmente chiude l'EM locale
+        if (localEM) {
+            em.close();
+        }
+
+        return maxOrdine;
+    }
+
 
 
 }

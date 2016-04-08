@@ -45,6 +45,18 @@ public class ServizioTable extends ETable {
         }
     }
 
+    protected Object[] getDisplayColumns() {
+        return new Object[]{
+                Servizio_.sigla,
+                Servizio_.descrizione,
+                COL_DURATA,
+                COL_FUNZIONI,
+                COL_COLORE
+        };
+
+
+    }// end of method
+
 
     @Override
     protected void init() {
@@ -63,17 +75,6 @@ public class ServizioTable extends ETable {
     }
 
 
-    protected Object[] getDisplayColumns() {
-        return new Object[]{
-                Servizio_.sigla,
-                Servizio_.descrizione,
-                COL_DURATA,
-                COL_FUNZIONI,
-                COL_COLORE
-        };
-
-
-    }// end of method
 
 
     @Override
@@ -164,7 +165,6 @@ public class ServizioTable extends ETable {
                     serv.save();
                 }
             });
-//            picker.setReadOnly(true);
             return picker;
         }
     }
