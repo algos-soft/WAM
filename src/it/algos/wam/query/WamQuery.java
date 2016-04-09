@@ -80,8 +80,7 @@ public class WamQuery {
 
 
     /**
-     * Tutti i servizi orari da visualizzare nel tabellone (orario=true).
-     * Elencati nell'ordine di apparizione
+     * Tutti i servizi elencati nell'ordine di apparizione
      *
      * @param em     l'EntityManager da utilizzare (se nullo lo crea qui)
      * @param orario true per i servizi orari, false per i servizi variabili

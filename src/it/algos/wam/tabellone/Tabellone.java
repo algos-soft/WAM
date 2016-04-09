@@ -39,6 +39,8 @@ public class Tabellone extends VerticalLayout implements View {
     private static final String ADDR_EDIT_TURNO = "turno";
     private static final String ADDR_EDIT_SERVIZIO = "servizio";
     private static final String ADDR_SEARCH = "ricerca";
+    private static final String ADDR_GENERATE = "genera";
+
     private static final String ADDR_LOGIN = "login";
     /**
      * numero massimo di giorni visualizzabili nel tabellone
@@ -80,6 +82,7 @@ public class Tabellone extends VerticalLayout implements View {
         navigator.addView(ADDR_EDIT_TURNO, editorPage);
         navigator.addView(ADDR_EDIT_SERVIZIO, editorPage);
         navigator.addView(ADDR_SEARCH, searchComponent);
+        navigator.addView(ADDR_GENERATE, new GeneratorPage());
         navigator.addView(ADDR_LOGIN, new LoginComponent());
         navigator.setErrorView(new TabErrView());
         navigator.navigateTo(ADDR_TABELLONE);
@@ -103,6 +106,9 @@ public class Tabellone extends VerticalLayout implements View {
                         setSizeFull();
                         break;
                     case ADDR_EDIT_SERVIZIO:
+                        setSizeFull();
+                        break;
+                    case ADDR_GENERATE:
                         setSizeFull();
                         break;
                     default:
@@ -451,10 +457,10 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            MenuItem menuVai = addItem("vai", FontAwesome.ARROW_CIRCLE_DOWN, null);
+            MenuItem menuVai = addItem("altro", FontAwesome.BARS, null);
 
 
-            menuVai.addItem("giorno precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
+            menuVai.addItem("vai al giorno precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
@@ -462,7 +468,7 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            menuVai.addItem("giorno successivo", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
+            menuVai.addItem("vai al giorno successivo", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
@@ -470,12 +476,20 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            menuVai.addItem("cerca", FontAwesome.SEARCH, new MenuBar.Command() {
+            menuVai.addItem("cerca periodo", FontAwesome.SEARCH, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     navigator.navigateTo(ADDR_SEARCH);
                 }
             });
+
+            menuVai.addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    navigator.navigateTo(ADDR_GENERATE);
+                }
+            });
+
 
 
         }
@@ -539,6 +553,44 @@ public class Tabellone extends VerticalLayout implements View {
             addComponent(editor);
             setComponentAlignment(editor, Alignment.MIDDLE_CENTER);
         }
+
+
+        @Override
+        public void enter(ViewChangeListener.ViewChangeEvent event) {
+        }
+
+    }
+
+
+    /**
+     * Componente di alto livello con logica di navigazione in un turno/servizio da modificare.
+     * Invocare il metodo setTurno() per inserire un turno da modificare.
+     */
+    private class GeneratorPage extends VerticalLayout implements View {
+
+        public GeneratorPage() {
+            setSizeFull();
+            CTurniGenerator generator = new CTurniGenerator(entityManager);
+            generator.addDismissListener(new CTabelloneEditor.DismissListener() {
+                @Override
+                public void editorDismissed(CTabelloneEditor.DismissEvent e) {
+                    navigator.navigateTo(ADDR_TABELLONE);
+                }
+            });
+            addComponent(generator);
+        }
+
+//        /**
+//         * Assegna un Editor a questo componente.
+//         * e lo aggiunge graficamente
+//         *
+//         * @param editor l'editor da mostrare nella pagina
+//         */
+//        public void setEditor(CTabelloneEditor editor) {
+//            removeAllComponents();
+//            addComponent(editor);
+//            setComponentAlignment(editor, Alignment.MIDDLE_CENTER);
+//        }
 
 
         @Override
