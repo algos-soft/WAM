@@ -1,20 +1,28 @@
 package it.algos.wam.tabellone;
 
+import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.web.field.DateField;
+import it.algos.webbase.web.lib.DateConvertUtils;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Componente per impostare il generatore/eliminatore di turni vuoti
  */
 public class CTurniGenerator extends CTabelloneEditor {
+
+    private DateField dateField1;
+    private DateField dateField2;
 
     public CTurniGenerator(EntityManager entityManager) {
         super(entityManager);
@@ -47,6 +55,36 @@ public class CTurniGenerator extends CTabelloneEditor {
      * @return il componente di dettaglio
      */
     private Component creaCompDettaglio() {
+
+        VerticalLayout layout = new VerticalLayout();
+        layout.setSpacing(true);
+
+        HorizontalLayout layoutDate = new HorizontalLayout();
+        layoutDate.setSpacing(true);
+        dateField1 = new DateField("Dal giorno");
+        LocalDate tomorrow=LocalDate.now().plusDays(1);
+        dateField1.setValue(DateConvertUtils.asUtilDate(tomorrow));
+        dateField1.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                Object value=valueChangeEvent.getProperty().getValue();
+                if(value != null && value instanceof Date){
+                    Date date = (Date)value;
+                    LocalDate d2=DateConvertUtils.asLocalDate(date).plusWeeks(1);
+                    dateField2.setValue(DateConvertUtils.asUtilDate(d2));
+                }
+            }
+        });
+
+
+        dateField2 = new DateField("Al giorno");
+        LocalDate date = DateConvertUtils.asLocalDate(dateField1.getValue());
+        Date duWeek=DateConvertUtils.asUtilDate(date.plusWeeks(1));
+        dateField2.setValue(duWeek);
+
+        layoutDate.addComponent(dateField1);
+        layoutDate.addComponent(dateField2);
+
         ArrayList<Servizio> servizi=new ArrayList<>();
         servizi.addAll(WamQuery.queryServizi(entityManager, true));
         servizi.addAll(WamQuery.queryServizi(entityManager, false));
@@ -77,7 +115,9 @@ public class CTurniGenerator extends CTabelloneEditor {
 
         }
 
-        return grid;
+        layout.addComponent(layoutDate);
+        layout.addComponent(grid);
+        return layout;
     }
 
 
