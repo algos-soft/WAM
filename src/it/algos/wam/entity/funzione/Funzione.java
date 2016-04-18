@@ -67,6 +67,9 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 
+    @Lob
+    private byte[] icon;
+
 
     /**
      * Costruttore senza argomenti
@@ -314,6 +317,13 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
         this.note = note;
     }//end of setter method
 
+    public byte[] getIcon() {
+        return icon;
+    }
+
+    public void setIcon(byte[] icon) {
+        this.icon = icon;
+    }
 
     /**
      * Clone di questa istanza

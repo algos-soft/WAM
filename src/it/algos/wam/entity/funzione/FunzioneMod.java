@@ -1,6 +1,7 @@
 package it.algos.wam.entity.funzione;
 
 
+import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.TextArea;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
@@ -8,6 +9,7 @@ import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.servizio.ServizioTable;
 import it.algos.wam.entity.servizio.ServizioTablePortal;
 import it.algos.wam.entity.volontario.Volontario_;
+import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 
@@ -50,20 +52,20 @@ public class FunzioneMod extends WamMod {
 //                Funzione_.note);
 //    }// end of method
 
-    /**
-     * Crea i campi visibili nella scheda (form)
-     * <p/>
-     * Come default spazzola tutti i campi della Entity <br>
-     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
-     */
-    @Override
-    protected Attribute<?, ?>[] creaFieldsForm() {
-        return super.addCompanyField(
-                Funzione_.sigla,
-                Funzione_.descrizione,
-                Funzione_.note);
-    }// end of method
+//    /**
+//     * Crea i campi visibili nella scheda (form)
+//     * <p/>
+//     * Come default spazzola tutti i campi della Entity <br>
+//     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+//     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
+//     */
+//    @Override
+//    protected Attribute<?, ?>[] creaFieldsForm() {
+//        return super.addCompanyField(
+//                Funzione_.sigla,
+//                Funzione_.descrizione,
+//                Funzione_.note);
+//    }// end of method
 
 //    /**
 //     * Crea i campi visibili nella scheda (search)
@@ -89,7 +91,9 @@ public class FunzioneMod extends WamMod {
         return new FunzioneTable(this);
     }
 
-
-
+    @Override
+    public ModuleForm createForm(Item item) {
+        return new FunzioneForm(item, this);
+    }
 }// end of class
 
