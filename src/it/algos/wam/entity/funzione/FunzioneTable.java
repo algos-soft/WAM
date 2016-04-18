@@ -74,13 +74,10 @@ public class FunzioneTable extends ETable {
 
 
     /**
-     * Colonna generata: colore.
+     * Colonna generata: icona.
      */
     private class IconColumnGenerator implements ColumnGenerator {
 
-        /**
-         * Genera la cella del colore.
-         */
         public Component generateCell(Table source, Object itemId, Object columnId) {
             final Item item = source.getItem(itemId);
             byte[] bas = (byte[]) item.getItemProperty(Funzione_.icon.getName()).getValue();
