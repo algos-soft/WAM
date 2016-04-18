@@ -269,53 +269,54 @@ public class WamUI extends UI {
         return nc;
     }// end of method
 
+
+//    /**
+//     * Crea il componente per l'utente
+//     *
+//     * @return il componente creato
+//     */
+//    private Component creaCompUtente() {
+//        MenuBar.MenuItem itemVolontari;
+//
+//        /* creo un componente standard di navigazione */
+//        NavComponent nc = new NavComponent(this);
+//
+//        // aggiungo le view - la menubar viene riempita automaticamente
+//        itemVolontari = nc.addMod(new VolontarioMod());
+//        nc.addMod(new FunzioneMod());
+//        nc.addMod(new ServizioMod());
+////        nc.setFooter(new Label("Footer text"));
+//
+//        // aggiungo un MenuItem con il tabellone.
+//        // volendo posso anche aggiungerlo nella posizione desiderata
+//        MenuBar mb = nc.getMenuBar();
+//        mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+//            @Override
+//            public void menuSelected(MenuBar.MenuItem selectedItem) {
+//                Tabellone tab = new Tabellone(getCurrentAddress());
+//                setContent(tab);
+//            }
+//        }, itemVolontari);
+//
+//        // da chiamare dopo che ho aggiunto tutti i MenuItems,
+//        // configura il Navigator in base alla MenuBar
+//        nc.setup();
+//
+//        return nc;
+//    }// end of method
+
     /**
      * Crea il componente per l'utente
      *
      * @return il componente creato
      */
     private Component creaCompUtente() {
-        MenuBar.MenuItem itemVolontari;
-
-        /* creo un componente standard di navigazione */
-        NavComponent nc = new NavComponent(this);
-
-        // aggiungo le view - la menubar viene riempita automaticamente
-        itemVolontari = nc.addMod(new VolontarioMod());
-        nc.addMod(new FunzioneMod());
-        nc.addMod(new ServizioMod());
-//        nc.setFooter(new Label("Footer text"));
-
-        // aggiungo un MenuItem con il tabellone.
-        // volendo posso anche aggiungerlo nella posizione desiderata
-        MenuBar mb = nc.getMenuBar();
-        mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Tabellone tab = new Tabellone(getCurrentAddress());
-                setContent(tab);
-            }
-        }, itemVolontari);
-
-        // da chiamare dopo che ho aggiunto tutti i MenuItems,
-        // configura il Navigator in base alla MenuBar
-        nc.setup();
-
-        return nc;
-    }// end of method
-
-    /**
-     * Crea il componente per l'utente
-     *
-     * @return il componente creato
-     */
-    private Component creaCompUtenteOld() {
 
         // creo un componente standard di navigazione
         NavComponent nc = new NavComponent(this);
 
         // aggiungo le view - la menubar viene riempita automaticamente
-        MenuBar.MenuItem item = nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
+        MenuBar.MenuItem itemVolontario = nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
         nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
         nc.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
 //        nc.setFooter(new Label("Footer text"));
@@ -329,7 +330,7 @@ public class WamUI extends UI {
                 Tabellone tab = new Tabellone(getCurrentAddress());
                 setContent(tab);
             }
-        }, item);
+        }, itemVolontario);
 
         // da chiamare dopo che ho aggiunto tutti i MenuItems,
         // configura il Navigator in base alla MenuBar
