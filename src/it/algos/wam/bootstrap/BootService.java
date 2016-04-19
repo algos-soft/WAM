@@ -160,7 +160,6 @@ public abstract class BootService {
             Volontario.crea(company, "Roberto", "Marchetti", listaFunzioni.get(2), listaFunzioni.get(3));
             Volontario.crea(company, "Edoardo", "Politi");
             Volontario.crea(company, "Sabina", "Roncelli");
-
         }// end of if cycle
     }// end of static method
 
@@ -205,7 +204,7 @@ public abstract class BootService {
         Servizio servizio;
 
         if (listaServizi != null && company != null) {
-            servizio = Servizio.crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile, orario, multiplo, persone);
+            servizio = Servizio.crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile);
             listaServizi.add(servizio);
         }// end of if cycle
 

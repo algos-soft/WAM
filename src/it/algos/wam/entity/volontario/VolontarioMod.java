@@ -1,10 +1,14 @@
 package it.algos.wam.entity.volontario;
 
 
+import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.wam.entity.funzione.FunzioneForm;
+import it.algos.wam.entity.servizio.ServizioForm;
+import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.search.SearchManager;
 
 import javax.persistence.metamodel.Attribute;
@@ -32,6 +36,11 @@ public class VolontarioMod extends WamMod {
     public VolontarioMod() {
         super(Volontario.class, MENU_ADDRESS, ICON);
     }// end of constructor
+
+    @Override
+    public ModuleForm createForm(Item item) {
+        return new VolontarioForm(item, this);
+    }
 
     /**
      * Crea i campi visibili nella lista (table)

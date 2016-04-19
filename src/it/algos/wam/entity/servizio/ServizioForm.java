@@ -6,9 +6,6 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -25,6 +22,7 @@ import java.util.List;
 
 /**
  * Created by alex on 5-04-2016.
+ * .
  */
 public class ServizioForm extends ModuleForm {
 
@@ -47,7 +45,6 @@ public class ServizioForm extends ModuleForm {
         super.init();
         servizioToUi();
     }
-
 
 
     @Override
@@ -88,7 +85,7 @@ public class ServizioForm extends ModuleForm {
 
         picker = new ServizioColorPicker();
 
-        HorizontalLayout hl = new HorizontalLayout(fsigla, fdesc,picker);
+        HorizontalLayout hl = new HorizontalLayout(fsigla, fdesc, picker);
         hl.setComponentAlignment(picker, Alignment.BOTTOM_CENTER);
 
         hl.setSpacing(true);
@@ -142,10 +139,9 @@ public class ServizioForm extends ModuleForm {
 
     @Override
     protected boolean save() {
-        boolean saved=super.save();
+        boolean saved = super.save();
         return saved;
     }
-
 
 
     @Override
@@ -176,13 +172,17 @@ public class ServizioForm extends ModuleForm {
         String err = "";
 
         // se orario predefinito, deve avere ora inizio e ora fine valide
-        if(isOrarioPredefinito()){
-            if(!oraInizio.isValid()){
-                if (!err.isEmpty()) {err += "\n";}
+        if (isOrarioPredefinito()) {
+            if (!oraInizio.isValid()) {
+                if (!err.isEmpty()) {
+                    err += "\n";
+                }
                 err += "Orario di inizio servizio non valido";
             }
-            if(!oraFine.isValid()){
-                if (!err.isEmpty()) {err += "\n";}
+            if (!oraFine.isValid()) {
+                if (!err.isEmpty()) {
+                    err += "\n";
+                }
                 err += "Orario di fine servizio non valido";
             }
         }
@@ -230,7 +230,7 @@ public class ServizioForm extends ModuleForm {
         oraFine.setTime(h, m);
 
         pi = getItem().getItemProperty(Servizio_.colore.getName());
-        int colorcode=pi.getValue();
+        int colorcode = pi.getValue();
         Color color = new Color(colorcode);
         picker.setColor(color);
 
@@ -251,7 +251,7 @@ public class ServizioForm extends ModuleForm {
      */
     private void uiToServizio() {
 
-        int h,m;
+        int h, m;
         h = oraInizio.getHour();
         getServizio().setOraInizio(h);
         m = oraInizio.getMinute();
@@ -275,7 +275,7 @@ public class ServizioForm extends ModuleForm {
      * Sincronizza i ServizioFunzione esistenti: modifica quelli esistenti,
      * cancella quelli inesistenti e crea quelli nuovi.
      */
-    private void syncFunzioni(){
+    private void syncFunzioni() {
         // modifica quelli esistenti e aggiunge i nuovi
         for (EditorSF editor : sfEditors) {
             ServizioFunzione sf = editor.getServizioFunzione();
@@ -322,7 +322,7 @@ public class ServizioForm extends ModuleForm {
     /**
      * Ritorna il valore del check Orario Predefinito
      */
-    private boolean isOrarioPredefinito(){
+    private boolean isOrarioPredefinito() {
         return Lib.getBool(fOrarioPredefinito.getValue());
     }
 
@@ -482,6 +482,20 @@ public class ServizioForm extends ModuleForm {
         }
 
         /**
+         * Returns the hour
+         *
+         * @return the hour, -1 if not selected
+         */
+        public int getHour() {
+            int num = -1;
+            Object value = getValue();
+            if (value != null) {
+                num = Integer.parseInt(value.toString());
+            }
+            return num;
+        }
+
+        /**
          * Assegna l'ora
          *
          * @param h l'ora
@@ -490,22 +504,9 @@ public class ServizioForm extends ModuleForm {
             setValue(intToString(h));
         }
 
-        /**
-         * Returns the hour
-         * @return the hour, -1 if not selected
-         */
-        public int getHour() {
-            int num=-1;
-            Object value = getValue();
-            if(value!=null){
-                num=Integer.parseInt(value.toString());
-            }
-            return num;
-        }
-
         @Override
         public boolean isValid() {
-            return (getHour()!=-1);
+            return (getHour() != -1);
         }
     }
 
@@ -537,6 +538,19 @@ public class ServizioForm extends ModuleForm {
             return s;
         }
 
+        /**
+         * Returns the minute
+         *
+         * @return the minute, -1 if not selected
+         */
+        public int getMinute() {
+            int num = -1;
+            Object value = getValue();
+            if (value != null) {
+                num = Integer.parseInt(value.toString());
+            }
+            return num;
+        }
 
         /**
          * Assegna i minuti
@@ -547,22 +561,9 @@ public class ServizioForm extends ModuleForm {
             setValue(intToString(m));
         }
 
-        /**
-         * Returns the minute
-         * @return the minute, -1 if not selected
-         */
-        public int getMinute() {
-            int num=-1;
-            Object value = getValue();
-            if(value!=null){
-                num=Integer.parseInt(value.toString());
-            }
-            return num;
-        }
-
         @Override
         public boolean isValid() {
-            return (getMinute()!=-1);
+            return (getMinute() != -1);
         }
 
 
@@ -610,7 +611,7 @@ public class ServizioForm extends ModuleForm {
             return cm.getMinute();
         }
 
-        public boolean isValid(){
+        public boolean isValid() {
             return (ch.isValid() && cm.isValid());
         }
 

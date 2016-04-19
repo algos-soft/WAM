@@ -3,6 +3,7 @@ package it.algos.wam.entity.volontariofunzione;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -50,6 +51,19 @@ public class VolontarioFunzione extends WamCompanyEntity {
      */
     public VolontarioFunzione(Volontario volontario, Funzione funzione) {
         super();
+        this.setVolontario(volontario);
+        this.setFunzione(funzione);
+    }// end of general constructor
+
+    /**
+     * Costruttore completo
+     *
+     * @param volontario di riferimento
+     * @param funzione   di riferimento
+     */
+    public VolontarioFunzione(WamCompany company, Volontario volontario, Funzione funzione) {
+        super();
+        this.setCompany(company);
         this.setVolontario(volontario);
         this.setFunzione(funzione);
     }// end of general constructor
