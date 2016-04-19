@@ -4,12 +4,15 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.colorpicker.Color;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
 import com.vaadin.ui.components.colorpicker.ColorChangeListener;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.servizio.ServizioColorPicker;
 import it.algos.wam.entity.servizio.Servizio_;
@@ -42,7 +45,7 @@ public class FunzioneTable extends ETable {
 
     protected Object[] getDisplayColumns() {
         return new Object[]{
-                Funzione_.icon,
+                COL_ICON,
                 Funzione_.sigla,
                 Funzione_.descrizione,
                 Funzione_.note,
@@ -72,7 +75,6 @@ public class FunzioneTable extends ETable {
 
 
 
-
     /**
      * Colonna generata: icona.
      */
@@ -80,11 +82,25 @@ public class FunzioneTable extends ETable {
 
         public Component generateCell(Table source, Object itemId, Object columnId) {
             final Item item = source.getItem(itemId);
-            byte[] bas = (byte[]) item.getItemProperty(Funzione_.icon.getName()).getValue();
-            Resource res = LibResource.getStreamResource(bas);
-            Image img = new Image(null, res);
-            img.setSizeUndefined();
-            return img;
+//            byte[] bas = (byte[]) item.getItemProperty(Funzione_.icon.getName()).getValue();
+//            Resource res = LibResource.getStreamResource(bas);
+
+//            res=LibResource.getImgResource(WAMApp.IMG_FOLDER_NAME, "lock-icon.png");
+//            res= FontAwesome.LIST;
+//
+//            Image img = new Image(null, res);
+//            img.setSizeUndefined();
+//            img.setIcon(FontAwesome.LIST);
+
+            Label lbl = new Label();
+            lbl.setContentMode(ContentMode.HTML);
+
+            int codepoint = FontAwesome.STETHOSCOPE.getCodepoint();
+            FontAwesome glyph = FontAwesome.fromCodepoint(codepoint);
+            lbl.setValue(glyph.getHtml());
+            lbl.addStyleName("redicon");
+
+            return lbl;
         }
     }
 
