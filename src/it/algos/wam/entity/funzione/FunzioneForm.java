@@ -2,6 +2,7 @@ package it.algos.wam.entity.funzione;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MultiSelectMode;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -115,8 +116,7 @@ public class FunzioneForm extends ModuleForm {
         public SelectIconDialog(Listener closeListener) {
             super(closeListener);
             setTitle("Scegli una icona");
-            addComponent(new IconGrid());
-            getDetailComponent().setHeight("20em");
+            addComponent(new IconGrid(this));
         }
 
 
@@ -168,8 +168,13 @@ public class FunzioneForm extends ModuleForm {
 
 
     class IconGrid extends GridLayout{
-        public IconGrid() {
-            super(6,5);
+        private SelectIconDialog dialog;
+
+        public IconGrid(SelectIconDialog dialog) {
+            super();
+            this.dialog=dialog;
+            setColumns(6);
+            setSpacing(true);
             populate();
         }
 
@@ -193,13 +198,33 @@ public class FunzioneForm extends ModuleForm {
                 Label lbl = new Label();
                 lbl.setContentMode(ContentMode.HTML);
                 lbl.setValue(glyph.getHtml());
-                lbl.addStyleName("redicon");
-                addComponent(lbl);
+                lbl.addStyleName("funzioneicon");
+                lbl.addStyleName("pippo");
+                HorizontalLayout layout = new HorizontalLayout();
+                layout.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+                    @Override
+                    public void layoutClick(LayoutEvents.LayoutClickEvent layoutClickEvent) {
+                        iconClicked(codepoint);
+                    }
+                });
+                layout.addStyleName("pippo");
+                layout.addComponent(lbl);
+                addComponent(layout);
             }
 
         }
 
+        private void iconClicked(int codepoint){
+            dialog.close();
+            int a = 87;
+            int b=a;
+        }
+
+
     }
+
+
+
 
     class IconTable extends Table{
 

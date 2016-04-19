@@ -106,10 +106,17 @@ $v-font-weight: 400;
     color: blue;
   }
 
-  .redicon .v-icon {
+  // icona nella funzione
+  .funzioneicon .v-icon {
     color: red;
-    font-size: 20px;
+    font-size: 2em;
   }
+
+  .pippo a:hover {
+    background: #6282A3;
+    color: yellow;
+  }
+
 
   // attributi di tutto il tabellone
   .ctabellone {
