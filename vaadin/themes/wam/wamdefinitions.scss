@@ -108,7 +108,7 @@ $v-font-weight: 400;
 
   // bottoni del dialogo di scelta funzioni nella scheda funzione
   .bfunzione .v-icon {
-    color: red;
+    color: white;
   }
 
 
@@ -343,13 +343,19 @@ $v-font-weight: 400;
   }
 
   // componente iscrizione - testo scuro
-  .ciscrizione-dark {
+  .ciscrizione-dark{
     color: black;
+    .v-icon{
+      color: black;
+    }
   }
 
   // componente iscrizione - testo chiaro
   .ciscrizione-light {
     color: white;
+    .v-icon{
+      color: white;
+    }
   }
 
 

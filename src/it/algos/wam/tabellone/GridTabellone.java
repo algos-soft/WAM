@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class GridTabellone extends GridLayout implements View {
 
-    public static final String W_COLONNE_TURNI = "7em";   // larghezza fissa delle colonne turni
+    public static final String W_COLONNE_TURNI = "8em";   // larghezza fissa delle colonne turni
     public static final String H_ISCRIZIONI = "1.6em";   // altezza fissa delle celle iscrizione
 
     private LocalDate dStart;

@@ -1,6 +1,7 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.event.LayoutEvents;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.funzione.Funzione;
@@ -187,12 +188,13 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         int row = 0;
         for (ServizioFunzione sf : serv.getServizioFunzioni()) {
             Iscrizione iscr = turno.getIscrizione(sf);
+            FontAwesome icon = sf.getFunzione().getIcon();
             Component ci;
             if (iscr != null) {
                 String nome = iscr.getVolontario().toString();
-                ci = new CIscrizione(nome);
+                ci = new CIscrizione(nome, icon);
             } else {
-                ci = new CIscrizione("");
+                ci = new CIscrizione("", icon);
             }
             // foreground dell'iscrizione
             if (bgStyle != null) {

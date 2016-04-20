@@ -1,8 +1,7 @@
 package it.algos.wam.entity.funzione;
 
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.*;
 import it.algos.webbase.web.dialog.BaseDialog;
 
 import java.util.ArrayList;
@@ -18,7 +17,14 @@ class SelectIconDialog extends BaseDialog {
     public SelectIconDialog() {
         super();
         setTitle("Scegli una icona");
-        addComponent(new IconGrid(this));
+        IconGrid grid = new IconGrid();
+        addComponent(grid);
+
+        Component dc = getDetailComponent();
+        if(dc instanceof VerticalLayout){
+            VerticalLayout vl = (VerticalLayout)dc;
+            vl.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
+        }
 
         Button bRemove = new Button("Rimuovi icona");
         bRemove.setIcon(FontAwesome.TRASH_O);
@@ -49,9 +55,9 @@ class SelectIconDialog extends BaseDialog {
 
     class IconGrid extends GridLayout {
 
-        public IconGrid(SelectIconDialog dialog) {
+        public IconGrid() {
             super();
-            setColumns(4);
+            setColumns(3);
             setSpacing(true);
             populate();
         }
@@ -59,12 +65,12 @@ class SelectIconDialog extends BaseDialog {
         private void populate() {
             int[] codepoints = {FontAwesome.AMBULANCE.getCodepoint(),
                     FontAwesome.WHEELCHAIR.getCodepoint(),
-                    FontAwesome.CAB.getCodepoint(),
-                    FontAwesome.MOTORCYCLE.getCodepoint(),
+//                    FontAwesome.CAB.getCodepoint(),   // non va
+//                    FontAwesome.MOTORCYCLE.getCodepoint(),   // non va
                     FontAwesome.MEDKIT.getCodepoint(),
                     FontAwesome.HEART.getCodepoint(),
                     FontAwesome.STETHOSCOPE.getCodepoint(),
-                    FontAwesome.HOTEL.getCodepoint(),
+//                    FontAwesome.HOTEL.getCodepoint(),   // non va
                     FontAwesome.USER.getCodepoint(),
                     FontAwesome.USER_MD.getCodepoint(),
                     FontAwesome.MALE.getCodepoint(),
@@ -144,6 +150,5 @@ class SelectIconDialog extends BaseDialog {
             l.dialogClosed(e);
         }
     }
-
 
 }
