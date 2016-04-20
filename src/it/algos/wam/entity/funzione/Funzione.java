@@ -1,5 +1,6 @@
 package it.algos.wam.entity.funzione;
 
+import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
@@ -336,6 +337,33 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
     public void setIconCodepoint(int iconCodepoint) {
         this.iconCodepoint = iconCodepoint;
+    }
+
+    /**
+     * Recupera l'icona
+     * @return l'icona
+     */
+    public FontAwesome getIcon(){
+        FontAwesome glyph=null;
+        int codepoint=getIconCodepoint();
+        try{
+            glyph=FontAwesome.fromCodepoint(codepoint);
+        }catch (Exception e){
+
+        }
+        return glyph;
+    }
+
+    /**
+     * Assegna una icona
+     * @param glyph l'icona FontAwesome
+     */
+    public void setIcon(FontAwesome glyph){
+        int codepoint=0;
+        if(glyph!=null){
+            codepoint=glyph.getCodepoint();
+        }
+        setIconCodepoint(codepoint);
     }
 
     /**

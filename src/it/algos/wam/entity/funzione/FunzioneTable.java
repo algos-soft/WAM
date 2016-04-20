@@ -30,14 +30,14 @@ import java.io.InputStream;
  */
 public class FunzioneTable extends ETable {
 
-    protected static final String COL_ICON = "icon";
+    protected static final String COL_ICON = "icona";
 
 
     public FunzioneTable(ModulePop module) {
         super(module);
         Container cont = getContainerDataSource();
-        if(cont instanceof Sortable){
-            Sortable sortable = (Sortable)cont;
+        if (cont instanceof Sortable) {
+            Sortable sortable = (Sortable) cont;
             sortable.sort(new Object[]{Funzione_.ordine.getName()}, new boolean[]{true});
         }
 
@@ -74,37 +74,68 @@ public class FunzioneTable extends ETable {
     }
 
 
-
     /**
      * Colonna generata: icona.
      */
     private class IconColumnGenerator implements ColumnGenerator {
 
         public Component generateCell(Table source, Object itemId, Object columnId) {
+
             final Item item = source.getItem(itemId);
-//            byte[] bas = (byte[]) item.getItemProperty(Funzione_.icon.getName()).getValue();
-//            Resource res = LibResource.getStreamResource(bas);
+            Button bIcon = new Button();
+            bIcon.setHtmlContentAllowed(true);
+            bIcon.setWidth("3em");
+            bIcon.setCaption("...");
+            bIcon.addStyleName("bfunzione");
 
-//            res=LibResource.getImgResource(WAMApp.IMG_FOLDER_NAME, "lock-icon.png");
-//            res= FontAwesome.LIST;
-//
-//            Image img = new Image(null, res);
-//            img.setSizeUndefined();
-//            img.setIcon(FontAwesome.LIST);
+            bIcon.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    SelectIconDialog dialog = new SelectIconDialog();
+                    dialog.addCloseListener(new SelectIconDialog.CloseListener() {
+                        @Override
+                        public void dialogClosed(SelectIconDialog.DialogEvent event) {
+                            int exitcode = event.getExitcode();
+                            BeanItem bi = LibBean.fromItem(item);
+                            Funzione funz = (Funzione) bi.getBean();
 
-            Label lbl = new Label();
-            lbl.setContentMode(ContentMode.HTML);
+                            switch (exitcode) {
+                                case 0:   // close, no action
+                                    break;
+                                case 1:   // icon selected
+                                    int codepoint = event.getCodepoint();
+                                    funz.setIconCodepoint(codepoint);
+                                    funz.save();
+                                    refresh();
+                                    break;
+                                case 2:   // rebove icon
+                                    funz.setIconCodepoint(0);
+                                    funz.save();
+                                    refresh();
+                                    break;
+                            }
 
-            int codepoint = FontAwesome.STETHOSCOPE.getCodepoint();
-            FontAwesome glyph = FontAwesome.fromCodepoint(codepoint);
-            lbl.setValue(glyph.getHtml());
-            lbl.addStyleName("redicon");
+                        }
+                    });
+                    dialog.show();
 
-            return lbl;
+                }
+            });
+
+
+            Property prop = item.getItemProperty(Funzione_.iconCodepoint.getName());
+            if (prop != null) {
+                FontAwesome glyph=null;
+                int codepoint = (int) prop.getValue();
+                try {
+                    glyph=FontAwesome.fromCodepoint(codepoint);
+                    bIcon.setCaption(glyph.getHtml());
+                } catch (Exception e) {
+                }
+            }
+            return bIcon;
         }
     }
-
-
 
 
 }
