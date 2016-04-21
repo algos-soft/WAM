@@ -5,6 +5,7 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
@@ -53,6 +54,16 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
      */
     public ServizioFunzione(Servizio servizio, Funzione funzione) {
         super();
+        this.setServizio(servizio);
+        this.setFunzione(funzione);
+    }// end of general constructor
+
+    /**
+     * Costruttore completo
+     */
+    public ServizioFunzione(WamCompany company,Servizio servizio, Funzione funzione) {
+        super();
+        this.setCompany(company);
         this.setServizio(servizio);
         this.setFunzione(funzione);
     }// end of general constructor

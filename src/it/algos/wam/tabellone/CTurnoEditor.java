@@ -609,8 +609,8 @@ public class CTurnoEditor extends CTabelloneEditor {
         if(vol!=null){
             admin=vol.isAdmin();
         }
-//        return true;
-        return admin;
+        return true;
+//        return admin;
     }
 
 
