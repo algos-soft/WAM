@@ -58,7 +58,10 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         iscrizioneGroupEditor = new IscrizioneGroupEditor();
         addComponent(iscrizioneGroupEditor);
-        addComponent(creaPanComandi());
+
+        Component panComandi = creaPanComandi();
+        addComponent(panComandi);
+        setComponentAlignment(panComandi, Alignment.MIDDLE_CENTER);
 
     }
 
@@ -342,6 +345,17 @@ public class CTurnoEditor extends CTabelloneEditor {
             this.parent = parent;
             setSpacing(true);
 
+            // crea il componente note
+            fNote = new TextField("Note");
+            fNote.setValue(iscrizione.getNota());
+            fNote.setWidth("10em");
+
+            // crea il componente ore
+            cTime = new HHMMComponent("Tempo HH:MM");
+            cTime.setHoursMinutes(iscrizione.getMinutiEffettivi());
+
+            // crea il componente editor di tipo diverso a seconda
+            // della modalità operativa multi-iscrizione
             Component comp;
             if (isMultiIscrizione()) {
                 comp = creaCompPopup();
@@ -383,8 +397,8 @@ public class CTurnoEditor extends CTabelloneEditor {
                             } else {
                                 selUtenti.select(currentSelectedVolontario);
                             }
-                        } else {
-                            int minutiTurno=turno.getMinutiTotali();
+                        } else { //nuova iscrizione
+                            int minutiTurno = turno.getMinutiTotali();
                             iscrizione.setMinutiEffettivi(minutiTurno);
                             cTime.setHoursMinutes(minutiTurno);
                             fNote.setValue("");
@@ -396,14 +410,6 @@ public class CTurnoEditor extends CTabelloneEditor {
                     currentSelectedVolontario = selUtenti.getVolontario();
                 }
             });
-
-
-            fNote = new TextField("Note");
-            fNote.setValue(iscrizione.getNota());
-            fNote.setWidth("10em");
-
-            cTime = new HHMMComponent("Tempo HH:MM");
-            cTime.setHoursMinutes(iscrizione.getMinutiEffettivi());
 
             VerticalLayout volLayout = new VerticalLayout();
             Label volLabel = new Label(creaTestoComponente(), ContentMode.HTML);
@@ -431,7 +437,6 @@ public class CTurnoEditor extends CTabelloneEditor {
 
             // bottone iscrizione
             Button bMain = new Button();
-            bMain.setHeight("100%");
             bMain.setWidth("100%");
             bMain.setHtmlContentAllowed(true);
             Volontario volIscritto = iscrizione.getVolontario();
@@ -443,7 +448,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                 if (glyph != null) {
                     caption = glyph.getHtml() + " " + caption;
                 }
-                bMain.addStyleName("greenBg");
+//                bMain.addStyleName("greenBg");
             } else {                    // non iscritto
                 caption = "";
                 FontAwesome glyph = funz.getIcon();
@@ -493,6 +498,8 @@ public class CTurnoEditor extends CTabelloneEditor {
                         entityManager.getTransaction().begin();
                         turno.getIscrizioni().add(iscrizione);
                         iscrizione.setVolontario(getLoggedUser());
+                        iscrizione.setNota(fNote.getValue());
+                        iscrizione.setMinutiEffettivi(cTime.getTotalMinutes());
                         entityManager.merge(turno);
                         entityManager.getTransaction().commit();
                         fireDismissListeners(new DismissEvent(bMain, true, false));
@@ -504,10 +511,10 @@ public class CTurnoEditor extends CTabelloneEditor {
 
             // bottone remove
             Button bRemove = new Button();
-            bRemove.setHeight("100%");
+//            bRemove.setHeight("100%");
             bRemove.setIcon(FontAwesome.REMOVE);
             bRemove.addStyleName("icon-red");
-            bRemove.setEnabled(volIscritto != null);
+            bRemove.setVisible(volIscritto != null);
             bRemove.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
@@ -519,15 +526,58 @@ public class CTurnoEditor extends CTabelloneEditor {
                 }
             });
 
+            // bottone registra
+            Button bSave = new Button();
+            bSave.setIcon(FontAwesome.CHECK);
+            bSave.addStyleName("icon-green");
+            bSave.setVisible(volIscritto != null);
+            bSave.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    entityManager.getTransaction().begin();
+                    iscrizione.setNota(fNote.getValue());
+                    iscrizione.setMinutiEffettivi(cTime.getTotalMinutes());
+                    entityManager.merge(iscrizione);
+                    entityManager.getTransaction().commit();
+                    fireDismissListeners(new DismissEvent(bRemove, true, false));
+                }
+            });
+
+            // bottone save solo se c'è un iscritto e se quello sono io
+            // se il bottone non c'è ci metto una label vuota per mantenere gli allineamenti
+            Component rightComp = new Label("&nbsp;", ContentMode.HTML);
+            if (volIscritto != null) {
+                if (volIscritto.equals(getLoggedUser())) {
+                    rightComp = bSave;
+                }
+            }
+            rightComp.setWidth("3em");
+
+            // se c'è un iscritto e quello non sono io, disabilito note e tempo
+            if (volIscritto != null) {
+                if (!volIscritto.equals(getLoggedUser())) {
+                    fNote.setEnabled(false);
+                    cTime.setEnabled(false);
+                }
+            }
+
 
             // layout finale
             HorizontalLayout layout = new HorizontalLayout();
             layout.setSpacing(true);
             layout.setWidth("100%");
-            layout.setHeight("3em");
-            layout.addComponent(bMain);
             layout.addComponent(bRemove);
+            layout.addComponent(bMain);
+            layout.addComponent(fNote);
+            layout.addComponent(cTime);
+            layout.addComponent(rightComp);
             layout.setExpandRatio(bMain, 1);
+
+            layout.setComponentAlignment(bRemove, Alignment.BOTTOM_CENTER);
+            layout.setComponentAlignment(bMain, Alignment.BOTTOM_CENTER);
+            layout.setComponentAlignment(fNote, Alignment.BOTTOM_LEFT);
+            layout.setComponentAlignment(cTime, Alignment.BOTTOM_LEFT);
+            layout.setComponentAlignment(rightComp, Alignment.BOTTOM_CENTER);
 
             return layout;
         }
@@ -572,7 +622,8 @@ public class CTurnoEditor extends CTabelloneEditor {
         /**
          * Recupera l'iscrizione aggiornata
          *
-         * @return l'iscrizione aggiornata, null se non è specificato il volontario
+         * @return l'iscrizione aggiornata, null se nell'iscrizione
+         * non è specificato il volontario (significa che nessuno è iscritto)
          */
         public Iscrizione getIscrizione() {
             if (getVolontario() != null) {
@@ -616,7 +667,6 @@ public class CTurnoEditor extends CTabelloneEditor {
         }// end class SelettoreUtenti
 
 
-
     } // end class IscrizioneEditor
 
     /**
@@ -648,8 +698,8 @@ public class CTurnoEditor extends CTabelloneEditor {
         if (vol != null) {
             admin = vol.isAdmin();
         }
-        return true;
-//        return admin;
+//        return true;
+        return admin;
     }
 
 

@@ -127,4 +127,11 @@ public class Iscrizione extends WamCompanyEntity {
         this.turno = turno;
     }
 
+    /**
+     * Ritorna true se ha una nota
+     */
+    public boolean hasNota(){
+        return (getNota()!=null && !getNota().isEmpty());
+    }
+
 }// end of class

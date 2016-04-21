@@ -192,9 +192,13 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
             Component ci;
             if (iscr != null) {
                 String nome = iscr.getVolontario().toString();
-                ci = new CIscrizione(nome, icon);
+                FontAwesome fa = null;
+                if(iscr.hasNota()){
+                    fa=FontAwesome.ASTERISK;
+                }
+                ci = new CIscrizione(nome, icon, fa);
             } else {
-                ci = new CIscrizione("", icon);
+                ci = new CIscrizione("", icon, null);
             }
             // foreground dell'iscrizione
             if (bgStyle != null) {

@@ -15,7 +15,14 @@ import java.time.LocalDate;
  */
 public class CIscrizione extends HorizontalLayout {
 
-    public CIscrizione(String nome, FontAwesome icon) {
+    /**
+     * Costruttore
+     * @param nome il nome del volontario
+     * @param leftIcon l'icona di sinistra
+     * @param rightIcon l'icona di destra
+     *
+     * */
+    public CIscrizione(String nome, FontAwesome leftIcon, FontAwesome rightIcon) {
         super();
 
         // impostazione del layout
@@ -26,14 +33,18 @@ public class CIscrizione extends HorizontalLayout {
         Label iconLabel = new Label();
         iconLabel.setContentMode(ContentMode.HTML);
         iconLabel.setWidth("1em");
-        if (icon != null) {
-            iconLabel.setValue(icon.getHtml());
+        if (leftIcon != null) {
+            iconLabel.setValue(leftIcon.getHtml());
         }
 
         // label per il nome del volontario
         Label nameLabel = new Label();
         nameLabel.setContentMode(ContentMode.HTML);
-        nameLabel.setValue(nome);
+        String text=nome;
+        if(rightIcon!=null){
+            text+=" "+rightIcon.getHtml();
+        }
+        nameLabel.setValue(text);
 
         // composizione grafica
         addComponent(iconLabel);

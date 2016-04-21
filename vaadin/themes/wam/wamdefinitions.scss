@@ -124,6 +124,13 @@ $v-font-weight: 400;
     }
   }
 
+  .icon-green {
+    .v-icon {
+      color: green;
+    }
+  }
+
+
   // bottoni del dialogo di scelta funzioni nella scheda funzione
   .bfunzione .v-icon {
     color: black;
