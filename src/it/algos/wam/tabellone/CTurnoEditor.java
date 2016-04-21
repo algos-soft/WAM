@@ -1,11 +1,16 @@
 package it.algos.wam.tabellone;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Property;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
@@ -13,6 +18,8 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.webbase.multiazienda.CompanyEntity;
+import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.field.IntegerField;
@@ -23,6 +30,7 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Componente per presentare e modificare un turno nel Tabellone.
@@ -321,7 +329,7 @@ public class CTurnoEditor extends CTabelloneEditor {
     private class IscrizioneEditor extends CustomComponent {
 
         private IscrizioneGroupEditor parent;
-        private ERelatedComboField fVolontario;
+        private SelettoreUtenti selUtenti;
         private TextField fNote;
         private IntegerField fOre;
         private Volontario currentSelectedVolontario;
@@ -357,35 +365,36 @@ public class CTurnoEditor extends CTabelloneEditor {
          */
         private Component creaCompPopup() {
 
-            fVolontario = new ERelatedComboField(Volontario.class);
-            fVolontario.setWidth("10em");
+            selUtenti=new SelettoreUtenti();
+            selUtenti.setWidth("10em");
             if (iscrizione.getVolontario() != null) {
-                fVolontario.setValue(iscrizione.getVolontario().getId());
+                currentSelectedVolontario=iscrizione.getVolontario();
+                selUtenti.setValue(currentSelectedVolontario);
             }
-            fVolontario.addValueChangeListener(new Property.ValueChangeListener() {
+            selUtenti.addValueChangeListener(new Property.ValueChangeListener() {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
 
                     // controllo che non sia già iscritto
-                    Volontario sel = getVolontario();
+                    Volontario sel = selUtenti.getVolontario();
                     if (sel != null) {
                         boolean giaIscritto = IscrizioneEditor.this.parent.isIscritto(sel, IscrizioneEditor.this);
                         if (giaIscritto) {
                             Notification.show(sel + " è già iscritto a questo turno.", Notification.Type.ERROR_MESSAGE);
                             if (currentSelectedVolontario == null) {
-                                fVolontario.select(null);
+                                selUtenti.select(null);
                             } else {
-                                fVolontario.select(currentSelectedVolontario.getId());
+                                selUtenti.select(currentSelectedVolontario);
                             }
                         }
                     }
 
                     syncFields();
 
-                    Volontario v = getVolontario();
-                    currentSelectedVolontario = v;
+                    currentSelectedVolontario = selUtenti.getVolontario();
                 }
             });
+
 
             fNote = new TextField("Note");
             fNote.setValue(iscrizione.getNota());
@@ -398,7 +407,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             VerticalLayout volLayout = new VerticalLayout();
             Label volLabel = new Label(creaTestoComponente(), ContentMode.HTML);
             volLayout.addComponent(volLabel);
-            volLayout.addComponent(fVolontario);
+            volLayout.addComponent(selUtenti);
 
             syncFields();
 
@@ -462,7 +471,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                     // controllo che l'utente corrente abbia la funzione richiesta
                     if (cont) {
                         if (!getLoggedUser().haFunzione(funz)) {
-                            Notification notif=new Notification("Nel tuo profilo non c'è la funzione " + funz.getDescrizione() + "<br>" + "Rivolgiti all'amministratore", Notification.Type.WARNING_MESSAGE);
+                            Notification notif = new Notification("Nel tuo profilo non c'è la funzione " + funz.getDescrizione() + "<br>" + "Rivolgiti all'amministratore", Notification.Type.WARNING_MESSAGE);
                             notif.setHtmlContentAllowed(true);
                             notif.show(Page.getCurrent());
                             cont = false;
@@ -470,7 +479,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                     }
 
                     // controllo che non sia già iscritto in qualche altra posizione di questo turno
-                    if(cont){
+                    if (cont) {
                         boolean giaIscritto = IscrizioneEditor.this.parent.isIscritto(getLoggedUser(), IscrizioneEditor.this);
                         if (giaIscritto) {
                             Notification.show("Sei già iscritto a questo turno.", Notification.Type.ERROR_MESSAGE);
@@ -538,7 +547,7 @@ public class CTurnoEditor extends CTabelloneEditor {
 
 
         private void syncFields() {
-            boolean enable = (fVolontario.getValue() != null);
+            boolean enable = (selUtenti.getVolontario() != null);
             fNote.setVisible(enable);
             fOre.setVisible(enable);
         }
@@ -550,12 +559,9 @@ public class CTurnoEditor extends CTabelloneEditor {
          * @return il volontario
          */
         public Volontario getVolontario() {
-            Volontario v = null;
+            Volontario v;
             if(isMultiIscrizione()){
-                Object value = fVolontario.getSelectedBean();
-                if (value != null && value instanceof Volontario) {
-                    v = (Volontario) value;
-                }
+                v = selUtenti.getVolontario();
             }else{
                 v = iscrizione.getVolontario();
             }
@@ -576,6 +582,38 @@ public class CTurnoEditor extends CTabelloneEditor {
             } else {
                 return null;
             }
+        }
+
+
+
+
+        /**
+         * Selettore filtrato sugli utenti che sono abilitati alla funzione corrente
+         */
+        class SelettoreUtenti extends ComboBox{
+
+            public SelettoreUtenti() {
+
+                // tutti i volontari che hanno la funzione corrente
+                Funzione funz = iscrizione.getServizioFunzione().getFunzione();
+                List volontari = CompanyQuery.getList(Volontario.class);
+                for(Object obj : volontari){
+                    Volontario v = (Volontario)obj;
+                    if(v.haFunzione(funz)){
+                        addItem(v);
+                    }
+                }
+            }
+
+            public Volontario getVolontario(){
+                Volontario v=null;
+                Object obj = getValue();
+                if(obj!=null && obj instanceof Volontario){
+                    v=(Volontario)obj;
+                }
+                return v;
+            }
+
         }
 
     }
@@ -609,8 +647,8 @@ public class CTurnoEditor extends CTabelloneEditor {
         if(vol!=null){
             admin=vol.isAdmin();
         }
-//        return true;
-        return admin;
+        return true;
+//        return admin;
     }
 
 
