@@ -1,5 +1,6 @@
 package it.algos.wam.bootstrap;
 
+import com.vaadin.server.VaadinSession;
 import it.algos.webbase.web.lib.LibVers;
 
 import javax.servlet.ServletContextEvent;
@@ -30,6 +31,10 @@ public class VersBootStrap implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent contextEvent) {
         int k = 0;
+
+//        VaadinSession s = new VaadinSession(null);
+//        VaadinSession.setCurrent(s);
+//        s.setAttribute("company", c);
 
         //--prima installazione del programma
         //--non fa nulla, solo informativo
