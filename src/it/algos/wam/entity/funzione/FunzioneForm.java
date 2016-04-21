@@ -146,23 +146,4 @@ public class FunzioneForm extends ModuleForm {
     }
 
 
-    //    @Override
-//    protected Attribute<?, ?>[] getAttributesList() {
-//        Attribute[] attrs = new Attribute[]{
-//                Funzione_.sigla,
-//                Funzione_.descrizione,
-//                Funzione_.note,
-//                Funzione_.iconCodepoint
-//        };
-//        return attrs;
-//    }
-
-
-//    @Override
-//    protected boolean save() {
-//        return super.save();
-//    }
-//
-
-
 }

@@ -34,7 +34,7 @@ public class CIscrizione extends HorizontalLayout {
         Label iconLabel = new Label();
         iconLabel.setContentMode(ContentMode.HTML);
         iconLabel.setWidth("1.3em");
-        iconLabel.addStyleName("ciscrizione");
+//        iconLabel.addStyleName("ciscrizione");
 //      //  iconLabel.addStyleName("bfunzione");
 
         if(icon!=null){

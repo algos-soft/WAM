@@ -2,9 +2,11 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -23,12 +25,18 @@ import java.util.ArrayList;
 
 /**
  * Componente per presentare e modificare un turno nel Tabellone.
+ * Ha due modalità di funzionamento: iscrizione singola o multi-iscrizione (vedi isMultiIscrizione())
+ * In modalità iscrizione singola, un volontario può iscrivere solo se stesso
+ * e l'iscrizione viene fatta tramite bottoni.
+ * In modalità multi-iscrizione, un volontario può iscrivere anche gli altri e
+ * l'iscrizione viene fatta selezionando i nomi dai dei popup.
+ *
  * Created by alex on 05/03/16.
  */
 public class CTurnoEditor extends CTabelloneEditor {
 
     private Turno turno;
-    private IscrizioniEditor iscrizioniEditor;
+    private IscrizioneGroupEditor iscrizioneGroupEditor;
     private TextField fieldNote;
 
     public CTurnoEditor(Turno turno, EntityManager entityManager) {
@@ -37,13 +45,13 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         addComponent(creaCompTitolo());
 
-        Component comp=creaCompDettaglio();
-        if(comp!=null){
+        Component comp = creaCompDettaglio();
+        if (comp != null) {
             addComponent(comp);
         }
 
-        iscrizioniEditor = new IscrizioniEditor();
-        addComponent(iscrizioniEditor);
+        iscrizioneGroupEditor = new IscrizioneGroupEditor();
+        addComponent(iscrizioneGroupEditor);
         addComponent(creaPanComandi());
 
     }
@@ -62,8 +70,8 @@ public class CTurnoEditor extends CTabelloneEditor {
         LocalDate dataInizio = DateConvertUtils.asLocalDate(turno.getInizio());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d LLLL YYYY");
         String dataOra = dataInizio.format(formatter);
-        if(serv.isOrario()){
-            dataOra+=", ore " + serv.getStrOrario();
+        if (serv.isOrario()) {
+            dataOra += ", ore " + serv.getStrOrario();
         }
 
         layout.addComponent(new Label(dataOra));
@@ -81,17 +89,13 @@ public class CTurnoEditor extends CTabelloneEditor {
      */
     private Component creaCompDettaglio() {
         Servizio serv = turno.getServizio();
-        if(!serv.isOrario()){
+        if (!serv.isOrario()) {
             fieldNote = new TextField("note");
             fieldNote.setWidth("100%");
             fieldNote.setValue(turno.getNote());
         }
         return fieldNote;
     }
-
-
-
-
 
 
     /**
@@ -108,10 +112,10 @@ public class CTurnoEditor extends CTabelloneEditor {
         bElimina.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                ConfirmDialog dialog=new ConfirmDialog("Elimina turno","Sei sicuro?",new ConfirmDialog.Listener() {
+                ConfirmDialog dialog = new ConfirmDialog("Elimina turno", "Sei sicuro?", new ConfirmDialog.Listener() {
                     @Override
                     public void onClose(ConfirmDialog dialog, boolean confirmed) {
-                        if(confirmed){
+                        if (confirmed) {
                             deleteTurno();
                             fireDismissListeners(new DismissEvent(bElimina, false, true));
                         }
@@ -129,6 +133,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             }
         });
 
+
         Button bRegistra = new Button("Registra");
         bRegistra.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         bRegistra.addStyleName(ValoTheme.BUTTON_PRIMARY);    // "primary" not "default"
@@ -136,7 +141,7 @@ public class CTurnoEditor extends CTabelloneEditor {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                if(saveTurno()){
+                if (saveTurnoMulti()) {
                     fireDismissListeners(new DismissEvent(bRegistra, true, false));
                 }
             }
@@ -144,24 +149,33 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         // controllo se il turno è persisted
 
-        if(turno.getId()!=null){
+        if (turno.getId() != null) {
             layout.addComponent(bElimina);
         }
+
         layout.addComponent(bAnnulla);
-        layout.addComponent(bRegistra);
+
+        /**
+         * Il bottone Registra
+         * Usato solo in modalità multi-iscrizione
+         */
+        if(isMultiIscrizione()){
+            layout.addComponent(bRegistra);
+        }
+
 
         return layout;
     }
 
 
-
     /**
      * Registra il turno corrente.
      * Visualizza una notifica se non riuscito
+     *
      * @return true se riuscito
      */
-    private boolean saveTurno() {
-        boolean success=false;
+    private boolean saveTurnoMulti() {
+        boolean success = false;
         entityManager.getTransaction().begin();
 
         try {
@@ -170,7 +184,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             turno.setNote(getNote());
 
             //cancella le iscrizioni correnti dal db
-            for(Iscrizione i : turno.getIscrizioni()){
+            for (Iscrizione i : turno.getIscrizioni()) {
                 entityManager.remove(i);
             }
 
@@ -178,17 +192,17 @@ public class CTurnoEditor extends CTabelloneEditor {
             turno.getIscrizioni().clear();
 
             // recupera le nuove iscrizioni e le aggiunge
-            ArrayList<Iscrizione>iscrizioni = iscrizioniEditor.getIscrizioni();
-            for(Iscrizione i : iscrizioni){
+            ArrayList<Iscrizione> iscrizioni = iscrizioneGroupEditor.getIscrizioni();
+            for (Iscrizione i : iscrizioni) {
                 turno.add(i);
             }
 
             // registra il turno
             entityManager.persist(turno);
             entityManager.getTransaction().commit();
-            success=true;
+            success = true;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             entityManager.getTransaction().rollback();
             e.printStackTrace();
         }
@@ -200,6 +214,7 @@ public class CTurnoEditor extends CTabelloneEditor {
     /**
      * Elimina il turno corrente.
      * Visualizza una notifica se non riuscito
+     *
      * @return true se riuscito
      */
     private boolean deleteTurno() {
@@ -211,25 +226,23 @@ public class CTurnoEditor extends CTabelloneEditor {
     /**
      * Ritorna il testo correntemente presente nel campo note
      */
-    private String getNote(){
-        String note="";
-        if(fieldNote!=null){
-            note=fieldNote.getValue();
+    private String getNote() {
+        String note = "";
+        if (fieldNote != null) {
+            note = fieldNote.getValue();
         }
         return note;
     }
 
 
-
-
     /**
      * Editor delle iscrizioni
      */
-    private class IscrizioniEditor extends VerticalLayout {
+    private class IscrizioneGroupEditor extends VerticalLayout {
 
         private ArrayList<IscrizioneEditor> iEditors = new ArrayList<>();
 
-        public IscrizioniEditor() {
+        public IscrizioneGroupEditor() {
 
             setSpacing(true);
 
@@ -284,13 +297,14 @@ public class CTurnoEditor extends CTabelloneEditor {
         /**
          * Ritorna l'elenco delle iscrizioni correntemente presenti
          * (tutte quelle che hanno un volontario)
+         *
          * @return l'elenco delle iscrizioni
          */
         public ArrayList<Iscrizione> getIscrizioni() {
             ArrayList<Iscrizione> iscrizioni = new ArrayList();
-            for(IscrizioneEditor ie : iEditors){
+            for (IscrizioneEditor ie : iEditors) {
                 Iscrizione i = ie.getIscrizione();
-                if(i!=null){
+                if (i != null) {
                     iscrizioni.add(i);
                 }
             }
@@ -303,9 +317,9 @@ public class CTurnoEditor extends CTabelloneEditor {
     /**
      * Editor di una singola Iscrizione
      */
-    private class IscrizioneEditor extends HorizontalLayout {
+    private class IscrizioneEditor extends CustomComponent {
 
-        private IscrizioniEditor parent;
+        private IscrizioneGroupEditor parent;
         private ERelatedComboField fVolontario;
         private TextField fNote;
         private IntegerField fOre;
@@ -314,17 +328,33 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         /**
          * @param iscrizione l'iscrizione da editare
-         * @param parent     l'editor parente per il controllo che il volontario non sia già iscritto
+         * @param parent     l'editor parente per il controllo che il
+         *                   volontario non sia già iscritto in altra posizione
          */
-        public IscrizioneEditor(Iscrizione iscrizione, IscrizioniEditor parent) {
-            this.iscrizione=iscrizione;
+        public IscrizioneEditor(Iscrizione iscrizione, IscrizioneGroupEditor parent) {
+            this.iscrizione = iscrizione;
             this.parent = parent;
             setSpacing(true);
 
-            String label = iscrizione.getServizioFunzione().getFunzione().getDescrizione();
-            fVolontario = new ERelatedComboField(Volontario.class, label);
+            Component comp;
+            if (isMultiIscrizione()) {
+                comp = creaCompPopup();
+            } else {
+                comp = creaCompBottone();
+            }
+
+            setCompositionRoot(comp);
+
+        }
+
+        /**
+         * Crea un componente popup che permette di selezionare e iscrivere un volontario
+         */
+        private Component creaCompPopup() {
+
+            fVolontario = new ERelatedComboField(Volontario.class);
             fVolontario.setWidth("10em");
-            if(iscrizione.getVolontario()!=null){
+            if (iscrizione.getVolontario() != null) {
                 fVolontario.setValue(iscrizione.getVolontario().getId());
             }
             fVolontario.addValueChangeListener(new Property.ValueChangeListener() {
@@ -351,21 +381,112 @@ public class CTurnoEditor extends CTabelloneEditor {
                     currentSelectedVolontario = v;
                 }
             });
-            addComponent(fVolontario);
 
             fNote = new TextField("Note");
             fNote.setValue(iscrizione.getNota());
             fNote.setWidth("10em");
-            addComponent(fNote);
 
             fOre = new IntegerField("Ore");
             fOre.setWidth("2em");
             fOre.setValue(iscrizione.getOreEffettive());
-            addComponent(fOre);
+
+            VerticalLayout volLayout = new VerticalLayout();
+            Label volLabel = new Label(creaTestoComponente(), ContentMode.HTML);
+            volLayout.addComponent(volLabel);
+            volLayout.addComponent(fVolontario);
 
             syncFields();
 
+            HorizontalLayout layout = new HorizontalLayout();
+            layout.setSpacing(true);
+            layout.addComponent(volLayout);
+            layout.addComponent(fNote);
+            layout.addComponent(fOre);
+
+            return layout;
         }
+
+        /**
+         * Crea un componente bottone che mostra il volontario iscritto o
+         * iscrive il volontario correntemente loggato
+         */
+        private Component creaCompBottone() {
+
+            // bottone iscrizione
+            Button bMain = new Button();
+            bMain.setHeight("100%");
+            bMain.setWidth("100%");
+            bMain.setHtmlContentAllowed(true);
+            Volontario volIscritto = iscrizione.getVolontario();
+            String caption;
+            if (volIscritto != null) {  // già iscritto
+                caption = volIscritto.toString();
+                Funzione funz = iscrizione.getServizioFunzione().getFunzione();
+                FontAwesome glyph = funz.getIcon();
+                if(glyph!=null){
+                    caption=glyph.getHtml()+" "+caption;
+                }
+            } else {                    // non iscritto
+                caption = creaTestoComponente();
+            }
+            bMain.setCaption(caption);
+            bMain.setEnabled(volIscritto==null);
+            bMain.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    entityManager.getTransaction().begin();
+                    turno.getIscrizioni().add(iscrizione);
+                    iscrizione.setVolontario(getUser());
+                    entityManager.merge(turno);
+                    entityManager.getTransaction().commit();
+                    fireDismissListeners(new DismissEvent(bMain, true, false));
+                }
+            });
+
+
+            // bottone remove
+            Button bRemove=new Button();
+            bRemove.setHeight("100%");
+            bRemove.setIcon(FontAwesome.REMOVE);
+            bRemove.setEnabled(volIscritto!=null);
+            bRemove.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent clickEvent) {
+                    entityManager.getTransaction().begin();
+                    turno.getIscrizioni().remove(iscrizione);
+                    entityManager.merge(turno);
+                    entityManager.getTransaction().commit();
+                    fireDismissListeners(new DismissEvent(bRemove, true, false));
+                }
+            });
+
+
+            // layout finale
+            HorizontalLayout layout=new HorizontalLayout();
+            layout.setSpacing(true);
+            layout.setWidth("100%");
+            layout.setHeight("3em");
+            layout.addComponent(bMain);
+            layout.addComponent(bRemove);
+            layout.setExpandRatio(bMain, 1);
+
+            return layout;
+        }
+
+        /**
+         * Crea la stringa html da visualizzare nel componente
+         * di selezione (usato come etichetta del popup o testo del bottone)
+         */
+        private String creaTestoComponente() {
+            Funzione funz = iscrizione.getServizioFunzione().getFunzione();
+            String lbltext = funz.getDescrizione();
+            FontAwesome glyph = funz.getIcon();
+            if (glyph != null) {
+                lbltext = glyph.getHtml() + " " + lbltext;
+            }
+            return lbltext;
+        }
+
 
         private void syncFields() {
             boolean enable = (fVolontario.getValue() != null);
@@ -390,20 +511,35 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         /**
          * Recupera l'iscrizione aggiornata
+         *
          * @return l'iscrizione aggiornata, null se non è specificato il volontario
          */
-        public Iscrizione getIscrizione(){
-            if(getVolontario()!=null){
+        public Iscrizione getIscrizione() {
+            if (getVolontario() != null) {
                 iscrizione.setVolontario(getVolontario());
                 iscrizione.setNota(fNote.getValue());
                 iscrizione.setOreEffettive(fOre.getValue());
                 return iscrizione;
-            }else{
+            } else {
                 return null;
             }
         }
 
     }
+
+    /**
+     * @return true se è attiva la modalità multi-iscrizione
+     * (un volontario può iscrivere anche gli altri)
+     */
+    private boolean isMultiIscrizione(){
+        return false;
+    }
+
+    private Volontario getUser(){
+        Volontario volontario = Volontario.find(1);
+        return volontario;
+    }
+
 
 
 }

@@ -57,7 +57,7 @@ class SelectIconDialog extends BaseDialog {
 
         public IconGrid() {
             super();
-            setColumns(3);
+            setColumns(5);
             setSpacing(true);
             populate();
         }
@@ -70,11 +70,17 @@ class SelectIconDialog extends BaseDialog {
                     FontAwesome.MEDKIT.getCodepoint(),
                     FontAwesome.HEART.getCodepoint(),
                     FontAwesome.STETHOSCOPE.getCodepoint(),
-//                    FontAwesome.HOTEL.getCodepoint(),   // non va
+//                    FontAwesome.BED.getCodepoint(),   // non va
+//                    FontAwesome.BICYCLE.getCodepoint(),   // non va
                     FontAwesome.USER.getCodepoint(),
                     FontAwesome.USER_MD.getCodepoint(),
                     FontAwesome.MALE.getCodepoint(),
                     FontAwesome.FEMALE.getCodepoint(),
+                    FontAwesome.PHONE.getCodepoint(),
+                    FontAwesome.BRIEFCASE.getCodepoint(),
+//                    FontAwesome.RECYCLE.getCodepoint(),  // non va
+                    FontAwesome.STAR.getCodepoint(),
+                    FontAwesome.TINT.getCodepoint(),
             };
 
             for (int codepoint : codepoints) {
