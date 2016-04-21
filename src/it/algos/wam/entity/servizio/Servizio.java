@@ -63,7 +63,7 @@ public class Servizio extends WamCompanyEntity {
     private int ordine = 0;
 
     // colore del servizio
-    private int colore=new Color(128,128,128).getRGB();
+    private int colore = new Color(128, 128, 128).getRGB();
 
 //    //--durata del turno (in ore)
 //    private int durata = 0;
@@ -122,16 +122,6 @@ public class Servizio extends WamCompanyEntity {
         setOraFine(oraFine);
     }// end of constructor
 
-
-    @PrePersist
-    protected void prePersist() {
-        if(getOrdine()==0){
-            int max = WamQuery.queryMaxOrdineServizio(null);
-            setOrdine(max+1);
-        }
-    }
-
-
     /**
      * Recupera una istanza di Servizio usando la query standard della Primary Key
      *
@@ -171,12 +161,11 @@ public class Servizio extends WamCompanyEntity {
         return instance;
     }// end of method
 
-
     /**
      * Recupera una istanza di Servizio usando la query di tutte e sole le property obbligatorie
      *
-     * @param company     selezionata
-     * @param sigla valore della property Sigla
+     * @param company selezionata
+     * @param sigla   valore della property Sigla
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -221,7 +210,6 @@ public class Servizio extends WamCompanyEntity {
         return (ArrayList<Servizio>) AQuery.getList(Servizio.class);
     }// end of method
 
-
     /**
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
@@ -242,7 +230,6 @@ public class Servizio extends WamCompanyEntity {
         return servizio;
     }// end of static method
 
-
     /**
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
@@ -254,22 +241,30 @@ public class Servizio extends WamCompanyEntity {
      * @param oraInizio   del servizio (facoltativo)
      * @param oraFine     del servizio (facoltativo)
      * @param orario      servizio ad orario prefissato e fisso ogni giorno
+     * @param colore      del gruppo (facoltativo)
      * @return istanza di Servizio
      */
-    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario) {
+    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario,int colore) {
         Servizio servizio = Servizio.find(company, sigla);
-
 
         if (servizio == null) {
             servizio = new Servizio(ordine, sigla, descrizione, oraInizio, oraFine);
             servizio.setCompany(company);
             servizio.setOrario(orario);
+            servizio.setColore(colore);
             servizio.save();
         }// end of if cycle
 
         return servizio;
     }// end of static method
 
+    @PrePersist
+    protected void prePersist() {
+        if (getOrdine() == 0) {
+            int max = WamQuery.queryMaxOrdineServizio(null);
+            setOrdine(max + 1);
+        }
+    }
 
     /**
      * Ritorna l'elenco delle funzioni previste per questo servizio
@@ -354,7 +349,7 @@ public class Servizio extends WamCompanyEntity {
      * Aggiunge un ServizioFunzione a questo servizio.
      * Regola automaticamente il link al Servizio.
      */
-    public void add(ServizioFunzione sf){
+    public void add(ServizioFunzione sf) {
         sf.setServizio(this);
         getServizioFunzioni().add(sf);
     }
@@ -485,17 +480,17 @@ public class Servizio extends WamCompanyEntity {
     /**
      * Ritorna una stringa che rappresenta l'orario dalle... alle...
      */
-    public String getStrOrario(){
-        return strHM(oraInizio)+":"+strHM(minutiInizio)+" - "+strHM(oraFine)+":"+strHM(minutiFine);
+    public String getStrOrario() {
+        return strHM(oraInizio) + ":" + strHM(minutiInizio) + " - " + strHM(oraFine) + ":" + strHM(minutiFine);
     }
 
     /**
      * @return il numero di ore o minuti formattato su 2 caratteri fissi
      */
-    private String strHM(int num){
-        String s = ""+num;
-        if(s.length()==1){
-            s="0"+s;
+    private String strHM(int num) {
+        String s = "" + num;
+        if (s.length() == 1) {
+            s = "0" + s;
         }
         return s;
     }
