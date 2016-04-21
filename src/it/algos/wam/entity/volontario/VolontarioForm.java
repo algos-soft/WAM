@@ -150,31 +150,9 @@ public class VolontarioForm extends ModuleForm {
         grid.setColumns(3);
         List<Funzione> funzioni = Funzione.findAll();
         for(Funzione f : funzioni){
-
-
-//            CheckBox box = new CheckBox(f.getDescrizione());
-//            box.addValueChangeListener(valueChangeEvent -> {
-//                if (box.getValue()) {
-//                    if(!getVolontario().haFunzione(f)){
-//                        getVolontario().addFunzione(f);
-//                    }
-//                } else {
-//                    if(getVolontario().haFunzione(f)){
-//                        getVolontario().removeFunzione(f);
-//                    }
-//                }
-//            });
-//
-//            box.setValue(getVolontario().haFunzione(f));
-//
-//            grid.addComponent(box);
-
             grid.addComponent(new CheckBoxFunzione(f));
-
         }
-
         return grid;
-
     }
 
     /**
