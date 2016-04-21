@@ -8,6 +8,7 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -135,19 +136,17 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una istanza di Funzione usando la query di una property specifica
+     * Filtrato sulla azienda corrente.
      *
      * @param sigla sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione, null se non trovata
-     * @deprecated perché manca la wamcompany e potrebbero esserci records multipli con la stessa sigla
      */
     public static Funzione findBySigla(String sigla) {
         Funzione instance = null;
-        BaseEntity entity = AQuery.queryOne(Funzione.class, Funzione_.sigla, sigla);
+        BaseEntity bean = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla);
 
-        if (entity != null) {
-            if (entity instanceof Funzione) {
-                instance = (Funzione) entity;
-            }// end of if cycle
+        if (bean != null && bean instanceof Funzione) {
+            instance = (Funzione) bean;
         }// end of if cycle
 
         return instance;
@@ -155,26 +154,35 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una istanza di Funzione usando la query di una property specifica
-     * Relativa ad una wamcompany
+     * Filtrato sulla azienda passata come parametro.
      *
-     * @param company croce di appartenenza
      * @param sigla   sigla di riferimento interna (obbligatoria)
+     * @param company croce di appartenenza
      * @return istanza di Funzione, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Funzione find(WamCompany company, String sigla) {
+    public static Funzione findBySigla(String sigla, WamCompany company) {
         Funzione instance = null;
+        BaseEntity bean;
 
-        //@todo migliorabile
-//        ArrayList<Funzione> funzioniPerSigla = (ArrayList<Funzione>) AQuery.queryList(Funzione.class, Funzione_.sigla, sigla);
-        List<Funzione> funzioniPerSigla = (List<Funzione>) AQuery.queryList(Funzione.class, Funzione_.sigla, sigla);
+        EntityManager manager = EM.createEntityManager();
+        bean = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla, manager, company);
+        manager.close();
 
-        if (funzioniPerSigla != null && funzioniPerSigla.size() > 0) {
-            for (Funzione funzione : funzioniPerSigla) {
-                if (funzione.getCompany().getId().equals(company.getId())) {
-                    instance = funzione;
-                }// end of if cycle
-            }// end of for cycle
+//        //@todo migliorabile
+////        ArrayList<Funzione> funzioniPerSigla = (ArrayList<Funzione>) AQuery.queryList(Funzione.class, Funzione_.sigla, sigla);
+//        List<Funzione> funzioniPerSigla = (List<Funzione>) AQuery.queryList(Funzione.class, Funzione_.sigla, sigla);
+//
+//        if (funzioniPerSigla != null && funzioniPerSigla.size() > 0) {
+//            for (Funzione funzione : funzioniPerSigla) {
+//                if (funzione.getCompany().getId().equals(company.getId())) {
+//                    instance = funzione;
+//                }// end of if cycle
+//            }// end of for cycle
+//        }// end of if cycle
+
+        if (bean != null && bean instanceof Funzione) {
+            instance = (Funzione) bean;
         }// end of if cycle
 
         return instance;
@@ -256,8 +264,14 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param glyph       dell'icona (facoltativo)
      * @return istanza di Funzione
      */
-    public static Funzione crea(WamCompany company, String sigla, String descrizione, int ordine, String note, FontAwesome glyph) {
-        Funzione funzione = Funzione.find(company, sigla);
+    public static Funzione crea(
+            WamCompany company,
+            String sigla,
+            String descrizione,
+            int ordine,
+            String note,
+            FontAwesome glyph) {
+        Funzione funzione = Funzione.findBySigla(sigla, company);
 
         if (funzione == null) {
             funzione = new Funzione();
@@ -384,7 +398,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Clone di questa istanza
      * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)
-     * È obbligatoria invocare questo metodo all'interno di un codice try/catch
+     * È obbligatorio invocare questo metodo all'interno di un codice try/catch
      *
      * @return nuova istanza di Funzione con gli stessi valori dei parametri di questa istanza
      */

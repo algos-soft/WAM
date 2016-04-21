@@ -29,7 +29,7 @@ public abstract class BootService {
      */
     public static void creaCompanyDemo() {
         WamCompany company = creaCroceDemo();
-        creaCompany(company);
+        initCompany(company);
     }// end of static method
 
     /**
@@ -41,17 +41,19 @@ public abstract class BootService {
      */
     public static void creaCompanyTest() {
         WamCompany company = creaCroceTest();
-        creaCompany(company);
+        initCompany(company);
     }// end of static method
 
     /**
-     * Creazione iniziale di una croce
+     * Inizializza una croce appena creata, con alcuni dati di esempio
      * Visibile solo a noi (developer)
-     * Serve come prova per visualizzare solo i Militi, le Funzioni ed i Turni di una demo rispetto all'altra
-     * <p>
-     * La crea SOLO se non esiste già
+     * Crea alcune funzioni standard
+     * Crea una lista di volontari di esempio
+     * Crea alcuni servizi di esempio
+     * Crea alcuni turni vuoti
+     * Riempie i turni creati
      */
-    private static void creaCompany(WamCompany company) {
+    public static void initCompany(WamCompany company) {
         ArrayList<Funzione> listaFunzioni;
         ArrayList<Volontario> listaVolontari;
         ArrayList<Servizio> listaServizi;
@@ -107,7 +109,7 @@ public abstract class BootService {
 
     /**
      * Creazione iniziale di alcune funzioni per la croce selezionata
-     * Li crea SOLO se non esistono già
+     * Le crea SOLO se non esistono già
      *
      * @param company croce selezionata
      * @return lista delle funzioni create
@@ -117,12 +119,12 @@ public abstract class BootService {
         int k = 0;
 
         if (company != null) {
-            addFunz(listaFunz, company, ++k, "aut", "Autista118", "Autista patentato 118", FontAwesome.AMBULANCE);
-            addFunz(listaFunz, company, ++k, "aut2", "Autista", "Autista", FontAwesome.WHEELCHAIR);
-            addFunz(listaFunz, company, ++k, "soc", "Soccorritore", "Soccorritore 118", FontAwesome.HEART);
-            addFunz(listaFunz, company, ++k, "sec", "Secondo", "Soccorritore in prova", FontAwesome.STETHOSCOPE);
-            addFunz(listaFunz, company, ++k, "ter", "Terzo", "Autista patentato 118", FontAwesome.USER);
-            addFunz(listaFunz, company, ++k, "bar", "Barelliere", "Barelliere", FontAwesome.USER_MD);
+            listaFunz.add(Funzione.crea(company, "aut", "Autista118", ++k, "Autista patentato 118", FontAwesome.AMBULANCE));
+            listaFunz.add(Funzione.crea(company, "aut2", "Autista", ++k, "Autista", FontAwesome.WHEELCHAIR));
+            listaFunz.add(Funzione.crea(company, "soc", "Soccorritore", ++k, "Soccorritore 118", FontAwesome.HEART));
+            listaFunz.add(Funzione.crea(company, "sec", "Secondo", ++k, "Soccorritore in prova", FontAwesome.STETHOSCOPE));
+            listaFunz.add(Funzione.crea(company, "ter", "Terzo", ++k, "Autista patentato 118", FontAwesome.USER));
+            listaFunz.add(Funzione.crea(company, "bar", "Barelliere", ++k, "Barelliere", FontAwesome.USER_MD));
         }// end of if cycle
 
         return listaFunz;
@@ -179,26 +181,26 @@ public abstract class BootService {
         return listaVolontari;
     }// end of static method
 
-    /**
-     * Creazione iniziale di alcune funzioni per la croce selezionata
-     * Li crea SOLO se non esistono già
-     *
-     * @param listaFunzioni create
-     * @param company       croce selezionata
-     * @param ordine        di presentazione nelle liste
-     * @param sigla         sigla di riferimento interna (obbligatoria)
-     * @param descrizione   per il tabellone (obbligatoria)
-     * @param note          di spiegazione (facoltative)
-     */
-    private static void addFunz(ArrayList<Funzione> listaFunzioni, WamCompany company, int ordine, String sigla, String descrizione, String note, FontAwesome glyph) {
-        Funzione funzione;
-
-        if (listaFunzioni != null && company != null) {
-            funzione = Funzione.crea(company, sigla, descrizione, ordine, note, glyph);
-            listaFunzioni.add(funzione);
-        }// end of if cycle
-
-    }// end of static method
+//    /**
+//     * Creazione iniziale di alcune funzioni per la croce selezionata
+//     * Li crea SOLO se non esistono già
+//     *
+//     * @param listaFunzioni create
+//     * @param company       croce selezionata
+//     * @param ordine        di presentazione nelle liste
+//     * @param sigla         sigla di riferimento interna (obbligatoria)
+//     * @param descrizione   per il tabellone (obbligatoria)
+//     * @param note          di spiegazione (facoltative)
+//     */
+//    private static void addFunz(ArrayList<Funzione> listaFunzioni, WamCompany company, int ordine, String sigla, String descrizione, String note, FontAwesome glyph) {
+//        Funzione funzione;
+//
+//        if (listaFunzioni != null && company != null) {
+//            funzione = Funzione.crea(company, sigla, descrizione, ordine, note, glyph);
+//            listaFunzioni.add(funzione);
+//        }// end of if cycle
+//
+//    }// end of static method
 
     /**
      * Creazione iniziale di alcuni servizi per la croce selezionata
