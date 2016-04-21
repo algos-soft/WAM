@@ -43,6 +43,8 @@ public class NavComponent extends VerticalLayout {
         setSpacing(true);
         setSizeFull();
 
+        menuBar.setWidth("100%");
+
         this.nav = new AlgosNavigator(ui, body);
         this.addComponent(menuBar);
         this.addComponent(body);
