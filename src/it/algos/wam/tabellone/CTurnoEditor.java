@@ -545,15 +545,19 @@ public class CTurnoEditor extends CTabelloneEditor {
 
 
         /**
-         * Recupera il volontario correntemente selezionato nel combo
+         * Recupera il volontario correntemente selezionato nell'editor
          *
          * @return il volontario
          */
         public Volontario getVolontario() {
             Volontario v = null;
-            Object value = fVolontario.getSelectedBean();
-            if (value != null && value instanceof Volontario) {
-                v = (Volontario) value;
+            if(isMultiIscrizione()){
+                Object value = fVolontario.getSelectedBean();
+                if (value != null && value instanceof Volontario) {
+                    v = (Volontario) value;
+                }
+            }else{
+                v = iscrizione.getVolontario();
             }
             return v;
         }
