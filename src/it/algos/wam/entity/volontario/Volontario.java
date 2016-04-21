@@ -230,14 +230,14 @@ public class Volontario extends WamCompanyEntity {
      * Creazione iniziale di un volontario
      * Lo crea SOLO se non esiste già
      *
-     * @param company       croce di appartenenza
-     * @param nome          del volontario/milite (obbligatorio)
-     * @param cognome       del volontario/milite (obbligatorio)
-     * @param listaFunzioni lista delle funzioni (facoltativa)
+     * @param company   croce di appartenenza
+     * @param nome      del volontario/milite (obbligatorio)
+     * @param cognome   del volontario/milite (obbligatorio)
+     * @param listaFunz lista delle funzioni (facoltativa)
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, String nome, String cognome, ArrayList<Funzione> listaFunzioni) {
-        return crea(company, nome, cognome, listaFunzioni.toArray(new Funzione[listaFunzioni.size()]));
+    public static Volontario crea(WamCompany company, String nome, String cognome, ArrayList<Funzione> listaFunz) {
+        return crea(company, nome, cognome, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
 
     /**
@@ -261,7 +261,6 @@ public class Volontario extends WamCompanyEntity {
             if (funzioni != null) {
                 for (Funzione funz : funzioni) {
                     vol.volontarioFunzioni.add(new VolontarioFunzione(company, vol, funz));
-//                    VolontarioFunzione.crea(vol, funz);
                 } // fine del ciclo for-each
             }// fine del blocco if
 
@@ -390,8 +389,8 @@ public class Volontario extends WamCompanyEntity {
      * Rimuove una funzione dal volontario
      */
     public void removeFunzione(Funzione funzione) {
-        for(VolontarioFunzione vf : volontarioFunzioni){
-            if(vf.getFunzione().equals(funzione)){
+        for (VolontarioFunzione vf : volontarioFunzioni) {
+            if (vf.getFunzione().equals(funzione)) {
                 volontarioFunzioni.remove(vf);
                 break;
             }
@@ -406,11 +405,11 @@ public class Volontario extends WamCompanyEntity {
      * @return true se ha la funzione
      */
     public boolean haFunzione(Funzione funz) {
-        boolean found=false;
+        boolean found = false;
         List<VolontarioFunzione> vfunzioni = getVolontarioFunzioni();
-        for(VolontarioFunzione vf : vfunzioni){
-            if(vf.getFunzione().equals(funz)){
-                found=true;
+        for (VolontarioFunzione vf : vfunzioni) {
+            if (vf.getFunzione().equals(funz)) {
+                found = true;
                 break;
             }
         }

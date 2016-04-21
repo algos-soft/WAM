@@ -5,6 +5,7 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -230,6 +231,7 @@ public class Servizio extends WamCompanyEntity {
         return servizio;
     }// end of static method
 
+
     /**
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
@@ -244,7 +246,26 @@ public class Servizio extends WamCompanyEntity {
      * @param colore      del gruppo (facoltativo)
      * @return istanza di Servizio
      */
-    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario,int colore) {
+    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, ArrayList<Funzione> listaFunz) {
+        return crea(company, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, listaFunz.toArray(new Funzione[listaFunz.size()]));
+    }// end of static method
+
+
+    /**
+     * Creazione iniziale di un servizio
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company     selezionata
+     * @param ordine      di presentazione nel tabellone
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param oraInizio   del servizio (facoltativo)
+     * @param oraFine     del servizio (facoltativo)
+     * @param orario      servizio ad orario prefissato e fisso ogni giorno
+     * @param colore      del gruppo (facoltativo)
+     * @return istanza di Servizio
+     */
+    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, Funzione... funzioni) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
@@ -252,11 +273,21 @@ public class Servizio extends WamCompanyEntity {
             servizio.setCompany(company);
             servizio.setOrario(orario);
             servizio.setColore(colore);
+
+            if (funzioni != null) {
+                for (Funzione funz : funzioni) {
+                    servizio.servizioFunzioni.add(new ServizioFunzione(company, servizio, funz));
+                } // fine del ciclo for-each
+            }// fine del blocco if
+
+            servizio = (Servizio) servizio.save();
+
             servizio.save();
         }// end of if cycle
 
         return servizio;
     }// end of static method
+
 
     @PrePersist
     protected void prePersist() {

@@ -33,7 +33,7 @@ public abstract class BootService {
         company = creaCroceDemo();
         listaFunzioni = creaFunzioni(company);
         creaVolontari(company, listaFunzioni);
-        listaServizi = creaServizi(company);
+        listaServizi = creaServizi(company, listaFunzioni);
         creaTurni(company, listaServizi);
     }// end of static method
 
@@ -52,7 +52,7 @@ public abstract class BootService {
         company = creaCroceTest();
         listaFunzioni = creaFunzioni(company);
         creaVolontari(company, listaFunzioni);
-        listaServizi = creaServizi(company);
+        listaServizi = creaServizi(company, listaFunzioni);
         creaTurni(company, listaServizi);
     }// end of static method
 
@@ -126,7 +126,7 @@ public abstract class BootService {
      *
      * @param company croce selezionata
      */
-    private static ArrayList<Servizio> creaServizi(WamCompany company) {
+    private static ArrayList<Servizio> creaServizi(WamCompany company, ArrayList<Funzione> listaFunz) {
         ArrayList<Servizio> listaServ = new ArrayList<>();
         int k = 0;
         int azzurro = new Color(146, 189, 255).getRGB();
@@ -134,9 +134,9 @@ public abstract class BootService {
         int rosa = new Color(255, 146, 211).getRGB();
 
         if (company != null) {
-            addServ(listaServ, company, ++k, "med-mat", "Automedica mattino", 8, 12, true, true, false, 3, azzurro);
-            addServ(listaServ, company, ++k, "med-pom", "Automedica pomeriggio", 12, 18, true, true, false, 3, azzurro);
-            addServ(listaServ, company, ++k, "med-sera", "Automedica sera", 18, 22, true, true, false, 2, azzurro);
+            addServ(listaServ, company, ++k, "med-mat", "Automedica mattino", 8, 12, true, true, false, 3, azzurro, listaFunz.get(0), listaFunz.get(1), listaFunz.get(2));
+            addServ(listaServ, company, ++k, "med-pom", "Automedica pomeriggio", 12, 18, true, true, false, 3, azzurro, listaFunz.get(0), listaFunz.get(1), listaFunz.get(2));
+            addServ(listaServ, company, ++k, "med-sera", "Automedica sera", 18, 22, true, true, false, 2, azzurro, listaFunz.get(0), listaFunz.get(1), listaFunz.get(2));
             addServ(listaServ, company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3, verdino);
             addServ(listaServ, company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 20, true, true, false, 3, verdino);
             addServ(listaServ, company, ++k, "amb-notte", "Ambulanza notte", 20, 8, true, true, false, 2, verdino);
@@ -153,16 +153,16 @@ public abstract class BootService {
      * Creazione iniziale di alcuni volontari per la croce selezionata
      * Li crea SOLO se non esistono già
      *
-     * @param company       croce selezionata
-     * @param listaFunzioni della company
+     * @param company   croce selezionata
+     * @param listaFunz ioni della company
      */
-    private static void creaVolontari(WamCompany company, ArrayList<Funzione> listaFunzioni) {
+    private static void creaVolontari(WamCompany company, ArrayList<Funzione> listaFunz) {
 
         if (company != null) {
             Volontario.crea(company, "Mario", "Brambilla");
-            Volontario.crea(company, "Giovanna", "Durante", listaFunzioni);
-            Volontario.crea(company, "Diego", "Bertini", listaFunzioni.get(3));
-            Volontario.crea(company, "Roberto", "Marchetti", listaFunzioni.get(2), listaFunzioni.get(3));
+            Volontario.crea(company, "Giovanna", "Durante", listaFunz);
+            Volontario.crea(company, "Diego", "Bertini", listaFunz.get(3));
+            Volontario.crea(company, "Roberto", "Marchetti", listaFunz.get(2), listaFunz.get(3));
             Volontario.crea(company, "Edoardo", "Politi");
             Volontario.crea(company, "Sabina", "Roncelli");
         }// end of if cycle
@@ -205,11 +205,11 @@ public abstract class BootService {
      * @param multiplo     servizio suscettibile di essere effettuato diverse volte nella giornata
      * @param persone      minime indispensabile allo svolgimento del servizio
      */
-    private static void addServ(ArrayList<Servizio> listaServizi, WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone, int colore) {
+    private static void addServ(ArrayList<Servizio> listaServizi, WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone, int colore, Funzione... funzioni) {
         Servizio servizio;
 
         if (listaServizi != null && company != null) {
-            servizio = Servizio.crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile, colore);
+            servizio = Servizio.crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile, colore, funzioni);
             listaServizi.add(servizio);
         }// end of if cycle
 
@@ -233,34 +233,34 @@ public abstract class BootService {
     }// end of static method
 
 
-    /**
-     * Creazione iniziale di alcuni turni per la croce demo
-     * Li crea SOLO se non esistono già
-     *
-     * @deprecated
-     */
-    private static void creaTurniDemo() {
-        WamCompany company = WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
-
-        Servizio servizio = null;
-        Turno turno;
-
-        servizio = Servizio.find(company, "msa-pom");
-        turno = Turno.crea(company, servizio, LibDate.creaData(14, 8, 2016));
-
-        servizio = Servizio.find(company, "ord-mat");
-        turno = Turno.crea(company, servizio, LibDate.creaData(22, 11, 2015));
-
-        servizio = Servizio.find(company, "avis");
-        turno = Turno.crea(company, servizio, LibDate.creaData(5, 2, 2016));
-
-        servizio = Servizio.find(company, "ext");
-        turno = Turno.crea(company, servizio, LibDate.creaData(17, 4, 2016));
-        turno.setTitoloExtra("Trasferimento");
-        turno.setLocalitaExtra("Padova");
-        turno.setNote("Sedia-Basta un milite");
-        turno.save();
-
-    }// end of static method
+//    /**
+//     * Creazione iniziale di alcuni turni per la croce demo
+//     * Li crea SOLO se non esistono già
+//     *
+//     * @deprecated
+//     */
+//    private static void creaTurniDemo() {
+//        WamCompany company = WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
+//
+//        Servizio servizio = null;
+//        Turno turno;
+//
+//        servizio = Servizio.find(company, "msa-pom");
+//        turno = Turno.crea(company, servizio, LibDate.creaData(14, 8, 2016));
+//
+//        servizio = Servizio.find(company, "ord-mat");
+//        turno = Turno.crea(company, servizio, LibDate.creaData(22, 11, 2015));
+//
+//        servizio = Servizio.find(company, "avis");
+//        turno = Turno.crea(company, servizio, LibDate.creaData(5, 2, 2016));
+//
+//        servizio = Servizio.find(company, "ext");
+//        turno = Turno.crea(company, servizio, LibDate.creaData(17, 4, 2016));
+//        turno.setTitoloExtra("Trasferimento");
+//        turno.setLocalitaExtra("Padova");
+//        turno.setNote("Sedia-Basta un milite");
+//        turno.save();
+//
+//    }// end of static method
 
 }// end of abstract static class
