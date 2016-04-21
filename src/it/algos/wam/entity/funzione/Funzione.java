@@ -28,7 +28,7 @@ import java.util.List;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
-public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
+public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,24 +37,24 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
     @NotEmpty
     @Column(length = 20)
     @Index
-    private String sigla="";
+    private String sigla = "";
 
 
     //--descrizione per il tabellone (obbligatoria)
     @NotEmpty
     @Column(length = 100)
     @Index
-    private String descrizione="";
+    private String descrizione = "";
 
 
     //--ordine di presentazione nelle liste
     @Index
-    private int ordine=0;
+    private int ordine = 0;
 
 
     //--note di spiegazione (facoltative)
     @Column(columnDefinition = "text")
-    private String note="";
+    private String note = "";
 
 
     //--tavola di incrocio
@@ -113,15 +113,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 //        this.setNote(note);
 //    }// end of constructor
 
-
-    @PrePersist
-    protected void prePersist() {
-        if(getOrdine()==0){
-            int max = WamQuery.queryMaxOrdineFunzione(null);
-            setOrdine(max+1);
-        }
-    }
-
     /**
      * Recupera una istanza di Funzione usando la query standard della Primary Key
      *
@@ -161,7 +152,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
         return instance;
     }// end of method
 
-
     /**
      * Recupera una istanza di Funzione usando la query di una property specifica
      * Relativa ad una wamcompany
@@ -188,7 +178,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
         return instance;
     }// end of method
-
 
     /**
      * Recupera il valore del numero totale di records della della Entity
@@ -227,7 +216,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
         return null;
     }// end of method
 
-
     /**
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
@@ -239,7 +227,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
     public static Funzione crea(WamCompany company, String sigla) {
         return crea(company, sigla, "", 0, "");
     }// end of static method
-
 
     /**
      * Creazione iniziale di una funzione
@@ -253,6 +240,22 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
      * @return istanza di Funzione
      */
     public static Funzione crea(WamCompany company, String sigla, String descrizione, int ordine, String note) {
+        return crea(company, sigla, descrizione, ordine, note, null);
+    }// end of static method
+
+    /**
+     * Creazione iniziale di una funzione
+     * La crea SOLO se non esiste già
+     *
+     * @param company     croce di appartenenza
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param ordine      di presentazione nelle liste
+     * @param note        di spiegazione (facoltative)
+     * @param glyph       dell'icona (facoltativo)
+     * @return istanza di Funzione
+     */
+    public static Funzione crea(WamCompany company, String sigla, String descrizione, int ordine, String note, FontAwesome glyph) {
         Funzione funzione = Funzione.find(company, sigla);
 
         if (funzione == null) {
@@ -262,11 +265,20 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
             funzione.setDescrizione(descrizione);
             funzione.setOrdine(ordine);
             funzione.setNote(note);
+            funzione.setIcon(glyph);
             funzione.save();
         }// end of if cycle
 
         return funzione;
     }// end of static method
+
+    @PrePersist
+    protected void prePersist() {
+        if (getOrdine() == 0) {
+            int max = WamQuery.queryMaxOrdineFunzione(null);
+            setOrdine(max + 1);
+        }
+    }
 
     public List<ServizioFunzione> getServizioFunzioni() {
         return servizioFunzioni;
@@ -341,14 +353,15 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
     /**
      * Recupera l'icona
+     *
      * @return l'icona
      */
-    public FontAwesome getIcon(){
-        FontAwesome glyph=null;
-        int codepoint=getIconCodepoint();
-        try{
-            glyph=FontAwesome.fromCodepoint(codepoint);
-        }catch (Exception e){
+    public FontAwesome getIcon() {
+        FontAwesome glyph = null;
+        int codepoint = getIconCodepoint();
+        try {
+            glyph = FontAwesome.fromCodepoint(codepoint);
+        } catch (Exception e) {
 
         }
         return glyph;
@@ -356,12 +369,13 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
 
     /**
      * Assegna una icona
+     *
      * @param glyph l'icona FontAwesome
      */
-    public void setIcon(FontAwesome glyph){
-        int codepoint=0;
-        if(glyph!=null){
-            codepoint=glyph.getCodepoint();
+    public void setIcon(FontAwesome glyph) {
+        int codepoint = 0;
+        if (glyph != null) {
+            codepoint = glyph.getCodepoint();
         }
         setIconCodepoint(codepoint);
     }
@@ -389,11 +403,10 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione>{
      */
     @Override
     public int compareTo(Funzione other) {
-        Integer ordQuesto=getOrdine();
-        Integer ordAltro=other.getOrdine();
+        Integer ordQuesto = getOrdine();
+        Integer ordAltro = other.getOrdine();
         return ordQuesto.compareTo(ordAltro);
     }
-
 
 
 }// end of domain class

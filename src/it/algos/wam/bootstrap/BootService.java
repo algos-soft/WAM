@@ -1,5 +1,7 @@
 package it.algos.wam.bootstrap;
 
+import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.colorpicker.Color;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
@@ -107,12 +109,12 @@ public abstract class BootService {
         int k = 0;
 
         if (company != null) {
-            addFunz(listaFunz, company, ++k, "aut", "Autista118", "Autista patentato 118");
-            addFunz(listaFunz, company, ++k, "aut2", "Autista", "Autista");
-            addFunz(listaFunz, company, ++k, "soc", "Soccorritore", "Soccorritore 118");
-            addFunz(listaFunz, company, ++k, "sec", "Secondo", "Soccorritore in prova");
-            addFunz(listaFunz, company, ++k, "ter", "Terzo", "Autista patentato 118");
-            addFunz(listaFunz, company, ++k, "bar", "Barelliere", "Barelliere");
+            addFunz(listaFunz, company, ++k, "aut", "Autista118", "Autista patentato 118", FontAwesome.AMBULANCE);
+            addFunz(listaFunz, company, ++k, "aut2", "Autista", "Autista", FontAwesome.WHEELCHAIR);
+            addFunz(listaFunz, company, ++k, "soc", "Soccorritore", "Soccorritore 118", FontAwesome.HEART);
+            addFunz(listaFunz, company, ++k, "sec", "Secondo", "Soccorritore in prova", FontAwesome.STETHOSCOPE);
+            addFunz(listaFunz, company, ++k, "ter", "Terzo", "Autista patentato 118", FontAwesome.USER);
+            addFunz(listaFunz, company, ++k, "bar", "Barelliere", "Barelliere", FontAwesome.USER_MD);
         }// end of if cycle
 
         return listaFunz;
@@ -127,17 +129,20 @@ public abstract class BootService {
     private static ArrayList<Servizio> creaServizi(WamCompany company) {
         ArrayList<Servizio> listaServ = new ArrayList<>();
         int k = 0;
+        int azzurro = new Color(146, 189, 255).getRGB();
+        int verdino = new Color(146, 255, 189).getRGB();
+        int rosa = new Color(255, 146, 211).getRGB();
 
         if (company != null) {
-            addServ(listaServ, company, ++k, "med-mat", "Automedica mattino", 8, 12, true, true, false, 3);
-            addServ(listaServ, company, ++k, "med-pom", "Automedica pomeriggio", 12, 18, true, true, false, 3);
-            addServ(listaServ, company, ++k, "med-sera", "Automedica sera", 18, 22, true, true, false, 2);
-            addServ(listaServ, company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3);
-            addServ(listaServ, company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 20, true, true, false, 3);
-            addServ(listaServ, company, ++k, "amb-notte", "Ambulanza notte", 20, 8, true, true, false, 2);
-            addServ(listaServ, company, ++k, "dim", "Dimissioni ordinarie", 0, 0, true, false, false, 2);
-            addServ(listaServ, company, ++k, "ext", "Extra", 0, 0, true, false, true, 2);
-            addServ(listaServ, company, ++k, "avis", "Avis", 0, 0, true, false, true, 1);
+            addServ(listaServ, company, ++k, "med-mat", "Automedica mattino", 8, 12, true, true, false, 3, azzurro);
+            addServ(listaServ, company, ++k, "med-pom", "Automedica pomeriggio", 12, 18, true, true, false, 3, azzurro);
+            addServ(listaServ, company, ++k, "med-sera", "Automedica sera", 18, 22, true, true, false, 2, azzurro);
+            addServ(listaServ, company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3, verdino);
+            addServ(listaServ, company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 20, true, true, false, 3, verdino);
+            addServ(listaServ, company, ++k, "amb-notte", "Ambulanza notte", 20, 8, true, true, false, 2, verdino);
+            addServ(listaServ, company, ++k, "dim", "Dimissioni ordinarie", 0, 0, true, false, false, 2, rosa);
+            addServ(listaServ, company, ++k, "ext", "Extra", 0, 0, true, false, true, 2, rosa);
+            addServ(listaServ, company, ++k, "avis", "Avis", 0, 0, true, false, true, 1, rosa);
         }// end of if cycle
 
         return listaServ;
@@ -174,11 +179,11 @@ public abstract class BootService {
      * @param descrizione   per il tabellone (obbligatoria)
      * @param note          di spiegazione (facoltative)
      */
-    private static void addFunz(ArrayList<Funzione> listaFunzioni, WamCompany company, int ordine, String sigla, String descrizione, String note) {
+    private static void addFunz(ArrayList<Funzione> listaFunzioni, WamCompany company, int ordine, String sigla, String descrizione, String note, FontAwesome glyph) {
         Funzione funzione;
 
         if (listaFunzioni != null && company != null) {
-            funzione = Funzione.crea(company, sigla, descrizione, ordine, note);
+            funzione = Funzione.crea(company, sigla, descrizione, ordine, note, glyph);
             listaFunzioni.add(funzione);
         }// end of if cycle
 
@@ -200,11 +205,11 @@ public abstract class BootService {
      * @param multiplo     servizio suscettibile di essere effettuato diverse volte nella giornata
      * @param persone      minime indispensabile allo svolgimento del servizio
      */
-    private static void addServ(ArrayList<Servizio> listaServizi, WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone) {
+    private static void addServ(ArrayList<Servizio> listaServizi, WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone, int colore) {
         Servizio servizio;
 
         if (listaServizi != null && company != null) {
-            servizio = Servizio.crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile);
+            servizio = Servizio.crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile, colore);
             listaServizi.add(servizio);
         }// end of if cycle
 
