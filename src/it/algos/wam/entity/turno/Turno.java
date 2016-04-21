@@ -395,15 +395,17 @@ public class Turno extends WamCompanyEntity {
         this.fine = fine;
     }//end of setter method
 
-
-//    public List<TurnoIscrizione> getTurnoIscrizioni() {
-//        return turnoIscrizioni;
-//    }// end of getter method
-
-//    public void setTurnoIscrizioni(List<TurnoIscrizione> turnoIscrizioni) {
-//        this.turnoIscrizioni = turnoIscrizioni;
-//    }//end of setter method
-
+    /**
+     * Ritorna la durata totale del turno in minuti
+     */
+    public int getMinutiTotali(){
+        int minuti=0;
+        Servizio serv = getServizio();
+        if(serv!=null){
+            minuti=serv.getMinutiTotali();
+        }
+        return minuti;
+    }
 
     public String getTitoloExtra() {
         return titoloExtra;

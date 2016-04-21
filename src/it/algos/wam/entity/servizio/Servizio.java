@@ -462,6 +462,24 @@ public class Servizio extends WamCompanyEntity {
         this.minutiFine = minutiFine;
     }//end of setter method
 
+
+    /**
+     * Ritorna il tempo totale del servizio in minuti
+     */
+    public int getMinutiTotali(){
+        int minutiTot;
+        int minutiStart=getOraInizio()*60+getMinutiInizio();
+        int minutiEnd = getOraFine()*60+getMinutiFine();
+        int diff = minutiEnd-minutiStart;
+        if(diff>=0) {
+            minutiTot=diff;
+        }else{
+            minutiTot=1440+diff;    // giorni diversi
+        }
+        return minutiTot;
+    }
+
+
     public boolean isOrario() {
         return orario;
     }// end of getter method

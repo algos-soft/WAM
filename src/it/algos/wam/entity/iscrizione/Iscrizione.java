@@ -5,11 +5,9 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 /**
@@ -40,7 +38,7 @@ public class Iscrizione extends WamCompanyEntity {
     private Timestamp lastModifica = null;
 
     //--durata effettiva del turno del milite/volontario di questa iscrizione
-    private int oreEffettive = 0;
+    private int minutiEffettivi = 0;
 
     //--eventuali problemi di presenza del milite/volontario di questa iscrizione nel turno
     //--serve per evidenziare il problema nel tabellone
@@ -54,7 +52,7 @@ public class Iscrizione extends WamCompanyEntity {
      * Costruttore vuoto
      */
     public Iscrizione() {
-         this(null, null,null);
+         this(null, null, null);
     }// end of constructor
 
     /**
@@ -68,6 +66,9 @@ public class Iscrizione extends WamCompanyEntity {
         setTurno(turno);
         setVolontario(volontario);
         setServizioFunzione(serFun);
+        if(turno!=null){
+            setMinutiEffettivi(turno.getMinutiTotali());    // quando viene creata ha lo stesso tempo del turno
+        }
     }// end of constructor
 
     public Volontario getVolontario() {
@@ -94,12 +95,12 @@ public class Iscrizione extends WamCompanyEntity {
         this.lastModifica = lastModifica;
     }//end of setter method
 
-    public int getOreEffettive() {
-        return oreEffettive;
+    public int getMinutiEffettivi() {
+        return minutiEffettivi;
     }// end of getter method
 
-    public void setOreEffettive(int oreEffettive) {
-        this.oreEffettive = oreEffettive;
+    public void setMinutiEffettivi(int oreEffettive) {
+        this.minutiEffettivi = oreEffettive;
     }//end of setter method
 
     public boolean isEsisteProblema() {
