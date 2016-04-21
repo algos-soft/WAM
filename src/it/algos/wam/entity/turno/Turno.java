@@ -41,7 +41,7 @@ public class Turno extends WamCompanyEntity {
     private Servizio servizio;
 
     // iscrizioni dei volontari a questo turno
-    @OneToMany(mappedBy = "turno", cascade=CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "turno", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<Iscrizione> iscrizioni = new ArrayList();
 
@@ -61,7 +61,6 @@ public class Turno extends WamCompanyEntity {
     //--i servizi senza orario (fisso) vengono creati solo con la data di inizio; la data di fine viene aggiunata dopo
     @Temporal(TemporalType.TIMESTAMP)
     private Date fine;
-
 
 
     //--motivazione del turno extra
@@ -300,6 +299,7 @@ public class Turno extends WamCompanyEntity {
      */
     public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, boolean assegnato) {
         Turno turno = null;
+        int chiave = LibWam.creaChiave(inizio);
 
         if (servizio == null || inizio == null) {
             return null;
@@ -307,6 +307,7 @@ public class Turno extends WamCompanyEntity {
 
         if (servizio.isOrario()) {
             turno = Turno.find(servizio, inizio);
+            turno = Turno.find(servizio, chiave);
         }// end of if cycle
 
         if (turno == null) {
@@ -481,9 +482,8 @@ public class Turno extends WamCompanyEntity {
 
 
     public void setIscrizioni(ArrayList<Iscrizione> iscrizioni) {
-        this.iscrizioni=iscrizioni;
+        this.iscrizioni = iscrizioni;
     }
-
 
 
     /**
@@ -496,7 +496,7 @@ public class Turno extends WamCompanyEntity {
         Iscrizione iscrizione = null;
         for (Iscrizione i : getIscrizioni()) {
             ServizioFunzione s = i.getServizioFunzione();
-            if(s!=null){
+            if (s != null) {
                 if (s.equals(sf)) {
                     iscrizione = i;
                     break;
@@ -522,10 +522,6 @@ public class Turno extends WamCompanyEntity {
             throw new CloneNotSupportedException();
         }// fine del blocco try-catch
     }// end of method
-
-
-
-
 
 
 }// end of domain class
