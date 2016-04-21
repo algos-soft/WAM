@@ -1,7 +1,11 @@
 package it.algos.wam.entity.volontario;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.webbase.web.field.CheckBoxField;
 import it.algos.webbase.web.field.TextField;
@@ -21,6 +25,13 @@ public class VolontarioForm extends ModuleForm {
     public VolontarioForm(Item item, ModulePop module) {
         super(item, module);
     }// end of constructor
+
+
+//    @Override
+//    protected void init() {
+//        super.init();
+//        readFunzioni();
+//    }
 
     /**
      * Populate the map to bind item properties to fields.
@@ -77,7 +88,6 @@ public class VolontarioForm extends ModuleForm {
 
     private Component creaCompDetail() {
         VerticalLayout layout = new VerticalLayout();
-        HorizontalLayout layoutBox = new HorizontalLayout();
         HorizontalLayout layoutBoxFunz;
         layout.setSpacing(true);
         Field field;
@@ -94,35 +104,125 @@ public class VolontarioForm extends ModuleForm {
         field.setWidth(LAR_CAMPO);
         layout.addComponent(field);
 
+        HorizontalLayout layoutBox = new HorizontalLayout();
+        layoutBox.setSpacing(true);
         field = getField(Volontario_.dipendente.getName());
         layoutBox.addComponent(field);
         field = getField(Volontario_.attivo.getName());
         layoutBox.addComponent(field);
         layout.addComponent(layoutBox);
 
-        layout.addComponent(new Label("Funzioni abilitate"));
+//        layout.addComponent(new Label("Funzioni abilitate"));
+//
+//        //--funzioni del volontario
+//        volontario = (Volontario) getEntity();
+//        if (volontario != null) {
+//            listaFunzioni = volontario.getVolontarioFunzioni();
+//        }// end of if cycle
 
-        //--funzioni del volontario
-        volontario = (Volontario) getEntity();
-        if (volontario != null) {
-            listaFunzioni = volontario.getVolontarioFunzioni();
-        }// end of if cycle
+//        if (listaFunzioni != null) {
+//            for (VolontarioFunzione funz : listaFunzioni) {
+//                funzText=funz.getFunzione().getDescrizione();
+//                label= new Label(funzText);
+//                label.setWidth(LAR_CAMPO);
+//                layoutBoxFunz = new HorizontalLayout();
+//                layoutBoxFunz.setSpacing(true);
+//                layoutBoxFunz.addComponent(label);
+//                layoutBoxFunz.addComponent(new CheckBoxField());
+//                layout.addComponent(layoutBoxFunz);
+//            }// end of for cycle
+//        }// end of if cycle
 
-        if (listaFunzioni != null) {
-            for (VolontarioFunzione funz : listaFunzioni) {
-                funzText=funz.getFunzione().getDescrizione();
-                label= new Label(funzText);
-                label.setWidth(LAR_CAMPO);
-                layoutBoxFunz = new HorizontalLayout();
-                layoutBoxFunz.setSpacing(true);
-                layoutBoxFunz.addComponent(label);
-                layoutBoxFunz.addComponent(new CheckBoxField());
-                layout.addComponent(layoutBoxFunz);
-            }// end of for cycle
-        }// end of if cycle
-
+        layout.addComponent(creaCompFunzioni());
 
         return layout;
     }// end of method
+
+
+    /**
+     * Crea il componente per la selezione delle funzioni abilitate.
+     * @return il componente funzioni
+     */
+    private Component creaCompFunzioni(){
+        GridLayout grid = new GridLayout();
+        grid.setSpacing(true);
+        grid.setCaption("Funzioni abilitate");
+        grid.setColumns(3);
+        List<Funzione> funzioni = Funzione.findAll();
+        for(Funzione f : funzioni){
+
+
+//            CheckBox box = new CheckBox(f.getDescrizione());
+//            box.addValueChangeListener(valueChangeEvent -> {
+//                if (box.getValue()) {
+//                    if(!getVolontario().haFunzione(f)){
+//                        getVolontario().addFunzione(f);
+//                    }
+//                } else {
+//                    if(getVolontario().haFunzione(f)){
+//                        getVolontario().removeFunzione(f);
+//                    }
+//                }
+//            });
+//
+//            box.setValue(getVolontario().haFunzione(f));
+//
+//            grid.addComponent(box);
+
+            grid.addComponent(new CheckBoxFunzione(f));
+
+        }
+
+        return grid;
+
+    }
+
+    /**
+     * Componente per il checkbox funzione, fatto di CheckBox e label HTML con icona
+     */
+    private class CheckBoxFunzione extends HorizontalLayout{
+        public CheckBoxFunzione(Funzione f) {
+            setSpacing(true);
+
+            // label con icona e nome funzione
+            Label label = new Label();
+            label.setContentMode(ContentMode.HTML);
+            FontAwesome icon = f.getIcon();
+            if(icon!=null){
+                label.setValue(icon.getHtml());
+                label.setWidth("0.7em");
+            }
+
+            // checkBox con nome funzione
+            CheckBox box = new CheckBox(f.getDescrizione());
+            box.addValueChangeListener(valueChangeEvent -> {
+                if (box.getValue()) {
+                    if (!getVolontario().haFunzione(f)) {
+                        getVolontario().addFunzione(f);
+                    }
+                } else {
+                    if (getVolontario().haFunzione(f)) {
+                        getVolontario().removeFunzione(f);
+                    }
+                }
+            });
+            box.setValue(getVolontario().haFunzione(f));
+
+            // dispongo i componenti
+            addComponent(label);
+            addComponent(box);
+
+        }
+
+    }
+
+    private Volontario getVolontario() {
+        return (Volontario) getEntity();
+    }
+
+    @Override
+    protected boolean save() {
+        return super.save();
+    }
 
 }// end of class

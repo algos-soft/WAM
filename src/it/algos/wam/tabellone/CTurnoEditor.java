@@ -3,6 +3,7 @@ package it.algos.wam.tabellone;
 import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
  * e l'iscrizione viene fatta tramite bottoni.
  * In modalità multi-iscrizione, un volontario può iscrivere anche gli altri e
  * l'iscrizione viene fatta selezionando i nomi dai dei popup.
- *
+ * <p>
  * Created by alex on 05/03/16.
  */
 public class CTurnoEditor extends CTabelloneEditor {
@@ -159,7 +160,7 @@ public class CTurnoEditor extends CTabelloneEditor {
          * Il bottone Registra
          * Usato solo in modalità multi-iscrizione
          */
-        if(isMultiIscrizione()){
+        if (isMultiIscrizione()) {
             layout.addComponent(bRegistra);
         }
 
@@ -340,7 +341,11 @@ public class CTurnoEditor extends CTabelloneEditor {
             if (isMultiIscrizione()) {
                 comp = creaCompPopup();
             } else {
-                comp = creaCompBottone();
+                if (isAdmin()) {
+                    comp = creaCompPopup();
+                } else {
+                    comp = creaCompBottone();
+                }
             }
 
             setCompositionRoot(comp);
@@ -366,7 +371,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                     if (sel != null) {
                         boolean giaIscritto = IscrizioneEditor.this.parent.isIscritto(sel, IscrizioneEditor.this);
                         if (giaIscritto) {
-                            Notification.show(sel + " è già iscritto a questo turno", Notification.Type.ERROR_MESSAGE);
+                            Notification.show(sel + " è già iscritto a questo turno.", Notification.Type.ERROR_MESSAGE);
                             if (currentSelectedVolontario == null) {
                                 fVolontario.select(null);
                             } else {
@@ -408,7 +413,9 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         /**
          * Crea un componente bottone che mostra il volontario iscritto o
-         * iscrive il volontario correntemente loggato
+         * iscrive il volontario correntemente loggato.
+         * Solo gli utenti normali hanno questo tipo di componente, gli admin
+         * hanno sempre il componente popup - qui non serve mai controllare isAdmin()
          */
         private Component creaCompBottone() {
 
@@ -418,37 +425,79 @@ public class CTurnoEditor extends CTabelloneEditor {
             bMain.setWidth("100%");
             bMain.setHtmlContentAllowed(true);
             Volontario volIscritto = iscrizione.getVolontario();
+            Funzione funz = iscrizione.getServizioFunzione().getFunzione();
             String caption;
             if (volIscritto != null) {  // già iscritto
                 caption = volIscritto.toString();
-                Funzione funz = iscrizione.getServizioFunzione().getFunzione();
                 FontAwesome glyph = funz.getIcon();
-                if(glyph!=null){
-                    caption=glyph.getHtml()+" "+caption;
+                if (glyph != null) {
+                    caption = glyph.getHtml() + " " + caption;
                 }
+                bMain.addStyleName("greenBg");
             } else {                    // non iscritto
-                caption = creaTestoComponente();
+                caption = "";
+                FontAwesome glyph = funz.getIcon();
+                if (glyph != null) {
+                    caption = glyph.getHtml() + " " + caption;
+                }
+                caption+=" Iscriviti come <strong>"+funz.getDescrizione()+"</strong>";
+                if (!getLoggedUser().haFunzione(funz)) {
+                    bMain.addStyleName("lightGrayBg");
+                }
             }
             bMain.setCaption(caption);
-            bMain.setEnabled(volIscritto==null);
+            // click listener solo se non c'è nessuno iscritto
             bMain.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
-                    entityManager.getTransaction().begin();
-                    turno.getIscrizioni().add(iscrizione);
-                    iscrizione.setVolontario(getUser());
-                    entityManager.merge(turno);
-                    entityManager.getTransaction().commit();
-                    fireDismissListeners(new DismissEvent(bMain, true, false));
+                    boolean cont = true;
+
+                    // controllo che non ci sia già un iscritto
+                    if (cont) {
+                        if (volIscritto != null) {
+                            cont = false;
+                        }
+                    }
+
+                    // controllo che l'utente corrente abbia la funzione richiesta
+                    if (cont) {
+                        if (!getLoggedUser().haFunzione(funz)) {
+                            Notification notif=new Notification("Nel tuo profilo non c'è la funzione " + funz.getDescrizione() + "<br>" + "Rivolgiti all'amministratore", Notification.Type.WARNING_MESSAGE);
+                            notif.setHtmlContentAllowed(true);
+                            notif.show(Page.getCurrent());
+                            cont = false;
+                        }
+                    }
+
+                    // controllo che non sia già iscritto in qualche altra posizione di questo turno
+                    if(cont){
+                        boolean giaIscritto = IscrizioneEditor.this.parent.isIscritto(getLoggedUser(), IscrizioneEditor.this);
+                        if (giaIscritto) {
+                            Notification.show("Sei già iscritto a questo turno.", Notification.Type.ERROR_MESSAGE);
+                            cont = false;
+                        }
+                    }
+
+                    // se tutto ok procedo alla iscrizione
+                    if (cont) {
+                        entityManager.getTransaction().begin();
+                        turno.getIscrizioni().add(iscrizione);
+                        iscrizione.setVolontario(getLoggedUser());
+                        entityManager.merge(turno);
+                        entityManager.getTransaction().commit();
+                        fireDismissListeners(new DismissEvent(bMain, true, false));
+                    }
+
                 }
             });
 
 
             // bottone remove
-            Button bRemove=new Button();
+            Button bRemove = new Button();
             bRemove.setHeight("100%");
             bRemove.setIcon(FontAwesome.REMOVE);
-            bRemove.setEnabled(volIscritto!=null);
+            bRemove.addStyleName("icon-red");
+            bRemove.setEnabled(volIscritto != null);
             bRemove.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
@@ -462,7 +511,7 @@ public class CTurnoEditor extends CTabelloneEditor {
 
 
             // layout finale
-            HorizontalLayout layout=new HorizontalLayout();
+            HorizontalLayout layout = new HorizontalLayout();
             layout.setSpacing(true);
             layout.setWidth("100%");
             layout.setHeight("3em");
@@ -531,13 +580,33 @@ public class CTurnoEditor extends CTabelloneEditor {
      * @return true se è attiva la modalità multi-iscrizione
      * (un volontario può iscrivere anche gli altri)
      */
-    private boolean isMultiIscrizione(){
-        return false;
+    private boolean isMultiIscrizione() {
+        return isAdmin();
     }
 
-    private Volontario getUser(){
+    /**
+     * Ritorna l'utente correntemente loggato
+     *
+     * @return l'utente loggato
+     */
+    private Volontario getLoggedUser() {
         Volontario volontario = Volontario.find(1);
         return volontario;
+    }
+
+    /**
+     * Verifica se il volontario è un admin
+     *
+     * @return true se è un admin
+     */
+    public boolean isAdmin() {
+        boolean admin=false;
+        Volontario vol = getLoggedUser();
+        if(vol!=null){
+            admin=vol.isAdmin();
+        }
+//        return true;
+        return admin;
     }
 
 

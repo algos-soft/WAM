@@ -209,10 +209,10 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
 
     /**
      * Colorazione di un turno futuro in funzione dell'urgenza di completamento
-     * - se è valido è comunque verde
-     * - se non è valido
-     * - se è vicino è giallo
-     * - se è molto vicino è rosso
+     * - se è valido è verde
+     * - se non è valido:
+     *    - se è vicino è giallo
+     *    - se è molto vicino è rosso
      *
      * @param turno il turno da esaminare
      * @return una coppia di stringhe con lo stile di background e lo stile di foreground

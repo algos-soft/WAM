@@ -6,6 +6,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -202,7 +203,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<Funzione> findAll() {
-        return (ArrayList<Funzione>) AQuery.getLista(Funzione.class);
+        return (ArrayList<Funzione>) CompanyQuery.getList(Funzione.class);
     }// end of method
 
     /**

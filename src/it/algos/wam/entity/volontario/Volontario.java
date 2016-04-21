@@ -134,7 +134,6 @@ public class Volontario extends WamCompanyEntity {
      * Recupera una istanza di Volontario usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
-     *
      * @return istanza di Volontario, null se non trovata
      */
     public static Volontario find(long id) {
@@ -156,7 +155,6 @@ public class Volontario extends WamCompanyEntity {
      * @param company valore della property Company
      * @param nome    valore della property Nome
      * @param cognome valore della property Cognome
-     *
      * @return istanza di Volontario, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -222,7 +220,6 @@ public class Volontario extends WamCompanyEntity {
      * @param company croce di appartenenza
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
-     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, String nome, String cognome) {
@@ -237,7 +234,6 @@ public class Volontario extends WamCompanyEntity {
      * @param nome          del volontario/milite (obbligatorio)
      * @param cognome       del volontario/milite (obbligatorio)
      * @param listaFunzioni lista delle funzioni (facoltativa)
-     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, String nome, String cognome, ArrayList<Funzione> listaFunzioni) {
@@ -252,7 +248,6 @@ public class Volontario extends WamCompanyEntity {
      * @param nome     del volontario/milite (obbligatorio)
      * @param cognome  del volontario/milite (obbligatorio)
      * @param funzioni lista delle funzioni (facoltativa)
-     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, String nome, String cognome, Funzione... funzioni) {
@@ -265,12 +260,12 @@ public class Volontario extends WamCompanyEntity {
 
             if (funzioni != null) {
                 for (Funzione funz : funzioni) {
-                    vol.volontarioFunzioni.add(new VolontarioFunzione(company,vol,funz));
+                    vol.volontarioFunzioni.add(new VolontarioFunzione(company, vol, funz));
 //                    VolontarioFunzione.crea(vol, funz);
                 } // fine del ciclo for-each
             }// fine del blocco if
 
-          vol=  (Volontario)vol.save();
+            vol = (Volontario) vol.save();
         }// end of if cycle
 
         return vol;
@@ -374,7 +369,7 @@ public class Volontario extends WamCompanyEntity {
         this.volontarioFunzioni = volontarioFunzioni;
     }//end of setter method
 
-    public void add(Funzione funzione) {
+    public void addFunzione(Funzione funzione) {
         VolontarioFunzione volFun = null;
 
         if (getCompany() == null) {
@@ -390,13 +385,55 @@ public class Volontario extends WamCompanyEntity {
         }// end of if cycle
     }// end of method
 
-//    public void add(WamCompany company, Funzione funzione) {
+
+    /**
+     * Rimuove una funzione dal volontario
+     */
+    public void removeFunzione(Funzione funzione) {
+        for(VolontarioFunzione vf : volontarioFunzioni){
+            if(vf.getFunzione().equals(funzione)){
+                volontarioFunzioni.remove(vf);
+                break;
+            }
+        }
+    }
+
+
+    /**
+     * Verifica se il volontario ha una data funzione
+     *
+     * @param funz la funzione da verificare
+     * @return true se ha la funzione
+     */
+    public boolean haFunzione(Funzione funz) {
+        boolean found=false;
+        List<VolontarioFunzione> vfunzioni = getVolontarioFunzioni();
+        for(VolontarioFunzione vf : vfunzioni){
+            if(vf.getFunzione().equals(funz)){
+                found=true;
+                break;
+            }
+        }
+        return found;
+    }
+
+    /**
+     * Verifica se il volontario è un admin
+     *
+     * @return true se è un admin
+     */
+    public boolean isAdmin() {
+        return false;
+    }
+
+
+//    public void addFunzione(WamCompany company, Funzione funzione) {
 //        VolontarioFunzione volFun = null;
 //
 //        if (volontarioFunzioni != null) {
 //            volFun = new VolontarioFunzione(this, funzione);
 //            volFun.setCompany(company);
-//            volontarioFunzioni.add(volFun);
+//            volontarioFunzioni.addFunzione(volFun);
 //        }// end of if cycle
 //
 //    }// end of method
