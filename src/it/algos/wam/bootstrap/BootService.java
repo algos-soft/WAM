@@ -12,7 +12,9 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.lib.LibDate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by gac on 25 feb 2016.
@@ -28,8 +30,13 @@ public abstract class BootService {
      * La crea SOLO se non esiste già
      */
     public static void creaCompanyDemo() {
+
         WamCompany company = creaCroceDemo();
-        initCompany(company);
+//        Object alfa = CompanyQuery.queryList(Funzione.class, CompanyEntity_.company, company);
+//        Object beta = CompanyQuery.getList(Funzione.class);
+//        Object gamma = CompanyQuery.getList(Funzione.class, new Compare.Equal("company", company));
+
+        initCompany(company, true);
     }// end of static method
 
     /**
@@ -41,7 +48,7 @@ public abstract class BootService {
      */
     public static void creaCompanyTest() {
         WamCompany company = creaCroceTest();
-        initCompany(company);
+        initCompany(company, true);
     }// end of static method
 
     /**
@@ -50,10 +57,21 @@ public abstract class BootService {
      * Crea alcune funzioni standard
      * Crea una lista di volontari di esempio
      * Crea alcuni servizi di esempio
-     * Crea alcuni turni vuoti
-     * Riempie i turni creati
      */
     public static void initCompany(WamCompany company) {
+        initCompany(company, false);
+    }// end of static method
+
+    /**
+     * Inizializza una croce appena creata, con alcuni dati di esempio
+     * Visibile solo a noi (developer)
+     * Crea alcune funzioni standard
+     * Crea una lista di volontari di esempio
+     * Crea alcuni servizi di esempio
+     * Crea alcuni turni vuoti (opzionale)
+     * Riempie i turni creati (opzionale)
+     */
+    public static void initCompany(WamCompany company, boolean creaTurni) {
         ArrayList<Funzione> listaFunzioni;
         ArrayList<Volontario> listaVolontari;
         ArrayList<Servizio> listaServizi;
@@ -62,8 +80,10 @@ public abstract class BootService {
         listaFunzioni = creaFunzioni(company);
         listaVolontari = creaVolontari(company, listaFunzioni);
         listaServizi = creaServizi(company, listaFunzioni);
-        listaTurni = creaTurniVuoti(company, listaServizi);
-        riempieTurni(company, listaVolontari, listaServizi, listaTurni);
+        if (creaTurni) {
+            listaTurni = creaTurniVuoti(company, listaServizi);
+            riempieTurni(company, listaVolontari, listaServizi, listaTurni);
+        }// end of if cycle
     }// end of static method
 
     /**
@@ -108,26 +128,64 @@ public abstract class BootService {
 
 
     /**
-     * Creazione iniziale di alcune funzioni per la croce selezionata
+     * Creazione iniziale di alcune funzioni standard per la croce selezionata
      * Le crea SOLO se non esistono già
      *
      * @param company croce selezionata
      * @return lista delle funzioni create
      */
+    @SuppressWarnings("unchecked")
     private static ArrayList<Funzione> creaFunzioni(WamCompany company) {
         ArrayList<Funzione> listaFunz = new ArrayList<>();
-        int k = 0;
+        ArrayList listaTmp = new ArrayList<>();
 
-        if (company != null) {
-            listaFunz.add(Funzione.crea(company, "aut", "Autista118", ++k, "Autista patentato 118", FontAwesome.AMBULANCE));
-            listaFunz.add(Funzione.crea(company, "aut2", "Autista", ++k, "Autista", FontAwesome.WHEELCHAIR));
-            listaFunz.add(Funzione.crea(company, "soc", "Soccorritore", ++k, "Soccorritore 118", FontAwesome.HEART));
-            listaFunz.add(Funzione.crea(company, "sec", "Secondo", ++k, "Soccorritore in prova", FontAwesome.STETHOSCOPE));
-            listaFunz.add(Funzione.crea(company, "ter", "Terzo", ++k, "Autista patentato 118", FontAwesome.USER));
-            listaFunz.add(Funzione.crea(company, "bar", "Barelliere", ++k, "Barelliere", FontAwesome.USER_MD));
+        if (company == null) {
+            return null;
         }// end of if cycle
 
+        listaTmp.add(Arrays.asList("aut", "Aut", "Autista", FontAwesome.WHEELCHAIR));
+        listaTmp.add(Arrays.asList("soc", "Soc", "Soccorritore", FontAwesome.USER));
+        listaTmp.add(Arrays.asList("bar", "Bar", "Barelliere", FontAwesome.USER_MD));
+
+        listaTmp.add(Arrays.asList("aut-118", "Aut-118", "Autista emergenza abilitato 118", FontAwesome.WHEELCHAIR));
+        listaTmp.add(Arrays.asList("aut-msa", "Aut-msa", "Autista automedica abilitato 118", FontAwesome.AMBULANCE));
+        listaTmp.add(Arrays.asList("aut-amb", "Aut-amb", "Autista ambulanza abilitato 118", FontAwesome.AMBULANCE));
+        listaTmp.add(Arrays.asList("aut-ord", "Aut-ord", "Autista ordinario", FontAwesome.AMBULANCE));
+
+        listaTmp.add(Arrays.asList("soc-pri", "1° Soc", "Primo soccorritore", FontAwesome.USER));
+        listaTmp.add(Arrays.asList("soc-sec", "2° Soc", "Secondo soccorritore", FontAwesome.STETHOSCOPE));
+        listaTmp.add(Arrays.asList("soc-ter", "3° Soc", "Terzo soccorritore", FontAwesome.USER));
+
+        listaTmp.add(Arrays.asList("soc-dae", "DAE", "Soccorritore abilitato DAE", FontAwesome.USER));
+        listaTmp.add(Arrays.asList("soc-ord", "Soc", "Soccorritore ordinario", FontAwesome.USER));
+        listaTmp.add(Arrays.asList("bar-aff", "Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
+        listaTmp.add(Arrays.asList("avis", "Avis", "Operatore trasporto AVIS", FontAwesome.USER));
+        listaTmp.add(Arrays.asList("cent", "Cen", "Centralinista", FontAwesome.USER));
+
+        for (int k = 0; k < listaTmp.size(); k++) {
+            listaFunz.add(creaFunzBase(company, k, (List) listaTmp.get(k)));
+        }// end of for cycle
+
         return listaFunz;
+    }// end of static method
+
+    /**
+     * Creazione della singola funzione per la croce selezionata
+     * La crea SOLO se non esiste già
+     *
+     * @param company  croce di appartenenza
+     * @param ordine   di presentazione nelle liste
+     * @param listaTmp di alcune property
+     * @return istanza di Funzione
+     */
+    private static Funzione creaFunzBase(WamCompany company, int ordine, List listaTmp) {
+        Funzione funzione;
+        String sigla = (String) listaTmp.get(0);
+        String descrizione = (String) listaTmp.get(1);
+        String note = (String) listaTmp.get(2);
+        FontAwesome glyph = (FontAwesome) listaTmp.get(3);
+
+        return Funzione.creaNew(company, sigla, descrizione, ordine, note, glyph);
     }// end of static method
 
     /**

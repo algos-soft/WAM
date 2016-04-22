@@ -6,7 +6,9 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.query.AQuery;
@@ -35,7 +37,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     private static final long serialVersionUID = 1L;
 
 
-    //--sigla di riferimento interna (obbligatoria)
+    //--sigla di riferimento interna NON visibile nel tabellone (obbligatoria)
     @NotEmpty
     @Column(length = 20)
     @Index
@@ -54,6 +56,10 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     private int ordine = 0;
 
 
+    //--codepoint dell'icona di FontAwesome (facoltative)
+    private int iconCodepoint;
+
+
     //--note di spiegazione (facoltative)
     @Column(columnDefinition = "text")
     private String note = "";
@@ -70,55 +76,80 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
 
-//    @Lob
-//    private byte[] icon;
-
-    // codepoint dell'icona di FontAwesome
-    private int iconCodepoint;
-
 
     /**
      * Costruttore senza argomenti
      * Necessario per le specifiche JavaBean
      */
     public Funzione() {
-//        this(null, "", "");
     }// end of constructor
 
-//    /**
-//     * Costruttore minimo con tutte le properties obbligatorie
-//     *
-//     * @param company     croce di appartenenza
-//     * @param sigla       sigla di riferimento interna (obbligatoria)
-//     * @param descrizione per il tabellone (obbligatoria)
-//     */
-//    public Funzione(WamCompany company, String sigla, String descrizione) {
-//        this(company, sigla, descrizione, 0, "");
-//    }// end of constructor
+    /**
+     * Costruttore minimo con tutte le properties obbligatorie
+     *
+     * @param company     croce di appartenenza
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     */
+    public Funzione(BaseCompany company, String sigla, String descrizione) {
+        this(company, sigla, descrizione, 0, null, "");
+    }// end of constructor
 
 
-//    /**
-//     * Costruttore completo
-//     *
-//     * @param company     croce di appartenenza
-//     * @param sigla       sigla di riferimento interna (obbligatoria)
-//     * @param descrizione per il tabellone (obbligatoria)
-//     * @param ordine      di presentazione nelle liste
-//     * @param note        di spiegazione (facoltative)
-//     */
-//    public Funzione(WamCompany company, String sigla, String descrizione, int ordine, String note) {
-//        super();
-//        this.setCompany(company);
-//        this.setSigla(sigla);
-//        this.setDescrizione(descrizione);
-//        this.setOrdine(ordine);
-//        this.setNote(note);
-//    }// end of constructor
+    /**
+     * Costruttore completo
+     *
+     * @param company     croce di appartenenza
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param ordine      di presentazione nelle liste
+     * @param glyph       icona di FontAwesome (facoltative)
+     * @param note        di spiegazione (facoltative)
+     */
+    public Funzione(BaseCompany company, String sigla, String descrizione, int ordine, FontAwesome glyph, String note) {
+        super();
+        this.setCompany(company);
+        this.setSigla(sigla);
+        this.setDescrizione(descrizione);
+        this.setOrdine(ordine);
+        this.setIcon(glyph);
+        this.setNote(note);
+    }// end of constructor
+
+    /**
+     * Recupera il totale dei records della Entity
+     * Filtrato sulla azienda corrente.
+     *
+     * @return numero totale di records della tavola
+     */
+    public static int count() {
+        return count(CompanySessionLib.getCompany());
+    }// end of method
+
+    /**
+     * Recupera il totale dei records della Entity
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company croce di appartenenza
+     * @return numero totale di records della tavola
+     */
+    public static int count(BaseCompany company) {
+        int totRec = 0;
+        long totTmp = CompanyQuery.getCount(Funzione.class, company);
+
+        if (totTmp > 0) {
+            totRec = (int) totTmp;
+        }// fine del blocco if
+
+        return totRec;
+    }// end of method
+
 
     /**
      * Recupera una istanza di Funzione usando la query standard della Primary Key
+     * Nessun filtro sulla azienda, perché la primary key è unica
      *
-     * @param id valore della Primary Key
+     * @param id valore (unico) della Primary Key
      * @return istanza di Funzione, null se non trovata
      */
     public static Funzione find(long id) {
@@ -156,30 +187,18 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Recupera una istanza di Funzione usando la query di una property specifica
      * Filtrato sulla azienda passata come parametro.
      *
-     * @param sigla   sigla di riferimento interna (obbligatoria)
      * @param company croce di appartenenza
+     * @param sigla   sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Funzione findBySigla(String sigla, WamCompany company) {
+    public static Funzione findBySigla(BaseCompany company, String sigla) {
         Funzione instance = null;
         BaseEntity bean;
 
         EntityManager manager = EM.createEntityManager();
         bean = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla, manager, company);
         manager.close();
-
-//        //@todo migliorabile
-////        ArrayList<Funzione> funzioniPerSigla = (ArrayList<Funzione>) AQuery.queryList(Funzione.class, Funzione_.sigla, sigla);
-//        List<Funzione> funzioniPerSigla = (List<Funzione>) AQuery.queryList(Funzione.class, Funzione_.sigla, sigla);
-//
-//        if (funzioniPerSigla != null && funzioniPerSigla.size() > 0) {
-//            for (Funzione funzione : funzioniPerSigla) {
-//                if (funzione.getCompany().getId().equals(company.getId())) {
-//                    instance = funzione;
-//                }// end of if cycle
-//            }// end of for cycle
-//        }// end of if cycle
 
         if (bean != null && bean instanceof Funzione) {
             instance = (Funzione) bean;
@@ -188,41 +207,27 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return instance;
     }// end of method
 
-    /**
-     * Recupera il valore del numero totale di records della della Entity
-     *
-     * @return numero totale di records della tavola
-     */
-    public static int count() {
-        int totRec = 0;
-        long totTmp = AQuery.getCount(Funzione.class);
-
-        if (totTmp > 0) {
-            totRec = (int) totTmp;
-        }// fine del blocco if
-
-        return totRec;
-    }// end of method
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla azienda corrente.
      *
      * @return lista di tutte le istanze di Funzione
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<Funzione> findAll() {
-        return (ArrayList<Funzione>) CompanyQuery.getList(Funzione.class);
+        return findAll(CompanySessionLib.getCompany());
     }// end of method
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Relativa ad una wamcompany
+     * Filtrato sulla azienda passata come parametro.
      *
      * @return lista di tutte le istanze di Funzione
      */
-    public static ArrayList<Funzione> findAll(WamCompany company) {
-        //@todo da sviluppare
-        return null;
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Funzione> findAll(BaseCompany company) {
+        return (ArrayList<Funzione>) CompanyQuery.getList(Funzione.class);
     }// end of method
 
     /**
@@ -233,8 +238,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param sigla   sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione
      */
-    public static Funzione crea(WamCompany company, String sigla) {
-        return crea(company, sigla, "", 0, "");
+    public static Funzione creaNew(WamCompany company, String sigla) {
+        return creaNew(company, sigla, "", 0, "");
     }// end of static method
 
     /**
@@ -248,8 +253,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param note        di spiegazione (facoltative)
      * @return istanza di Funzione
      */
-    public static Funzione crea(WamCompany company, String sigla, String descrizione, int ordine, String note) {
-        return crea(company, sigla, descrizione, ordine, note, null);
+    public static Funzione creaNew(WamCompany company, String sigla, String descrizione, int ordine, String note) {
+        return creaNew(company, sigla, descrizione, ordine, note, null);
     }// end of static method
 
     /**
@@ -264,14 +269,14 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param glyph       dell'icona (facoltativo)
      * @return istanza di Funzione
      */
-    public static Funzione crea(
+    public static Funzione creaNew(
             WamCompany company,
             String sigla,
             String descrizione,
             int ordine,
             String note,
             FontAwesome glyph) {
-        Funzione funzione = Funzione.findBySigla(sigla, company);
+        Funzione funzione = Funzione.findBySigla(company, sigla);
 
         if (funzione == null) {
             funzione = new Funzione();
