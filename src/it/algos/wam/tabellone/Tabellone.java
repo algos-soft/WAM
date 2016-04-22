@@ -71,12 +71,13 @@ public class Tabellone extends VerticalLayout implements View {
 
         entityManager = EM.createEntityManager();
 
-        tabComponent = new TabComponent();
-        creaGrid(LocalDate.now());
 
+        tabComponent = new TabComponent();
         editorPage = new EditorPage();
         searchPage = new SearchPage();
         generatorPage = new GeneratorPage();
+
+        creaGrid(LocalDate.now());
 
         // creo un Navigator e vi aggiungo i vari componenti che possono
         // essere presentati dal tabellone
@@ -295,43 +296,6 @@ public class Tabellone extends VerticalLayout implements View {
         WRigaTab riga = new WRigaTab(servizio, new Turno[0]);
         EngineTab.insertRiga(grid, riga, row+1);
     }
-
-
-//    /**
-//     * Crea un nuovo servizio e lo presenta nell'editor.
-//     * Se registrato, aggiunge una riga con il servizio al tabellone.
-//     * Invocato dal bottone Crea Nuovo Servizio nel Tabellone
-//     */
-//    public void nuovoServizio() {
-//
-//        // crea un nuovo servizio
-//        Servizio servizio = new Servizio("extra", "servizio extra");
-//        servizio.setOrario(false);
-//
-//        // crea un editor per il servizio
-//        // quando si dismette l'editor, tornerà al tabellone
-//        CServizioEditor editor = new CServizioEditor(servizio, entityManager);
-//        editor.addDismissListener(new CTabelloneEditor.DismissListener() {
-//            @Override
-//            public void editorDismissed(CTabelloneEditor.DismissEvent e) {
-//
-//                // se ha salvato aggiunge una nuova riga col servizio
-//                if (e.isSaved()) {
-//                    if (e.isSaved()) {
-//                        WRigaTab wRiga = new WRigaTab(servizio, null);
-//                        EngineTab.addRiga(tabComponent.getGridTabellone(), wRiga);
-//                    }
-//                }
-//                navigator.navigateTo(ADDR_TABELLONE);
-//            }
-//        });
-//
-//
-//        // assegna l'editor e naviga alla editor view
-//        editorPage.setEditor(editor);
-//        navigator.navigateTo(ADDR_EDIT_SERVIZIO);
-//
-//    }
 
 
     /**

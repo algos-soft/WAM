@@ -183,7 +183,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
         public CompFunzioni() {
             //addStyleName("greenBg");
             setSpacing(false);
-            setWidth("3em");
+            setWidth("6em");
 
 
             Funzione funz;
@@ -202,7 +202,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
                 funz = serFun.getFunzione();
                 obbligatoria = serFun.isObbligatoria();
 
-                Component comp = addFunzione(funz.getSigla());
+                Component comp = addFunzione(funz.getDescrizione());
                 if (obbligatoria) {
                     comp.addStyleName("cfunzioneobblig");
                 }

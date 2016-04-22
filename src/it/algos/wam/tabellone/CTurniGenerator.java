@@ -1,7 +1,9 @@
 package it.algos.wam.tabellone;
 
+import com.sun.tools.javac.comp.Check;
 import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -44,7 +46,7 @@ public class CTurniGenerator extends CTabelloneEditor {
      */
     private Component creaCompTitolo() {
         VerticalLayout layout = new VerticalLayout();
-        layout.addComponent(new Label("<strong>" + "Generatore turni vuoti"+ "</strong>", ContentMode.HTML));
+        layout.addComponent(new Label("<strong>" + "Generatore turni vuoti" + "</strong>", ContentMode.HTML));
 
         return layout;
     }
@@ -70,10 +72,10 @@ public class CTurniGenerator extends CTabelloneEditor {
         dateField1.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                Object value=valueChangeEvent.getProperty().getValue();
-                if(value != null && value instanceof Date){
-                    Date date = (Date)value;
-                    LocalDate d2=DateConvertUtils.asLocalDate(date).plusWeeks(1);
+                Object value = valueChangeEvent.getProperty().getValue();
+                if (value != null && value instanceof Date) {
+                    Date date = (Date) value;
+                    LocalDate d2 = DateConvertUtils.asLocalDate(date).plusWeeks(1);
                     dateField2.setValue(DateConvertUtils.asUtilDate(d2));
                 }
             }
@@ -92,7 +94,7 @@ public class CTurniGenerator extends CTabelloneEditor {
         servizi.addAll(WamQuery.queryServizi(entityManager, true));
         servizi.addAll(WamQuery.queryServizi(entityManager, false));
 
-        GridLayout grid = new GridLayout(8,servizi.size()+1);
+        GridLayout grid = new GridLayout(9,servizi.size()+2);
         grid.setSpacing(true);
 
         grid.addComponent(new Label("Lun"), 1, 0);
@@ -103,26 +105,88 @@ public class CTurniGenerator extends CTabelloneEditor {
         grid.addComponent(new Label("Sab"), 6, 0);
         grid.addComponent(new Label("Dom"), 7, 0);
 
-        int row=1;
-        for(Servizio serv : servizi){
-            Label label = new Label(serv.getDescrizione());
-            grid.addComponent(label, 0, row);
+        int rows = servizi.size();
+        int cols = 7;
+        CheckBox[][] matrix = new CheckBox[rows][cols];
 
-            for(int col=1; col<8; col++){
+        int row=0;
+        for(Servizio serv : servizi){
+
+            // nome servizio
+            Label label = new Label(serv.getDescrizione());
+            grid.addComponent(label, 0, row+1);
+
+            // riga orizzontale di checkboxes
+            for(int col=0; col<7; col++){
                 CheckBox cb = new CheckBox();
-                grid.addComponent(cb, col, row);
+                grid.addComponent(cb, col+1, row+1);
+                matrix[row][col]=cb;
             }
+
+            // componente multiselettore per riga
+            int row1=row;
+            SwitchOnOffH onOff=new SwitchOnOffH(new SwitchListener() {
+
+                @Override
+                public void clickedOn() {
+                    turnRow(matrix, row1, true);
+                }
+
+                @Override
+                public void clickedOff() {
+                    turnRow(matrix, row1, false);
+                }
+            });
+            grid.addComponent(onOff, 8, row+1);
 
             row++;
 
-
         }
+
+        // componenti multiselettore per colonna
+        for(int col=1; col<=7; col++){
+            int col1=col-1;
+            SwitchOnOffV onOff=new SwitchOnOffV(new SwitchListener() {
+                @Override
+                public void clickedOn() {
+                    turnColumn(matrix, col1, true);
+                }
+
+                @Override
+                public void clickedOff() {
+                    turnColumn(matrix, col1, false);
+                }
+            });
+            grid.addComponent(onOff, col, row+1);
+        }
+
 
         layout.addComponent(layoutDate);
         layout.addComponent(grid);
         return layout;
     }
 
+    private void turnRow(CheckBox[][] matrix, int row, boolean state){
+        for(int i=0;i<matrix[row].length;i++){
+            matrix[row][i].setValue(state);
+        }
+    }
+
+    private void turnColumn(CheckBox[][] matrix, int col, boolean state){
+        CheckBox[] boxes = getColumn(matrix, col);
+        for(CheckBox cb : boxes){
+            cb.setValue(state);
+        }
+    }
+
+
+    private static CheckBox[] getColumn(CheckBox[][] array, int index){
+        CheckBox[] column = new CheckBox[array.length];
+        for(int i=0; i<column.length; i++){
+            column[i] = array[i][index];
+        }
+        return column;
+    }
 
 
 
@@ -159,6 +223,67 @@ public class CTurniGenerator extends CTabelloneEditor {
         layout.addComponent(bEsegui);
 
         return layout;
+    }
+
+    private class SwitchOnOffH extends HorizontalLayout{
+
+        public SwitchOnOffH(SwitchListener swListener) {
+
+            setSizeUndefined();
+            setSpacing(true);
+            addStyleName("icon-red");
+
+            HorizontalLayout layOn = new HorizontalLayout();
+            layOn.addComponent(new Label(FontAwesome.SQUARE_O.getHtml() , ContentMode.HTML));
+            layOn.addLayoutClickListener(layoutClickEvent -> {
+                swListener.clickedOff();
+            });
+
+            HorizontalLayout layOff = new HorizontalLayout();
+            layOff.addComponent(new Label(FontAwesome.CHECK_SQUARE_O.getHtml() , ContentMode.HTML));
+            layOff.addLayoutClickListener(layoutClickEvent -> {
+                swListener.clickedOn();
+            });
+
+
+            addComponent(layOn);
+            addComponent(layOff);
+
+        }
+
+    }
+
+    interface SwitchListener{
+        void clickedOn();
+        void clickedOff();
+    }
+
+
+    private class SwitchOnOffV extends VerticalLayout{
+        public SwitchOnOffV(SwitchListener swListener) {
+
+            setSizeUndefined();
+            setSpacing(false);
+            addStyleName("icon-red");
+
+            HorizontalLayout layOn = new HorizontalLayout();
+            layOn.addComponent(new Label(FontAwesome.SQUARE_O.getHtml() , ContentMode.HTML));
+            layOn.addLayoutClickListener(layoutClickEvent -> {
+                swListener.clickedOff();
+            });
+
+            HorizontalLayout layOff = new HorizontalLayout();
+            layOff.addComponent(new Label(FontAwesome.CHECK_SQUARE_O.getHtml() , ContentMode.HTML));
+            layOff.addLayoutClickListener(layoutClickEvent -> {
+                swListener.clickedOn();
+            });
+
+
+            addComponent(layOn);
+            addComponent(layOff);
+
+        }
+
     }
 
 
