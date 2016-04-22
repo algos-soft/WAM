@@ -158,6 +158,27 @@ public class CTurniGenerator extends CTabelloneEditor {
             grid.addComponent(onOff, col, row+1);
         }
 
+        // componente multiselettore globale
+        SwitchOnOffH onOffGen=new SwitchOnOffH(new SwitchListener() {
+            @Override
+            public void clickedOn() {
+                for(int row=0; row<matrix.length; row++){
+                    turnRow(matrix, row, true);
+                }
+            }
+
+            @Override
+            public void clickedOff() {
+                for(int row=0; row<matrix.length; row++){
+                    turnRow(matrix, row, false);
+                }
+            }
+        }, FontAwesome.CHECK_SQUARE, FontAwesome.SQUARE);
+        // nell' ultima cella in basso a dx
+//        onOffGen.setCaption("tutto");
+        grid.addComponent(onOffGen, grid.getColumns()-1, grid.getRows()-1);
+        grid.setComponentAlignment(onOffGen, Alignment.BOTTOM_CENTER);
+
 
         layout.addComponent(layoutDate);
         layout.addComponent(grid);
@@ -225,22 +246,22 @@ public class CTurniGenerator extends CTabelloneEditor {
 
     private class SwitchOnOffH extends HorizontalLayout{
 
-        public SwitchOnOffH(SwitchListener swListener) {
+        public SwitchOnOffH(SwitchListener swListener, FontAwesome iconOn, FontAwesome iconOff) {
 
             setSizeUndefined();
             setSpacing(true);
             addStyleName("icon-red");
 
             HorizontalLayout layOn = new HorizontalLayout();
-            layOn.addComponent(new Label(FontAwesome.SQUARE_O.getHtml() , ContentMode.HTML));
+            layOn.addComponent(new Label(iconOn.getHtml() , ContentMode.HTML));
             layOn.addLayoutClickListener(layoutClickEvent -> {
-                swListener.clickedOff();
+                swListener.clickedOn();
             });
 
             HorizontalLayout layOff = new HorizontalLayout();
-            layOff.addComponent(new Label(FontAwesome.CHECK_SQUARE_O.getHtml() , ContentMode.HTML));
+            layOff.addComponent(new Label(iconOff.getHtml() , ContentMode.HTML));
             layOff.addLayoutClickListener(layoutClickEvent -> {
-                swListener.clickedOn();
+                swListener.clickedOff();
             });
 
 
@@ -249,6 +270,9 @@ public class CTurniGenerator extends CTabelloneEditor {
 
         }
 
+        public SwitchOnOffH(SwitchListener swListener) {
+            this(swListener, FontAwesome.CHECK_SQUARE_O, FontAwesome.SQUARE_O);
+        }
     }
 
     interface SwitchListener{
@@ -265,15 +289,15 @@ public class CTurniGenerator extends CTabelloneEditor {
             addStyleName("icon-red");
 
             HorizontalLayout layOn = new HorizontalLayout();
-            layOn.addComponent(new Label(FontAwesome.SQUARE_O.getHtml() , ContentMode.HTML));
+            layOn.addComponent(new Label(FontAwesome.CHECK_SQUARE_O.getHtml() , ContentMode.HTML));
             layOn.addLayoutClickListener(layoutClickEvent -> {
-                swListener.clickedOff();
+                swListener.clickedOn();
             });
 
             HorizontalLayout layOff = new HorizontalLayout();
-            layOff.addComponent(new Label(FontAwesome.CHECK_SQUARE_O.getHtml() , ContentMode.HTML));
+            layOff.addComponent(new Label(FontAwesome.SQUARE_O.getHtml() , ContentMode.HTML));
             layOff.addLayoutClickListener(layoutClickEvent -> {
-                swListener.clickedOn();
+                swListener.clickedOff();
             });
 
 

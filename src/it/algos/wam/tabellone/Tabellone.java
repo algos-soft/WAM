@@ -71,7 +71,10 @@ public class Tabellone extends VerticalLayout implements View {
 
         entityManager = EM.createEntityManager();
 
-
+        // todo questi componenti non vanno istanziati ora!
+        // todo passare le classi al navigatore
+        // todo li istanzierà il navigatore la prima volta che ci naviga
+        // todo usare il flag del navigatore che evita di ricrearli tutte le volte
         tabComponent = new TabComponent();
         editorPage = new EditorPage();
         searchPage = new SearchPage();
