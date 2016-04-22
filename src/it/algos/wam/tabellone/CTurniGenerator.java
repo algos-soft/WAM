@@ -1,6 +1,5 @@
 package it.algos.wam.tabellone;
 
-import com.sun.tools.javac.comp.Check;
 import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
@@ -16,7 +15,6 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Componente per impostare il generatore/eliminatore di turni vuoti
