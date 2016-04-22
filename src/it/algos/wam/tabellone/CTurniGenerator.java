@@ -29,7 +29,10 @@ public class CTurniGenerator extends CTabelloneEditor {
 
         addComponent(creaCompTitolo());
         addComponent(creaCompDettaglio());
-        addComponent(creaPanComandi());
+
+        Component comp = creaPanComandi();
+        addComponent(comp);
+        setComponentAlignment(comp, Alignment.BOTTOM_CENTER);
 
     }
 

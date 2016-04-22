@@ -2,11 +2,13 @@ package it.algos.wam.tabellone;
 
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.login.Login;
@@ -37,7 +39,6 @@ public class Tabellone extends VerticalLayout implements View {
     // Indirizzi delle pagine interne per la navigazione del Navigator
     private static final String ADDR_TABELLONE = "tabellone";
     private static final String ADDR_EDIT_TURNO = "turno";
-    private static final String ADDR_EDIT_SERVIZIO = "servizio";
     private static final String ADDR_SEARCH = "ricerca";
     private static final String ADDR_GENERATE = "genera";
 
@@ -49,7 +50,8 @@ public class Tabellone extends VerticalLayout implements View {
     private EntityManager entityManager;
     private TabComponent tabComponent;
     private EditorPage editorPage;
-    private SearchComponent searchComponent;
+    private SearchPage searchPage;
+    private GeneratorPage generatorPage;
     private Navigator navigator;
     private String homeURI;
 
@@ -73,16 +75,16 @@ public class Tabellone extends VerticalLayout implements View {
         creaGrid(LocalDate.now());
 
         editorPage = new EditorPage();
-        searchComponent = new SearchComponent();
+        searchPage = new SearchPage();
+        generatorPage = new GeneratorPage();
 
         // creo un Navigator e vi aggiungo i vari componenti che possono
         // essere presentati dal tabellone
         navigator = new Navigator(UI.getCurrent(), this);
         navigator.addView(ADDR_TABELLONE, tabComponent);
         navigator.addView(ADDR_EDIT_TURNO, editorPage);
-        navigator.addView(ADDR_EDIT_SERVIZIO, editorPage);
-        navigator.addView(ADDR_SEARCH, searchComponent);
-        navigator.addView(ADDR_GENERATE, new GeneratorPage());
+        navigator.addView(ADDR_SEARCH, searchPage);
+        navigator.addView(ADDR_GENERATE, generatorPage);
         navigator.addView(ADDR_LOGIN, new LoginComponent());
         navigator.setErrorView(new TabErrView());
         navigator.navigateTo(ADDR_TABELLONE);
@@ -103,13 +105,12 @@ public class Tabellone extends VerticalLayout implements View {
                         setSizeFull();
                         break;
                     case ADDR_EDIT_TURNO:
-                        setSizeFull();
-                        break;
-                    case ADDR_EDIT_SERVIZIO:
-                        setSizeFull();
+                        setWidth("100%");
+                        setHeightUndefined();
                         break;
                     case ADDR_GENERATE:
-                        setSizeFull();
+                        setWidth("100%");
+                        setHeightUndefined();
                         break;
                     default:
                         cont = false;
@@ -562,6 +563,7 @@ public class Tabellone extends VerticalLayout implements View {
     }
 
 
+
     /**
      * Componente di alto livello con logica di navigazione in un turno/servizio da modificare.
      * Invocare il metodo setTurno() per inserire un turno da modificare.
@@ -569,29 +571,24 @@ public class Tabellone extends VerticalLayout implements View {
     private class GeneratorPage extends VerticalLayout implements View {
 
         public GeneratorPage() {
-            setSizeFull();
+            setWidth("100%");
+//            addStyleName("yellowBg");
+
+
             CTurniGenerator generator = new CTurniGenerator(entityManager);
+//            generator.addStyleName("pinkBg");
+
             generator.addDismissListener(new CTabelloneEditor.DismissListener() {
                 @Override
                 public void editorDismissed(CTabelloneEditor.DismissEvent e) {
                     navigator.navigateTo(ADDR_TABELLONE);
                 }
             });
+
             addComponent(generator);
+            setComponentAlignment(generator, Alignment.MIDDLE_CENTER);
+
         }
-
-//        /**
-//         * Assegna un Editor a questo componente.
-//         * e lo aggiunge graficamente
-//         *
-//         * @param editor l'editor da mostrare nella pagina
-//         */
-//        public void setEditor(CTabelloneEditor editor) {
-//            removeAllComponents();
-//            addComponent(editor);
-//            setComponentAlignment(editor, Alignment.MIDDLE_CENTER);
-//        }
-
 
         @Override
         public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -603,14 +600,14 @@ public class Tabellone extends VerticalLayout implements View {
     /**
      * Componente View con MenuBar comandi ricerca periodo.
      */
-    private class SearchComponent extends VerticalLayout implements View {
+    private class SearchPage extends VerticalLayout implements View {
 
         private SearchForm form;
 
         /**
          * Constructor
          */
-        public SearchComponent() {
+        public SearchPage() {
             setSizeFull();
             form = new SearchForm();
             addComponent(form);

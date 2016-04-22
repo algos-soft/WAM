@@ -9,6 +9,7 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.iscrizione.Iscrizione;
+import it.algos.wam.entity.volontario.Volontario;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -107,15 +108,20 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         blank.setWidth("100%");
         blank.setHeight("100%");
         blank.addStyleName("cnoturno");
+        if(isAdmin()){
+            blank.addStyleName("cursor-pointer");
+        }
 
-        // listener quando viene cliccata l'area iscrizioni
-        blank.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
-            @Override
-            public void layoutClick(LayoutEvents.LayoutClickEvent event) {
-                InfoNewTurnoWrap wrapper = new InfoNewTurnoWrap(serv, dataInizio);
-                tabellone.cellClicked(CellType.NO_TURNO, x, y, wrapper);
-            }
-        });
+        // solo admin: listener quando viene cliccata l'area iscrizioni
+        if(isAdmin()){
+            blank.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+                @Override
+                public void layoutClick(LayoutEvents.LayoutClickEvent event) {
+                    InfoNewTurnoWrap wrapper = new InfoNewTurnoWrap(serv, dataInizio);
+                    tabellone.cellClicked(CellType.NO_TURNO, x, y, wrapper);
+                }
+            });
+        }
 
         // aggiunge graficamente il componente
         this.addComponent(blank);
@@ -278,6 +284,30 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
      */
     public void setY(int y) {
         this.y = y;
+    }
+
+    /**
+     * Ritorna l'utente correntemente loggato
+     *
+     * @return l'utente loggato
+     */
+    private Volontario getLoggedUser() {
+        Volontario volontario = Volontario.find(1);
+        return volontario;
+    }
+
+    /**
+     * Verifica se il volontario è un admin
+     *
+     * @return true se è un admin
+     */
+    private boolean isAdmin() {
+        boolean admin = false;
+        Volontario vol = getLoggedUser();
+        if (vol != null) {
+            admin = vol.isAdmin();
+        }
+        return admin;
     }
 
 

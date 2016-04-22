@@ -426,17 +426,6 @@ public class Volontario extends WamCompanyEntity {
     }
 
 
-//    public void addFunzione(WamCompany company, Funzione funzione) {
-//        VolontarioFunzione volFun = null;
-//
-//        if (volontarioFunzioni != null) {
-//            volFun = new VolontarioFunzione(this, funzione);
-//            volFun.setCompany(company);
-//            volontarioFunzioni.addFunzione(volFun);
-//        }// end of if cycle
-//
-//    }// end of method
-
     /**
      * Clone di questa istanza
      * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)

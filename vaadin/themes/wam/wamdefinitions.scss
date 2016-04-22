@@ -352,8 +352,13 @@ $v-font-weight: 400;
                     rgba(0, 0, 0, 0.0) 0.6em
     );
     border-radius: 6px;
+  }
+
+  // cursore a forma di pointer (manina)
+  .cursor-pointer {
     cursor: pointer;
   }
+
 
   // componente iscrizione
   .ciscrizione {

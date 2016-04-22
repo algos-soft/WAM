@@ -19,7 +19,6 @@ import it.algos.wam.entity.volontario.Volontario;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.component.HHMMComponent;
 import it.algos.webbase.web.dialog.ConfirmDialog;
-import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 
@@ -61,7 +60,7 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         Component panComandi = creaPanComandi();
         addComponent(panComandi);
-        setComponentAlignment(panComandi, Alignment.MIDDLE_CENTER);
+        setComponentAlignment(panComandi, Alignment.BOTTOM_CENTER);
 
     }
 
@@ -346,12 +345,12 @@ public class CTurnoEditor extends CTabelloneEditor {
             setSpacing(true);
 
             // crea il componente note
-            fNote = new TextField("Note");
+            fNote = new TextField("note");
             fNote.setValue(iscrizione.getNota());
             fNote.setWidth("10em");
 
             // crea il componente ore
-            cTime = new HHMMComponent("Tempo HH:MM");
+            cTime = new HHMMComponent("tempo hh:mm");
             cTime.setHoursMinutes(iscrizione.getMinutiEffettivi());
 
             // crea il componente editor di tipo diverso a seconda
@@ -363,7 +362,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                 if (isAdmin()) {
                     comp = creaCompPopup();
                 } else {
-                    comp = creaCompBottone();
+                    comp = creaCompBottoni();
                 }
             }
 
@@ -428,12 +427,12 @@ public class CTurnoEditor extends CTabelloneEditor {
         }
 
         /**
-         * Crea un componente bottone che mostra il volontario iscritto o
-         * iscrive il volontario correntemente loggato.
-         * Solo gli utenti normali hanno questo tipo di componente, gli admin
+         * Crea un componente con bottoni che mostra il volontario iscritto o
+         * iscrive/disiscrive il volontario correntemente loggato.
+         * Solo gli utenti normali hanno questo tipo di componente, mentre gli admin
          * hanno sempre il componente popup - qui non serve mai controllare isAdmin()
          */
-        private Component creaCompBottone() {
+        private Component creaCompBottoni() {
 
             // bottone iscrizione
             Button bMain = new Button();
@@ -448,7 +447,6 @@ public class CTurnoEditor extends CTabelloneEditor {
                 if (glyph != null) {
                     caption = glyph.getHtml() + " " + caption;
                 }
-//                bMain.addStyleName("greenBg");
             } else {                    // non iscritto
                 caption = "";
                 FontAwesome glyph = funz.getIcon();
@@ -511,10 +509,8 @@ public class CTurnoEditor extends CTabelloneEditor {
 
             // bottone remove
             Button bRemove = new Button();
-//            bRemove.setHeight("100%");
             bRemove.setIcon(FontAwesome.REMOVE);
             bRemove.addStyleName("icon-red");
-            bRemove.setVisible(volIscritto != null);
             bRemove.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
@@ -543,7 +539,19 @@ public class CTurnoEditor extends CTabelloneEditor {
                 }
             });
 
-            // bottone save solo se c'è un iscritto e se quello sono io
+            // disponibilità bottone remove:
+            // visibile solo se c'è un iscritto e se quello sono io.
+            boolean visible=false;
+            if (volIscritto != null) {
+                if (volIscritto.equals(getLoggedUser())) {
+                    visible = true;
+                }
+            }
+            bRemove.setVisible(visible);
+
+
+            // disponibilità bottone save:
+            // disponibile solo se c'è un iscritto e se quello sono io
             // se il bottone non c'è ci metto una label vuota per mantenere gli allineamenti
             Component rightComp = new Label("&nbsp;", ContentMode.HTML);
             if (volIscritto != null) {
@@ -553,13 +561,23 @@ public class CTurnoEditor extends CTabelloneEditor {
             }
             rightComp.setWidth("3em");
 
-            // se c'è un iscritto e quello non sono io, disabilito note e tempo
+            // abilitazione note e tempo:
+            // questi campi sono sempre visibili.
+            // se c'è già un iscritto diverso da me, oppure se non sono abilitato per questa funzione, sono disabilitati
+            boolean enabled=true;
             if (volIscritto != null) {
                 if (!volIscritto.equals(getLoggedUser())) {
-                    fNote.setEnabled(false);
-                    cTime.setEnabled(false);
+                    enabled=false;
                 }
             }
+            if(enabled){
+                if(!getLoggedUser().haFunzione(funz)){
+                    enabled=false;
+                }
+            }
+            fNote.setEnabled(enabled);
+            cTime.setEnabled(enabled);
+
 
 
             // layout finale
@@ -692,13 +710,12 @@ public class CTurnoEditor extends CTabelloneEditor {
      *
      * @return true se è un admin
      */
-    public boolean isAdmin() {
+    private boolean isAdmin() {
         boolean admin = false;
         Volontario vol = getLoggedUser();
         if (vol != null) {
             admin = vol.isAdmin();
         }
-//        return true;
         return admin;
     }
 
