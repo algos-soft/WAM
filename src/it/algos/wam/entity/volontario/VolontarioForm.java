@@ -58,7 +58,10 @@ public class VolontarioForm extends ModuleForm {
                 Volontario_.cognome,
                 Volontario_.dipendente,
                 Volontario_.attivo,
-                Volontario_.note};
+                Volontario_.note,
+                Volontario_.admin
+        };
+
         field = new TextField(Volontario_.nome.getName());
         field.setColumns(25);
         addField(attributes[0], field);
@@ -73,6 +76,9 @@ public class VolontarioForm extends ModuleForm {
         fieldArea.setColumns(25);
         fieldArea.setRows(4);
         addField(attributes[4], fieldArea);
+
+        fieldCheck = new CheckBoxField(Volontario_.admin.getName());
+        addField(Volontario_.admin, fieldCheck);
 
     }// end of method
 
@@ -111,6 +117,10 @@ public class VolontarioForm extends ModuleForm {
         field = getField(Volontario_.attivo.getName());
         layoutBox.addComponent(field);
         layout.addComponent(layoutBox);
+
+        field = getField(Volontario_.admin.getName());
+        layout.addComponent(field);
+
 
 //        layout.addComponent(new Label("Funzioni abilitate"));
 //

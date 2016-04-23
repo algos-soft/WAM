@@ -16,7 +16,6 @@ public abstract class WAMApp extends AlgosApp {
      */
     public static final String IMG_FOLDER_NAME = "WEB-INF/data/img/";
 
-    private static Volontario loggedUser;
 
     /**
      * PROVVISORIO
@@ -25,10 +24,7 @@ public abstract class WAMApp extends AlgosApp {
      * @return l'utente loggato
      */
     public static Volontario getLoggedUser() {
-        if(loggedUser==null){
-            loggedUser= Volontario.find(1);
-        }
-        return loggedUser;
+        return Volontario.find(1);
     }
 
     /**

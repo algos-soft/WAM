@@ -64,6 +64,9 @@ public class Volontario extends WamCompanyEntity {
     private boolean dipendente = false;
     private boolean attivo = true;
 
+    // se è admin - provvisorio
+    private boolean admin;
+
     //--scadenza certificati
     //--data di scadenza del certificato BSD
     //--se non valorizzata, il milite non ha acquisito il certificato
@@ -422,9 +425,12 @@ public class Volontario extends WamCompanyEntity {
      * @return true se è un admin
      */
     public boolean isAdmin() {
-        return false;
+        return admin;
     }
 
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
 
     /**
      * Clone di questa istanza

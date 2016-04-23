@@ -20,6 +20,7 @@ public class Volontario_ extends CompanyEntity_ {
     public static volatile SingularAttribute<Volontario, Date> dataNascita;
     public static volatile SingularAttribute<Volontario, Boolean> dipendente;
     public static volatile SingularAttribute<Volontario, Boolean> attivo;
+    public static volatile SingularAttribute<Volontario, Boolean> admin;
     public static volatile ListAttribute<Volontario, VolontarioFunzione> funzioni;
 
 }// end of entity class
