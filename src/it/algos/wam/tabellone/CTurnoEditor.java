@@ -10,6 +10,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
@@ -155,10 +156,12 @@ public class CTurnoEditor extends CTabelloneEditor {
             }
         });
 
-        // controllo se il turno è persisted
-
-        if (turno.getId() != null) {
-            layout.addComponent(bElimina);
+        // funzione elimina solo se admin e solo se è un turno persisted
+        if(WAMApp.isAdmin()){
+            // controllo se il turno è persisted
+            if (turno.getId() != null) {
+                layout.addComponent(bElimina);
+            }
         }
 
         layout.addComponent(bAnnulla);
@@ -359,7 +362,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             if (isMultiIscrizione()) {
                 comp = creaCompPopup();
             } else {
-                if (isAdmin()) {
+                if (WAMApp.isAdmin()) {
                     comp = creaCompPopup();
                 } else {
                     comp = creaCompBottoni();
@@ -454,7 +457,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                     caption = glyph.getHtml() + " " + caption;
                 }
                 caption += " Iscriviti come <strong>" + funz.getDescrizione() + "</strong>";
-                if (!getLoggedUser().haFunzione(funz)) {
+                if (!WAMApp.getLoggedUser().haFunzione(funz)) {
                     bMain.addStyleName("lightGrayBg");
                 }
             }
@@ -474,7 +477,7 @@ public class CTurnoEditor extends CTabelloneEditor {
 
                     // controllo che l'utente corrente abbia la funzione richiesta
                     if (cont) {
-                        if (!getLoggedUser().haFunzione(funz)) {
+                        if (!WAMApp.getLoggedUser().haFunzione(funz)) {
                             Notification notif = new Notification("Nel tuo profilo non c'è la funzione " + funz.getDescrizione() + "<br>" + "Rivolgiti all'amministratore", Notification.Type.WARNING_MESSAGE);
                             notif.setHtmlContentAllowed(true);
                             notif.show(Page.getCurrent());
@@ -484,7 +487,7 @@ public class CTurnoEditor extends CTabelloneEditor {
 
                     // controllo che non sia già iscritto in qualche altra posizione di questo turno
                     if (cont) {
-                        boolean giaIscritto = IscrizioneEditor.this.parent.isIscritto(getLoggedUser(), IscrizioneEditor.this);
+                        boolean giaIscritto = IscrizioneEditor.this.parent.isIscritto(WAMApp.getLoggedUser(), IscrizioneEditor.this);
                         if (giaIscritto) {
                             Notification.show("Sei già iscritto a questo turno.", Notification.Type.ERROR_MESSAGE);
                             cont = false;
@@ -495,7 +498,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                     if (cont) {
                         entityManager.getTransaction().begin();
                         turno.getIscrizioni().add(iscrizione);
-                        iscrizione.setVolontario(getLoggedUser());
+                        iscrizione.setVolontario(WAMApp.getLoggedUser());
                         iscrizione.setNota(fNote.getValue());
                         iscrizione.setMinutiEffettivi(cTime.getTotalMinutes());
                         entityManager.merge(turno);
@@ -543,7 +546,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             // visibile solo se c'è un iscritto e se quello sono io.
             boolean visible=false;
             if (volIscritto != null) {
-                if (volIscritto.equals(getLoggedUser())) {
+                if (volIscritto.equals(WAMApp.getLoggedUser())) {
                     visible = true;
                 }
             }
@@ -555,7 +558,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             // se il bottone non c'è ci metto una label vuota per mantenere gli allineamenti
             Component rightComp = new Label("&nbsp;", ContentMode.HTML);
             if (volIscritto != null) {
-                if (volIscritto.equals(getLoggedUser())) {
+                if (volIscritto.equals(WAMApp.getLoggedUser())) {
                     rightComp = bSave;
                 }
             }
@@ -566,12 +569,12 @@ public class CTurnoEditor extends CTabelloneEditor {
             // se c'è già un iscritto diverso da me, oppure se non sono abilitato per questa funzione, sono disabilitati
             boolean enabled=true;
             if (volIscritto != null) {
-                if (!volIscritto.equals(getLoggedUser())) {
+                if (!volIscritto.equals(WAMApp.getLoggedUser())) {
                     enabled=false;
                 }
             }
             if(enabled){
-                if(!getLoggedUser().haFunzione(funz)){
+                if(!WAMApp.getLoggedUser().haFunzione(funz)){
                     enabled=false;
                 }
             }
@@ -692,32 +695,10 @@ public class CTurnoEditor extends CTabelloneEditor {
      * (un volontario può iscrivere anche gli altri)
      */
     private boolean isMultiIscrizione() {
-        return isAdmin();
+        return WAMApp.isAdmin();
     }
 
-    /**
-     * Ritorna l'utente correntemente loggato
-     *
-     * @return l'utente loggato
-     */
-    private Volontario getLoggedUser() {
-        Volontario volontario = Volontario.find(1);
-        return volontario;
-    }
 
-    /**
-     * Verifica se il volontario è un admin
-     *
-     * @return true se è un admin
-     */
-    private boolean isAdmin() {
-        boolean admin = false;
-        Volontario vol = getLoggedUser();
-        if (vol != null) {
-            admin = vol.isAdmin();
-        }
-        return admin;
-    }
 
 
 }

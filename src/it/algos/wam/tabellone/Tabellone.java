@@ -6,9 +6,11 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.login.Login;
@@ -29,10 +31,11 @@ import java.util.Date;
  * Componente Tabellone.
  * <p>
  * Contiene la business logic e gestisce la navigazione e l'interazione tra i componenti grafici di alto livello.
- * Il componente tabComponent ospita una menubar con i comandi di spostamento e la griglia del tabellone.
- * Il componente editTurnoComponent presenta il form con i dati di un turno e permette di modificarli.
- * Il componente searchComponent presenta il dialogo per impostare le conizioni di
+ * Un componente che ospita una menubar con i comandi di spostamento e la griglia del tabellone.
+ * Un componente per presentare i dati di un turno modificarli.
+ * Un componente che presenta il dialogo per impostare le conizioni di
  * ricerca per visualizzare un tabellone custom.
+ * Un componente per impostare ed eseguire la generazione e cancellazione di turni
  */
 public class Tabellone extends VerticalLayout implements View {
 
@@ -50,8 +53,6 @@ public class Tabellone extends VerticalLayout implements View {
     private EntityManager entityManager;
     private TabComponent tabComponent;
     private EditorPage editorPage;
-    private SearchPage searchPage;
-    private GeneratorPage generatorPage;
     private Navigator navigator;
     private String homeURI;
 
@@ -71,27 +72,19 @@ public class Tabellone extends VerticalLayout implements View {
 
         entityManager = EM.createEntityManager();
 
-        // todo questi componenti non vanno istanziati ora!
-        // todo passare le classi al navigatore
-        // todo li istanzierà il navigatore la prima volta che ci naviga
-        // todo usare il flag del navigatore che evita di ricrearli tutte le volte
         tabComponent = new TabComponent();
-        editorPage = new EditorPage();
-        searchPage = new SearchPage();
-        generatorPage = new GeneratorPage();
 
         creaGrid(LocalDate.now());
 
         // creo un Navigator e vi aggiungo i vari componenti che possono
         // essere presentati dal tabellone
         navigator = new Navigator(UI.getCurrent(), this);
+        navigator.addProvider(new TabNavViewProvider());
         navigator.addView(ADDR_TABELLONE, tabComponent);
-        navigator.addView(ADDR_EDIT_TURNO, editorPage);
-        navigator.addView(ADDR_SEARCH, searchPage);
-        navigator.addView(ADDR_GENERATE, generatorPage);
         navigator.addView(ADDR_LOGIN, new LoginComponent());
         navigator.setErrorView(new TabErrView());
         navigator.navigateTo(ADDR_TABELLONE);
+
 
         // Listener di cambio View nel Navigator.
         // In funzione della pagina in cui stiamo entrando, cambio
@@ -139,6 +132,41 @@ public class Tabellone extends VerticalLayout implements View {
      */
     public Tabellone() {
         this(null);
+    }
+
+    /**
+     * Provider di view per il Navigator interno al tabellone
+     */
+    private class TabNavViewProvider implements ViewProvider {
+
+        @Override
+        public String getViewName(String name) {
+            String outName=null;
+            switch (name){
+                case ADDR_GENERATE:outName=name;break;
+                case ADDR_SEARCH:outName=name;break;
+                case ADDR_EDIT_TURNO:outName=name;break;
+            }
+            return outName;
+        }
+
+        @Override
+        public View getView(String name) {
+            View view=null;
+            switch (name){
+                case ADDR_GENERATE:
+                    view=new GeneratorPage();
+                    break;
+                case ADDR_SEARCH:
+                    view=new SearchPage();
+                    break;
+                case ADDR_EDIT_TURNO:
+                    view=getEditorPage();
+                    break;
+            }
+
+            return view;
+        }
     }
 
 
@@ -249,45 +277,22 @@ public class Tabellone extends VerticalLayout implements View {
 
 
         // assegna l'editor e naviga alla editor view
-        editorPage.setEditor(editor);
+        getEditorPage().setEditor(editor);
         navigator.navigateTo(ADDR_EDIT_TURNO);
     }
 
 
-//    /**
-//     * Edita una cella di tipo Servizio
-//     */
-//    private void editCellServizio(final Servizio servizio, int col, int row) {
-//        // crea un editor per il servizio
-//        // quando si dismette l'editor, tornerà al tabellone
-//        CServizioEditor editor = new CServizioEditor(servizio, entityManager);
-//        editor.addDismissListener(new CTabelloneEditor.DismissListener() {
-//            @Override
-//            public void editorDismissed(CTabelloneEditor.DismissEvent e) {
-//
-//                // se ha salvato o eliminato, aggiorna la cella della griglia
-//                if (e.isSaved() | e.isDeleted()) {
-//                    GridTabellone grid = tabComponent.getGridTabellone();
-//                    TabelloneCell cell = null;
-//                    if (e.isSaved()) {
-//                        grid.removeComponent(col, row);
-//                        cell = new CServizioDisplay(grid, servizio);
-//                        grid.addComponent(cell, col, row);
-//                    }
-//                    if (e.isDeleted()) {
-//                        grid.removeRow(row);
-//                    }
-//                }
-//                navigator.navigateTo(ADDR_TABELLONE);
-//            }
-//        });
-//
-//
-//        // assegna l'editor e naviga alla editor view
-//        editorPage.setEditor(editor);
-//        navigator.navigateTo(ADDR_EDIT_SERVIZIO);
-//
-//    }
+    /**
+     * Ritorna la EditorPage
+     * è sempre la stessa istanza
+     * se non c'è la crea ora
+     */
+    private EditorPage getEditorPage(){
+        if(editorPage==null){
+            editorPage=new EditorPage();
+        }
+        return editorPage;
+    }
 
 
     /**
@@ -334,17 +339,6 @@ public class Tabellone extends VerticalLayout implements View {
             setSpacing(true);
             addComponent(menuPlaceholder);
             addComponent(gridPlaceholder);
-
-//            // bottone nuovo servizio
-//            Button bNuovoServ = new Button("Crea nuovo servizio", FontAwesome.PLUS_CIRCLE);
-//            addComponent(bNuovoServ);
-//            bNuovoServ.addClickListener(new Button.ClickListener() {
-//                @Override
-//                public void buttonClick(Button.ClickEvent clickEvent) {
-//                    nuovoServizio();
-//                }
-//            });
-
 
         }
 
@@ -451,12 +445,14 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            menuVai.addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    navigator.navigateTo(ADDR_GENERATE);
-                }
-            });
+            if(WAMApp.isAdmin()){
+                menuVai.addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
+                    @Override
+                    public void menuSelected(MenuBar.MenuItem selectedItem) {
+                        navigator.navigateTo(ADDR_GENERATE);
+                    }
+                });
+            }
 
 
 
@@ -532,18 +528,14 @@ public class Tabellone extends VerticalLayout implements View {
 
 
     /**
-     * Componente di alto livello con logica di navigazione in un turno/servizio da modificare.
-     * Invocare il metodo setTurno() per inserire un turno da modificare.
+     * Pagina che ospita il generatore turni.
      */
-    private class GeneratorPage extends VerticalLayout implements View {
+    class GeneratorPage extends VerticalLayout implements View {
 
         public GeneratorPage() {
             setWidth("100%");
-//            addStyleName("yellowBg");
-
 
             CTurniGenerator generator = new CTurniGenerator(entityManager);
-//            generator.addStyleName("pinkBg");
 
             generator.addDismissListener(new CTabelloneEditor.DismissListener() {
                 @Override

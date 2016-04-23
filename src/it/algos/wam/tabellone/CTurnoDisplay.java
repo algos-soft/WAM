@@ -4,6 +4,7 @@ import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -108,12 +109,12 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         blank.setWidth("100%");
         blank.setHeight("100%");
         blank.addStyleName("cnoturno");
-        if(isAdmin()){
+        if(WAMApp.isAdmin()){
             blank.addStyleName("cursor-pointer");
         }
 
         // solo admin: listener quando viene cliccata l'area iscrizioni
-        if(isAdmin()){
+        if(WAMApp.isAdmin()){
             blank.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
                 @Override
                 public void layoutClick(LayoutEvents.LayoutClickEvent event) {
@@ -286,29 +287,6 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         this.y = y;
     }
 
-    /**
-     * Ritorna l'utente correntemente loggato
-     *
-     * @return l'utente loggato
-     */
-    private Volontario getLoggedUser() {
-        Volontario volontario = Volontario.find(1);
-        return volontario;
-    }
-
-    /**
-     * Verifica se il volontario è un admin
-     *
-     * @return true se è un admin
-     */
-    private boolean isAdmin() {
-        boolean admin = false;
-        Volontario vol = getLoggedUser();
-        if (vol != null) {
-            admin = vol.isAdmin();
-        }
-        return admin;
-    }
 
 
 }// end of class
