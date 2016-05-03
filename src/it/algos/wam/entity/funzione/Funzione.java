@@ -38,13 +38,15 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
 
     //--sigla di riferimento interna NON visibile nel tabellone (obbligatoria)
+    //@todo cambiare nome della property in siglaInterna
     @NotEmpty
     @Column(length = 20)
     @Index
     private String sigla = "";
 
 
-    //--descrizione per il tabellone (obbligatoria)
+    //--descrizione visibile nel tabellone (obbligatoria)
+    //@todo cambiare nome della property in siglaVisibile
     @NotEmpty
     @Column(length = 100)
     @Index
@@ -79,7 +81,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Costruttore senza argomenti
-     * Necessario per le specifiche JavaBean
+     * Obbligatorio per le specifiche JavaBean
      */
     public Funzione() {
     }// end of constructor
@@ -87,7 +89,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Costruttore minimo con tutte le properties obbligatorie
      *
-     * @param company     croce di appartenenza
+     * @param company     croce di appartenenza (property della superclasse)
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
      */

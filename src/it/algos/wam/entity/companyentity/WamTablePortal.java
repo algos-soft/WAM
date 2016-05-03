@@ -78,25 +78,6 @@ public class WamTablePortal extends TablePortal {
         ATable table = this.getTable();
         Container.Filterable cont = null;
 
-//        if (table != null) {
-//            cont = table.getFilterableContainer();
-//        }// fine del blocco if
-//
-//        if (company != null) {
-//            filter = new Compare.Equal(WamCompanyEntity_.company.getName(), company);
-//        }// fine del blocco if
-//
-//        if (cont != null) {
-//            cont.removeAllContainerFilters();
-//            cont.addContainerFilter(filter);
-//        }// fine del blocco if
-
-//        if (company != null) {
-//            CompanySessionLib.setCompany(company);
-//        } else {
-//            CompanySessionLib.setCompany(null);
-//        }// fine del blocco if-else
-
         if (table != null) {
             cont = table.getFilterableContainer();
             if (company != null) {

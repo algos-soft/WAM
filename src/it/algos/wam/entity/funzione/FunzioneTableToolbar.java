@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 
 /**
  * Created by alex on 08/04/16.
+ * .
  */
 public class FunzioneTableToolbar extends TableToolbar {
 
