@@ -10,7 +10,6 @@ import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.lib.LibDate;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
