@@ -70,12 +70,13 @@ public abstract class WamMod extends CompanyModule {
      */
     @Override
     public TablePortal createTablePortal() {
+        return new WamTablePortal(this);
 
-        if (LibSession.isDeveloper()) {
-            return new WamTablePortal(this);
-        } else {
-            return super.createTablePortal();
-        }// end of if/else cycle
+//        if (LibSession.isDeveloper()) {
+//            return new WamTablePortal(this);
+//        } else {
+//            return super.createTablePortal();
+//        }// end of if/else cycle
 
     }// end of method
 

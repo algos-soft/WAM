@@ -88,7 +88,7 @@ public class ServizioTableToolbar extends TableToolbar {
     }
 
     @Override
-    protected void syncButtons(boolean singleSelected, boolean multiSelected) {
+    public void syncButtons(boolean singleSelected, boolean multiSelected) {
         super.syncButtons(singleSelected, multiSelected);
 
         if(bMoveUp!=null){

@@ -9,6 +9,7 @@ import it.algos.wam.entity.servizio.Servizio_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.turno.Turno_;
+import it.algos.wam.entity.volontario.Volontario;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.DateConvertUtils;
@@ -304,8 +305,6 @@ public class WamQuery {
     }
 
 
-
-
     /**
      * Recupera il massimo numero d'ordine di funzione fino ad ora attribuito.
      *
@@ -344,7 +343,6 @@ public class WamQuery {
 
         return maxOrdine;
     }
-
 
 
 }

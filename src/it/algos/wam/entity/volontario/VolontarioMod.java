@@ -6,10 +6,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
-import it.algos.wam.entity.funzione.FunzioneForm;
-import it.algos.wam.entity.servizio.ServizioForm;
 import it.algos.webbase.web.form.ModuleForm;
-import it.algos.webbase.web.search.SearchManager;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -49,20 +46,37 @@ public class VolontarioMod extends WamMod {
      * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
      * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
      */
+    @SuppressWarnings("all")
     protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{
-                WamCompanyEntity_.company,
+        return super.addCompanyField(new Attribute[]{
                 Volontario_.nome,
                 Volontario_.cognome,
                 Volontario_.dataNascita,
                 Volontario_.cellulare,
                 Volontario_.dipendente,
-                Volontario_.attivo};
+                Volontario_.attivo});
     }// end of method
+
+//    /**
+//     * Crea i campi visibili nella lista (table)
+//     * <p>
+//     * Come default spazzola tutti i campi della Entity <br>
+//     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+//     * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
+//     */
+//    protected Attribute<?, ?>[] creaFieldsList() {
+//        return new Attribute[]{
+//                Volontario_.nome,
+//                Volontario_.cognome,
+//                Volontario_.dataNascita,
+//                Volontario_.cellulare,
+//                Volontario_.dipendente,
+//                Volontario_.attivo};
+//    }// end of method
 
     /**
      * Crea i campi visibili nella scheda (form)
-     * <p/>
+     * <p>
      * Come default spazzola tutti i campi della Entity <br>
      * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
      * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
@@ -84,7 +98,7 @@ public class VolontarioMod extends WamMod {
 
     /**
      * Crea i campi visibili nella scheda (search)
-     * <p/>
+     * <p>
      * Come default spazzola tutti i campi della Entity <br>
      * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
      * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
