@@ -10,11 +10,11 @@ import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
 
 /**
- * Modulo astratto per implementare la creazione della WamTablePortal
+ * Modulo astratto per implementare la creazione della WamTablePortalSposta
  * Si interpone come layer tra le classi Mod che usano la property Company e la superclasse standard ModulePop
  */
 @SuppressWarnings("serial")
-public abstract class WamMod extends CompanyModule {
+public abstract class WamModSposta extends WamMod {
 
     /**
      * Costruttore
@@ -22,7 +22,7 @@ public abstract class WamMod extends CompanyModule {
      * @param entity   di riferimento del modulo
      * @param menuIcon icona del menu
      */
-    public WamMod(Class entity, Resource menuIcon) {
+    public WamModSposta(Class entity, Resource menuIcon) {
         super(entity, menuIcon);
     }// end of constructor
 
@@ -33,31 +33,9 @@ public abstract class WamMod extends CompanyModule {
      * @param menuLabel etichetta visibile nella menu bar
      * @param menuIcon  icona del menu
      */
-    public WamMod(Class entity, String menuLabel, Resource menuIcon) {
+    public WamModSposta(Class entity, String menuLabel, Resource menuIcon) {
         super(entity, menuLabel, menuIcon);
     }// end of constructor
-
-
-    /**
-     * Aggiunge il campo company
-     * <p>
-     * in caso di developer, aggiunge (a sinistra) la colonna della company
-     * aggiunge tutte le altre property, definite nella sottoclasse
-     * Chiamato dalla sottoclasse
-     */
-    protected Attribute<?, ?>[] addCompanyField(Attribute... elenco) {
-        ArrayList<Attribute> lista = new ArrayList<>();
-
-        if (LibSession.isDeveloper()) {
-            lista.add(WamCompanyEntity_.company);
-        }// end of if cycle
-
-        for (Attribute attr : elenco) {
-            lista.add(attr);
-        }// end of for cycle
-
-        return lista.toArray(new Attribute[lista.size()]);
-    }// end of method
 
 
     /**
@@ -70,12 +48,8 @@ public abstract class WamMod extends CompanyModule {
      */
     @Override
     public TablePortal createTablePortal() {
-        return new WamTablePortal(this);
+        return new WamTablePortalSposta(this);
     }// end of method
 
-    @Override
-    public void search() {
-        super.search();
-    }// end of method
 
 }// end of class

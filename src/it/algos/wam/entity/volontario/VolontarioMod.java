@@ -6,6 +6,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.wam.entity.companyentity.WamModSposta;
 import it.algos.webbase.web.form.ModuleForm;
 
 import javax.persistence.metamodel.Attribute;
@@ -14,7 +15,7 @@ import javax.persistence.metamodel.Attribute;
  * Modulo del Volontario
  */
 @SuppressWarnings("serial")
-public class VolontarioMod extends WamMod {
+public class VolontarioMod extends WamModSposta {
 
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Volontari";

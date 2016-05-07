@@ -29,9 +29,9 @@ public class WamTablePortal extends TablePortal {
     public static final Resource ICON_MOVE_DN = FontAwesome.ARROW_DOWN;
     private final static String MENU_CROCI_CAPTION = "Croce";
     private final static String ITEM_ALL_CROCI = "tutte";
-    private TableToolbar toolbar;
+    protected TableToolbar toolbar;
+    private boolean usaBottoniSpostamento;
     private HashMap<WamCompany, MenuBar.MenuItem> croci;
-
     private MenuBar.MenuItem bMoveUp;
     private MenuBar.MenuItem bMoveDn;
 
@@ -40,36 +40,30 @@ public class WamTablePortal extends TablePortal {
     }// end of constructor
 
     public TableToolbar createToolbar() {
+        boolean utenteSviluppatore = LibSession.isDeveloper();
         toolbar = super.createToolbar();
         toolbar.setCreate(true);
 
-        addMenuCroci();
-        fixCompany();
+        if (utenteSviluppatore) {
+            addMenuCroci();
+            fixCompany();
+        } else {
+            if (isUsaBottoniSpostamento()) {
+                syncButtonsSpostamento(true);
+            }// end of if cycle
+        }// end of if/else cycle
 
         return toolbar;
     }// end of method
 
-    /**
-     * Croci selection.
-     * <p>
-     * Costruisce un menu per selezionare la croce da filtrare
-     * Costruisce i menuItem in funzione delle croci esistenti
-     */
-    private void addMenuCroci() {
-        boolean utenteSviluppatore = LibSession.isDeveloper();
-
-        if (utenteSviluppatore) {
-            addEffettivoMenuCroci();
-        }// end of if cycle
-    }// end of method
 
     /**
      * Regolazione iniziale se è selezionata una company.
      */
     private void fixCompany() {
-        BaseCompany company= CompanySessionLib.getCompany();
+        BaseCompany company = CompanySessionLib.getCompany();
 
-        if (company!=null) {
+        if (company != null) {
             syncCompany((WamCompany) company);
         } else {
             syncCompany(null);
@@ -83,7 +77,7 @@ public class WamTablePortal extends TablePortal {
      * Costruisce un menu per selezionare la croce da filtrare
      * Costruisce i menuItem in funzione delle croci esistenti
      */
-    private void addEffettivoMenuCroci() {
+    private void addMenuCroci() {
         MenuBar.MenuItem item = null;
         MenuBar.MenuItem subItem;
         croci = new HashMap<WamCompany, MenuBar.MenuItem>();
@@ -227,10 +221,15 @@ public class WamTablePortal extends TablePortal {
 
         if (company == null) {
             setFiltro(null);
-            syncButtonsSpostamento(false);
+            if (isUsaBottoniSpostamento()) {
+                syncButtonsSpostamento(false);
+            }// end of if cycle
+
         } else {
             setFiltro(company);
-            syncButtonsSpostamento(true);
+            if (isUsaBottoniSpostamento()) {
+                syncButtonsSpostamento(true);
+            }// end of if cycle
         }// end of if/else cycle
 
     }// end of method
@@ -288,4 +287,11 @@ public class WamTablePortal extends TablePortal {
         return comp;
     }// end of method
 
+    protected boolean isUsaBottoniSpostamento() {
+        return usaBottoniSpostamento;
+    }// end of getter method
+
+    protected void setUsaBottoniSpostamento(boolean usaBottoniSpostamento) {
+        this.usaBottoniSpostamento = usaBottoniSpostamento;
+    }//end of setter method
 }// end of class
