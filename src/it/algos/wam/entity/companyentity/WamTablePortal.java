@@ -29,7 +29,6 @@ public class WamTablePortal extends TablePortal {
     public static final Resource ICON_MOVE_DN = FontAwesome.ARROW_DOWN;
     private final static String MENU_CROCI_CAPTION = "Croce";
     private final static String ITEM_ALL_CROCI = "tutte";
-    protected TableToolbar toolbar;
     private boolean usaBottoniSpostamento;
     private HashMap<WamCompany, MenuBar.MenuItem> croci;
     private MenuBar.MenuItem bMoveUp;
@@ -135,22 +134,17 @@ public class WamTablePortal extends TablePortal {
 
     /*
      * Elimina i menu sposta records.
+     * <p>
+     * Elimina il componente grafico
+     * Elimina l'oggetto comando
      */
     private void delMenuSpostaRecords() {
-        Component compMoveUp;
-        Component compMoveDn;
 
-        compMoveUp = getComp(bMoveUp);
-        if (compMoveUp != null) {
-            toolbar.commandLayout.removeComponent(compMoveUp);
-            bMoveUp = null;
-        }// end of if cycle
+        super.delCmd(CMD_MOVE_UP);
+        bMoveUp = null;
 
-        compMoveDn = getComp(bMoveDn);
-        if (compMoveDn != null) {
-            toolbar.commandLayout.removeComponent(compMoveDn);
-            bMoveDn = null;
-        }// end of if cycle
+        super.delCmd(CMD_MOVE_DN);
+        bMoveDn = null;
 
     }// end of method
 
@@ -211,6 +205,14 @@ public class WamTablePortal extends TablePortal {
     protected void spostaGiu() {
     }// end of method
 
+    /**
+     * Cambiata la selezione delle righe.
+     * Possibilità di modificare l'aspetto (e la funzionalità) dei bottoni, eventualmente disabilitandoli
+     */
+    @Override
+    public void selectionChanged(ATable.SelectionChangeEvent e) {
+        syncButtons(e.isSingleRowSelected(), e.isMultipleRowsSelected());
+    }// end of method
 
     /**
      * Modificata la selezione della company.
@@ -264,28 +266,6 @@ public class WamTablePortal extends TablePortal {
         }// end of if cycle
     }// end of method
 
-    /**
-     * Recupera il componente grafico corrispondente al menu indicato.
-     */
-    protected Component getComp(MenuBar.MenuItem item) {
-        Component comp = null;
-        int max = toolbar.commandLayout.getComponentCount();
-        MenuBar bottoneVisibile;
-        MenuBar.MenuItem itemTmp;
-
-        for (int k = 0; k < max; k++) {
-            comp = toolbar.commandLayout.getComponent(k);
-            if (comp instanceof MenuBar) {
-                bottoneVisibile = (MenuBar) comp;
-                itemTmp = bottoneVisibile.getItems().get(0);
-                if (itemTmp == item) {
-                    return comp;
-                }// end of if cycle
-            }// end of if cycle
-        }// end of for cycle
-
-        return comp;
-    }// end of method
 
     protected boolean isUsaBottoniSpostamento() {
         return usaBottoniSpostamento;
@@ -294,4 +274,5 @@ public class WamTablePortal extends TablePortal {
     protected void setUsaBottoniSpostamento(boolean usaBottoniSpostamento) {
         this.usaBottoniSpostamento = usaBottoniSpostamento;
     }//end of setter method
+
 }// end of class

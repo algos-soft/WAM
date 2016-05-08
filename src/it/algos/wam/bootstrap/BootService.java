@@ -161,7 +161,7 @@ public abstract class BootService {
         listaTmp.add(Arrays.asList("cent", "Cen", "Centralinista", FontAwesome.USER));
 
         for (int k = 0; k < listaTmp.size(); k++) {
-            listaFunz.add(creaFunzBase(company, k, (List) listaTmp.get(k)));
+            listaFunz.add(creaFunzBase(company, k+1, (List) listaTmp.get(k)));
         }// end of for cycle
 
         return listaFunz;
@@ -177,7 +177,6 @@ public abstract class BootService {
      * @return istanza di Funzione
      */
     private static Funzione creaFunzBase(WamCompany company, int ordine, List listaTmp) {
-        Funzione funzione;
         String sigla = (String) listaTmp.get(0);
         String descrizione = (String) listaTmp.get(1);
         String note = (String) listaTmp.get(2);

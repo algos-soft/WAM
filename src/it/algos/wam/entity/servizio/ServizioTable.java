@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  * Created by alex on 7-04-2016.
+ * .
  */
 public class ServizioTable extends ETable {
 
@@ -47,6 +48,7 @@ public class ServizioTable extends ETable {
 
     protected Object[] getDisplayColumns() {
         return new Object[]{
+                Servizio_.ordine,
                 Servizio_.sigla,
                 Servizio_.descrizione,
                 COL_DURATA,

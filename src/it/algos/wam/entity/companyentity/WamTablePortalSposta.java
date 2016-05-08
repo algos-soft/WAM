@@ -2,13 +2,14 @@ package it.algos.wam.entity.companyentity;
 
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 /**
  * Created by gac on 07 mag 2016.
  * Sovrascrive la classe standard per aggiungere due bottone/menu di spostamento dei records
  */
-public class WamTablePortalSposta extends WamTablePortal {
+public class WamTablePortalSposta extends WamTablePortal implements ATable.SelectionChangeListener{
 
     public WamTablePortalSposta(ModulePop modulo) {
         super(modulo);

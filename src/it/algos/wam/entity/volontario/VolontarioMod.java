@@ -15,7 +15,7 @@ import javax.persistence.metamodel.Attribute;
  * Modulo del Volontario
  */
 @SuppressWarnings("serial")
-public class VolontarioMod extends WamModSposta {
+public class VolontarioMod extends WamMod {
 
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Volontari";

@@ -27,6 +27,7 @@ import java.io.InputStream;
 
 /**
  * Created by alex on 08/04/16.
+ * .
  */
 public class FunzioneTable extends ETable {
 
@@ -45,6 +46,7 @@ public class FunzioneTable extends ETable {
 
     protected Object[] getDisplayColumns() {
         return new Object[]{
+                Funzione_.ordine,
                 COL_ICON,
                 Funzione_.sigla,
                 Funzione_.descrizione,
