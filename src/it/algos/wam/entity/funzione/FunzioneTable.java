@@ -8,6 +8,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
+import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibBean;
@@ -34,14 +35,24 @@ public class FunzioneTable extends ETable {
     }
 
     protected Object[] getDisplayColumns() {
-        return new Object[]{
-                Funzione_.ordine,
-                COL_ICON,
-                Funzione_.sigla,
-                Funzione_.descrizione,
-                Funzione_.note,
-        };
-
+        if (LibSession.isDeveloper()) {
+            return new Object[]{
+                    WamCompanyEntity_.company,
+                    Funzione_.ordine,
+                    COL_ICON,
+                    Funzione_.sigla,
+                    Funzione_.descrizione,
+                    Funzione_.note,
+            };
+        } else {
+            return new Object[]{
+                    Funzione_.ordine,
+                    COL_ICON,
+                    Funzione_.sigla,
+                    Funzione_.descrizione,
+                    Funzione_.note,
+            };
+        }// end of if/else cycle
     }// end of method
 
     @Override

@@ -4,18 +4,18 @@ import com.vaadin.data.Container;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
-import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.company.BaseCompany;
-import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ELazyContainer;
+import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
+import javax.persistence.EntityManager;
 import java.util.HashMap;
 
 /**
@@ -117,7 +117,7 @@ public class WamTablePortal extends TablePortal {
         if (bMoveUp == null) {
             bMoveUp = toolbar.addButton(CMD_MOVE_UP, ICON_MOVE_UP, new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    spostaSu();
+                    spostaRecord(true);
                 }// end of inner method
             });// end of anonymous inner class
         }// end of if cycle
@@ -125,7 +125,7 @@ public class WamTablePortal extends TablePortal {
         if (bMoveDn == null) {
             bMoveDn = toolbar.addButton(CMD_MOVE_DN, ICON_MOVE_DN, new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    spostaGiu();
+                    spostaRecord(false);
                 }// end of inner method
             });// end of anonymous inner class
         }// end of if cycle
@@ -197,18 +197,31 @@ public class WamTablePortal extends TablePortal {
         }// fine del blocco if
     }// end of method
 
+
     /**
-     * Spostamento in su del singolo record.
+     * Spostamento effettivo, in su o in giu del singolo record.
      * Sovrascritto
+     *
+     * @param sopra true per spostare in alto, false per spostare in basso
      */
-    protected void spostaSu() {
+    protected void spostaRecord(boolean sopra) {
     }// end of method
 
     /**
-     * Spostamento in giu del singolo record.
-     * Sovrascritto
+     * Effettua la transazione di swap
      */
-    protected void spostaGiu() {
+    protected void swapCommit(BaseEntity entity1, BaseEntity entity2) {
+        EntityManager manager = table.getEntityManager();
+        manager.getTransaction().begin();
+        try {
+            manager.merge(entity1);
+            manager.merge(entity2);
+            manager.getTransaction().commit();
+            table.refresh();
+        } catch (Exception e) {
+            manager.getTransaction().rollback();
+        }
+
     }// end of method
 
     /**

@@ -12,10 +12,11 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
 import com.vaadin.ui.components.colorpicker.ColorChangeListener;
+import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
-import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibBean;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.util.Collections;
@@ -37,27 +38,36 @@ public class ServizioTable extends ETable {
     protected static final String COL_COLORE = "colore";
 
 
-
     public ServizioTable(ModulePop module) {
         super(module);
         Container cont = getContainerDataSource();
-        if(cont instanceof Sortable){
-            Sortable sortable = (Sortable)cont;
+        if (cont instanceof Sortable) {
+            Sortable sortable = (Sortable) cont;
             sortable.sort(new Object[]{Servizio_.ordine.getName()}, new boolean[]{true});
         }
     }
 
     protected Object[] getDisplayColumns() {
-        return new Object[]{
-                Servizio_.ordine,
-                Servizio_.sigla,
-                Servizio_.descrizione,
-                COL_DURATA,
-                COL_FUNZIONI,
-                COL_COLORE
-        };
-
-
+        if (LibSession.isDeveloper()) {
+            return new Object[]{
+                    WamCompanyEntity_.company,
+                    Servizio_.ordine,
+                    Servizio_.sigla,
+                    Servizio_.descrizione,
+                    COL_DURATA,
+                    COL_FUNZIONI,
+                    COL_COLORE
+            };
+        } else {
+            return new Object[]{
+                    Servizio_.ordine,
+                    Servizio_.sigla,
+                    Servizio_.descrizione,
+                    COL_DURATA,
+                    COL_FUNZIONI,
+                    COL_COLORE
+            };
+        }// end of if/else cycle
     }// end of method
 
 
@@ -76,8 +86,6 @@ public class ServizioTable extends ETable {
 
         setColumnAlignment(COL_DURATA, Align.LEFT);
     }
-
-
 
 
     @Override
@@ -102,15 +110,15 @@ public class ServizioTable extends ETable {
             Item item = source.getItem(itemId);
 
             prop = item.getItemProperty(Servizio_.orario.getName());
-            boolean orario = (Boolean)prop.getValue();
+            boolean orario = (Boolean) prop.getValue();
 
             String s;
-            if(orario){
+            if (orario) {
                 BeanItem bi = LibBean.fromItem(item);
-                Servizio serv = (Servizio)bi.getBean();
-                s=serv.getStrOrario();
-            }else{
-                s="variabile";
+                Servizio serv = (Servizio) bi.getBean();
+                s = serv.getStrOrario();
+            } else {
+                s = "variabile";
             }
 
             return new Label(s);
@@ -128,15 +136,21 @@ public class ServizioTable extends ETable {
         public Component generateCell(Table source, Object itemId, Object columnId) {
             Item item = source.getItem(itemId);
             BeanItem bi = LibBean.fromItem(item);
-            Servizio serv = (Servizio)bi.getBean();
-            String s="";
-            List<ServizioFunzione> lista= serv.getServizioFunzioni();
+            Servizio serv = (Servizio) bi.getBean();
+            String s = "";
+            List<ServizioFunzione> lista = serv.getServizioFunzioni();
             Collections.sort(lista);
-            for(ServizioFunzione sf : lista){
-                if(s.length()>0){s+=", ";}
-                if(sf.isObbligatoria()){s+="<strong>";}
-                s+=sf.getFunzione().getSigla();
-                if(sf.isObbligatoria()){s+="</strong>";}
+            for (ServizioFunzione sf : lista) {
+                if (s.length() > 0) {
+                    s += ", ";
+                }
+                if (sf.isObbligatoria()) {
+                    s += "<strong>";
+                }
+                s += sf.getFunzione().getSigla();
+                if (sf.isObbligatoria()) {
+                    s += "</strong>";
+                }
             }
             return new Label(s, ContentMode.HTML);
         }
@@ -154,7 +168,7 @@ public class ServizioTable extends ETable {
             Property prop;
             Item item = source.getItem(itemId);
             prop = item.getItemProperty(Servizio_.colore.getName());
-            int codColore = (Integer)prop.getValue();
+            int codColore = (Integer) prop.getValue();
             ColorPicker picker = new ServizioColorPicker();
             picker.setColor(new Color(codColore));
             picker.setCaption("&#8203;"); //zero-width space
@@ -162,8 +176,8 @@ public class ServizioTable extends ETable {
                 @Override
                 public void colorChanged(ColorChangeEvent colorChangeEvent) {
                     BeanItem bi = LibBean.fromItem(item);
-                    Servizio serv = (Servizio)bi.getBean();
-                    int colorcode=colorChangeEvent.getColor().getRGB();
+                    Servizio serv = (Servizio) bi.getBean();
+                    int colorcode = colorChangeEvent.getColor().getRGB();
                     serv.setColore(colorcode);
                     serv.save();
                 }
