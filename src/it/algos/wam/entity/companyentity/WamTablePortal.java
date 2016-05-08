@@ -3,10 +3,11 @@ package it.algos.wam.entity.companyentity;
 import com.vaadin.data.Container;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ELazyContainer;
 import it.algos.webbase.web.lib.LibSession;
@@ -28,7 +29,8 @@ public class WamTablePortal extends TablePortal {
     public static final String CMD_MOVE_DN = "Sposta giu";
     public static final Resource ICON_MOVE_DN = FontAwesome.ARROW_DOWN;
     private final static String MENU_CROCI_CAPTION = "Croce";
-    private final static String ITEM_ALL_CROCI = "tutte";
+    private final static String ITEM_ALL_CROCI = "Tutte";
+    protected boolean useAllCompany;
     private boolean usaBottoniSpostamento;
     private HashMap<WamCompany, MenuBar.MenuItem> croci;
     private MenuBar.MenuItem bMoveUp;
@@ -44,9 +46,11 @@ public class WamTablePortal extends TablePortal {
         toolbar.setCreate(true);
 
         if (utenteSviluppatore) {
+            useAllCompany = true;
             addMenuCroci();
-            fixCompany();
+            fixInizialeCompany();
         } else {
+            useAllCompany = false;
             if (isUsaBottoniSpostamento()) {
                 syncButtonsSpostamento(true);
             }// end of if cycle
@@ -59,13 +63,13 @@ public class WamTablePortal extends TablePortal {
     /**
      * Regolazione iniziale se è selezionata una company.
      */
-    private void fixCompany() {
+    private void fixInizialeCompany() {
         BaseCompany company = CompanySessionLib.getCompany();
 
         if (company != null) {
-            syncCompany((WamCompany) company);
+            syncCompany(croci.get(null), (WamCompany) company);
         } else {
-            syncCompany(null);
+            syncCompany(null, null);
         }// end of if/else cycle
 
     }// end of method
@@ -85,14 +89,14 @@ public class WamTablePortal extends TablePortal {
 
         subItem = item.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                syncCompany(null);
+                syncCompany(selectedItem, null);
             }// end of inner method
         });// end of anonymous inner class
         croci.put(null, subItem);
         for (WamCompany company : WamCompany.findAll()) {
-            subItem = item.addItem(company.toString(), null, new MenuBar.Command() {
+            subItem = item.addItem(company.getName(), null, new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    syncCompany(company);
+                    syncCompany(selectedItem, company);
                 }// end of inner method
             });// end of anonymous inner class
             croci.put(company, subItem);
@@ -153,7 +157,7 @@ public class WamTablePortal extends TablePortal {
      * Creates a filter corresponding to the needed wamcompany in the table
      * I filtri sono comprensivi del livello sottostante (GreaterOrEqual)
      */
-    private void setFiltro(WamCompany company) {
+    protected void setFiltro(WamCompany company) {
         Container.Filter filter = null;
         ATable table = this.getTable();
         Container.Filterable cont = null;
@@ -168,6 +172,8 @@ public class WamTablePortal extends TablePortal {
 
             table.refresh();
         }// end of if cycle
+
+//        getTable().setColumnCollapsed(BaseCompany_.name.getName(), useAllCompany);
 
         this.spuntaMenu(company);
     }// end of method
@@ -219,18 +225,25 @@ public class WamTablePortal extends TablePortal {
      * Regola il filtro sulla company
      * Sincronizza lo stato dei bottoni.
      */
-    protected void syncCompany(WamCompany company) {
+    protected void syncCompany(MenuBar.MenuItem item, WamCompany company) {
 
         if (company == null) {
+            useAllCompany = true;
             setFiltro(null);
             if (isUsaBottoniSpostamento()) {
                 syncButtonsSpostamento(false);
             }// end of if cycle
-
+            if (item != null) {
+                item.getParent().setText(ITEM_ALL_CROCI);
+            }// end of if cycle
         } else {
+            useAllCompany = false;
             setFiltro(company);
             if (isUsaBottoniSpostamento()) {
                 syncButtonsSpostamento(true);
+            }// end of if cycle
+            if (item != null) {
+                item.getParent().setText(company.getName());
             }// end of if cycle
         }// end of if/else cycle
 

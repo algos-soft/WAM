@@ -5,25 +5,14 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Resource;
-import com.vaadin.server.StreamResource;
-import com.vaadin.shared.ui.colorpicker.Color;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.*;
-import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
-import com.vaadin.ui.components.colorpicker.ColorChangeListener;
-import it.algos.wam.WAMApp;
-import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.entity.servizio.ServizioColorPicker;
-import it.algos.wam.entity.servizio.Servizio_;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Table;
+import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.ETable;
-import it.algos.webbase.web.lib.ByteStreamResource;
 import it.algos.webbase.web.lib.LibBean;
-import it.algos.webbase.web.lib.LibResource;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
 /**
  * Created by alex on 08/04/16.
@@ -52,7 +41,6 @@ public class FunzioneTable extends ETable {
                 Funzione_.descrizione,
                 Funzione_.note,
         };
-
 
     }// end of method
 
@@ -127,10 +115,10 @@ public class FunzioneTable extends ETable {
 
             Property prop = item.getItemProperty(Funzione_.iconCodepoint.getName());
             if (prop != null) {
-                FontAwesome glyph=null;
+                FontAwesome glyph = null;
                 int codepoint = (int) prop.getValue();
                 try {
-                    glyph=FontAwesome.fromCodepoint(codepoint);
+                    glyph = FontAwesome.fromCodepoint(codepoint);
                     bIcon.setCaption(glyph.getHtml());
                 } catch (Exception e) {
                 }

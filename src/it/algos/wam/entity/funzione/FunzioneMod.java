@@ -3,7 +3,10 @@ package it.algos.wam.entity.funzione;
 
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Resource;
+import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.companyentity.WamModSposta;
+import it.algos.webbase.multiazienda.CompanyModule;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
@@ -18,6 +21,10 @@ public class FunzioneMod extends WamModSposta {
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Funzioni";
 
+    // icona (eventuale) del modulo
+    public static Resource ICON = FontAwesome.CHECK_SQUARE_O;
+
+
     /**
      * Costruttore senza parametri
      * <p>
@@ -27,8 +34,29 @@ public class FunzioneMod extends WamModSposta {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public FunzioneMod() {
-        super(Funzione.class, MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
+        super(Funzione.class, MENU_ADDRESS, ICON);
     }// end of constructor
+
+
+    @Override
+    public ModuleForm createForm(Item item) {
+        return new FunzioneForm(item, this);
+    }// end of method
+
+
+    @Override
+    public ATable createTable() {
+        return new FunzioneTable(this);
+    }// end of method
+
+
+    @Override
+    public TablePortal createTablePortal() {
+        TablePortal portaleFunzione = new FunzioneTablePortal(this);
+        portaleFunzione.delCmd(TableToolbar.CMD_SEARCH);
+
+        return portaleFunzione;
+    }// end of method
 
 //    /**
 //     * Crea i campi visibili nella lista (table)
@@ -74,24 +102,6 @@ public class FunzioneMod extends WamModSposta {
 //                Funzione_.sigla,
 //                Funzione_.descrizione);
 //    }// end of method
-
-    @Override
-    public TablePortal createTablePortal() {
-        TablePortal portaleFunzione = new FunzioneTablePortal(this);
-        portaleFunzione.delCmd(TableToolbar.CMD_SEARCH);
-
-        return portaleFunzione;
-    }// end of method
-
-    @Override
-    public ATable createTable() {
-        return new FunzioneTable(this);
-    }// end of method
-
-    @Override
-    public ModuleForm createForm(Item item) {
-        return new FunzioneForm(item, this);
-    }// end of method
 
 }// end of class
 

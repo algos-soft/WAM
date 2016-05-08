@@ -13,6 +13,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
 import com.vaadin.ui.components.colorpicker.ColorChangeListener;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.module.ModulePop;
