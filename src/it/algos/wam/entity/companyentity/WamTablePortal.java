@@ -10,6 +10,7 @@ import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ELazyContainer;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
@@ -94,7 +95,7 @@ public class WamTablePortal extends TablePortal {
         });// end of anonymous inner class
         croci.put(null, subItem);
         for (WamCompany company : WamCompany.findAll()) {
-            subItem = item.addItem(company.getName(), null, new MenuBar.Command() {
+            subItem = item.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     syncCompany(selectedItem, company);
                 }// end of inner method
@@ -255,7 +256,7 @@ public class WamTablePortal extends TablePortal {
                 syncButtonsSpostamento(true);
             }// end of if cycle
             if (item != null) {
-                item.getParent().setText(company.getName());
+                item.getParent().setText(LibText.primaMaiuscola(company.getCompanyCode()));
             }// end of if cycle
         }// end of if/else cycle
 

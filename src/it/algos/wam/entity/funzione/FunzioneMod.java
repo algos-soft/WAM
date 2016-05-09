@@ -58,6 +58,8 @@ public class FunzioneMod extends WamModSposta {
         return portaleFunzione;
     }// end of method
 
+
+
 //    /**
 //     * Crea i campi visibili nella lista (table)
 //     * <p>

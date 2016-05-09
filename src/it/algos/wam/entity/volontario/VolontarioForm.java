@@ -1,7 +1,6 @@
 package it.algos.wam.entity.volontario;
 
 import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
@@ -16,12 +15,20 @@ import javax.persistence.metamodel.Attribute;
 import java.util.List;
 
 /**
- * Created by gac on 19 apr 2016.
+ * Created by webbase templates.
  */
 public class VolontarioForm extends ModuleForm {
 
     private static String LAR_CAMPO = "300px";
 
+    /**
+     * The form used to edit an item.
+     * <p>
+     * Invoca la superclasse passando i parametri:
+     *
+     * @param item   (facoltativo) singola istanza della classe
+     * @param module (obbligatorio) di riferimento
+     */
     public VolontarioForm(Item item, ModulePop module) {
         super(item, module);
     }// end of constructor
@@ -46,7 +53,7 @@ public class VolontarioForm extends ModuleForm {
      * Se si vuole un layout completamente diverso sovrascrivere
      * senza invocare il metodo della superclasse
      */
-//    @Override
+    @Override
     public void createFields() {
         TextField field;
         CheckBoxField fieldCheck;
@@ -151,24 +158,34 @@ public class VolontarioForm extends ModuleForm {
 
     /**
      * Crea il componente per la selezione delle funzioni abilitate.
+     *
      * @return il componente funzioni
      */
-    private Component creaCompFunzioni(){
+    private Component creaCompFunzioni() {
         GridLayout grid = new GridLayout();
         grid.setSpacing(true);
         grid.setCaption("Funzioni abilitate");
         grid.setColumns(3);
         List<Funzione> funzioni = Funzione.findAll();
-        for(Funzione f : funzioni){
+        for (Funzione f : funzioni) {
             grid.addComponent(new CheckBoxFunzione(f));
         }
         return grid;
     }
 
+    private Volontario getVolontario() {
+        return (Volontario) getEntity();
+    }
+
+    @Override
+    protected boolean save() {
+        return super.save();
+    }
+
     /**
      * Componente per il checkbox funzione, fatto di CheckBox e label HTML con icona
      */
-    private class CheckBoxFunzione extends HorizontalLayout{
+    private class CheckBoxFunzione extends HorizontalLayout {
         public CheckBoxFunzione(Funzione f) {
             setSpacing(true);
 
@@ -176,7 +193,7 @@ public class VolontarioForm extends ModuleForm {
             Label label = new Label();
             label.setContentMode(ContentMode.HTML);
             FontAwesome icon = f.getIcon();
-            if(icon!=null){
+            if (icon != null) {
                 label.setValue(icon.getHtml());
                 label.setWidth("0.7em");
             }
@@ -202,15 +219,6 @@ public class VolontarioForm extends ModuleForm {
 
         }
 
-    }
-
-    private Volontario getVolontario() {
-        return (Volontario) getEntity();
-    }
-
-    @Override
-    protected boolean save() {
-        return super.save();
     }
 
 }// end of class

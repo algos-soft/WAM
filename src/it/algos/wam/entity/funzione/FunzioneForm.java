@@ -28,12 +28,11 @@ public class FunzioneForm extends ModuleForm {
 
     @Override
     protected Component createComponent() {
-
         VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(true);
 
         layout.addComponent(creaCompDetail());
 
-        layout.setMargin(true);
 
         return layout;
     }
