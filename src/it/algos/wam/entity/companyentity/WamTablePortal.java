@@ -173,7 +173,7 @@ public class WamTablePortal extends TablePortal {
             table.refresh();
         }// end of if cycle
 
-//        getTable().setColumnCollapsed(BaseCompany_.name.getName(), useAllCompany);
+        getTable().setColumnCollapsed(WamCompanyEntity_.company.getName(), !useAllCompany);
 
         this.spuntaMenu(company);
     }// end of method
