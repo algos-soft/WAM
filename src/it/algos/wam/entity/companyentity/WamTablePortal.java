@@ -239,7 +239,6 @@ public class WamTablePortal extends TablePortal {
      * Sincronizza lo stato dei bottoni.
      */
     protected void syncCompany(MenuBar.MenuItem item, WamCompany company) {
-
         if (company == null) {
             useAllCompany = true;
             setFiltro(null);
@@ -260,6 +259,8 @@ public class WamTablePortal extends TablePortal {
             }// end of if cycle
         }// end of if/else cycle
 
+        table.deselectAll();
+        table.refresh();
     }// end of method
 
     /**
@@ -281,6 +282,7 @@ public class WamTablePortal extends TablePortal {
     }// end of method
 
     protected void syncButtons(boolean singleSelected, boolean multiSelected) {
+//        int posizione=getTable().
         toolbar.syncButtons(singleSelected, multiSelected);
 
         if (bMoveUp != null) {

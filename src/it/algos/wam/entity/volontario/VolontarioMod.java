@@ -4,9 +4,9 @@ package it.algos.wam.entity.volontario;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
-import it.algos.wam.entity.companyentity.WamModSposta;
 import it.algos.webbase.web.form.ModuleForm;
 
 import javax.persistence.metamodel.Attribute;
@@ -33,6 +33,7 @@ public class VolontarioMod extends WamMod {
      */
     public VolontarioMod() {
         super(Volontario.class, MENU_ADDRESS, ICON);
+        getTable().setRowHeaderMode(Table.ROW_HEADER_MODE_INDEX);
     }// end of constructor
 
     @Override
