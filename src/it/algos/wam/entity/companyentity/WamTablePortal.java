@@ -264,11 +264,11 @@ public class WamTablePortal extends TablePortal {
         }// end of if cycle
     }// end of method
 
-    private void fireCompanyChanged(SelectionChangeEvent e) {
-        for (ATable.SelectionChangeListener l : selectionChangeListeners) {
-            l.selectionChanged(e);
-        }
-    }
+//    private void fireCompanyChanged(SelectionChangeEvent e) {
+//        for (ATable.SelectionChangeListener l : selectionChangeListeners) {
+//            l.selectionChanged(e);
+//        }
+//    }
 
     /**
      * Regola l'esistenza dei bottoni di spostamento
