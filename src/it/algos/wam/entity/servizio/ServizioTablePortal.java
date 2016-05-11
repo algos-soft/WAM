@@ -1,5 +1,6 @@
 package it.algos.wam.entity.servizio;
 
+import it.algos.wam.entity.companyentity.CompanyChangeListener;
 import it.algos.wam.entity.companyentity.WamTablePortalSposta;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
@@ -9,13 +10,12 @@ import it.algos.webbase.web.module.ModulePop;
  * Created by alex on 7-04-2016.
  * .
  */
-public class ServizioTablePortal extends WamTablePortalSposta {
+public class ServizioTablePortal extends WamTablePortalSposta  {
 
 
     public ServizioTablePortal(ModulePop modulo) {
         super(modulo);
     }// end of constructor
-
 
     /**
      * Spostamento effettivo, in su o in giu del singolo record.

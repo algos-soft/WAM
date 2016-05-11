@@ -17,6 +17,7 @@ import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -37,9 +38,13 @@ public class WamTablePortal extends TablePortal {
     private MenuBar.MenuItem bMoveUp;
     private MenuBar.MenuItem bMoveDn;
 
+//    private ArrayList<CompanyChangeListener> companyChangeListeners = new ArrayList<>();
+
+
     public WamTablePortal(ModulePop modulo) {
         super(modulo);
     }// end of constructor
+
 
     public TableToolbar createToolbar() {
         boolean utenteSviluppatore = LibSession.isDeveloper();
@@ -261,14 +266,11 @@ public class WamTablePortal extends TablePortal {
 
             table.deselectAll();
             table.refresh();
+
+//            fireCompanyChanged(companyNew);
         }// end of if cycle
     }// end of method
 
-//    private void fireCompanyChanged(SelectionChangeEvent e) {
-//        for (ATable.SelectionChangeListener l : selectionChangeListeners) {
-//            l.selectionChanged(e);
-//        }
-//    }
 
     /**
      * Regola l'esistenza dei bottoni di spostamento
@@ -301,6 +303,23 @@ public class WamTablePortal extends TablePortal {
         }// end of if cycle
     }// end of method
 
+
+//    public void addCompanyChangeListeners(CompanyChangeListener listener) {
+//        companyChangeListeners.add(listener);
+//    }// end of method
+//
+//    public void removeCompanyChangeListeners() {
+//    }// end of method
+//
+//    private void fireCompanyChanged(WamCompany company ) {
+//        for (CompanyChangeListener listener : companyChangeListeners) {
+//            listener.companyChanged(company);
+//        }// end of for cycle
+//    }// end of method
+//
+//    public void setCompanyChangeListeners(ArrayList<CompanyChangeListener> companyChangeListeners) {
+//        this.companyChangeListeners = companyChangeListeners;
+//    }//end of setter method
 
     protected boolean isUsaBottoniSpostamento() {
         return usaBottoniSpostamento;
