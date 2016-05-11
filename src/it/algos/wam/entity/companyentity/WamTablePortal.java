@@ -225,44 +225,50 @@ public class WamTablePortal extends TablePortal {
 
     }// end of method
 
-    /**
-     * Cambiata la selezione delle righe.
-     * Possibilità di modificare l'aspetto (e la funzionalità) dei bottoni, eventualmente disabilitandoli
-     */
-    @Override
-    public void selectionChanged(ATable.SelectionChangeEvent e) {
-        syncButtons(e.isSingleRowSelected(), e.isMultipleRowsSelected());
-    }// end of method
 
     /**
+     * Sincronizza la company selezionata
+     * <p>
      * Modificata la selezione della company.
      * Regola il filtro sulla company
      * Sincronizza lo stato dei bottoni.
+     * Regola la company della sessione
      */
-    protected void syncCompany(MenuBar.MenuItem item, WamCompany company) {
-        if (company == null) {
-            useAllCompany = true;
-            setFiltro(null);
-            if (isUsaBottoniSpostamento()) {
-                syncButtonsSpostamento(false);
-            }// end of if cycle
-            if (item != null) {
-                item.getParent().setText(ITEM_ALL_CROCI);
-            }// end of if cycle
-        } else {
-            useAllCompany = false;
-            setFiltro(company);
-            if (isUsaBottoniSpostamento()) {
-                syncButtonsSpostamento(true);
-            }// end of if cycle
-            if (item != null) {
-                item.getParent().setText(LibText.primaMaiuscola(company.getCompanyCode()));
-            }// end of if cycle
-        }// end of if/else cycle
+    protected void syncCompany(MenuBar.MenuItem item, WamCompany companyNew) {
+        WamCompany companyOld = (WamCompany) CompanySessionLib.getCompany();
 
-        table.deselectAll();
-        table.refresh();
+        if (companyNew != companyOld) {
+            if (companyNew == null) {
+                useAllCompany = true;
+                setFiltro(null);
+                if (isUsaBottoniSpostamento()) {
+                    syncButtonsSpostamento(false);
+                }// end of if cycle
+                if (item != null) {
+                    item.getParent().setText(ITEM_ALL_CROCI);
+                }// end of if cycle
+            } else {
+                useAllCompany = false;
+                setFiltro(companyNew);
+                if (isUsaBottoniSpostamento()) {
+                    syncButtonsSpostamento(true);
+                }// end of if cycle
+                if (item != null) {
+                    item.getParent().setText(LibText.primaMaiuscola(companyNew.getCompanyCode()));
+                }// end of if cycle
+            }// end of if/else cycle
+            CompanySessionLib.setCompany(companyNew);
+
+            table.deselectAll();
+            table.refresh();
+        }// end of if cycle
     }// end of method
+
+    private void fireCompanyChanged(SelectionChangeEvent e) {
+        for (ATable.SelectionChangeListener l : selectionChangeListeners) {
+            l.selectionChanged(e);
+        }
+    }
 
     /**
      * Regola l'esistenza dei bottoni di spostamento

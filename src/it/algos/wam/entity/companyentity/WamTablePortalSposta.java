@@ -20,4 +20,13 @@ public class WamTablePortalSposta extends WamTablePortal implements ATable.Selec
         return super.createToolbar();
     }// end of method
 
+    /**
+     * Cambiata la selezione delle righe.
+     * Possibilità di modificare l'aspetto (e la funzionalità) dei bottoni, eventualmente disabilitandoli
+     */
+    @Override
+    public void selectionChanged(ATable.SelectionChangeEvent e) {
+        syncButtons(e.isSingleRowSelected(), e.isMultipleRowsSelected());
+    }// end of method
+
 }// end of class

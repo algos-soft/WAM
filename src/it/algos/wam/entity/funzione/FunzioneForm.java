@@ -26,28 +26,14 @@ public class FunzioneForm extends ModuleForm {
         super.init();
     }
 
-    @Override
-    protected Component createComponent() {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
-
-        layout.addComponent(creaCompDetail());
-
-
-        return layout;
-    }
-
 
     /**
      * Crea il componente che visualizza il dettaglio
+     * Retrieve the fields from the binder and place them in the UI.
      *
      * @return il componente dettagli
      */
-    private Component creaCompDetail() {
-
-        VerticalLayout layout = new VerticalLayout();
-        layout.setSpacing(true);
-
+    protected Component creaCompDetail(FormLayout layout) {
         Field fsigla = getField(Funzione_.sigla);
         Field fdesc = getField(Funzione_.descrizione);
         Field fnote = getField(Funzione_.note);

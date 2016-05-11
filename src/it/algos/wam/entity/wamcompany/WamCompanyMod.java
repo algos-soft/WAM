@@ -3,14 +3,12 @@ package it.algos.wam.entity.wamcompany;
 
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Resource;
-import it.algos.wam.entity.companyentity.WamCompanyEntity_;
-import it.algos.wam.entity.servizio.Servizio;
-import it.algos.webbase.domain.company.BaseCompanyForm;
-import it.algos.webbase.domain.company.BaseCompanyModule;
+import it.algos.wam.entity.funzione.FunzioneTablePortal;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.table.TablePortal;
+import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -35,6 +33,19 @@ public class WamCompanyMod extends ModulePop {
         super(WamCompany.class, MENU_ADDRESS, FontAwesome.AMBULANCE);
     }// end of constructor
 
+
+    @Override
+    public ModuleForm createForm(Item item) {
+        return new WamCompanyForm(item, this);
+    }// end of method
+
+    @Override
+    public TablePortal createTablePortal() {
+        TablePortal portaleCroce = super.createTablePortal();
+        portaleCroce.delCmd(TableToolbar.CMD_SEARCH);
+
+        return portaleCroce;
+    }// end of method
 
     /**
      * Crea i campi visibili nella scheda (form)

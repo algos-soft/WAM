@@ -12,6 +12,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
+import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.module.ModulePop;
@@ -52,20 +53,23 @@ public class ServizioForm extends ModuleForm {
         super.createFields();
     }
 
-    @Override
+    /**
+     * Create the detail component (the upper part containing the fields).
+     * <p>
+     * Usa il FormLayout che ha le label a sinsitra dei campi (standard)
+     * Se si vogliono le label sopra i campi, sovrascivere questo metodo e usare un VerticalLayout
+     *
+     * @return the detail component containing the fields
+     */
     protected Component createComponent() {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(true);
+        layout.setSpacing(true);
 
         sfEditors = new ArrayList();
 
-        VerticalLayout layout = new VerticalLayout();
-        //layout.setSpacing(true);
-
-        layout.addComponent(creaCompDetail());
-
-        layout.setMargin(true);
-
-        return layout;
-    }
+        return creaCompDetail(layout);
+    }// end of method
 
 
     /**
@@ -73,11 +77,7 @@ public class ServizioForm extends ModuleForm {
      *
      * @return il componente dettagli
      */
-    private Component creaCompDetail() {
-
-        VerticalLayout layout = new VerticalLayout();
-        layout.setSpacing(true);
-
+    private Component creaCompDetail(VerticalLayout layout) {
         Field fsigla = getField(Servizio_.sigla);
         fsigla.setWidth("8em");
         Field fdesc = getField(Servizio_.descrizione);
