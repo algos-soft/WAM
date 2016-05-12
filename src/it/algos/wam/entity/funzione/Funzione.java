@@ -241,7 +241,20 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return istanza di Funzione
      */
     public static Funzione creaNew(WamCompany company, String sigla) {
-        return creaNew(company, sigla, "", 0, "");
+        return creaNew(company, null, sigla, "", 0, "");
+    }// end of static method
+
+    /**
+     * Creazione iniziale di una funzione
+     * La crea SOLO se non esiste già
+     *
+     * @param company croce di appartenenza
+     * @param manager the EntityManager to use
+     * @param sigla   sigla di riferimento interna (obbligatoria)
+     * @return istanza di Funzione
+     */
+    public static Funzione creaNew(WamCompany company, EntityManager manager, String sigla) {
+        return creaNew(company, manager, sigla, "", 0, "");
     }// end of static method
 
     /**
@@ -249,14 +262,15 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * La crea SOLO se non esiste già
      *
      * @param company     croce di appartenenza
+     * @param manager     the EntityManager to use
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
      * @param ordine      di presentazione nelle liste
      * @param note        di spiegazione (facoltative)
      * @return istanza di Funzione
      */
-    public static Funzione creaNew(WamCompany company, String sigla, String descrizione, int ordine, String note) {
-        return creaNew(company, sigla, descrizione, ordine, note, null);
+    public static Funzione creaNew(WamCompany company, EntityManager manager, String sigla, String descrizione, int ordine, String note) {
+        return creaNew(company, manager, sigla, descrizione, ordine, note, null);
     }// end of static method
 
     /**
@@ -264,6 +278,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * La crea SOLO se non esiste già
      *
      * @param company     croce di appartenenza
+     * @param manager     the EntityManager to use
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
      * @param ordine      di presentazione nelle liste
@@ -273,6 +288,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     public static Funzione creaNew(
             WamCompany company,
+            EntityManager manager,
             String sigla,
             String descrizione,
             int ordine,
@@ -288,7 +304,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             funzione.setOrdine(ordine);
             funzione.setNote(note);
             funzione.setIcon(glyph);
-            funzione.save();
+            funzione.save(manager);
         }// end of if cycle
 
         return funzione;

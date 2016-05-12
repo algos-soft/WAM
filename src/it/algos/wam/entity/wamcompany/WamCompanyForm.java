@@ -104,7 +104,7 @@ public class WamCompanyForm extends ModuleForm {
         BeanItem bi = LibBean.fromItem(getItem());
         WamCompany company = (WamCompany) bi.getBean();
 
-        if (usaCreaDatiStandard) {
+        if (isNewRecord() && usaCreaDatiStandard) {
             BootService.initCompany(company);
         }// end of if cycle
     }// end of method

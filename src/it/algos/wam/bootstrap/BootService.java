@@ -9,11 +9,15 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibDate;
+
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 /**
  * Created by gac on 25 feb 2016.
  * Classe statica astratta.
@@ -74,14 +78,17 @@ public abstract class BootService {
         ArrayList<Volontario> listaVolontari;
         ArrayList<Servizio> listaServizi;
         ArrayList<Turno> listaTurni;
+        EntityManager manager = EM.createEntityManager();
 
-        listaFunzioni = creaFunzioni(company);
-        listaVolontari = creaVolontari(company, listaFunzioni);
-        listaServizi = creaServizi(company, listaFunzioni);
+        listaFunzioni = creaFunzioni(company, manager);
+        listaVolontari = creaVolontari(company, manager, listaFunzioni);
+        listaServizi = creaServizi(company, manager, listaFunzioni);
         if (creaTurni) {
             listaTurni = creaTurniVuoti(company, listaServizi);
             riempieTurni(company, listaVolontari, listaServizi, listaTurni);
         }// end of if cycle
+
+        manager.close();
     }// end of static method
 
     /**
@@ -130,10 +137,11 @@ public abstract class BootService {
      * Le crea SOLO se non esistono già
      *
      * @param company croce selezionata
+     * @param manager the EntityManager to use
      * @return lista delle funzioni create
      */
     @SuppressWarnings("unchecked")
-    private static ArrayList<Funzione> creaFunzioni(WamCompany company) {
+    private static ArrayList<Funzione> creaFunzioni(WamCompany company, EntityManager manager) {
         ArrayList<Funzione> listaFunz = new ArrayList<>();
         ArrayList listaTmp = new ArrayList<>();
 
@@ -161,7 +169,7 @@ public abstract class BootService {
         listaTmp.add(Arrays.asList("cent", "Cen", "Centralinista", FontAwesome.USER));
 
         for (int k = 0; k < listaTmp.size(); k++) {
-            listaFunz.add(creaFunzBase(company, k+1, (List) listaTmp.get(k)));
+            listaFunz.add(creaFunzBase(company, manager, k + 1, (List) listaTmp.get(k)));
         }// end of for cycle
 
         return listaFunz;
@@ -174,43 +182,16 @@ public abstract class BootService {
      * @param company  croce di appartenenza
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
+     * @param manager  the EntityManager to use
      * @return istanza di Funzione
      */
-    private static Funzione creaFunzBase(WamCompany company, int ordine, List listaTmp) {
+    private static Funzione creaFunzBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
         String sigla = (String) listaTmp.get(0);
         String descrizione = (String) listaTmp.get(1);
         String note = (String) listaTmp.get(2);
         FontAwesome glyph = (FontAwesome) listaTmp.get(3);
 
-        return Funzione.creaNew(company, sigla, descrizione, ordine, note, glyph);
-    }// end of static method
-
-    /**
-     * Creazione iniziale di alcuni servizi per la croce selezionata
-     * Li crea SOLO se non esistono già
-     *
-     * @param company croce selezionata
-     */
-    private static ArrayList<Servizio> creaServizi(WamCompany company, ArrayList<Funzione> listaFunz) {
-        ArrayList<Servizio> listaServ = new ArrayList<>();
-        int k = 0;
-        int azzurro = new Color(146, 189, 255).getRGB();
-        int verdino = new Color(146, 255, 189).getRGB();
-        int rosa = new Color(255, 146, 211).getRGB();
-
-        if (company != null) {
-            addServ(listaServ, company, ++k, "med-mat", "Automedica mattino", 8, 12, true, true, false, 3, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5));
-            addServ(listaServ, company, ++k, "med-pom", "Automedica pomeriggio", 12, 18, true, true, false, 3, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5));
-            addServ(listaServ, company, ++k, "med-sera", "Automedica sera", 18, 22, true, true, false, 2, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5));
-            addServ(listaServ, company, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3, verdino, listaFunz.get(1), listaFunz.get(3));
-            addServ(listaServ, company, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 20, true, true, false, 3, verdino, listaFunz.get(1), listaFunz.get(3));
-            addServ(listaServ, company, ++k, "amb-notte", "Ambulanza notte", 20, 8, true, true, false, 2, verdino, listaFunz.get(1), listaFunz.get(3));
-            addServ(listaServ, company, ++k, "dim", "Dimissioni ordinarie", 0, 0, true, false, false, 2, rosa, listaFunz.get(1), listaFunz.get(4));
-            addServ(listaServ, company, ++k, "ext", "Extra", 0, 0, true, false, true, 2, rosa, listaFunz.get(1), listaFunz.get(4));
-            addServ(listaServ, company, ++k, "avis", "Avis", 0, 0, true, false, true, 1, rosa, listaFunz.get(1));
-        }// end of if cycle
-
-        return listaServ;
+        return Funzione.creaNew(company, manager, sigla, descrizione, ordine, note, glyph);
     }// end of static method
 
 
@@ -219,22 +200,55 @@ public abstract class BootService {
      * Li crea SOLO se non esistono già
      *
      * @param company   croce selezionata
+     * @param manager   the EntityManager to use
      * @param listaFunz ioni della company
      */
-    private static ArrayList<Volontario> creaVolontari(WamCompany company, ArrayList<Funzione> listaFunz) {
+    private static ArrayList<Volontario> creaVolontari(WamCompany company, EntityManager manager, ArrayList<Funzione> listaFunz) {
         ArrayList<Volontario> listaVolontari = new ArrayList<Volontario>();
 
         if (company != null) {
-            listaVolontari.add(Volontario.crea(company, "Mario", "Brambilla"));
-            listaVolontari.add(Volontario.crea(company, "Giovanna", "Durante", listaFunz));
-            listaVolontari.add(Volontario.crea(company, "Diego", "Bertini", listaFunz.get(3)));
-            listaVolontari.add(Volontario.crea(company, "Roberto", "Marchetti", listaFunz.get(2), listaFunz.get(3)));
-            listaVolontari.add(Volontario.crea(company, "Edoardo", "Politi"));
-            listaVolontari.add(Volontario.crea(company, "Sabina", "Roncelli"));
+            listaVolontari.add(Volontario.crea(company, manager, "Mario", "Brambilla"));
+            listaVolontari.add(Volontario.crea(company, manager, "Giovanna", "Durante", listaFunz));
+            listaVolontari.add(Volontario.crea(company, manager, "Diego", "Bertini", listaFunz.get(3)));
+            listaVolontari.add(Volontario.crea(company, manager, "Roberto", "Marchetti", listaFunz.get(2), listaFunz.get(3)));
+            listaVolontari.add(Volontario.crea(company, manager, "Edoardo", "Politi"));
+            listaVolontari.add(Volontario.crea(company, manager, "Sabina", "Roncelli"));
         }// end of if cycle
 
         return listaVolontari;
     }// end of static method
+
+
+    /**
+     * Creazione iniziale di alcuni servizi per la croce selezionata
+     * Li crea SOLO se non esistono già
+     *
+     * @param company   croce selezionata
+     * @param manager   the EntityManager to use
+     * @param listaFunz ioni della company
+     */
+    private static ArrayList<Servizio> creaServizi(WamCompany company, EntityManager manager, ArrayList<Funzione> listaFunz) {
+        ArrayList<Servizio> listaServ = new ArrayList<>();
+        int k = 0;
+        int azzurro = new Color(146, 189, 255).getRGB();
+        int verdino = new Color(146, 255, 189).getRGB();
+        int rosa = new Color(255, 146, 211).getRGB();
+
+        if (company != null) {
+            addServ(listaServ, company, manager, ++k, "med-mat", "Automedica mattino", 8, 12, true, true, false, 3, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5));
+            addServ(listaServ, company, manager, ++k, "med-pom", "Automedica pomeriggio", 12, 18, true, true, false, 3, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5));
+            addServ(listaServ, company, manager, ++k, "med-sera", "Automedica sera", 18, 22, true, true, false, 2, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5));
+            addServ(listaServ, company, manager, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3, verdino, listaFunz.get(1), listaFunz.get(3));
+            addServ(listaServ, company, manager, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 20, true, true, false, 3, verdino, listaFunz.get(1), listaFunz.get(3));
+            addServ(listaServ, company, manager, ++k, "amb-notte", "Ambulanza notte", 20, 8, true, true, false, 2, verdino, listaFunz.get(1), listaFunz.get(3));
+            addServ(listaServ, company, manager, ++k, "dim", "Dimissioni ordinarie", 0, 0, true, false, false, 2, rosa, listaFunz.get(1), listaFunz.get(4));
+            addServ(listaServ, company, manager, ++k, "ext", "Extra", 0, 0, true, false, true, 2, rosa, listaFunz.get(1), listaFunz.get(4));
+            addServ(listaServ, company, manager, ++k, "avis", "Avis", 0, 0, true, false, true, 1, rosa, listaFunz.get(1));
+        }// end of if cycle
+
+        return listaServ;
+    }// end of static method
+
 
 //    /**
 //     * Creazione iniziale di alcune funzioni per la croce selezionata
@@ -263,6 +277,7 @@ public abstract class BootService {
      *
      * @param listaServizi creati
      * @param company      selezionata
+     * @param manager      the EntityManager to use
      * @param ordine       di presentazione nel tabellone
      * @param sigla        sigla di riferimento interna (obbligatoria)
      * @param descrizione  per il tabellone (obbligatoria)
@@ -273,11 +288,11 @@ public abstract class BootService {
      * @param multiplo     servizio suscettibile di essere effettuato diverse volte nella giornata
      * @param persone      minime indispensabile allo svolgimento del servizio
      */
-    private static void addServ(ArrayList<Servizio> listaServizi, WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone, int colore, Funzione... funzioni) {
+    private static void addServ(ArrayList<Servizio> listaServizi, WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone, int colore, Funzione... funzioni) {
         Servizio servizio;
 
         if (listaServizi != null && company != null) {
-            servizio = Servizio.crea(company, ordine, sigla, descrizione, oraInizio, oraFine, visibile, colore, funzioni);
+            servizio = Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, visibile, colore, funzioni);
             listaServizi.add(servizio);
         }// end of if cycle
 

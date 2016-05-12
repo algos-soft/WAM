@@ -11,10 +11,7 @@ import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -226,7 +223,22 @@ public class Volontario extends WamCompanyEntity {
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, String nome, String cognome) {
-        return crea(company, nome, cognome, new ArrayList<Funzione>());
+        return crea(company, null, nome, cognome, new ArrayList<Funzione>());
+    }// end of static method
+
+
+    /**
+     * Creazione iniziale di un volontario
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company croce di appartenenza
+     * @param manager the EntityManager to use
+     * @param nome    del volontario/milite (obbligatorio)
+     * @param cognome del volontario/milite (obbligatorio)
+     * @return istanza di Volontario
+     */
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome) {
+        return crea(company, manager, nome, cognome, new ArrayList<Funzione>());
     }// end of static method
 
     /**
@@ -234,13 +246,14 @@ public class Volontario extends WamCompanyEntity {
      * Lo crea SOLO se non esiste già
      *
      * @param company   croce di appartenenza
+     * @param manager   the EntityManager to use
      * @param nome      del volontario/milite (obbligatorio)
      * @param cognome   del volontario/milite (obbligatorio)
      * @param listaFunz lista delle funzioni (facoltativa)
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, String nome, String cognome, ArrayList<Funzione> listaFunz) {
-        return crea(company, nome, cognome, listaFunz.toArray(new Funzione[listaFunz.size()]));
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, ArrayList<Funzione> listaFunz) {
+        return crea(company, manager, nome, cognome, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
 
     /**
@@ -248,12 +261,13 @@ public class Volontario extends WamCompanyEntity {
      * Lo crea SOLO se non esiste già
      *
      * @param company  croce di appartenenza
+     * @param manager  the EntityManager to use
      * @param nome     del volontario/milite (obbligatorio)
      * @param cognome  del volontario/milite (obbligatorio)
      * @param funzioni lista delle funzioni (facoltativa)
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, String nome, String cognome, Funzione... funzioni) {
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, Funzione... funzioni) {
         Volontario vol = Volontario.find(company, nome, cognome);
 
         if (vol == null) {
@@ -267,7 +281,7 @@ public class Volontario extends WamCompanyEntity {
                 } // fine del ciclo for-each
             }// fine del blocco if
 
-            vol = (Volontario) vol.save();
+            vol = (Volontario) vol.save(manager);
         }// end of if cycle
 
         return vol;

@@ -5,7 +5,6 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
-import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -221,11 +220,25 @@ public class Servizio extends WamCompanyEntity {
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, String sigla, String descrizione) {
+        return crea(company, null, sigla, descrizione);
+    }// end of static method
+
+    /**
+     * Creazione iniziale di un servizio
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company     selezionata
+     * @param manager     the EntityManager to use
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @return istanza di Servizio
+     */
+    public static Servizio crea(WamCompany company, EntityManager manager, String sigla, String descrizione) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
             servizio = new Servizio(sigla, descrizione);
-            servizio.save();
+            servizio.save(manager);
         }// end of if cycle
 
         return servizio;
@@ -237,6 +250,7 @@ public class Servizio extends WamCompanyEntity {
      * Lo crea SOLO se non esiste già
      *
      * @param company     selezionata
+     * @param manager     the EntityManager to use
      * @param ordine      di presentazione nel tabellone
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
@@ -246,8 +260,8 @@ public class Servizio extends WamCompanyEntity {
      * @param colore      del gruppo (facoltativo)
      * @return istanza di Servizio
      */
-    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, ArrayList<Funzione> listaFunz) {
-        return crea(company, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, listaFunz.toArray(new Funzione[listaFunz.size()]));
+    public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, ArrayList<Funzione> listaFunz) {
+        return crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
 
 
@@ -256,6 +270,7 @@ public class Servizio extends WamCompanyEntity {
      * Lo crea SOLO se non esiste già
      *
      * @param company     selezionata
+     * @param manager     the EntityManager to use
      * @param ordine      di presentazione nel tabellone
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
@@ -265,7 +280,7 @@ public class Servizio extends WamCompanyEntity {
      * @param colore      del gruppo (facoltativo)
      * @return istanza di Servizio
      */
-    public static Servizio crea(WamCompany company, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, Funzione... funzioni) {
+    public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, Funzione... funzioni) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
@@ -280,9 +295,7 @@ public class Servizio extends WamCompanyEntity {
                 } // fine del ciclo for-each
             }// fine del blocco if
 
-            servizio = (Servizio) servizio.save();
-
-            servizio.save();
+            servizio = (Servizio) servizio.save(manager);
         }// end of if cycle
 
         return servizio;
@@ -466,15 +479,15 @@ public class Servizio extends WamCompanyEntity {
     /**
      * Ritorna il tempo totale del servizio in minuti
      */
-    public int getMinutiTotali(){
+    public int getMinutiTotali() {
         int minutiTot;
-        int minutiStart=getOraInizio()*60+getMinutiInizio();
-        int minutiEnd = getOraFine()*60+getMinutiFine();
-        int diff = minutiEnd-minutiStart;
-        if(diff>=0) {
-            minutiTot=diff;
-        }else{
-            minutiTot=1440+diff;    // giorni diversi
+        int minutiStart = getOraInizio() * 60 + getMinutiInizio();
+        int minutiEnd = getOraFine() * 60 + getMinutiFine();
+        int diff = minutiEnd - minutiStart;
+        if (diff >= 0) {
+            minutiTot = diff;
+        } else {
+            minutiTot = 1440 + diff;    // giorni diversi
         }
         return minutiTot;
     }
