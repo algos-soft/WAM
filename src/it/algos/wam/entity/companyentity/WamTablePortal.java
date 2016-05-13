@@ -4,7 +4,9 @@ import com.vaadin.data.Container;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ELazyContainer;
@@ -17,7 +19,6 @@ import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -31,20 +32,17 @@ public class WamTablePortal extends TablePortal {
     public static final String CMD_MOVE_DN = "Sposta giu";
     public static final Resource ICON_MOVE_DN = FontAwesome.ARROW_DOWN;
     private final static String MENU_CROCI_CAPTION = "Croce";
-    private final static String ITEM_ALL_CROCI = "Tutte";
+    private final static String ITEM_ALL_CROCI = "...";
     protected boolean useAllCompany;
     private boolean usaBottoniSpostamento;
     private HashMap<WamCompany, MenuBar.MenuItem> croci;
+    private MenuBar.MenuItem bCroci;
     private MenuBar.MenuItem bMoveUp;
     private MenuBar.MenuItem bMoveDn;
-
-//    private ArrayList<CompanyChangeListener> companyChangeListeners = new ArrayList<>();
-
 
     public WamTablePortal(ModulePop modulo) {
         super(modulo);
     }// end of constructor
-
 
     public TableToolbar createToolbar() {
         boolean utenteSviluppatore = LibSession.isDeveloper();
@@ -65,7 +63,6 @@ public class WamTablePortal extends TablePortal {
         return toolbar;
     }// end of method
 
-
     /**
      * Regolazione iniziale se è selezionata una company.
      */
@@ -73,9 +70,9 @@ public class WamTablePortal extends TablePortal {
         BaseCompany company = CompanySessionLib.getCompany();
 
         if (company != null) {
-            syncCompany(croci.get(null), (WamCompany) company);
+            syncCompany((WamCompany) company);
         } else {
-            syncCompany(null, null);
+            syncCompany(null);
         }// end of if/else cycle
 
     }// end of method
@@ -87,29 +84,27 @@ public class WamTablePortal extends TablePortal {
      * Costruisce i menuItem in funzione delle croci esistenti
      */
     private void addMenuCroci() {
-        MenuBar.MenuItem item = null;
         MenuBar.MenuItem subItem;
         croci = new HashMap<WamCompany, MenuBar.MenuItem>();
 
-        item = toolbar.addButton(MENU_CROCI_CAPTION, FontAwesome.NAVICON, null);
+        bCroci = toolbar.addButton(MENU_CROCI_CAPTION, FontAwesome.NAVICON, null);
 
-        subItem = item.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
+        subItem = bCroci.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                syncCompany(selectedItem, null);
+                fireCompanyChanged(null);
             }// end of inner method
         });// end of anonymous inner class
         croci.put(null, subItem);
         for (WamCompany company : WamCompany.findAll()) {
-            subItem = item.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
+            subItem = bCroci.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    syncCompany(selectedItem, company);
+                    fireCompanyChanged(company);
                 }// end of inner method
             });// end of anonymous inner class
             croci.put(company, subItem);
         }// end of for cycle
 
     }// end of method
-
 
     /*
      * Spostamento in su ed in giu dei singoli records.
@@ -140,7 +135,6 @@ public class WamTablePortal extends TablePortal {
         syncButtons(false, false);
 
     }// end of method
-
 
     /*
      * Elimina i menu sposta records.
@@ -203,7 +197,6 @@ public class WamTablePortal extends TablePortal {
         }// fine del blocco if
     }// end of method
 
-
     /**
      * Spostamento effettivo, in su o in giu del singolo record.
      * Sovrascritto
@@ -230,7 +223,6 @@ public class WamTablePortal extends TablePortal {
 
     }// end of method
 
-
     /**
      * Sincronizza la company selezionata
      * <p>
@@ -239,38 +231,28 @@ public class WamTablePortal extends TablePortal {
      * Sincronizza lo stato dei bottoni.
      * Regola la company della sessione
      */
-    protected void syncCompany(MenuBar.MenuItem item, WamCompany companyNew) {
-        WamCompany companyOld = (WamCompany) CompanySessionLib.getCompany();
+    public void syncCompany(WamCompany companyNew) {
 
-        if (companyNew != companyOld) {
             if (companyNew == null) {
                 useAllCompany = true;
                 setFiltro(null);
                 if (isUsaBottoniSpostamento()) {
                     syncButtonsSpostamento(false);
                 }// end of if cycle
-                if (item != null) {
-                    item.getParent().setText(ITEM_ALL_CROCI);
-                }// end of if cycle
+                bCroci.setText(ITEM_ALL_CROCI);
             } else {
                 useAllCompany = false;
                 setFiltro(companyNew);
                 if (isUsaBottoniSpostamento()) {
                     syncButtonsSpostamento(true);
                 }// end of if cycle
-                if (item != null) {
-                    item.getParent().setText(LibText.primaMaiuscola(companyNew.getCompanyCode()));
-                }// end of if cycle
+                bCroci.setText(LibText.primaMaiuscola(companyNew.getCompanyCode()));
             }// end of if/else cycle
             CompanySessionLib.setCompany(companyNew);
 
             table.deselectAll();
             table.refresh();
-
-//            fireCompanyChanged(companyNew);
-        }// end of if cycle
     }// end of method
-
 
     /**
      * Regola l'esistenza dei bottoni di spostamento
@@ -303,23 +285,16 @@ public class WamTablePortal extends TablePortal {
         }// end of if cycle
     }// end of method
 
+    protected void fireCompanyChanged(WamCompany company) {
+        UI ui = getUI();
+        WamUI wamUI;
 
-//    public void addCompanyChangeListeners(CompanyChangeListener listener) {
-//        companyChangeListeners.add(listener);
-//    }// end of method
-//
-//    public void removeCompanyChangeListeners() {
-//    }// end of method
-//
-//    private void fireCompanyChanged(WamCompany company ) {
-//        for (CompanyChangeListener listener : companyChangeListeners) {
-//            listener.companyChanged(company);
-//        }// end of for cycle
-//    }// end of method
-//
-//    public void setCompanyChangeListeners(ArrayList<CompanyChangeListener> companyChangeListeners) {
-//        this.companyChangeListeners = companyChangeListeners;
-//    }//end of setter method
+        if (ui instanceof WamUI) {
+            wamUI = (WamUI) ui;
+            wamUI.fireCompanyChanged(company);
+        }// fine del blocco if
+
+    }// end of method
 
     protected boolean isUsaBottoniSpostamento() {
         return usaBottoniSpostamento;

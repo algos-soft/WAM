@@ -12,10 +12,11 @@ import it.algos.webbase.web.form.ModuleForm;
 import javax.persistence.metamodel.Attribute;
 
 /**
- * Modulo del Volontario
+ * Modulo del Volontario  (in alcuni casi detto Milite)
  */
 @SuppressWarnings("serial")
 public class VolontarioMod extends WamMod {
+
 
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Volontari";
@@ -39,7 +40,7 @@ public class VolontarioMod extends WamMod {
     @Override
     public ModuleForm createForm(Item item) {
         return new VolontarioForm(item, this);
-    }
+    }// end of method
 
     /**
      * Crea i campi visibili nella lista (table)

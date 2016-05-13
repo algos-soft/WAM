@@ -5,11 +5,14 @@ import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Notification;
+import it.algos.wam.entity.companyentity.CompanyChangeListener;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.companyentity.WamModSposta;
+import it.algos.wam.entity.companyentity.WamTablePortal;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.iscrizione.Iscrizione_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyModule;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -24,7 +27,7 @@ import java.util.List;
  * Modulo del servizio (fisso o variabile) previsto o effettuato
  */
 @SuppressWarnings("serial")
-public class ServizioMod extends WamModSposta {
+public class ServizioMod extends WamModSposta  {
 
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Servizi";

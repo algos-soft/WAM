@@ -4,8 +4,11 @@ package it.algos.wam.entity.funzione;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import it.algos.wam.entity.companyentity.CompanyChangeListener;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.companyentity.WamModSposta;
+import it.algos.wam.entity.companyentity.WamTablePortal;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyModule;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.table.ATable;
@@ -16,7 +19,7 @@ import it.algos.webbase.web.toolbar.TableToolbar;
  * Gestione (minimale) del modulo specifico
  */
 @SuppressWarnings("serial")
-public class FunzioneMod extends WamModSposta {
+public class FunzioneMod extends WamModSposta  {
 
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Funzioni";
@@ -104,6 +107,7 @@ public class FunzioneMod extends WamModSposta {
 //                Funzione_.sigla,
 //                Funzione_.descrizione);
 //    }// end of method
+
 
 }// end of class
 

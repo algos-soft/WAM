@@ -2,6 +2,7 @@ package it.algos.wam.entity.companyentity;
 
 
 import com.vaadin.server.Resource;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyModule;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.table.TablePortal;

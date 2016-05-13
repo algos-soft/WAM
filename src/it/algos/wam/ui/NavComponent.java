@@ -1,6 +1,5 @@
 package it.algos.wam.ui;
 
-import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Component;
@@ -65,14 +64,13 @@ public class NavComponent extends VerticalLayout {
         // manda il navigatore alla prima view
         Collection<MenuBar.MenuItem> coll = mappaItem.values();
         MenuBar.MenuItem[] items = coll.toArray(new MenuBar.MenuItem[0]);
-        if (items.length>0){
+        if (items.length > 0) {
             MenuBar.MenuItem item = items[0];
-            MenuCommand mcmd = (MenuCommand)item.getCommand();
+            MenuCommand mcmd = (MenuCommand) item.getCommand();
             String addr = mcmd.getNavigatorAddress();
             nav.navigateTo(addr);
         }
     }
-
 
     /**
      * Inserisce un componente nel footer
@@ -94,7 +92,6 @@ public class NavComponent extends VerticalLayout {
         addView(viewClass, true, label, null);
     }
 
-
     /**
      * Adds a cached View to the UI
      * <p>
@@ -105,12 +102,12 @@ public class NavComponent extends VerticalLayout {
      * @param viewClass the view class to instantiate
      * @param label     the text for the menu item
      * @param icon      the icon for the menu item
+     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, String label, Resource icon) {
         return addView(viewClass, true, label, icon);
     }
-
 
     /**
      * Adds a View to the UI
@@ -124,6 +121,7 @@ public class NavComponent extends VerticalLayout {
      * @param viewCached true to instantiated only once, false to instantiate each time
      * @param label      the text for the menu item
      * @param icon       the icon for the menu item
+     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
@@ -146,6 +144,7 @@ public class NavComponent extends VerticalLayout {
      * @param viewClass da visualizzare nell'area controllata dal navigatore
      *                  alla pressione del bottone di menu
      * @param icon      icona per il menu
+     *
      * @return menuItem appena creato
      */
     private MenuBar.MenuItem createMenuItem(Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
@@ -158,11 +157,12 @@ public class NavComponent extends VerticalLayout {
 
     /**
      * Aggiunge un modulo alla UI
-     * <p/>
+     * <p>
      * Il modulo può essere aggiunto come istanza già creata
      * Tipicamente un ModulePop
      *
      * @param modulo da visualizzare nel placeholder alla pressione del bottone di menu
+     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addMod(ModulePop modulo) {
@@ -183,10 +183,9 @@ public class NavComponent extends VerticalLayout {
         return menuItem;
     }// end of method
 
-
     /**
      * Aggiunge una view alla UI
-     * <p/>
+     * <p>
      * La view può essere aggiunto come istanza già creata
      * Qualunque oggetto grafico che implementi l'interfaccia View
      *
@@ -212,6 +211,7 @@ public class NavComponent extends VerticalLayout {
      *
      * @param vista    da visualizzare nel placeholder alla pressione del bottone di menu
      * @param menuIcon del menu
+     *
      * @return menuItem appena creato
      */
     private MenuBar.MenuItem createMenuItem(View vista, String menuAddress, Resource menuIcon) {
@@ -231,7 +231,6 @@ public class NavComponent extends VerticalLayout {
     public AlgosNavigator getNavigator() {
         return nav;
     }
-
 
     public MenuBar getMenuBar() {
         return menuBar;

@@ -7,12 +7,13 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
+import it.algos.wam.entity.companyentity.CompanyChangeListener;
+import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.servizio.ServizioMod;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzioneMod;
 import it.algos.wam.entity.turno.TurnoMod;
 import it.algos.wam.entity.volontario.VolontarioMod;
-import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
@@ -30,19 +31,23 @@ import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.screen.ErrorScreen;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 /**
  * Created by Gac on 08 mar 2016.
+ * .
  */
 @Theme("wam")
 public class WamUI extends UI {
+
+    // si registra chi è interessato al cambio di company
+    private ArrayList<CompanyChangeListener> companyChangeListeners = new ArrayList<>();
 
     /**
      * @param request the Vaadin request that caused this UI to be created
      */
     @Override
     protected void init(VaadinRequest request) {
-
 
 //        // set theme
 //        String themeName;
@@ -160,7 +165,6 @@ public class WamUI extends UI {
 
     }// end of method
 
-
     /**
      * Crea il componente da visualizzare in funzione del ruolo.
      *
@@ -220,7 +224,6 @@ public class WamUI extends UI {
         return utente;
     }// end of method
 
-
     /**
      * Crea il componente per il programmatore
      *
@@ -241,14 +244,15 @@ public class WamUI extends UI {
         nc.addMod(new PrefMod());
 
         itemCroce = nc.addMod(new WamCompanyMod());
-        nc.addMod(new FunzioneMod());
-        nc.addMod(new ServizioMod());
-        nc.addMod(new VolontarioMod());
+
+        addMod(nc, new FunzioneMod());
+        addMod(nc, new ServizioMod());
+        addMod(nc, new VolontarioMod());
 
         itemIncroci = nc.getMenuBar().addItem("Incroci", null, null);
-        addSottoMenuIncroci(mb,itemIncroci);
+        addSottoMenuIncroci(mb, itemIncroci);
 
-        nc.addMod(new TurnoMod());
+        addMod(nc, new TurnoMod());
 
 //        nc.setFooter(new Label("Footer text"));
 
@@ -269,6 +273,17 @@ public class WamUI extends UI {
         return nc;
     }// end of method
 
+    /**
+     * Aggiunge un modulo alla UI
+     * Il modulo implementa la gestione delle company
+     *
+     * @param navComp - componente standard di navigazione
+     * @param modulo  da visualizzare nel placeholder alla pressione del bottone di menu
+     */
+    private void addMod(NavComponent navComp, WamMod modulo) {
+        this.addCompanyChangeListeners(modulo);
+        navComp.addMod(modulo);
+    }// end of method
 
 //    /**
 //     * Crea il componente per l'utente
@@ -346,7 +361,7 @@ public class WamUI extends UI {
      *
      * @param menuItem principale del modulo
      */
-    public void addSottoMenuIncroci(MenuBar menuBar,MenuBar.MenuItem menuItem) {
+    public void addSottoMenuIncroci(MenuBar menuBar, MenuBar.MenuItem menuItem) {
 
         MenuCommand cmd = new MenuCommand(menuBar, new ServizioFunzioneMod());
         menuItem.addItem(ServizioFunzioneMod.MENU_ADDRESS, null, cmd);
@@ -375,4 +390,18 @@ public class WamUI extends UI {
         return str;
     }
 
-}
+    public void addCompanyChangeListeners(CompanyChangeListener listener) {
+        companyChangeListeners.add(listener);
+    }// end of method
+
+    // @todo - serve?
+    public void removeCompanyChangeListeners() {
+    }// end of method
+
+    public void fireCompanyChanged(WamCompany company) {
+        for (CompanyChangeListener listener : companyChangeListeners) {
+            listener.companyChanged(company);
+        }// end of for cycle
+    }// end of method
+
+}// end of class

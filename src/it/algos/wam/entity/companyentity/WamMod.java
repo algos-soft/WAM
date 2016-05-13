@@ -2,6 +2,7 @@ package it.algos.wam.entity.companyentity;
 
 
 import com.vaadin.server.Resource;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyModule;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.table.TablePortal;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  * Si interpone come layer tra le classi Mod che usano la property Company e la superclasse standard ModulePop
  */
 @SuppressWarnings("serial")
-public abstract class WamMod extends CompanyModule {
+public abstract class WamMod extends CompanyModule implements CompanyChangeListener{
 
     /**
      * Costruttore
@@ -76,6 +77,11 @@ public abstract class WamMod extends CompanyModule {
     @Override
     public void search() {
         super.search();
+    }// end of method
+
+    @Override
+    public void companyChanged(WamCompany company) {
+        ((WamTablePortal)getTablePortal()).syncCompany(company);
     }// end of method
 
 }// end of class
