@@ -94,7 +94,6 @@ public class WamTablePortal extends TablePortal {
                 fireCompanyChanged(null);
             }// end of inner method
         });// end of anonymous inner class
-        croci.put(null, subItem);
         for (WamCompany company : WamCompany.findAll()) {
             subItem = bCroci.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -185,7 +184,7 @@ public class WamTablePortal extends TablePortal {
     private void spuntaMenu(WamCompany croceSelezionata) {
         MenuBar.MenuItem subItem;
 
-        if (croci.containsKey(croceSelezionata)) {
+        if (croceSelezionata != null && croci.containsKey(croceSelezionata)) {
             subItem = croci.get(croceSelezionata);
             if (subItem != null) {
                 for (WamCompany croce : croci.keySet()) {
@@ -233,25 +232,25 @@ public class WamTablePortal extends TablePortal {
      */
     public void syncCompany(WamCompany companyNew) {
 
-            if (companyNew == null) {
-                useAllCompany = true;
-                setFiltro(null);
-                if (isUsaBottoniSpostamento()) {
-                    syncButtonsSpostamento(false);
-                }// end of if cycle
-                bCroci.setText(ITEM_ALL_CROCI);
-            } else {
-                useAllCompany = false;
-                setFiltro(companyNew);
-                if (isUsaBottoniSpostamento()) {
-                    syncButtonsSpostamento(true);
-                }// end of if cycle
-                bCroci.setText(LibText.primaMaiuscola(companyNew.getCompanyCode()));
-            }// end of if/else cycle
-            CompanySessionLib.setCompany(companyNew);
+        if (companyNew == null) {
+            useAllCompany = true;
+            setFiltro(null);
+            if (isUsaBottoniSpostamento()) {
+                syncButtonsSpostamento(false);
+            }// end of if cycle
+            bCroci.setText(ITEM_ALL_CROCI);
+        } else {
+            useAllCompany = false;
+            setFiltro(companyNew);
+            if (isUsaBottoniSpostamento()) {
+                syncButtonsSpostamento(true);
+            }// end of if cycle
+            bCroci.setText(LibText.primaMaiuscola(companyNew.getCompanyCode()));
+        }// end of if/else cycle
+        CompanySessionLib.setCompany(companyNew);
 
-            table.deselectAll();
-            table.refresh();
+        table.deselectAll();
+        table.refresh();
     }// end of method
 
     /**
@@ -273,7 +272,6 @@ public class WamTablePortal extends TablePortal {
     }// end of method
 
     protected void syncButtons(boolean singleSelected, boolean multiSelected) {
-//        int posizione=getTable().
         toolbar.syncButtons(singleSelected, multiSelected);
 
         if (bMoveUp != null) {
