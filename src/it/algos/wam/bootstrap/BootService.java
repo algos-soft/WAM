@@ -237,6 +237,7 @@ public abstract class BootService {
         String nome = "";
         String cognome = "";
         Funzione[] funzioni = null;
+        ArrayList lista = null;
 
         if (listaTmp.size() > 0 && listaTmp.get(0) instanceof String) {
             nome = (String) listaTmp.get(0);
@@ -246,8 +247,19 @@ public abstract class BootService {
             cognome = (String) listaTmp.get(1);
         }// end of if cycle
 
-        if (listaTmp.size() > 2 && listaTmp.get(2) instanceof Funzione[]) {
-            funzioni = (Funzione[]) listaTmp.get(2);
+        if (listaTmp.size() > 2) {
+            if (listaTmp.get(2) instanceof ArrayList) {
+                lista = (ArrayList) listaTmp.get(2);
+                funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
+            } else {
+                lista = new ArrayList();
+                for (int k = 2; k < listaTmp.size(); k++) {
+                    if (listaTmp.get(k) instanceof Funzione) {
+                        lista.add(listaTmp.get(k));
+                    }// end of if cycle
+                }// end of for cycle
+                funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
+            }// end of if/else cycle
         }// end of if cycle
 
         return Volontario.crea(company, manager, nome, cognome, funzioni);
@@ -310,6 +322,7 @@ public abstract class BootService {
         boolean orario = false;
         int colore = 0;
         Funzione[] funzioni = null;
+        ArrayList lista = null;
 
         if (listaTmp.size() > 0 && listaTmp.get(0) instanceof String) {
             sigla = (String) listaTmp.get(0);
@@ -335,8 +348,19 @@ public abstract class BootService {
             colore = (Integer) listaTmp.get(5);
         }// end of if cycle
 
-        if (listaTmp.size() > 6 && listaTmp.get(6) instanceof Funzione[]) {
-            funzioni = (Funzione[]) listaTmp.get(6);
+        if (listaTmp.size() > 6) {
+            if (listaTmp.get(6) instanceof ArrayList) {
+                lista = (ArrayList) listaTmp.get(6);
+                funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
+            } else {
+                lista = new ArrayList();
+                for (int k = 6; k < listaTmp.size(); k++) {
+                    if (listaTmp.get(k) instanceof Funzione) {
+                        lista.add(listaTmp.get(k));
+                    }// end of if cycle
+                }// end of for cycle
+                funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
+            }// end of if/else cycle
         }// end of if cycle
 
         return Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, funzioni);
