@@ -7,7 +7,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
-import it.algos.wam.entity.companyentity.CompanyChangeListener;
+import it.algos.wam.entity.companyentity.CompanyListener;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.servizio.ServizioMod;
@@ -40,8 +40,9 @@ import java.util.ArrayList;
 @Theme("wam")
 public class WamUI extends UI {
 
-    // si registra chi è interessato al cambio di company
-    private ArrayList<CompanyChangeListener> companyChangeListeners = new ArrayList<>();
+    // si registra chi è interessato alle modifiche delle company (aggiunta, cancellazione, modifica di quella corrente)
+    private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
+
 
     /**
      * @param request the Vaadin request that caused this UI to be created
@@ -285,7 +286,7 @@ public class WamUI extends UI {
      * @param modulo  da visualizzare nel placeholder alla pressione del bottone di menu
      */
     private void addMod(NavComponent navComp, WamMod modulo) {
-        this.addCompanyChangeListeners(modulo);
+        this.addCompanyListeners(modulo);
         navComp.addMod(modulo);
     }// end of method
 
@@ -394,16 +395,31 @@ public class WamUI extends UI {
         return str;
     }
 
-    public void addCompanyChangeListeners(CompanyChangeListener listener) {
-        companyChangeListeners.add(listener);
+    public void addCompanyListeners(CompanyListener listener) {
+        companyListeners.add(listener);
     }// end of method
 
     // @todo - serve?
     public void removeCompanyChangeListeners() {
     }// end of method
 
+
+    public void fireCompanyAdded(WamCompany company) {
+        for (CompanyListener listener : companyListeners) {
+            listener.companyAdded(company);
+        }// end of for cycle
+    }// end of method
+
+
+    public void fireCompanyRemoved(WamCompany company) {
+        for (CompanyListener listener : companyListeners) {
+            listener.companyRemoved(company);
+        }// end of for cycle
+    }// end of method
+
+
     public void fireCompanyChanged(WamCompany company) {
-        for (CompanyChangeListener listener : companyChangeListeners) {
+        for (CompanyListener listener : companyListeners) {
             listener.companyChanged(company);
         }// end of for cycle
     }// end of method

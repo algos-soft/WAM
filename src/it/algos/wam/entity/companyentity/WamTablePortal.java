@@ -223,6 +223,24 @@ public class WamTablePortal extends TablePortal {
     }// end of method
 
     /**
+     * Aggiunge una company al menu
+     * <p>
+     * Creata una nuova company.
+     */
+    public void addCompany(WamCompany companyNew) {
+
+    }// end of method
+
+    /**
+     * Elimina una company dal menu
+     * <p>
+     * Cancellata una company.
+     */
+    public void deleteCompany(WamCompany companyNew) {
+
+    }// end of method
+
+    /**
      * Sincronizza la company selezionata
      * <p>
      * Modificata la selezione della company.

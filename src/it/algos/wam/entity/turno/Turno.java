@@ -34,6 +34,7 @@ import java.util.List;
 @Entity
 public class Turno extends WamCompanyEntity {
 
+    // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
     // servizio di riferimento

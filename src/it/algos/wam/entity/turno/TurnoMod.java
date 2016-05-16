@@ -2,6 +2,7 @@ package it.algos.wam.entity.turno;
 
 
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.volontario.Volontario_;
@@ -11,11 +12,16 @@ import javax.persistence.metamodel.Attribute;
 /**
  * Gestione (minimale) del modulo specifico
  */
-@SuppressWarnings("serial")
 public class TurnoMod extends WamMod {
+
+    // versione della classe per la serializzazione
+    private static final long serialVersionUID = 1L;
 
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Turni";
+
+    // icona (eventuale) del modulo
+    public static Resource ICON = FontAwesome.TASKS;
 
     /**
      * Costruttore senza parametri
@@ -26,7 +32,7 @@ public class TurnoMod extends WamMod {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public TurnoMod() {
-        super(Turno.class, MENU_ADDRESS, FontAwesome.TASKS);
+        super(Turno.class, MENU_ADDRESS, ICON);
     }// end of constructor
 
 

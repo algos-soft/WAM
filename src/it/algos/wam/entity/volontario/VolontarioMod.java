@@ -14,15 +14,17 @@ import javax.persistence.metamodel.Attribute;
 /**
  * Modulo del Volontario  (in alcuni casi detto Milite)
  */
-@SuppressWarnings("serial")
 public class VolontarioMod extends WamMod {
 
+    // versione della classe per la serializzazione
+    private static final long serialVersionUID = 1L;
 
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Volontari";
 
-    // icona del modulo
+    // icona (eventuale) del modulo
     public static Resource ICON = FontAwesome.USER;
+
 
     /**
      * Costruttore senza parametri

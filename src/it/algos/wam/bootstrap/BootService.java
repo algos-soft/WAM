@@ -34,10 +34,6 @@ public abstract class BootService {
     public static void creaCompanyDemo() {
 
         WamCompany company = creaCroceDemo();
-//        Object alfa = CompanyQuery.queryList(Funzione.class, CompanyEntity_.company, company);
-//        Object beta = CompanyQuery.getList(Funzione.class);
-//        Object gamma = CompanyQuery.getList(Funzione.class, new Compare.Equal("company", company));
-
         initCompany(company, true);
     }// end of static method
 
@@ -142,37 +138,37 @@ public abstract class BootService {
      */
     @SuppressWarnings("unchecked")
     private static ArrayList<Funzione> creaFunzioni(WamCompany company, EntityManager manager) {
-        ArrayList<Funzione> listaFunz = new ArrayList<>();
-        ArrayList listaTmp = new ArrayList<>();
+        ArrayList<Funzione> listaFunzioni = new ArrayList<>();
+        ArrayList lista = new ArrayList<>();
 
         if (company == null) {
             return null;
         }// end of if cycle
 
-        listaTmp.add(Arrays.asList("aut", "Aut", "Autista", FontAwesome.WHEELCHAIR));
-        listaTmp.add(Arrays.asList("soc", "Soc", "Soccorritore", FontAwesome.USER));
-        listaTmp.add(Arrays.asList("bar", "Bar", "Barelliere", FontAwesome.USER_MD));
+        lista.add(Arrays.asList("aut", "Aut", "Autista", FontAwesome.WHEELCHAIR));
+        lista.add(Arrays.asList("soc", "Soc", "Soccorritore", FontAwesome.USER));
+        lista.add(Arrays.asList("bar", "Bar", "Barelliere", FontAwesome.USER_MD));
 
-        listaTmp.add(Arrays.asList("aut-118", "Aut-118", "Autista emergenza abilitato 118", FontAwesome.WHEELCHAIR));
-        listaTmp.add(Arrays.asList("aut-msa", "Aut-msa", "Autista automedica abilitato 118", FontAwesome.AMBULANCE));
-        listaTmp.add(Arrays.asList("aut-amb", "Aut-amb", "Autista ambulanza abilitato 118", FontAwesome.AMBULANCE));
-        listaTmp.add(Arrays.asList("aut-ord", "Aut-ord", "Autista ordinario", FontAwesome.AMBULANCE));
+        lista.add(Arrays.asList("aut-118", "Aut-118", "Autista emergenza abilitato 118", FontAwesome.WHEELCHAIR));
+        lista.add(Arrays.asList("aut-msa", "Aut-msa", "Autista automedica abilitato 118", FontAwesome.AMBULANCE));
+        lista.add(Arrays.asList("aut-amb", "Aut-amb", "Autista ambulanza abilitato 118", FontAwesome.AMBULANCE));
+        lista.add(Arrays.asList("aut-ord", "Aut-ord", "Autista ordinario", FontAwesome.AMBULANCE));
 
-        listaTmp.add(Arrays.asList("soc-pri", "1° Soc", "Primo soccorritore", FontAwesome.USER));
-        listaTmp.add(Arrays.asList("soc-sec", "2° Soc", "Secondo soccorritore", FontAwesome.STETHOSCOPE));
-        listaTmp.add(Arrays.asList("soc-ter", "3° Soc", "Terzo soccorritore", FontAwesome.USER));
+        lista.add(Arrays.asList("soc-pri", "1° Soc", "Primo soccorritore", FontAwesome.USER));
+        lista.add(Arrays.asList("soc-sec", "2° Soc", "Secondo soccorritore", FontAwesome.STETHOSCOPE));
+        lista.add(Arrays.asList("soc-ter", "3° Soc", "Terzo soccorritore", FontAwesome.USER));
 
-        listaTmp.add(Arrays.asList("soc-dae", "DAE", "Soccorritore abilitato DAE", FontAwesome.USER));
-        listaTmp.add(Arrays.asList("soc-ord", "Soc", "Soccorritore ordinario", FontAwesome.USER));
-        listaTmp.add(Arrays.asList("bar-aff", "Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
-        listaTmp.add(Arrays.asList("avis", "Avis", "Operatore trasporto AVIS", FontAwesome.USER));
-        listaTmp.add(Arrays.asList("cent", "Cen", "Centralinista", FontAwesome.USER));
+        lista.add(Arrays.asList("soc-dae", "DAE", "Soccorritore abilitato DAE", FontAwesome.USER));
+        lista.add(Arrays.asList("soc-ord", "Soc", "Soccorritore ordinario", FontAwesome.USER));
+        lista.add(Arrays.asList("bar-aff", "Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
+        lista.add(Arrays.asList("avis", "Avis", "Operatore trasporto AVIS", FontAwesome.USER));
+        lista.add(Arrays.asList("cent", "Cen", "Centralinista", FontAwesome.USER));
 
-        for (int k = 0; k < listaTmp.size(); k++) {
-            listaFunz.add(creaFunzBase(company, manager, k + 1, (List) listaTmp.get(k)));
+        for (int k = 01; k < lista.size(); k++) {
+            listaFunzioni.add(creaFunzBase(company, manager, k + 1, (List) lista.get(k)));
         }// end of for cycle
 
-        return listaFunz;
+        return listaFunzioni;
     }// end of static method
 
     /**
@@ -180,9 +176,9 @@ public abstract class BootService {
      * La crea SOLO se non esiste già
      *
      * @param company  croce di appartenenza
+     * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
-     * @param manager  the EntityManager to use
      * @return istanza di Funzione
      */
     private static Funzione creaFunzBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -191,7 +187,7 @@ public abstract class BootService {
         String note = (String) listaTmp.get(2);
         FontAwesome glyph = (FontAwesome) listaTmp.get(3);
 
-        return Funzione.creaNew(company, manager, sigla, descrizione, ordine, note, glyph);
+        return Funzione.crea(company, manager, sigla, descrizione, ordine, note, glyph);
     }// end of static method
 
 
@@ -203,19 +199,58 @@ public abstract class BootService {
      * @param manager   the EntityManager to use
      * @param listaFunz ioni della company
      */
+    @SuppressWarnings("unchecked")
     private static ArrayList<Volontario> creaVolontari(WamCompany company, EntityManager manager, ArrayList<Funzione> listaFunz) {
-        ArrayList<Volontario> listaVolontari = new ArrayList<Volontario>();
+        ArrayList<Volontario> listaVolontari = new ArrayList<>();
+        ArrayList lista = new ArrayList<>();
 
-        if (company != null) {
-            listaVolontari.add(Volontario.crea(company, manager, "Mario", "Brambilla"));
-            listaVolontari.add(Volontario.crea(company, manager, "Giovanna", "Durante", listaFunz));
-            listaVolontari.add(Volontario.crea(company, manager, "Diego", "Bertini", listaFunz.get(3)));
-            listaVolontari.add(Volontario.crea(company, manager, "Roberto", "Marchetti", listaFunz.get(2), listaFunz.get(3)));
-            listaVolontari.add(Volontario.crea(company, manager, "Edoardo", "Politi"));
-            listaVolontari.add(Volontario.crea(company, manager, "Sabina", "Roncelli"));
+        if (company == null) {
+            return null;
         }// end of if cycle
 
+        lista.add(Arrays.asList("Mario", "Brambilla"));
+        lista.add(Arrays.asList("Giovanna", "Durante", listaFunz));
+        lista.add(Arrays.asList("Diego", "Bertini", listaFunz.get(3)));
+        lista.add(Arrays.asList("Roberto", "Marchetti", listaFunz.get(2), listaFunz.get(3)));
+        lista.add(Arrays.asList("Edoardo", "Politi"));
+        lista.add(Arrays.asList("Sabina", "Roncelli"));
+        lista.add(Arrays.asList("Lucia", "Casaroli", listaFunz.get(1)));
+
+        for (int k = 0; k < lista.size(); k++) {
+            listaVolontari.add(creaVolBase(company, manager, (List) lista.get(k)));
+        }// end of for cycle
+
         return listaVolontari;
+    }// end of static method
+
+
+    /**
+     * Creazione iniziale di un volontario
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company  croce di appartenenza
+     * @param manager  the EntityManager to use
+     * @param listaTmp di alcune property
+     * @return istanza di Volontario
+     */
+    private static Volontario creaVolBase(WamCompany company, EntityManager manager, List listaTmp) {
+        String nome = "";
+        String cognome = "";
+        Funzione[] funzioni = null;
+
+        if (listaTmp.size() > 0 && listaTmp.get(0) instanceof String) {
+            nome = (String) listaTmp.get(0);
+        }// end of if cycle
+
+        if (listaTmp.size() > 1 && listaTmp.get(1) instanceof String) {
+            cognome = (String) listaTmp.get(1);
+        }// end of if cycle
+
+        if (listaTmp.size() > 2 && listaTmp.get(2) instanceof Funzione[]) {
+            funzioni = (Funzione[]) listaTmp.get(2);
+        }// end of if cycle
+
+        return Volontario.crea(company, manager, nome, cognome, funzioni);
     }// end of static method
 
 
@@ -227,76 +262,86 @@ public abstract class BootService {
      * @param manager   the EntityManager to use
      * @param listaFunz ioni della company
      */
+    @SuppressWarnings("unchecked")
     private static ArrayList<Servizio> creaServizi(WamCompany company, EntityManager manager, ArrayList<Funzione> listaFunz) {
-        ArrayList<Servizio> listaServ = new ArrayList<>();
-        int k = 0;
+        ArrayList<Servizio> listaServizi = new ArrayList<>();
+        ArrayList lista = new ArrayList<>();
         int azzurro = new Color(146, 189, 255).getRGB();
         int verdino = new Color(146, 255, 189).getRGB();
         int rosa = new Color(255, 146, 211).getRGB();
 
-        if (company != null) {
-            addServ(listaServ, company, manager, ++k, "med-mat", "Automedica mattino", 8, 12, true, true, false, 3, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5));
-            addServ(listaServ, company, manager, ++k, "med-pom", "Automedica pomeriggio", 12, 18, true, true, false, 3, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5));
-            addServ(listaServ, company, manager, ++k, "med-sera", "Automedica sera", 18, 22, true, true, false, 2, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5));
-            addServ(listaServ, company, manager, ++k, "amb-mat", "Ambulanza mattino", 8, 12, true, true, false, 3, verdino, listaFunz.get(1), listaFunz.get(3));
-            addServ(listaServ, company, manager, ++k, "amb-pom", "Ambulanza pomeriggio", 12, 20, true, true, false, 3, verdino, listaFunz.get(1), listaFunz.get(3));
-            addServ(listaServ, company, manager, ++k, "amb-notte", "Ambulanza notte", 20, 8, true, true, false, 2, verdino, listaFunz.get(1), listaFunz.get(3));
-            addServ(listaServ, company, manager, ++k, "dim", "Dimissioni ordinarie", 0, 0, true, false, false, 2, rosa, listaFunz.get(1), listaFunz.get(4));
-            addServ(listaServ, company, manager, ++k, "ext", "Extra", 0, 0, true, false, true, 2, rosa, listaFunz.get(1), listaFunz.get(4));
-            addServ(listaServ, company, manager, ++k, "avis", "Avis", 0, 0, true, false, true, 1, rosa, listaFunz.get(1));
+        if (company == null) {
+            return null;
         }// end of if cycle
 
-        return listaServ;
+        lista.add(Arrays.asList("med-mat", "Automedica mattino", 8, 12, true, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5)));
+        lista.add(Arrays.asList("med-pom", "Automedica pomeriggio", 12, 18, true, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5)));
+        lista.add(Arrays.asList("med-sera", "Automedica sera", 18, 22, true, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5)));
+        lista.add(Arrays.asList("amb-mat", "Ambulanza mattino", 8, 12, true, verdino, listaFunz.get(1), listaFunz.get(3)));
+        lista.add(Arrays.asList("amb-pom", "Ambulanza pomeriggio", 12, 20, true, verdino, listaFunz.get(1), listaFunz.get(3)));
+        lista.add(Arrays.asList("amb-notte", "Ambulanza notte", 20, 8, true, verdino, listaFunz.get(1), listaFunz.get(3)));
+        lista.add(Arrays.asList("dim", "Dimissioni ordinarie", 0, 0, true, rosa, listaFunz.get(1), listaFunz.get(4)));
+        lista.add(Arrays.asList("ext", "Extra", 0, 0, true, rosa, listaFunz.get(1), listaFunz.get(4)));
+        lista.add(Arrays.asList("avis", "Avis", 0, 0, true, rosa, listaFunz.get(1)));
+
+        for (int k = 0; k < lista.size(); k++) {
+            listaServizi.add(creaServBase(company, manager, k + 1, (List) lista.get(k)));
+        }// end of for cycle
+
+        return listaServizi;
     }// end of static method
 
-
-//    /**
-//     * Creazione iniziale di alcune funzioni per la croce selezionata
-//     * Li crea SOLO se non esistono già
-//     *
-//     * @param listaFunzioni create
-//     * @param company       croce selezionata
-//     * @param ordine        di presentazione nelle liste
-//     * @param sigla         sigla di riferimento interna (obbligatoria)
-//     * @param descrizione   per il tabellone (obbligatoria)
-//     * @param note          di spiegazione (facoltative)
-//     */
-//    private static void addFunz(ArrayList<Funzione> listaFunzioni, WamCompany company, int ordine, String sigla, String descrizione, String note, FontAwesome glyph) {
-//        Funzione funzione;
-//
-//        if (listaFunzioni != null && company != null) {
-//            funzione = Funzione.crea(company, sigla, descrizione, ordine, note, glyph);
-//            listaFunzioni.add(funzione);
-//        }// end of if cycle
-//
-//    }// end of static method
 
     /**
-     * Creazione iniziale di alcuni servizi per la croce selezionata
-     * Li crea SOLO se non esistono già
+     * Creazione iniziale di un servizio
+     * La crea SOLO se non esiste già
      *
-     * @param listaServizi creati
-     * @param company      selezionata
-     * @param manager      the EntityManager to use
-     * @param ordine       di presentazione nel tabellone
-     * @param sigla        sigla di riferimento interna (obbligatoria)
-     * @param descrizione  per il tabellone (obbligatoria)
-     * @param oraInizio    del servizio (facoltativo)
-     * @param oraFine      del servizio (facoltativo)
-     * @param visibile     nel tabellone
-     * @param orario       servizio ad orario prefissato e fisso ogni giorno
-     * @param multiplo     servizio suscettibile di essere effettuato diverse volte nella giornata
-     * @param persone      minime indispensabile allo svolgimento del servizio
+     * @param company  croce di appartenenza
+     * @param manager  the EntityManager to use
+     * @param ordine   di presentazione nelle liste
+     * @param listaTmp di alcune property
+     * @return istanza di Servizio
      */
-    private static void addServ(ArrayList<Servizio> listaServizi, WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean visibile, boolean orario, boolean multiplo, int persone, int colore, Funzione... funzioni) {
-        Servizio servizio;
+    private static Servizio creaServBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
+        String sigla = "";
+        String descrizione = "";
+        int oraInizio = 0;
+        int oraFine = 0;
+        boolean orario = false;
+        int colore = 0;
+        Funzione[] funzioni = null;
 
-        if (listaServizi != null && company != null) {
-            servizio = Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, visibile, colore, funzioni);
-            listaServizi.add(servizio);
+        if (listaTmp.size() > 0 && listaTmp.get(0) instanceof String) {
+            sigla = (String) listaTmp.get(0);
         }// end of if cycle
 
+        if (listaTmp.size() > 1 && listaTmp.get(1) instanceof String) {
+            descrizione = (String) listaTmp.get(1);
+        }// end of if cycle
+
+        if (listaTmp.size() > 2 && listaTmp.get(2) instanceof Integer) {
+            oraInizio = (Integer) listaTmp.get(2);
+        }// end of if cycle
+
+        if (listaTmp.size() > 3 && listaTmp.get(3) instanceof Integer) {
+            oraFine = (Integer) listaTmp.get(3);
+        }// end of if cycle
+
+        if (listaTmp.size() > 4 && listaTmp.get(4) instanceof Boolean) {
+            orario = (Boolean) listaTmp.get(4);
+        }// end of if cycle
+
+        if (listaTmp.size() > 5 && listaTmp.get(5) instanceof Integer) {
+            colore = (Integer) listaTmp.get(5);
+        }// end of if cycle
+
+        if (listaTmp.size() > 6 && listaTmp.get(6) instanceof Funzione[]) {
+            funzioni = (Funzione[]) listaTmp.get(6);
+        }// end of if cycle
+
+        return Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, funzioni);
     }// end of static method
+
 
     /**
      * Creazione iniziale di alcuni turni vuoti per la croce selezionata

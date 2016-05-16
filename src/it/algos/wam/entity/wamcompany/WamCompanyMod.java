@@ -3,6 +3,7 @@ package it.algos.wam.entity.wamcompany;
 
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Resource;
 import it.algos.wam.entity.funzione.FunzioneTablePortal;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.web.form.ModuleForm;
@@ -17,9 +18,15 @@ import javax.persistence.metamodel.Attribute;
  */
 public class WamCompanyMod extends ModulePop {
 
+    // versione della classe per la serializzazione
+    private static final long serialVersionUID = 1L;
 
     // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "Croci";
+
+    // icona (eventuale) del modulo
+    public static Resource ICON = FontAwesome.AMBULANCE;
+
 
     /**
      * Costruttore senza parametri
@@ -30,7 +37,7 @@ public class WamCompanyMod extends ModulePop {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public WamCompanyMod() {
-        super(WamCompany.class, MENU_ADDRESS, FontAwesome.AMBULANCE);
+        super(WamCompany.class, MENU_ADDRESS, ICON);
     }// end of constructor
 
 
@@ -65,5 +72,14 @@ public class WamCompanyMod extends ModulePop {
         };
     }// end of method
 
+    @Override
+    protected void tableDataChanged() {
+        super.tableDataChanged();
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
+    }
 }// end of class
 

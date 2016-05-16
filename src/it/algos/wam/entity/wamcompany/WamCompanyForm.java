@@ -5,8 +5,10 @@ import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import it.algos.wam.bootstrap.BootService;
+import it.algos.wam.ui.WamUI;
 import it.algos.webbase.web.field.CheckBoxField;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibBean;
@@ -107,6 +109,22 @@ public class WamCompanyForm extends ModuleForm {
         if (isNewRecord() && usaCreaDatiStandard) {
             BootService.initCompany(company);
         }// end of if cycle
+
+        if (isNewRecord()) {
+            fireCompanyAdded(company);
+        }// end of if cycle
+
+    }// end of method
+
+    protected void fireCompanyAdded(WamCompany company) {
+        UI ui = getModule().getUI();
+        WamUI wamUI;
+
+        if (ui instanceof WamUI) {
+            wamUI = (WamUI) ui;
+            wamUI.fireCompanyAdded(company);
+        }// fine del blocco if
+
     }// end of method
 
 //    protected boolean save() {

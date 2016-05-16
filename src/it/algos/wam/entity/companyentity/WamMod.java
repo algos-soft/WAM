@@ -14,8 +14,11 @@ import java.util.ArrayList;
  * Modulo astratto per implementare la creazione della WamTablePortal
  * Si interpone come layer tra le classi Mod che usano la property Company e la superclasse standard ModulePop
  */
-@SuppressWarnings("serial")
-public abstract class WamMod extends CompanyModule implements CompanyChangeListener{
+public abstract class WamMod extends CompanyModule implements CompanyListener {
+
+    // versione della classe per la serializzazione
+    private static final long serialVersionUID = 1L;
+
 
     /**
      * Costruttore
@@ -79,9 +82,20 @@ public abstract class WamMod extends CompanyModule implements CompanyChangeListe
         super.search();
     }// end of method
 
+
+    @Override
+    public void companyAdded(WamCompany company) {
+        ((WamTablePortal) getTablePortal()).addCompany(company);
+    }// end of method
+
+    @Override
+    public void companyRemoved(WamCompany company) {
+        ((WamTablePortal) getTablePortal()).deleteCompany(company);
+    }// end of method
+
     @Override
     public void companyChanged(WamCompany company) {
-        ((WamTablePortal)getTablePortal()).syncCompany(company);
+        ((WamTablePortal) getTablePortal()).syncCompany(company);
     }// end of method
 
 }// end of class

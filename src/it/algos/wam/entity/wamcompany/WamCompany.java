@@ -23,6 +23,7 @@ import java.util.List;
 @DefaultSort({"companyCode"})
 public class WamCompany extends BaseCompany {
 
+    // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
     public static String DEMO_COMPANY_CODE = "demo";

@@ -31,6 +31,7 @@ import java.util.List;
 @Entity
 public class Servizio extends WamCompanyEntity {
 
+    // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
 
@@ -278,6 +279,7 @@ public class Servizio extends WamCompanyEntity {
      * @param oraFine     del servizio (facoltativo)
      * @param orario      servizio ad orario prefissato e fisso ogni giorno
      * @param colore      del gruppo (facoltativo)
+     * @param funzioni lista delle funzioni (facoltativa)
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, Funzione... funzioni) {

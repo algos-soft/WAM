@@ -34,6 +34,7 @@ import java.util.List;
 @Entity
 public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
+    // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
 
@@ -240,8 +241,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param sigla   sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione
      */
-    public static Funzione creaNew(WamCompany company, String sigla) {
-        return creaNew(company, null, sigla, "", 0, "");
+    public static Funzione crea(WamCompany company, String sigla) {
+        return crea(company, null, sigla, "", 0, "");
     }// end of static method
 
     /**
@@ -253,8 +254,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param sigla   sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione
      */
-    public static Funzione creaNew(WamCompany company, EntityManager manager, String sigla) {
-        return creaNew(company, manager, sigla, "", 0, "");
+    public static Funzione crea(WamCompany company, EntityManager manager, String sigla) {
+        return crea(company, manager, sigla, "", 0, "");
     }// end of static method
 
     /**
@@ -269,8 +270,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param note        di spiegazione (facoltative)
      * @return istanza di Funzione
      */
-    public static Funzione creaNew(WamCompany company, EntityManager manager, String sigla, String descrizione, int ordine, String note) {
-        return creaNew(company, manager, sigla, descrizione, ordine, note, null);
+    public static Funzione crea(WamCompany company, EntityManager manager, String sigla, String descrizione, int ordine, String note) {
+        return crea(company, manager, sigla, descrizione, ordine, note, null);
     }// end of static method
 
     /**
@@ -286,7 +287,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param glyph       dell'icona (facoltativo)
      * @return istanza di Funzione
      */
-    public static Funzione creaNew(
+    public static Funzione crea(
             WamCompany company,
             EntityManager manager,
             String sigla,

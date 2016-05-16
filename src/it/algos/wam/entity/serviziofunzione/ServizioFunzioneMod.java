@@ -2,6 +2,7 @@ package it.algos.wam.entity.serviziofunzione;
 
 
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Resource;
 import it.algos.webbase.web.module.ModulePop;
 
 /**
@@ -10,8 +11,14 @@ import it.algos.webbase.web.module.ModulePop;
 @SuppressWarnings("serial")
 public class ServizioFunzioneMod extends ModulePop {
 
-    // indirizzo interno del modulo (serve nei menu)
+    // versione della classe per la serializzazione
+    private static final long serialVersionUID = 1L;
+
+    // indirizzo interno del modulo - etichetta del menu
     public static String MENU_ADDRESS = "ServizioFunzione";
+
+    // icona (eventuale) del modulo
+    public static Resource ICON = FontAwesome.USER;
 
     /**
      * Costruttore senza parametri
@@ -22,7 +29,7 @@ public class ServizioFunzioneMod extends ModulePop {
      * (facoltativo) icona del menu (se manca usa un'icona standard)
      */
     public ServizioFunzioneMod() {
-        super(ServizioFunzione.class, MENU_ADDRESS, FontAwesome.GEAR);
+        super(ServizioFunzione.class, MENU_ADDRESS, ICON);
     }// end of constructor
 
 }// end of class

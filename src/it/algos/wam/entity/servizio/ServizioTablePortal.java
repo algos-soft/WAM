@@ -1,6 +1,5 @@
 package it.algos.wam.entity.servizio;
 
-import it.algos.wam.entity.companyentity.CompanyChangeListener;
 import it.algos.wam.entity.companyentity.WamTablePortalSposta;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;

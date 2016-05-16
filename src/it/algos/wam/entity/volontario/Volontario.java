@@ -32,6 +32,7 @@ import java.util.List;
 @Entity
 public class Volontario extends WamCompanyEntity {
 
+    // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
     @OneToMany(mappedBy = "volontario", cascade = CascadeType.ALL, orphanRemoval = true)
