@@ -43,7 +43,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotEmpty
     @Column(length = 20)
     @Index
-    private String sigla = "";
+    private String siglaInterna = "";
 
 
     //--descrizione visibile nel tabellone (obbligatoria)
@@ -51,7 +51,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotEmpty
     @Column(length = 100)
     @Index
-    private String descrizione = "";
+    private String siglaVisibile = "";
 
 
     //--ordine di presentazione nelle liste
@@ -91,11 +91,11 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Costruttore minimo con tutte le properties obbligatorie
      *
      * @param company     croce di appartenenza (property della superclasse)
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
+     * @param siglaInterna       sigla di riferimento interna (obbligatoria)
+     * @param siglaVisibile per il tabellone (obbligatoria)
      */
-    public Funzione(BaseCompany company, String sigla, String descrizione) {
-        this(company, sigla, descrizione, 0, null, "");
+    public Funzione(BaseCompany company, String siglaInterna, String siglaVisibile) {
+        this(company, siglaInterna, siglaVisibile, 0, null, "");
     }// end of constructor
 
 
@@ -103,17 +103,17 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Costruttore completo
      *
      * @param company     croce di appartenenza
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
+     * @param siglaInterna       sigla di riferimento interna (obbligatoria)
+     * @param siglaVisibile per il tabellone (obbligatoria)
      * @param ordine      di presentazione nelle liste
      * @param glyph       icona di FontAwesome (facoltative)
      * @param note        di spiegazione (facoltative)
      */
-    public Funzione(BaseCompany company, String sigla, String descrizione, int ordine, FontAwesome glyph, String note) {
+    public Funzione(BaseCompany company, String siglaInterna, String siglaVisibile, int ordine, FontAwesome glyph, String note) {
         super();
         this.setCompany(company);
-        this.setSigla(sigla);
-        this.setDescrizione(descrizione);
+        this.setSiglaInterna(siglaInterna);
+        this.setSiglaVisibile(siglaVisibile);
         this.setOrdine(ordine);
         this.setIcon(glyph);
         this.setNote(note);
@@ -177,7 +177,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     public static Funzione findBySigla(String sigla) {
         Funzione instance = null;
-        BaseEntity bean = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla);
+        BaseEntity bean = CompanyQuery.queryOne(Funzione.class, Funzione_.siglaInterna, sigla);
 
         if (bean != null && bean instanceof Funzione) {
             instance = (Funzione) bean;
@@ -200,7 +200,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         BaseEntity bean;
 
         EntityManager manager = EM.createEntityManager();
-        bean = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla, manager, company);
+        bean = CompanyQuery.queryOne(Funzione.class, Funzione_.siglaInterna, sigla, manager, company);
         manager.close();
 
         if (bean != null && bean instanceof Funzione) {
@@ -300,8 +300,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         if (funzione == null) {
             funzione = new Funzione();
             funzione.setCompany(company);
-            funzione.setSigla(sigla);
-            funzione.setDescrizione(descrizione);
+            funzione.setSiglaInterna(sigla);
+            funzione.setSiglaVisibile(descrizione);
             funzione.setOrdine(ordine);
             funzione.setNote(note);
             funzione.setIcon(glyph);
@@ -337,15 +337,15 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     @Override
     public String toString() {
-        return descrizione;
+        return siglaVisibile;
     }// end of method
 
-    public String getSigla() {
-        return sigla;
+    public String getSiglaInterna() {
+        return siglaInterna;
     }// end of getter method
 
-    public void setSigla(String sigla) {
-        this.sigla = sigla;
+    public void setSiglaInterna(String sigla) {
+        this.siglaInterna = sigla;
     }//end of setter method
 
     public int getOrdine() {
@@ -356,12 +356,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         this.ordine = ordine;
     }//end of setter method
 
-    public String getDescrizione() {
-        return descrizione;
+    public String getSiglaVisibile() {
+        return siglaVisibile;
     }// end of getter method
 
-    public void setDescrizione(String descrizione) {
-        this.descrizione = descrizione;
+    public void setSiglaVisibile(String descrizione) {
+        this.siglaVisibile = descrizione;
     }//end of setter method
 
     public String getNote() {

@@ -362,7 +362,7 @@ public class Servizio extends WamCompanyEntity {
         ArrayList<Funzione> funzioni = getFunzioni();
         for (int i = 0; i < funzioni.size(); i++) {
             Funzione currFun = funzioni.get(i);
-            if (currFun.getSigla().equals(f.getSigla())) {
+            if (currFun.getSiglaInterna().equals(f.getSiglaInterna())) {
                 pos = i;
                 break;
             }

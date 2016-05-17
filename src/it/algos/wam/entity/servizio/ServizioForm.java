@@ -12,7 +12,6 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
-import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.module.ModulePop;
@@ -370,7 +369,7 @@ public class ServizioForm extends ModuleForm {
 
                         if (iscrizioni.size() == 0) {
 
-                            String messaggio = "Vuoi eliminare la funzione " + serFun.getFunzione().getDescrizione() + "?";
+                            String messaggio = "Vuoi eliminare la funzione " + serFun.getFunzione().getSiglaVisibile() + "?";
                             new ConfirmDialog(null, messaggio, new ConfirmDialog.Listener() {
                                 @Override
                                 public void onClose(ConfirmDialog dialog, boolean confirmed) {

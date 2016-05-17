@@ -34,8 +34,8 @@ public class FunzioneForm extends ModuleForm {
      * @return il componente dettagli
      */
     protected Component creaCompDetail(FormLayout layout) {
-        Field fsigla = getField(Funzione_.sigla);
-        Field fdesc = getField(Funzione_.descrizione);
+        Field fsigla = getField(Funzione_.siglaInterna);
+        Field fdesc = getField(Funzione_.siglaVisibile);
         Field fnote = getField(Funzione_.note);
 
         iconButton = new Button();

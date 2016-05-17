@@ -40,16 +40,16 @@ public class FunzioneTable extends ETable {
                     WamCompanyEntity_.company,
                     Funzione_.ordine,
                     COL_ICON,
-                    Funzione_.sigla,
-                    Funzione_.descrizione,
+                    Funzione_.siglaInterna,
+                    Funzione_.siglaVisibile,
                     Funzione_.note,
             };
         } else {
             return new Object[]{
                     Funzione_.ordine,
                     COL_ICON,
-                    Funzione_.sigla,
-                    Funzione_.descrizione,
+                    Funzione_.siglaInterna,
+                    Funzione_.siglaVisibile,
                     Funzione_.note,
             };
         }// end of if/else cycle
@@ -68,8 +68,8 @@ public class FunzioneTable extends ETable {
         setColumnReorderingAllowed(true);
         setSortEnabled(false);
 
-        setColumnExpandRatio(Funzione_.sigla, 1);
-        setColumnExpandRatio(Funzione_.descrizione, 2);
+        setColumnExpandRatio(Funzione_.siglaInterna, 1);
+        setColumnExpandRatio(Funzione_.siglaVisibile, 2);
         setColumnExpandRatio(Funzione_.note, 2);
 
     }

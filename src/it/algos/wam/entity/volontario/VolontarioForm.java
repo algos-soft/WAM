@@ -199,7 +199,7 @@ public class VolontarioForm extends ModuleForm {
             }
 
             // checkBox con nome funzione
-            CheckBox box = new CheckBox(f.getDescrizione());
+            CheckBox box = new CheckBox(f.getSiglaVisibile());
             box.addValueChangeListener(valueChangeEvent -> {
                 if (box.getValue()) {
                     if (!getVolontario().haFunzione(f)) {

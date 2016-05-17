@@ -147,7 +147,7 @@ public class ServizioTable extends ETable {
                 if (sf.isObbligatoria()) {
                     s += "<strong>";
                 }
-                s += sf.getFunzione().getSigla();
+                s += sf.getFunzione().getSiglaInterna();
                 if (sf.isObbligatoria()) {
                     s += "</strong>";
                 }

@@ -202,7 +202,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
                 funz = serFun.getFunzione();
                 obbligatoria = serFun.isObbligatoria();
 
-                Component comp = addFunzione(funz.getDescrizione());
+                Component comp = addFunzione(funz.getSiglaVisibile());
                 if (obbligatoria) {
                     comp.addStyleName("cfunzioneobblig");
                 }

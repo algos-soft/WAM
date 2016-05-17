@@ -456,7 +456,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                 if (glyph != null) {
                     caption = glyph.getHtml() + " " + caption;
                 }
-                caption += " Iscriviti come <strong>" + funz.getDescrizione() + "</strong>";
+                caption += " Iscriviti come <strong>" + funz.getSiglaVisibile() + "</strong>";
                 if (!WAMApp.getLoggedUser().haFunzione(funz)) {
                     bMain.addStyleName("lightGrayBg");
                 }
@@ -478,7 +478,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                     // controllo che l'utente corrente abbia la funzione richiesta
                     if (cont) {
                         if (!WAMApp.getLoggedUser().haFunzione(funz)) {
-                            Notification notif = new Notification("Nel tuo profilo non c'è la funzione " + funz.getDescrizione() + "<br>" + "Rivolgiti all'amministratore", Notification.Type.WARNING_MESSAGE);
+                            Notification notif = new Notification("Nel tuo profilo non c'è la funzione " + funz.getSiglaVisibile() + "<br>" + "Rivolgiti all'amministratore", Notification.Type.WARNING_MESSAGE);
                             notif.setHtmlContentAllowed(true);
                             notif.show(Page.getCurrent());
                             cont = false;
@@ -609,7 +609,7 @@ public class CTurnoEditor extends CTabelloneEditor {
          */
         private String creaTestoComponente() {
             Funzione funz = iscrizione.getServizioFunzione().getFunzione();
-            String lbltext = funz.getDescrizione();
+            String lbltext = funz.getSiglaVisibile();
             FontAwesome glyph = funz.getIcon();
             if (glyph != null) {
                 lbltext = glyph.getHtml() + " " + lbltext;

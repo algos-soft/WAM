@@ -38,18 +38,6 @@ public abstract class BootService {
     }// end of static method
 
     /**
-     * Creazione iniziale di una croce test
-     * Visibile solo a noi (developer)
-     * Serve come prova per visualizzare solo i Militi, le Funzioni ed i Turni di una demo rispetto all'altra
-     * <p>
-     * La crea SOLO se non esiste già
-     */
-    public static void creaCompanyTest() {
-        WamCompany company = creaCroceTest();
-        initCompany(company, true);
-    }// end of static method
-
-    /**
      * Inizializza una croce appena creata, con alcuni dati di esempio
      * Visibile solo a noi (developer)
      * Crea alcune funzioni standard
@@ -108,27 +96,6 @@ public abstract class BootService {
 
 
     /**
-     * Creazione iniziale dei dati generali per la croce test
-     * Li crea SOLO se non esistono già
-     */
-    private static WamCompany creaCroceTest() {
-        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
-
-        if (company == null) {
-            company = new WamCompany();
-            company.setCompanyCode(WAMApp.TEST_COMPANY_CODE);
-            company.setName("Test");
-            company.setAddress1("Via Roma, 17");
-            company.setAddress1("20020 Gossolengo");
-            company.setContact("Francesca Raggi");
-            company.setEmail("info@crocetest.it");
-            company.save();
-        }// end of if cycle
-        return company;
-    }// end of method
-
-
-    /**
      * Creazione iniziale di alcune funzioni standard per la croce selezionata
      * Le crea SOLO se non esistono già
      *
@@ -164,7 +131,7 @@ public abstract class BootService {
         lista.add(Arrays.asList("avis", "Avis", "Operatore trasporto AVIS", FontAwesome.USER));
         lista.add(Arrays.asList("cent", "Cen", "Centralinista", FontAwesome.USER));
 
-        for (int k = 01; k < lista.size(); k++) {
+        for (int k = 0; k < lista.size(); k++) {
             listaFunzioni.add(creaFunzBase(company, manager, k + 1, (List) lista.get(k)));
         }// end of for cycle
 

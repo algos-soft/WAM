@@ -341,9 +341,9 @@ public class WamUI extends UI {
         NavComponent nc = new NavComponent(this);
 
         // aggiungo le view - la menubar viene riempita automaticamente
-        MenuBar.MenuItem itemVolontario = nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
-        nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
+        MenuBar.MenuItem itemFunzione=nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
         nc.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
+        MenuBar.MenuItem itemVolontario = nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
 //        nc.setFooter(new Label("Footer text"));
 
         // aggiungo un MenuItem con il tabellone.
@@ -355,7 +355,7 @@ public class WamUI extends UI {
                 Tabellone tab = new Tabellone(getCurrentAddress());
                 setContent(tab);
             }
-        }, itemVolontario);
+        }, itemFunzione);
 
         // da chiamare dopo che ho aggiunto tutti i MenuItems,
         // configura il Navigator in base alla MenuBar
