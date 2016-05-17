@@ -277,6 +277,9 @@ public class WamUI extends UI {
         // configura il Navigator in base alla MenuBar
         nc.setup();
 
+        // modulo iniziale (per programmatori)
+        nc.navigateTo(WamCompanyMod.class);
+
         return nc;
     }// end of method
 
