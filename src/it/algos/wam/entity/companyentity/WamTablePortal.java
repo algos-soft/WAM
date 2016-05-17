@@ -19,6 +19,7 @@ import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.EntityManager;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 /**
@@ -309,7 +310,6 @@ public class WamTablePortal extends TablePortal {
             wamUI = (WamUI) ui;
             wamUI.fireCompanyChanged(company);
         }// fine del blocco if
-
     }// end of method
 
     protected boolean isUsaBottoniSpostamento() {

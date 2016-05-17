@@ -102,7 +102,6 @@ public class NavComponent extends VerticalLayout {
      * @param viewClass the view class to instantiate
      * @param label     the text for the menu item
      * @param icon      the icon for the menu item
-     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, String label, Resource icon) {
@@ -121,7 +120,6 @@ public class NavComponent extends VerticalLayout {
      * @param viewCached true to instantiated only once, false to instantiate each time
      * @param label      the text for the menu item
      * @param icon       the icon for the menu item
-     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
@@ -144,7 +142,6 @@ public class NavComponent extends VerticalLayout {
      * @param viewClass da visualizzare nell'area controllata dal navigatore
      *                  alla pressione del bottone di menu
      * @param icon      icona per il menu
-     *
      * @return menuItem appena creato
      */
     private MenuBar.MenuItem createMenuItem(Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
@@ -162,7 +159,6 @@ public class NavComponent extends VerticalLayout {
      * Tipicamente un ModulePop
      *
      * @param modulo da visualizzare nel placeholder alla pressione del bottone di menu
-     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addMod(ModulePop modulo) {
@@ -198,7 +194,11 @@ public class NavComponent extends VerticalLayout {
         MenuBar.MenuItem menuItem = createMenuItem(vista, menuLabel, menuIcon);
 
         if (menuItem != null) {
-            keyModulo = vista.getClass().getSimpleName();
+            if (vista instanceof ModulePop) {
+                keyModulo = ((ModulePop) vista).getMenuLabel();
+            } else {
+                keyModulo = vista.getClass().getSimpleName();
+            }// end of if/else cycle
             mappaItem.put(keyModulo, menuItem);
         }// end of if cycle
 
@@ -211,7 +211,6 @@ public class NavComponent extends VerticalLayout {
      *
      * @param vista    da visualizzare nel placeholder alla pressione del bottone di menu
      * @param menuIcon del menu
-     *
      * @return menuItem appena creato
      */
     private MenuBar.MenuItem createMenuItem(View vista, String menuAddress, Resource menuIcon) {
@@ -235,4 +234,23 @@ public class NavComponent extends VerticalLayout {
     public MenuBar getMenuBar() {
         return menuBar;
     }
+
+    /**
+     * Naviga al modulo indicato
+     */
+    public void navigateTo(Class clazz) {
+        AlgosNavigator navigator = getNavigator();
+        String navigatorAddress = "";
+
+        if (clazz == null) {
+            return;
+        }// end of if cycle
+
+        if (navigator != null) {
+            navigatorAddress = clazz.getName();
+            navigator.navigateTo(navigatorAddress);
+        }// end of if cycle
+
+    }// end of method
+
 }
