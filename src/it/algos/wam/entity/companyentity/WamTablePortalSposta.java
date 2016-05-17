@@ -1,6 +1,5 @@
 package it.algos.wam.entity.companyentity;
 
-import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.toolbar.TableToolbar;
