@@ -9,7 +9,7 @@ import it.algos.webbase.web.toolbar.TableToolbar;
  * Created by gac on 07 mag 2016.
  * Sovrascrive la classe standard per aggiungere due bottone/menu di spostamento dei records
  */
-public class WamTablePortalSposta extends WamTablePortal implements ATable.SelectionChangeListener{
+public class WamTablePortalSposta extends WamTablePortal implements ATable.SelectionChangedListener{
 
     public WamTablePortalSposta(ModulePop modulo) {
         super(modulo);

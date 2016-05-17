@@ -8,6 +8,7 @@ import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.webbase.web.form.ModuleForm;
+import it.algos.webbase.web.module.ModulePop;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -37,6 +38,29 @@ public class VolontarioMod extends WamMod {
     public VolontarioMod() {
         super(Volontario.class, MENU_ADDRESS, ICON);
         getTable().setRowHeaderMode(Table.ROW_HEADER_MODE_INDEX);
+
+        addRecordSavedListener(new RecordSavedListener() {
+            @Override
+            public void recordCreated(RecordEvent e) {
+                int a = 87;
+                int b = a;
+            }
+
+            @Override
+            public void recordSaved(RecordEvent e) {
+                int a = 87;
+                int b = a;
+            }
+        });
+
+        addRecordDeletedListener(new RecordDeletedListener() {
+            @Override
+            public void recordDeleted(RecordEvent e) {
+                int a = 87;
+                int b=a;
+
+            }
+        });
     }// end of constructor
 
     @Override

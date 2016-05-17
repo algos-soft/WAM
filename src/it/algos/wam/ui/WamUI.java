@@ -50,6 +50,8 @@ public class WamUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
 
+        setTheme("wam");
+
 //        // set theme
 //        String themeName;
 //        if (Page.getCurrent().getWebBrowser().isTouchDevice()) {
