@@ -5,6 +5,7 @@ import com.vaadin.server.Resource;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyModule;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.TablePortal;
 
 import javax.persistence.metamodel.Attribute;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  * Modulo astratto per implementare la creazione della WamTablePortal
  * Si interpone come layer tra le classi Mod che usano la property Company e la superclasse standard ModulePop
  */
-public abstract class WamMod extends CompanyModule implements CompanyListener {
+public abstract class WamMod extends CompanyModule implements CompanyListener, ModulePop.RecordSavedListener, ModulePop.RecordDeletedListener {
 
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
@@ -96,6 +97,21 @@ public abstract class WamMod extends CompanyModule implements CompanyListener {
     @Override
     public void companyChanged(WamCompany company) {
         ((WamTablePortal) getTablePortal()).syncCompany(company);
+    }// end of method
+
+    @Override
+    public void recordDeleted(RecordEvent e) {
+
+    }// end of method
+
+    @Override
+    public void recordCreated(RecordEvent e) {
+
+    }// end of method
+
+    @Override
+    public void recordSaved(RecordEvent e) {
+
     }// end of method
 
 }// end of class

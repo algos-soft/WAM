@@ -19,7 +19,6 @@ import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.EntityManager;
-import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 /**
@@ -96,15 +95,27 @@ public class WamTablePortal extends TablePortal {
             }// end of inner method
         });// end of anonymous inner class
         for (WamCompany company : WamCompany.findAll()) {
-            subItem = bCroci.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    fireCompanyChanged(company);
-                }// end of inner method
-            });// end of anonymous inner class
+            subItem = addCroce(company);
             croci.put(company, subItem);
         }// end of for cycle
 
     }// end of method
+
+    /**
+     * Costruisce un menu per selezionare la croce da filtrare
+     */
+    private MenuBar.MenuItem addCroce(WamCompany company) {
+        MenuBar.MenuItem subItem;
+
+        subItem = bCroci.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                fireCompanyChanged(company);
+            }// end of inner method
+        });// end of anonymous inner class
+
+        return subItem;
+    }// end of method
+
 
     /*
      * Spostamento in su ed in giu dei singoli records.
@@ -229,7 +240,10 @@ public class WamTablePortal extends TablePortal {
      * Creata una nuova company.
      */
     public void addCompany(WamCompany companyNew) {
+        MenuBar.MenuItem subItem;
 
+        subItem = addCroce(companyNew);
+        syncCompany(companyNew);
     }// end of method
 
     /**
