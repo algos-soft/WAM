@@ -4,7 +4,8 @@ package it.algos.wam.entity.wamcompany;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
-import it.algos.wam.entity.funzione.FunzioneTablePortal;
+import com.vaadin.ui.UI;
+import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.module.ModulePop;
@@ -72,14 +73,24 @@ public class WamCompanyMod extends ModulePop {
         };
     }// end of method
 
-    @Override
-    protected void tableDataChanged() {
-        super.tableDataChanged();
-    }
 
-    @Override
-    public void delete() {
-        super.delete();
-    }
+    public void delete(Object id) {
+        WamCompany company = WamCompany.find((Long) id);
+        super.delete(id);
+        fireCompanyRemoved(company);
+    }// end of method
+
+
+    protected void fireCompanyRemoved(WamCompany company) {
+        UI ui = getUI();
+        WamUI wamUI;
+
+        if (ui instanceof WamUI) {
+            wamUI = (WamUI) ui;
+            wamUI.fireCompanyRemoved(company);
+        }// fine del blocco if
+
+    }// end of method
+
 }// end of class
 

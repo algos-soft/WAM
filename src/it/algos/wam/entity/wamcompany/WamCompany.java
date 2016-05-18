@@ -76,6 +76,26 @@ public class WamCompany extends BaseCompany {
 //	};
 
     /**
+     * Recupera una istanza di WamCompany usando la query standard della Primary Key
+     * Nessun filtro sulla azienda, perché la primary key è unica
+     *
+     * @param id valore (unico) della Primary Key
+     * @return istanza di WamCompany, null se non trovata
+     */
+    public static WamCompany find(long id) {
+        WamCompany instance = null;
+        BaseEntity entity = AQuery.queryById(WamCompany.class, id);
+
+        if (entity != null) {
+            if (entity instanceof WamCompany) {
+                instance = (WamCompany) entity;
+            }// end of if cycle
+        }// end of if cycle
+
+        return instance;
+    }// end of method
+
+    /**
      * Recupera una istanza di Company usando la query di una property specifica
      *
      * @param code valore della property code

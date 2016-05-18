@@ -238,11 +238,10 @@ public class WamTablePortal extends TablePortal {
      * Aggiunge una company al menu
      * <p>
      * Creata una nuova company.
+     * Sincronizza il filtro
      */
     public void addCompany(WamCompany companyNew) {
-        MenuBar.MenuItem subItem;
-
-        subItem = addCroce(companyNew);
+        addCroce(companyNew);
         syncCompany(companyNew);
     }// end of method
 
@@ -250,8 +249,26 @@ public class WamTablePortal extends TablePortal {
      * Elimina una company dal menu
      * <p>
      * Cancellata una company.
+     * Sincronizza il filtro
      */
     public void deleteCompany(WamCompany companyNew) {
+        deleteMenu(companyNew);
+        syncCompany(companyNew);
+    }// end of method
+
+
+    /**
+     * Cancella il menu selezionato
+     */
+    private void deleteMenu(WamCompany croceDaCancellare) {
+        MenuBar.MenuItem subItem;
+
+        if (croceDaCancellare != null && croci.containsKey(croceDaCancellare)) {
+            subItem = croci.get(croceDaCancellare);
+            if (subItem != null) {
+                bCroci.removeChild(subItem);
+            }// fine del blocco if
+        }// fine del blocco if
 
     }// end of method
 
