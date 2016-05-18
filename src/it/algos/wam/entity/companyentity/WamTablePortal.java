@@ -269,7 +269,6 @@ public class WamTablePortal extends TablePortal {
                 bCroci.removeChild(subItem);
             }// fine del blocco if
         }// fine del blocco if
-
     }// end of method
 
     /**
