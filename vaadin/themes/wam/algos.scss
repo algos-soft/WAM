@@ -1,7 +1,7 @@
 // Global variable overrides. Must be declared before importing Valo.
 
 // Defines the plaintext font size, weight and family. Font size affects general component sizing.
-$v-font-size: 18px;
+$v-font-size: 16px;
 $v-font-weight: 400;
 //$v-font-family: "Open Sans", sans-serif;
 //$v-background-color: #EEE;
@@ -9,14 +9,14 @@ $v-font-weight: 400;
 /* Import the base theme.*/
 // @import "../reindeer/reindeer.scss";
 //noinspection CssUnknownTarget
-@import "../valo/valo.scss";
+//@import "../valo/valo.scss";
 
 /* This contains all of your theme.*/
 /* If somebody wants to extend the theme she will include this mixin. */
 @mixin algos {
 
   /* Include all the styles from the imported theme */
-  @include valo;
+  //@include valo;
 
   /* Insert your theme rules here */
   .v-menubar-mainmenu {
@@ -45,7 +45,7 @@ $v-font-weight: 400;
   }
   .toolbar {
     background: #D8D8D8;
-    padding-top: 10px;
+    padding: 1em;
   }
 
   .yellowBg {
@@ -72,9 +72,19 @@ $v-font-weight: 400;
     color: red;
   }
 
+  .grayBg {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+
   .darkGrayBg {
     background: #5d5d5d;
   }
+
+  .lightGrayBg {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
 
   .v-textfield-align-left {
     text-align: left;
@@ -106,5 +116,18 @@ $v-font-weight: 400;
   .v-icon {
     color:blue;
   }
+
+  .icon-red {
+    .v-icon {
+      color: red;
+    }
+  }
+
+  .icon-green {
+    .v-icon {
+      color: green;
+    }
+  }
+
 
 }

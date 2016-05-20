@@ -1,8 +1,12 @@
+@import "../valo/valo.scss";
 @import "wamdefinitions.scss";
+@import "algos.scss";
 
 /* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
 /* The actual styles should be defined in .scss files */
 /* Questo prefisso deve avere lo stesso nome del theme! */
 .wam {
+  @include valo;
+  @include algos;
   @include wamstyles;
 }
