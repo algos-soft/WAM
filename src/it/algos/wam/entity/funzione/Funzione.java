@@ -1,5 +1,7 @@
 package it.algos.wam.entity.funzione;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -7,6 +9,7 @@ import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -205,8 +208,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         ArrayList<Funzione> lista = null;
         ArrayList<Funzione> listaTmp;
 
-//        Container.Filter filter = new Compare.Equal(CompanyEntity_.company, company);
-        listaTmp = (ArrayList<Funzione>) AQuery.getLista(Funzione.class);
+        Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
+        listaTmp = (ArrayList<Funzione>) AQuery.getLista(Funzione.class, filter);
         if (listaTmp != null && listaTmp.size() > 0) {
             lista = new ArrayList<>();
             for (Funzione funz : listaTmp) {

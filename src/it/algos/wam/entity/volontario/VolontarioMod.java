@@ -9,6 +9,7 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.table.ATable;
 
 import javax.persistence.metamodel.Attribute;
 
