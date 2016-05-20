@@ -113,6 +113,8 @@ public class FunzioneForm extends ModuleForm {
      */
     protected Component creaCompDetail(FormLayout layout) {
         Field fsigla = getField(Funzione_.siglaInterna);
+        fsigla.focus();
+
         Field fdesc = getField(Funzione_.siglaVisibile);
         Field fnote = getField(Funzione_.note);
 

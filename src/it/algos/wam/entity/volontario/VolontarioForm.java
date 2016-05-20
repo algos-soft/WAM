@@ -71,6 +71,7 @@ public class VolontarioForm extends ModuleForm {
 
         field = new TextField(Volontario_.nome.getName());
         field.setColumns(25);
+        field.focus();
         addField(attributes[0], field);
         field = new TextField(Volontario_.cognome.getName());
         field.setColumns(25);

@@ -79,6 +79,8 @@ public class ServizioForm extends ModuleForm {
     private Component creaCompDetail(VerticalLayout layout) {
         Field fsigla = getField(Servizio_.sigla);
         fsigla.setWidth("8em");
+        fsigla.focus();
+
         Field fdesc = getField(Servizio_.descrizione);
         fdesc.setWidth("16em");
 
