@@ -4,6 +4,7 @@ package it.algos.wam.entity.funzione;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamModSposta;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.table.ATable;
@@ -35,6 +36,7 @@ public class FunzioneMod extends WamModSposta  {
      */
     public FunzioneMod() {
         super(Funzione.class, MENU_ADDRESS, ICON);
+        getTable().setRowHeaderMode(Table.ROW_HEADER_MODE_INDEX);
     }// end of constructor
 
 

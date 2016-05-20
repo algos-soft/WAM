@@ -46,7 +46,7 @@ public class FunzioneTable extends ETable {
             };
         } else {
             return new Object[]{
-                    Funzione_.ordine,
+//                    Funzione_.ordine,
                     COL_ICON,
                     Funzione_.siglaInterna,
                     Funzione_.siglaVisibile,

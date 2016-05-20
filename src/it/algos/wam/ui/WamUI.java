@@ -44,7 +44,6 @@ public class WamUI extends UI {
     // si registra chi è interessato alle modifiche delle company (aggiunta, cancellazione, modifica di quella corrente)
     private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
 
-
     /**
      * @param request the Vaadin request that caused this UI to be created
      */
@@ -344,7 +343,7 @@ public class WamUI extends UI {
         NavComponent nc = new NavComponent(this);
 
         // aggiungo le view - la menubar viene riempita automaticamente
-        MenuBar.MenuItem itemFunzione=nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
+        MenuBar.MenuItem itemFunzione = nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
         nc.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
         MenuBar.MenuItem itemVolontario = nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
 //        nc.setFooter(new Label("Footer text"));
@@ -399,7 +398,11 @@ public class WamUI extends UI {
     private String getCurrentAddress() {
         URI uri = Page.getCurrent().getLocation();
         String str = uri.getScheme() + ":" + uri.getSchemeSpecificPart();
-//        String str = uri.getAuthority()+uri.getPath();
+
+        if (LibSession.isDeveloper()) {
+            str = uri.getScheme() + "://" + uri.getRawAuthority() + "/wam?" + uri.getQuery();
+        }// fine del blocco if
+
         return str;
     }
 
@@ -411,20 +414,17 @@ public class WamUI extends UI {
     public void removeCompanyChangeListeners() {
     }// end of method
 
-
     public void fireCompanyAdded(WamCompany company) {
         for (CompanyListener listener : companyListeners) {
             listener.companyAdded(company);
         }// end of for cycle
     }// end of method
 
-
     public void fireCompanyRemoved(WamCompany company) {
         for (CompanyListener listener : companyListeners) {
             listener.companyRemoved(company);
         }// end of for cycle
     }// end of method
-
 
     public void fireCompanyChanged(WamCompany company) {
         for (CompanyListener listener : companyListeners) {

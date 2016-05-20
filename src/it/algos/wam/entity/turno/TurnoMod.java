@@ -51,7 +51,6 @@ public class TurnoMod extends WamMod {
                 Turno_.fine,
                 Turno_.titoloExtra,
                 Turno_.localitaExtra,
-                Turno_.note,
                 Turno_.assegnato};
     }// end of method
 
@@ -66,7 +65,7 @@ public class TurnoMod extends WamMod {
     protected Attribute<?, ?>[] creaFieldsForm() {
         return new Attribute[]{
                 WamCompanyEntity_.company,
-                Turno_.iscrizioni,
+//                Turno_.iscrizioni,
                 Turno_.servizio,
                 Turno_.inizio,
                 Turno_.fine,

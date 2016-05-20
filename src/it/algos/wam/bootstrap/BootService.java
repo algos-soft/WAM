@@ -6,6 +6,7 @@ import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
@@ -23,7 +24,6 @@ import java.util.List;
  * Classe statica astratta.
  */
 public abstract class BootService {
-
 
     /**
      * Creazione iniziale di una croce demo
@@ -79,7 +79,7 @@ public abstract class BootService {
         }// end of if cycle
 
         if (creaIscrizioni) {
-//            riempieTurni(company, listaVolontari, listaServizi, listaTurni);
+            riempieTurni(company, manager, listaTurni, listaVolontari, listaServizi);
         }// end of if cycle
 
         manager.close();
@@ -104,13 +104,13 @@ public abstract class BootService {
         return company;
     }// end of static method
 
-
     /**
      * Creazione iniziale di alcune funzioni standard per la croce selezionata
      * Le crea SOLO se non esistono già
      *
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
+     *
      * @return lista delle funzioni create
      */
     @SuppressWarnings("unchecked")
@@ -156,6 +156,7 @@ public abstract class BootService {
      * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
+     *
      * @return istanza di Funzione
      */
     private static Funzione creaFunzBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -167,7 +168,6 @@ public abstract class BootService {
         return Funzione.crea(company, manager, sigla, descrizione, ordine, note, glyph);
     }// end of static method
 
-
     /**
      * Creazione iniziale di alcuni volontari per la croce selezionata
      * Li crea SOLO se non esistono già
@@ -175,6 +175,7 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param funz    lista delle funzioni di questa croce
+     *
      * @return lista dei volontari creati
      */
     @SuppressWarnings("unchecked")
@@ -201,7 +202,6 @@ public abstract class BootService {
         return listaVolontari;
     }// end of static method
 
-
     /**
      * Creazione iniziale di un volontario
      * Lo crea SOLO se non esiste già
@@ -209,6 +209,7 @@ public abstract class BootService {
      * @param company  croce di appartenenza
      * @param manager  the EntityManager to use
      * @param listaTmp di alcune property
+     *
      * @return istanza di Volontario
      */
     private static Volontario creaVolBase(WamCompany company, EntityManager manager, List listaTmp) {
@@ -243,7 +244,6 @@ public abstract class BootService {
         return Volontario.crea(company, manager, nome, cognome, funzioni);
     }// end of static method
 
-
     /**
      * Creazione iniziale di alcuni servizi per la croce selezionata
      * Li crea SOLO se non esistono già
@@ -251,6 +251,7 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param funz    lista delle funzioni di questa croce
+     *
      * @return lista dei servizi creati
      */
     @SuppressWarnings("unchecked")
@@ -282,7 +283,6 @@ public abstract class BootService {
         return listaServizi;
     }// end of static method
 
-
     /**
      * Creazione iniziale di un servizio
      * La crea SOLO se non esiste già
@@ -291,6 +291,7 @@ public abstract class BootService {
      * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
+     *
      * @return istanza di Servizio
      */
     private static Servizio creaServBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -345,7 +346,6 @@ public abstract class BootService {
         return Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, funzioni);
     }// end of static method
 
-
     /**
      * Creazione iniziale di alcuni turni vuoti per la croce selezionata
      * Li crea SOLO se non esistono già
@@ -353,6 +353,7 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param servizi lista dei servizi di questa croce
+     *
      * @return lista dei turni creati
      */
     private static ArrayList<Turno> creaTurniVuoti(WamCompany company, EntityManager manager, ArrayList<Servizio> servizi) {
@@ -361,7 +362,7 @@ public abstract class BootService {
 
         for (int k = 0; k < 30; k++) {
             for (Servizio servizio : servizi) {
-                listaTurni.add(Turno.crea(company, servizio, LibDate.add(oggi, k)));
+                listaTurni.add(Turno.crea(company, manager,servizio, LibDate.add(oggi, k)));
             }// end of for cycle
         }// end of for cycle
 
@@ -371,37 +372,66 @@ public abstract class BootService {
     /**
      * Riempimento iniziale di alcuni turni vuoti per la croce selezionata
      *
-     * @param company croce selezionata
+     * @param company   croce di appartenenza
+     * @param manager   the EntityManager to use
+     * @param turni     lista dei turni di questa croce
+     * @param volontari lista dei volontari di questa croce
+     * @param servizi   lista dei servizi di questa croce
      */
-    private static void riempieTurni(WamCompany company, ArrayList<Volontario> listaVolontari, ArrayList<Servizio> listaServizi, ArrayList<Turno> listaTurni) {
+    private static void riempieTurni(
+            WamCompany company,
+            EntityManager manager,
+            ArrayList<Turno> turni,
+            ArrayList<Volontario> volontari,
+            ArrayList<Servizio> servizi) {
         Date oggi = LibDate.today();
-        Servizio servizio;
+        Servizio serv;
         Iscrizione isc;
         Turno turno;
-        ArrayList<Iscrizione> iscrizioni;
+        ArrayList<Funzione> funzioni;
+//        Funzione funz;
+        ArrayList<Iscrizione> iscrizioni = new ArrayList<>();
 
-//        if (listaServizi != null && listaServizi.size() > 1) {
-//            servizioMattina = listaServizi.get(1);
-//        }// end of if cycle
+        for (int k = 0; k < 5; k++) {
+//            for (int k = 0; k < turni.size(); k = k + 2) {
+            turno = turni.get(k);
+            serv = turno.getServizio();
+            funzioni = serv.getFunzioni();
+            for (Funzione funz : funzioni) {
+                for (Volontario vol : volontari) {
+                    if (vol.haFunzione(funz)) {
+                        isc = new Iscrizione(turno, vol, new ServizioFunzione(serv, funz));
+                        iscrizioni.add(isc);
+                        isc.save(manager);
+                    }// fine del blocco if
+                } // fine del ciclo for-each
+            } // fine del ciclo for-each
+            turno.setIscrizioni(iscrizioni);
+            turno.setAssegnato(true);
+            turno.save(manager);
+        } // fine del ciclo for
 
+////        if (listaServizi != null && listaServizi.size() > 1) {
+////            servizioMattina = listaServizi.get(1);
+////        }// end of if cycle
+//
+////        for (int k = 0; k < 30; k++) {
+////            Turno.crea(company, serv, LibDate.add(oggi, k));
+////        }// end of for cycle
+//
 //        for (int k = 0; k < 30; k++) {
-//            Turno.crea(company, serv, LibDate.add(oggi, k));
+//            for (Servizio serv : listaServizi) {
+//                iscrizioni = new ArrayList<Iscrizione>();
+//                turno = Turno.find(serv, LibDate.add(oggi, k));
+//                isc = new Iscrizione(turno, listaVolontari.get(3), null);
+//                iscrizioni.add(isc);
+//                if (turno != null) {
+//                    turno.setIscrizioni(iscrizioni);
+//                    turno.save();
+//                }// end of if cycle
+//            }// end of for cycle
 //        }// end of for cycle
 
-        for (int k = 0; k < 30; k++) {
-            for (Servizio serv : listaServizi) {
-                iscrizioni = new ArrayList<Iscrizione>();
-                turno = Turno.find(serv, LibDate.add(oggi, k));
-                isc = new Iscrizione(turno, listaVolontari.get(3), null);
-                iscrizioni.add(isc);
-                if (turno != null) {
-                    turno.setIscrizioni(iscrizioni);
-                    turno.save();
-                }// end of if cycle
-            }// end of for cycle
-        }// end of for cycle
-
     }// end of static method
-
 
 }// end of abstract static class

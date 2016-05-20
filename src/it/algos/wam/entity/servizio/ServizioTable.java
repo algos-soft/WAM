@@ -60,7 +60,7 @@ public class ServizioTable extends ETable {
             };
         } else {
             return new Object[]{
-                    Servizio_.ordine,
+//                    Servizio_.ordine,
                     Servizio_.sigla,
                     Servizio_.descrizione,
                     COL_DURATA,

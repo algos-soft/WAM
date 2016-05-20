@@ -20,6 +20,7 @@ import it.algos.webbase.web.module.ModulePop;
 public class WamCompanyForm extends ModuleForm {
 
     private boolean usaCreaDatiStandard = false;
+    private boolean usaRiempiTurniStandard = false;
 
     /**
      * The form used to edit an item.
@@ -32,7 +33,6 @@ public class WamCompanyForm extends ModuleForm {
     public WamCompanyForm(Item item, ModulePop module) {
         super(item, module);
     }// end of constructor
-
 
     /**
      * Populate the map to bind item properties to fields.
@@ -52,7 +52,6 @@ public class WamCompanyForm extends ModuleForm {
         super.createFields();
     }// end of method
 
-
     /**
      * Create the detail component (the upper part containing the fields).
      * <p>
@@ -67,10 +66,10 @@ public class WamCompanyForm extends ModuleForm {
 
         layout.addComponent(super.createComponent());
         layout.addComponent(this.creaCheckBox());
+        layout.addComponent(this.creaCheckBox2());
 
         return layout;
     }// end of method
-
 
     /**
      * Crea il CheckBox aggiuntivo
@@ -96,6 +95,29 @@ public class WamCompanyForm extends ModuleForm {
     }// end of method
 
     /**
+     * Crea il secondo CheckBox aggiuntivo
+     */
+    private Component creaCheckBox2() {
+        VerticalLayout vertLayout = new VerticalLayout();
+        CheckBoxField fieldCheck = null;
+        vertLayout.setMargin(true);
+        vertLayout.setSpacing(true);
+
+        if (isNewRecord()) {
+            fieldCheck = new CheckBoxField("Creazione delle iscrizioni per i turni");
+            fieldCheck.addValueChangeListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent event) {
+                    usaRiempiTurniStandard = (boolean) event.getProperty().getValue();
+                }// end of inner method
+            });// end of anonymous inner class
+            vertLayout.addComponent(fieldCheck);
+        }// end of if cycle
+
+        return vertLayout;
+    }// end of method
+
+    /**
      * Invoked after the item has been saved.
      * Chance for subclasses to override.
      *
@@ -107,7 +129,7 @@ public class WamCompanyForm extends ModuleForm {
         WamCompany company = (WamCompany) bi.getBean();
 
         if (isNewRecord() && usaCreaDatiStandard) {
-            BootService.initCompany(company);
+            BootService.initCompany(company, true, usaRiempiTurniStandard);
         }// end of if cycle
 
         if (isNewRecord()) {

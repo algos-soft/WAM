@@ -46,7 +46,6 @@ public class Turno extends WamCompanyEntity {
     @CascadeOnDelete
     private List<Iscrizione> iscrizioni = new ArrayList();
 
-
     //--chiave indicizzata per query più veloci e 'mirate' (obbligatoria)
     //--annoX1000 + giorno nell'anno
     @NotNull
@@ -63,7 +62,6 @@ public class Turno extends WamCompanyEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fine;
 
-
     //--motivazione del turno extra
     private String titoloExtra;
     //--nome evidenziato della località per turni extra
@@ -74,14 +72,12 @@ public class Turno extends WamCompanyEntity {
     //--turno previsto (vuoto) oppure assegnato (militi inseriti)
     private boolean assegnato = false;
 
-
     /**
      * Costruttore minimo con tutte le properties obbligatorie
      */
     public Turno() {
         this(null, null, null, false);
     }// end of constructor
-
 
     /**
      * Costruttore completo
@@ -103,6 +99,7 @@ public class Turno extends WamCompanyEntity {
      * Recupera una istanza di Turno usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
+     *
      * @return istanza di Turno, null se non trovata
      */
     public static Turno find(long id) {
@@ -122,6 +119,7 @@ public class Turno extends WamCompanyEntity {
      * Recupera una lista di Turni usando la chiave specifica
      *
      * @param chiave indicizzata per query più veloci e 'mirate' (obbligatoria)
+     *
      * @return lista di Turni, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -151,6 +149,7 @@ public class Turno extends WamCompanyEntity {
      *
      * @param servizio tipologia di servizio (obbligatoria)
      * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
+     *
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -174,6 +173,7 @@ public class Turno extends WamCompanyEntity {
      * @param company  croce di appartenenza
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
+     *
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -186,6 +186,7 @@ public class Turno extends WamCompanyEntity {
      *
      * @param company croce di appartenenza
      * @param chiave  indicizzata per query più veloci e 'mirate' (obbligatoria)
+     *
      * @return istanza di Turno, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -207,6 +208,7 @@ public class Turno extends WamCompanyEntity {
      *
      * @param servizio tipologia di servizio (obbligatoria)
      * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
+     *
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -243,6 +245,7 @@ public class Turno extends WamCompanyEntity {
      *
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
+     *
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -280,25 +283,31 @@ public class Turno extends WamCompanyEntity {
      * Creazione iniziale di un turno
      * Lo crea SOLO se non esiste
      *
+     * @param company  croce di appartenenza
+     * @param manager  the EntityManager to use
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
+     *
      * @return istanza di turno
      */
-    public static Turno crea(WamCompany company, Servizio servizio, Date inizio) {
-        return crea(company, servizio, inizio, null, false);
+    public static Turno crea(WamCompany company, EntityManager manager, Servizio servizio, Date inizio) {
+        return crea(company, manager, servizio, inizio, null, false);
     }// end of static method
 
     /**
      * Creazione iniziale di un turno
      * Lo crea SOLO se non esiste
      *
+     * @param company   croce di appartenenza
+     * @param manager   the EntityManager to use
      * @param servizio  tipologia di servizio (obbligatoria)
      * @param inizio    giorno, ora e minuto di inizio turno
      * @param fine      giorno, ora e minuto di fine turno
      * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
+     *
      * @return istanza di turno
      */
-    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, boolean assegnato) {
+    public static Turno crea(WamCompany company, EntityManager manager, Servizio servizio, Date inizio, Date fine, boolean assegnato) {
         Turno turno = null;
         int chiave = LibWam.creaChiave(inizio);
 
@@ -337,7 +346,6 @@ public class Turno extends WamCompanyEntity {
 
 //        tunIsc = new TurnoIscrizione(this, iscrizione);
 //        tunIsc.setCompany(getCompany());
-
 
     }// end of method
 
@@ -400,11 +408,11 @@ public class Turno extends WamCompanyEntity {
     /**
      * Ritorna la durata totale del turno in minuti
      */
-    public int getMinutiTotali(){
-        int minuti=0;
+    public int getMinutiTotali() {
+        int minuti = 0;
         Servizio serv = getServizio();
-        if(serv!=null){
-            minuti=serv.getMinutiTotali();
+        if (serv != null) {
+            minuti = serv.getMinutiTotali();
         }
         return minuti;
     }
@@ -440,7 +448,6 @@ public class Turno extends WamCompanyEntity {
     public void setAssegnato(boolean assegnato) {
         this.assegnato = assegnato;
     }//end of setter method
-
 
     /**
      * Controlla se questo turno ha le iscrizioni coperte per tutte le funzioni
@@ -478,21 +485,19 @@ public class Turno extends WamCompanyEntity {
         return completo;
     }
 
-
     public List<Iscrizione> getIscrizioni() {
         return iscrizioni;
     }
 
-
-    public void setIscrizioni(ArrayList<Iscrizione> iscrizioni) {
+    public void setIscrizioni(List<Iscrizione> iscrizioni) {
         this.iscrizioni = iscrizioni;
     }
-
 
     /**
      * Recupera la eventuale iscrizione a una data funzione.
      *
      * @param sf il ServizioFunzione
+     *
      * @return l'iscrizione
      */
     public Iscrizione getIscrizione(ServizioFunzione sf) {
@@ -525,6 +530,5 @@ public class Turno extends WamCompanyEntity {
             throw new CloneNotSupportedException();
         }// fine del blocco try-catch
     }// end of method
-
 
 }// end of domain class

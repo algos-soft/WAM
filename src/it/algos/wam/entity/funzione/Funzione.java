@@ -205,19 +205,10 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<Funzione> findAll(WamCompany company) {
-        ArrayList<Funzione> lista = null;
-        ArrayList<Funzione> listaTmp;
+        ArrayList<Funzione> lista;
 
         Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
-        listaTmp = (ArrayList<Funzione>) AQuery.getLista(Funzione.class, filter);
-        if (listaTmp != null && listaTmp.size() > 0) {
-            lista = new ArrayList<>();
-            for (Funzione funz : listaTmp) {
-                if (funz.getCompany().getId()==company.getId()) {
-                    lista.add(funz);
-                }// end of if cycle
-            }// end of for cycle
-        }// end of if cycle
+        lista = (ArrayList<Funzione>) AQuery.getLista(Funzione.class, filter);
 
         return lista;
     }// end of method
