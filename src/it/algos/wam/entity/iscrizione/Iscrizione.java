@@ -1,11 +1,19 @@
 package it.algos.wam.entity.iscrizione;
 
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.EM;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import java.sql.Timestamp;
@@ -52,24 +60,86 @@ public class Iscrizione extends WamCompanyEntity {
      * Costruttore vuoto
      */
     public Iscrizione() {
-         this(null, null, null);
+        this(null, null, null);
     }// end of constructor
 
     /**
      * Costruttore con la funzione e il volontario
      *
-     * @param turno     turno di riferimento
+     * @param turno      turno di riferimento
      * @param serFun     a quale funzione del servizio il volontario si iscrive
      * @param volontario milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
      */
     public Iscrizione(Turno turno, Volontario volontario, ServizioFunzione serFun) {
+        this((WamCompany) CompanySessionLib.getCompany(), turno, volontario, serFun);
+    }// end of constructor
+
+    /**
+     * Costruttore completo
+     *
+     * @param company    croce di appartenenza
+     * @param turno      turno di riferimento
+     * @param serFun     a quale funzione del servizio il volontario si iscrive
+     * @param volontario milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
+     */
+    public Iscrizione(WamCompany company, Turno turno, Volontario volontario, ServizioFunzione serFun) {
+        super();
+        super.setCompany(company);
         setTurno(turno);
         setVolontario(volontario);
         setServizioFunzione(serFun);
-        if(turno!=null){
+        if (turno != null) {
             setMinutiEffettivi(turno.getMinutiTotali());    // quando viene creata ha lo stesso tempo del turno
         }
     }// end of constructor
+
+    /**
+     * Recupera una istanza di Iscrizione usando la query di una property specifica
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company      croce di appartenenza
+     * @param turno      turno di riferimento
+     * @return istanza di Iscrizione, null se non trovata
+     */
+    @SuppressWarnings("unchecked")
+    public static Iscrizione findByTurno(WamCompany company, Turno turno) {
+        Iscrizione instance = null;
+        BaseEntity bean;
+
+        EntityManager manager = EM.createEntityManager();
+        bean = CompanyQuery.queryOne(Iscrizione.class, Iscrizione_.turno ,turno);
+        manager.close();
+
+        if (bean != null && bean instanceof Iscrizione) {
+            instance = (Iscrizione) bean;
+        }// end of if cycle
+
+        return instance;
+    }// end of method
+
+
+    /**
+     * Creazione iniziale di un volontario
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company    croce di appartenenza
+     * @param manager    the EntityManager to use
+     * @param turno      turno di riferimento
+     * @param serFun     a quale funzione del servizio il volontario si iscrive
+     * @param volontario milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
+     *
+     * @return istanza di Volontario
+     */
+    public static Iscrizione crea(WamCompany company, EntityManager manager,Turno turno, Volontario volontario, ServizioFunzione serFun) {
+        Iscrizione isc = Iscrizione.findByTurno(company, turno);
+
+        if (isc == null) {
+            isc = new Iscrizione(company, turno, volontario,serFun);
+            isc = (Iscrizione) isc.save(manager);
+        }// end of if cycle
+
+        return isc;
+    }// end of static method
 
     public Volontario getVolontario() {
         return volontario;
@@ -130,8 +200,8 @@ public class Iscrizione extends WamCompanyEntity {
     /**
      * Ritorna true se ha una nota
      */
-    public boolean hasNota(){
-        return (getNota()!=null && !getNota().isEmpty());
+    public boolean hasNota() {
+        return (getNota() != null && !getNota().isEmpty());
     }
 
 }// end of class
