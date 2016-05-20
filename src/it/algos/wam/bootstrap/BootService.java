@@ -400,9 +400,10 @@ public abstract class BootService {
             for (Funzione funz : funzioni) {
                 for (Volontario vol : volontari) {
                     if (vol.haFunzione(funz)) {
-                        isc = new Iscrizione(turno, vol, new ServizioFunzione(serv, funz));
+//                        isc = new Iscrizione(turno, vol, new ServizioFunzione(serv, funz));
+                        isc= Iscrizione.crea(company,manager,turno,vol,new ServizioFunzione(serv, funz));
+//                        isc.save(manager);
                         iscrizioni.add(isc);
-                        isc.save(manager);
                     }// fine del blocco if
                 } // fine del ciclo for-each
             } // fine del ciclo for-each

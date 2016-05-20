@@ -4,7 +4,6 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 import it.algos.wam.bootstrap.BootService;
 import it.algos.wam.ui.WamUI;
@@ -18,17 +17,21 @@ import it.algos.webbase.web.module.ModulePop;
  */
 public class WamCompanyForm extends ModuleForm {
 
-    private static String RIENTRO="  ---> ";
-    private boolean usaCreaDatiBase = false;
-    private boolean usaCreaTurniVuoti = false;
-    private boolean usaRiempiTurni = false;
+    private static String RIENTRO = "  ---> ";
+    private boolean usaCreaDatiProva;
+    private boolean usaCreaDatiBase;
+    private boolean usaCreaTurniVuoti;
+    private boolean usaRiempiTurni;
 
     private CheckBoxField box1;
-    private CheckBoxField box2 ;
-    private CheckBoxField box3 ;
+    private CheckBoxField box2;
+    private CheckBoxField box3;
+    private CheckBoxField box4;
 
     private Label label2;
     private Label label3;
+    private Label label4;
+
     /**
      * The form used to edit an item.
      * <p>
@@ -77,6 +80,7 @@ public class WamCompanyForm extends ModuleForm {
         layout.addComponent(this.creaCheckBox());
         layout.addComponent(this.creaCheckBox2());
         layout.addComponent(this.creaCheckBox3());
+        layout.addComponent(this.creaCheckBox4());
 
         return layout;
     }// end of method
@@ -85,24 +89,24 @@ public class WamCompanyForm extends ModuleForm {
      * Crea il CheckBox aggiuntivo
      */
     private Component creaCheckBox() {
-        VerticalLayout vertLayout = new VerticalLayout();
+        HorizontalLayout layout = new HorizontalLayout();
         WamCompanyForm form = this;
 
         if (isNewRecord()) {
-            box1 = new CheckBoxField("Creazione dei dati iniziali per questa croce");
+            box1 = new CheckBoxField("Creazione dei dati di prova per questa croce");
             box1.setValue(false);
             box1.setVisible(true);
             box1.addValueChangeListener(new Property.ValueChangeListener() {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
-                    usaCreaDatiBase = (boolean) event.getProperty().getValue();
-                    syncCheckBox(form,event);
+                    usaCreaDatiProva = (boolean) event.getProperty().getValue();
+                    syncCheckBox(form, event);
                 }// end of inner method
             });// end of anonymous inner class
-            vertLayout.addComponent(box1);
+            layout.addComponent(box1);
         }// end of if cycle
 
-        return vertLayout;
+        return layout;
     }// end of method
 
     /**
@@ -112,15 +116,16 @@ public class WamCompanyForm extends ModuleForm {
         HorizontalLayout layout = new HorizontalLayout();
 
         if (isNewRecord()) {
-            box2 = new CheckBoxField("Creazione dei turni previsti");
-            box2.setValue(true);
+            usaCreaDatiBase = true;
+            box2 = new CheckBoxField("Funzioni, servizi e volontari");
+            box2.setValue(usaCreaDatiBase);
             box2.setVisible(false);
-            label2 =new Label(RIENTRO);
+            label2 = new Label(RIENTRO);
             label2.setVisible(false);
             box2.addValueChangeListener(new Property.ValueChangeListener() {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
-                    usaCreaTurniVuoti = (boolean) event.getProperty().getValue();
+                    usaCreaDatiBase = (boolean) event.getProperty().getValue();
                 }// end of inner method
             });// end of anonymous inner class
             layout.addComponent(label2);
@@ -137,15 +142,16 @@ public class WamCompanyForm extends ModuleForm {
         HorizontalLayout layout = new HorizontalLayout();
 
         if (isNewRecord()) {
-            box3 = new CheckBoxField("Inserimento delle iscrizioni nei turni");
-            box3.setValue(true);
+            usaCreaTurniVuoti = true;
+            box3 = new CheckBoxField("Predisposizione dei turni");
+            box3.setValue(usaCreaDatiBase);
             box3.setVisible(false);
-            label3 =new Label(RIENTRO);
+            label3 = new Label(RIENTRO);
             label3.setVisible(false);
             box3.addValueChangeListener(new Property.ValueChangeListener() {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
-                    usaRiempiTurni = (boolean) event.getProperty().getValue();
+                    usaCreaTurniVuoti = (boolean) event.getProperty().getValue();
                 }// end of inner method
             });// end of anonymous inner class
             layout.addComponent(label3);
@@ -155,18 +161,48 @@ public class WamCompanyForm extends ModuleForm {
         return layout;
     }// end of method
 
-    private void syncCheckBox(WamCompanyForm form,Property.ValueChangeEvent evento) {
+    /**
+     * Crea il terzo CheckBox aggiuntivo
+     */
+    private Component creaCheckBox4() {
+        HorizontalLayout layout = new HorizontalLayout();
+
+        if (isNewRecord()) {
+            usaRiempiTurni = false;
+            box4 = new CheckBoxField("Inserimento delle iscrizioni nei turni");
+            box4.setValue(usaRiempiTurni);
+            box4.setVisible(false);
+            label4 = new Label(RIENTRO);
+            label4.setVisible(false);
+            box4.addValueChangeListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent event) {
+                    usaRiempiTurni = (boolean) event.getProperty().getValue();
+                }// end of inner method
+            });// end of anonymous inner class
+            layout.addComponent(label4);
+            layout.addComponent(box4);
+        }// end of if cycle
+
+        return layout;
+    }// end of method
+
+    private void syncCheckBox(WamCompanyForm form, Property.ValueChangeEvent evento) {
         if (box2 != null && box3 != null) {
-            if (usaCreaDatiBase) {
+            if (usaCreaDatiProva) {
                 label2.setVisible(true);
                 box2.setVisible(true);
                 label3.setVisible(true);
                 box3.setVisible(true);
+                label4.setVisible(true);
+                box4.setVisible(true);
             } else {
-                label3.setVisible(false);
+                label2.setVisible(false);
                 box2.setVisible(false);
                 label3.setVisible(false);
                 box3.setVisible(false);
+                label4.setVisible(false);
+                box4.setVisible(false);
             }// fine del blocco if-else
         }// fine del blocco if
     }// end of method
@@ -182,7 +218,7 @@ public class WamCompanyForm extends ModuleForm {
         BeanItem bi = LibBean.fromItem(getItem());
         WamCompany company = (WamCompany) bi.getBean();
 
-        if (isNewRecord() && usaCreaDatiBase) {
+        if (isNewRecord() && usaCreaDatiProva && usaCreaDatiBase) {
             BootService.initCompany(company, usaCreaTurniVuoti, usaRiempiTurni);
         }// end of if cycle
 
