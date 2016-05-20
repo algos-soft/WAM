@@ -1,6 +1,16 @@
+// Global variable overrides. Must be declared before importing Valo.
+// Defines the plaintext font size, weight and family. Font size affects general component sizing.
+$v-font-size: 18px;
+$v-font-weight: 400;
+
+
 @import "../valo/valo.scss";
-@import "wamstyles.scss";
-@import "algos.scss";
+//@import "../chameleon/chameleon.scss";
+//@import "../liferay/liferay.scss";
+//@import "../reindeer/reindeer.scss";
+//@import "../runo/runo.scss";
+@import "../algos.scss";
+@import "wam.scss";
 
 /* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
 /* The actual styles should be defined in .scss files */
@@ -8,5 +18,5 @@
 .wam {
   @include valo;
   @include algos;
-  @include wamstyles;
+  @include wam;
 }

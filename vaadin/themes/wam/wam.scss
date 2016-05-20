@@ -1,17 +1,6 @@
-// Global variable overrides. Must be declared before importing Valo.
-
-// Defines the plaintext font size, weight and family. Font size affects general component sizing.
-$v-font-size: 18px;
-$v-font-weight: 400;
-//$v-font-family: "Open Sans", sans-serif;
-//$v-background-color: #EEE;
-
-
 /* This contains all of your theme.*/
 /* If somebody wants to extend the theme she will include this mixin. */
-@mixin wamstyles {
-
-
+@mixin wam {
 
   // bottoni del dialogo di scelta funzioni nella scheda funzione
   .bfunzione .v-icon {

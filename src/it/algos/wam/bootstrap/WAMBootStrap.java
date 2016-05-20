@@ -40,8 +40,8 @@ public class WAMBootStrap extends ABootStrap {
         WAMApp.setServletContext(svltCtx);
 
         // eventuali modifiche allle dimensioni dei bottoni
-        Toolbar.ALTEZZA_BOTTONI = 40;
-        Toolbar.LARGHEZZA_BOTTONI = 140;
+//        Toolbar.ALTEZZA_BOTTONI = 40;
+//        Toolbar.LARGHEZZA_BOTTONI = 140;
         //TextField.LARGHEZZA_DEFAULT="320px";  // non trova questa variabile - alex 01-03-16
 
         // eventuali modifiche ai flag generali di regolazione
