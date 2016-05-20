@@ -1,5 +1,7 @@
 package it.algos.wam.entity.servizio;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.shared.ui.colorpicker.Color;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
@@ -7,6 +9,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -224,18 +227,9 @@ public class Servizio extends WamCompanyEntity {
     @SuppressWarnings("unchecked")
     public static ArrayList<Servizio> findAll(WamCompany company) {
         ArrayList<Servizio> lista = null;
-        ArrayList<Servizio> listaTmp;
 
-//        Container.Filter filter = new Compare.Equal(CompanyEntity_.company, company);
-        listaTmp = (ArrayList<Servizio>) AQuery.getLista(Servizio.class);
-        if (listaTmp != null && listaTmp.size() > 0) {
-            lista = new ArrayList<>();
-            for (Servizio ser : listaTmp) {
-                if (ser.getCompany().getId()==company.getId()) {
-                    lista.add(ser);
-                }// end of if cycle
-            }// end of for cycle
-        }// end of if cycle
+        Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
+        lista = (ArrayList<Servizio>) AQuery.getLista(Servizio.class, filter);
 
         return lista;
     }// end of method
