@@ -39,7 +39,6 @@ public class WamServlet extends AlgosServlet {
     @Override
     public void sessionInit(SessionInitEvent event) throws ServiceException {
         super.sessionInit(event);
-
         // Do session start stuff here
 
 //        // provvisorio!! fino a quando non gestiamo il login
