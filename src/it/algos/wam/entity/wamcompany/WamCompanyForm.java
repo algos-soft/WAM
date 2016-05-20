@@ -4,9 +4,8 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.ui.*;
 import it.algos.wam.bootstrap.BootService;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.web.field.CheckBoxField;
@@ -19,9 +18,17 @@ import it.algos.webbase.web.module.ModulePop;
  */
 public class WamCompanyForm extends ModuleForm {
 
-    private boolean usaCreaDatiStandard = false;
-    private boolean usaRiempiTurniStandard = false;
+    private static String RIENTRO="  ---> ";
+    private boolean usaCreaDatiBase = false;
+    private boolean usaCreaTurniVuoti = false;
+    private boolean usaRiempiTurni = false;
 
+    private CheckBoxField box1;
+    private CheckBoxField box2 ;
+    private CheckBoxField box3 ;
+
+    private Label label2;
+    private Label label3;
     /**
      * The form used to edit an item.
      * <p>
@@ -63,10 +70,13 @@ public class WamCompanyForm extends ModuleForm {
     @Override
     protected Component createComponent() {
         VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(true);
+        layout.setSpacing(false);
 
         layout.addComponent(super.createComponent());
         layout.addComponent(this.creaCheckBox());
         layout.addComponent(this.creaCheckBox2());
+        layout.addComponent(this.creaCheckBox3());
 
         return layout;
     }// end of method
@@ -76,19 +86,20 @@ public class WamCompanyForm extends ModuleForm {
      */
     private Component creaCheckBox() {
         VerticalLayout vertLayout = new VerticalLayout();
-        CheckBoxField fieldCheck = null;
-        vertLayout.setMargin(true);
-        vertLayout.setSpacing(true);
+        WamCompanyForm form = this;
 
         if (isNewRecord()) {
-            fieldCheck = new CheckBoxField("Creazione dei dati iniziali per questa croce");
-            fieldCheck.addValueChangeListener(new Property.ValueChangeListener() {
+            box1 = new CheckBoxField("Creazione dei dati iniziali per questa croce");
+            box1.setValue(false);
+            box1.setVisible(true);
+            box1.addValueChangeListener(new Property.ValueChangeListener() {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
-                    usaCreaDatiStandard = (boolean) event.getProperty().getValue();
+                    usaCreaDatiBase = (boolean) event.getProperty().getValue();
+                    syncCheckBox(form,event);
                 }// end of inner method
             });// end of anonymous inner class
-            vertLayout.addComponent(fieldCheck);
+            vertLayout.addComponent(box1);
         }// end of if cycle
 
         return vertLayout;
@@ -98,23 +109,66 @@ public class WamCompanyForm extends ModuleForm {
      * Crea il secondo CheckBox aggiuntivo
      */
     private Component creaCheckBox2() {
-        VerticalLayout vertLayout = new VerticalLayout();
-        CheckBoxField fieldCheck = null;
-        vertLayout.setMargin(true);
-        vertLayout.setSpacing(true);
+        HorizontalLayout layout = new HorizontalLayout();
 
         if (isNewRecord()) {
-            fieldCheck = new CheckBoxField("Creazione delle iscrizioni per i turni");
-            fieldCheck.addValueChangeListener(new Property.ValueChangeListener() {
+            box2 = new CheckBoxField("Creazione dei turni previsti");
+            box2.setValue(true);
+            box2.setVisible(false);
+            label2 =new Label(RIENTRO);
+            label2.setVisible(false);
+            box2.addValueChangeListener(new Property.ValueChangeListener() {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {
-                    usaRiempiTurniStandard = (boolean) event.getProperty().getValue();
+                    usaCreaTurniVuoti = (boolean) event.getProperty().getValue();
                 }// end of inner method
             });// end of anonymous inner class
-            vertLayout.addComponent(fieldCheck);
+            layout.addComponent(label2);
+            layout.addComponent(box2);
         }// end of if cycle
 
-        return vertLayout;
+        return layout;
+    }// end of method
+
+    /**
+     * Crea il terzo CheckBox aggiuntivo
+     */
+    private Component creaCheckBox3() {
+        HorizontalLayout layout = new HorizontalLayout();
+
+        if (isNewRecord()) {
+            box3 = new CheckBoxField("Inserimento delle iscrizioni nei turni");
+            box3.setValue(true);
+            box3.setVisible(false);
+            label3 =new Label(RIENTRO);
+            label3.setVisible(false);
+            box3.addValueChangeListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent event) {
+                    usaRiempiTurni = (boolean) event.getProperty().getValue();
+                }// end of inner method
+            });// end of anonymous inner class
+            layout.addComponent(label3);
+            layout.addComponent(box3);
+        }// end of if cycle
+
+        return layout;
+    }// end of method
+
+    private void syncCheckBox(WamCompanyForm form,Property.ValueChangeEvent evento) {
+        if (box2 != null && box3 != null) {
+            if (usaCreaDatiBase) {
+                label2.setVisible(true);
+                box2.setVisible(true);
+                label3.setVisible(true);
+                box3.setVisible(true);
+            } else {
+                label3.setVisible(false);
+                box2.setVisible(false);
+                label3.setVisible(false);
+                box3.setVisible(false);
+            }// fine del blocco if-else
+        }// fine del blocco if
     }// end of method
 
     /**
@@ -128,8 +182,8 @@ public class WamCompanyForm extends ModuleForm {
         BeanItem bi = LibBean.fromItem(getItem());
         WamCompany company = (WamCompany) bi.getBean();
 
-        if (isNewRecord() && usaCreaDatiStandard) {
-            BootService.initCompany(company, true, usaRiempiTurniStandard);
+        if (isNewRecord() && usaCreaDatiBase) {
+            BootService.initCompany(company, usaCreaTurniVuoti, usaRiempiTurni);
         }// end of if cycle
 
         if (isNewRecord()) {
@@ -148,16 +202,5 @@ public class WamCompanyForm extends ModuleForm {
         }// fine del blocco if
 
     }// end of method
-
-//    protected boolean save() {
-//        BeanItem bi = LibBean.fromItem(getItem());
-//        WamCompany company = (WamCompany) bi.getBean();
-//
-//        if (usaCreaDatiStandard) {
-//            BootService.initCompany(company);
-//        }// end of if cycle
-//
-//        return super.save();
-//    }// end of method
 
 }// end of form class
