@@ -8,6 +8,7 @@ import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.module.ModulePop;
 
 import javax.persistence.metamodel.Attribute;
+import java.util.ArrayList;
 
 /**
  * Created by alex on 18-04-2016.
@@ -25,6 +26,83 @@ public class FunzioneForm extends ModuleForm {
     protected void init() {
         super.init();
     }
+
+
+//    /**
+//     * Create the detail component (the upper part containing the fields).
+//     * <p>
+//     * Usa il FormLayout che ha le label a sinsitra dei campi (standard)
+//     * Se si vogliono le label sopra i campi, sovrascivere questo metodo e usare un VerticalLayout
+//     *
+//     * @return the detail component containing the fields
+//     */
+//    protected Component createComponent() {
+//
+//        VerticalLayout vl = new VerticalLayout();
+//
+//
+//        FormLayout fl = new FormLayout();
+//        fl.setMargin(true);
+//        fl.setSpacing(true);
+//        //layout.setSizeUndefined();
+//
+//
+//        //vl.addComponent(fl);
+//        vl.addComponent(creaCompDetail2(fl));
+//        return vl;
+//    }// end of method
+
+
+//    /**
+//     * Crea il componente che visualizza il dettaglio
+//     * Retrieve the fields from the binder and place them in the UI.
+//     *
+//     * @return il componente dettagli
+//     */
+//    private Component creaCompDetail2(FormLayout layout) {
+//        Field fsigla = getField(Funzione_.siglaInterna);
+//        Field fdesc = getField(Funzione_.siglaVisibile);
+//        Field fnote = getField(Funzione_.note);
+//
+//        iconButton = new Button();
+//        iconButton.setHtmlContentAllowed(true);
+//        iconButton.addStyleName("bfunzione");
+//        iconButton.addClickListener(new Button.ClickListener() {
+//            @Override
+//            public void buttonClick(Button.ClickEvent clickEvent) {
+//                SelectIconDialog dialog = new SelectIconDialog();
+//                dialog.addCloseListener(new SelectIconDialog.CloseListener() {
+//                    @Override
+//                    public void dialogClosed(SelectIconDialog.DialogEvent event) {
+//                        int exitcode = event.getExitcode();
+//                        switch (exitcode) {
+//                            case 0:   // close, no action
+//                                break;
+//                            case 1:   // icon selected
+//                                int codepoint = event.getCodepoint();
+//                                setGlyph(FontAwesome.fromCodepoint(codepoint));
+//                                syncButton();
+//                                break;
+//                            case 2:   // rewove icon
+//                                setGlyph(null);
+//                                syncButton();
+//                                break;
+//                        }
+//
+//                    }
+//                });
+//                dialog.show();
+//            }
+//        });
+//        syncButton();
+//
+//        layout.addComponent(iconButton);
+//        layout.addComponent(fsigla);
+//        layout.addComponent(fdesc);
+//        layout.addComponent(fnote);
+//
+//        return layout;
+//    }
 
 
     /**
