@@ -4,6 +4,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.ServiceException;
 import com.vaadin.server.SessionInitEvent;
+import it.algos.wam.bootstrap.TestService;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.web.servlet.AlgosServlet;
 

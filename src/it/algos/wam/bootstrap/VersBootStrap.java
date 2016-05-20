@@ -1,10 +1,14 @@
 package it.algos.wam.bootstrap;
 
 import com.vaadin.server.VaadinSession;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibVers;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.ArrayList;
 
 /**
  * Log delle versioni, modifiche e patch installate

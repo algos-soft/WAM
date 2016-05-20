@@ -49,9 +49,6 @@ public class WamCompany extends BaseCompany {
 
     // le altre tabelle sono cancellate a cascata a partire da queste
 
-//    public WamCompany() {
-//        super();
-//    }// end of constructor
 
     /**
      * Costruttore senza argomenti
@@ -71,16 +68,29 @@ public class WamCompany extends BaseCompany {
         super(companyCode, name);
     }// end of constructor
 
-//	public void createDemoData(){
-//		DemoDataGenerator.createDemoData(this);
-//	};
+
+    /**
+     * Recupera il totale dei records della Entity
+     *
+     * @return numero totale di records nella Entity
+     */
+    public static int count() {
+        int totRec = 0;
+        long totTmp = AQuery.getCount(WamCompany.class);
+
+        if (totTmp > 0) {
+            totRec = (int) totTmp;
+        }// fine del blocco if
+
+        return totRec;
+    }// end of method
 
     /**
      * Recupera una istanza di WamCompany usando la query standard della Primary Key
      * Nessun filtro sulla azienda, perché la primary key è unica
      *
      * @param id valore (unico) della Primary Key
-     * @return istanza di WamCompany, null se non trovata
+     * @return istanza della Entity, null se non trovata
      */
     public static WamCompany find(long id) {
         WamCompany instance = null;
@@ -96,11 +106,20 @@ public class WamCompany extends BaseCompany {
     }// end of method
 
     /**
-     * Recupera una istanza di Company usando la query di una property specifica
+     * Recupera una lista (array) di TUTTI i records della Entity
+     *
+     * @return lista di tutte le istanze della Entity
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<WamCompany> findAll() {
+        return (ArrayList<WamCompany>) AQuery.getLista(WamCompany.class);
+    }// end of method
+
+    /**
+     * Recupera una istanza della Entity usando la query per una property specifica
      *
      * @param code valore della property code
-     *
-     * @return istanza di Company, null se non trovata
+     * @return istanza della Entity, null se non trovata
      */
     public static WamCompany findByCode(String code) {
         WamCompany instance = null;
@@ -128,7 +147,6 @@ public class WamCompany extends BaseCompany {
      * Ritorna la Demo Company
      *
      * @return la Demo Company, null se non esiste
-     *
      * @deprecated
      */
     public static WamCompany getDemoCompanyOld() {
@@ -141,15 +159,6 @@ public class WamCompany extends BaseCompany {
         return company;
     }// end of method
 
-    /**
-     * Recupera una lista (array) di tutti i records della Domain Class
-     *
-     * @return lista di tutte le istanze di Company
-     */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<WamCompany> findAll() {
-        return (ArrayList<WamCompany>) AQuery.getLista(WamCompany.class);
-    }// end of method
 
     @Override
     public String toString() {

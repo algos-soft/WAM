@@ -4,6 +4,8 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -131,6 +133,47 @@ public class Volontario extends WamCompanyEntity {
         setDipendente(dipendente);
     }// end of constructor
 
+
+    /**
+     * Recupera il totale dei records della Entity
+     * Filtrato sulla azienda corrente.
+     *
+     * @return numero totale di records nella Entity
+     */
+    public static int count() {
+        return count((WamCompany) CompanySessionLib.getCompany());
+    }// end of method
+
+
+    /**
+     * Recupera il totale dei records della Entity
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company croce di appartenenza
+     * @return numero totale di records della tavola
+     */
+    public static int count(WamCompany company) {
+        int totRec = 0;
+        long totTmp = CompanyQuery.getCount(Volontario.class, company);
+
+        if (totTmp > 0) {
+            totRec = (int) totTmp;
+        }// fine del blocco if
+
+        return totRec;
+    }// end of method
+
+
+    /**
+     * Recupera il totale dei records della Entity
+     * Senza filtri.
+     *
+     * @return numero totale di records nella Entity
+     */
+    public static int countAll() {
+        return count((WamCompany) null);
+    }// end of method
+
     /**
      * Recupera una istanza di Volontario usando la query standard della Primary Key
      *
@@ -149,6 +192,59 @@ public class Volontario extends WamCompanyEntity {
 
         return instance;
     }// end of method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla azienda corrente.
+     *
+     * @return lista di tutte le istanze di Funzione
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Volontario> findAll() {
+        return (ArrayList<Volontario>) CompanyQuery.getList(Volontario.class);
+    }// end of method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company croce di appartenenza
+     * @return lista di tutte le istanze di Funzione
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Volontario> findAll(WamCompany company) {
+        ArrayList<Volontario> lista = null;
+        ArrayList<Volontario> listaTmp;
+
+//        Container.Filter filter = new Compare.Equal(CompanyEntity_.company, company);
+        listaTmp = (ArrayList<Volontario>) AQuery.getLista(Volontario.class);
+        if (listaTmp != null && listaTmp.size() > 0) {
+            lista = new ArrayList<>();
+            for (Volontario vol : listaTmp) {
+                if (vol.getCompany().getId()==company.getId()) {
+                    lista.add(vol);
+                }// end of if cycle
+            }// end of for cycle
+        }// end of if cycle
+
+        return lista;
+    }// end of method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Senza filtri.
+     *
+     * @return lista di tutte le istanze di Funzione
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Volontario> findAllAll() {
+        return (ArrayList<Volontario>) AQuery.getLista(Volontario.class);
+    }// end of method
+
+
 
     /**
      * Recupera una istanza di Volontario usando la query di tutte e sole le property obbligatorie
@@ -187,32 +283,6 @@ public class Volontario extends WamCompanyEntity {
         return instance;
     }// end of method
 
-    /**
-     * Recupera il valore del numero totale di records della Domain Class
-     *
-     * @return numero totale di records della tavola
-     */
-    public static int count() {
-        int totRec = 0;
-        long totTmp = AQuery.getCount(Volontario.class);
-
-        if (totTmp > 0) {
-            totRec = (int) totTmp;
-        }// fine del blocco if
-
-        return totRec;
-    }// end of method
-
-    /**
-     * Recupera una lista (array) di tutti i records della Domain Class
-     *
-     * @return lista di tutte le istanze di Volontario
-     */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Volontario> findAll() {
-        return (ArrayList<Volontario>) AQuery.getLista(Volontario.class);
-
-    }// end of method
 
     /**
      * Creazione iniziale di un volontario

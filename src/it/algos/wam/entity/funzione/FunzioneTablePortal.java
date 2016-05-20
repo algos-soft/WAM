@@ -58,4 +58,5 @@ public class FunzioneTablePortal extends WamTablePortalSposta {
         getTable().refresh();
     }// end of method
 
+
 }// end of class

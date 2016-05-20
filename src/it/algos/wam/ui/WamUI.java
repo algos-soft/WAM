@@ -7,6 +7,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
+import it.algos.wam.bootstrap.TestService;
 import it.algos.wam.entity.companyentity.CompanyListener;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
@@ -101,6 +102,8 @@ public class WamUI extends UI {
 
         this.setContent(comp);
 
+        // log di partenza con uscita in Output
+        TestService.runTest();
     }// end of method
 
     /**

@@ -90,8 +90,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Costruttore minimo con tutte le properties obbligatorie
      *
-     * @param company     croce di appartenenza (property della superclasse)
-     * @param siglaInterna       sigla di riferimento interna (obbligatoria)
+     * @param company       croce di appartenenza (property della superclasse)
+     * @param siglaInterna  sigla di riferimento interna (obbligatoria)
      * @param siglaVisibile per il tabellone (obbligatoria)
      */
     public Funzione(BaseCompany company, String siglaInterna, String siglaVisibile) {
@@ -102,12 +102,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Costruttore completo
      *
-     * @param company     croce di appartenenza
-     * @param siglaInterna       sigla di riferimento interna (obbligatoria)
+     * @param company       croce di appartenenza
+     * @param siglaInterna  sigla di riferimento interna (obbligatoria)
      * @param siglaVisibile per il tabellone (obbligatoria)
-     * @param ordine      di presentazione nelle liste
-     * @param glyph       icona di FontAwesome (facoltative)
-     * @param note        di spiegazione (facoltative)
+     * @param ordine        di presentazione nelle liste
+     * @param glyph         icona di FontAwesome (facoltative)
+     * @param note          di spiegazione (facoltative)
      */
     public Funzione(BaseCompany company, String siglaInterna, String siglaVisibile, int ordine, FontAwesome glyph, String note) {
         super();
@@ -123,11 +123,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Recupera il totale dei records della Entity
      * Filtrato sulla azienda corrente.
      *
-     * @return numero totale di records della tavola
+     * @return numero totale di records nella Entity
      */
     public static int count() {
-        return count(CompanySessionLib.getCompany());
+        return count((WamCompany) CompanySessionLib.getCompany());
     }// end of method
+
 
     /**
      * Recupera il totale dei records della Entity
@@ -136,7 +137,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company croce di appartenenza
      * @return numero totale di records della tavola
      */
-    public static int count(BaseCompany company) {
+    public static int count(WamCompany company) {
         int totRec = 0;
         long totTmp = CompanyQuery.getCount(Funzione.class, company);
 
@@ -145,6 +146,17 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         }// fine del blocco if
 
         return totRec;
+    }// end of method
+
+
+    /**
+     * Recupera il totale dei records della Entity
+     * Senza filtri.
+     *
+     * @return numero totale di records nella Entity
+     */
+    public static int countAll() {
+        return count((WamCompany) null);
     }// end of method
 
 
@@ -168,16 +180,68 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return instance;
     }// end of method
 
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla azienda corrente.
+     *
+     * @return lista di tutte le istanze di Funzione
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Funzione> findAll() {
+        return (ArrayList<Funzione>) CompanyQuery.getList(Funzione.class);
+    }// end of method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company croce di appartenenza
+     * @return lista di tutte le istanze di Funzione
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Funzione> findAll(WamCompany company) {
+        ArrayList<Funzione> lista = null;
+        ArrayList<Funzione> listaTmp;
+
+//        Container.Filter filter = new Compare.Equal(CompanyEntity_.company, company);
+        listaTmp = (ArrayList<Funzione>) AQuery.getLista(Funzione.class);
+        if (listaTmp != null && listaTmp.size() > 0) {
+            lista = new ArrayList<>();
+            for (Funzione funz : listaTmp) {
+                if (funz.getCompany().getId()==company.getId()) {
+                    lista.add(funz);
+                }// end of if cycle
+            }// end of for cycle
+        }// end of if cycle
+
+        return lista;
+    }// end of method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Senza filtri.
+     *
+     * @return lista di tutte le istanze di Funzione
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Funzione> findAllAll() {
+        return (ArrayList<Funzione>) AQuery.getLista(Funzione.class);
+    }// end of method
+
+
     /**
      * Recupera una istanza di Funzione usando la query di una property specifica
      * Filtrato sulla azienda corrente.
      *
-     * @param sigla sigla di riferimento interna (obbligatoria)
+     * @param siglaInterna sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione, null se non trovata
      */
-    public static Funzione findBySigla(String sigla) {
+    public static Funzione findBySigla(String siglaInterna) {
         Funzione instance = null;
-        BaseEntity bean = CompanyQuery.queryOne(Funzione.class, Funzione_.siglaInterna, sigla);
+        BaseEntity bean = CompanyQuery.queryOne(Funzione.class, Funzione_.siglaInterna, siglaInterna);
 
         if (bean != null && bean instanceof Funzione) {
             instance = (Funzione) bean;
@@ -190,17 +254,17 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Recupera una istanza di Funzione usando la query di una property specifica
      * Filtrato sulla azienda passata come parametro.
      *
-     * @param company croce di appartenenza
-     * @param sigla   sigla di riferimento interna (obbligatoria)
+     * @param company      croce di appartenenza
+     * @param siglaInterna sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Funzione findBySigla(BaseCompany company, String sigla) {
+    public static Funzione findBySigla(WamCompany company, String siglaInterna) {
         Funzione instance = null;
         BaseEntity bean;
 
         EntityManager manager = EM.createEntityManager();
-        bean = CompanyQuery.queryOne(Funzione.class, Funzione_.siglaInterna, sigla, manager, company);
+        bean = CompanyQuery.queryOne(Funzione.class, Funzione_.siglaInterna, siglaInterna, manager, company);
         manager.close();
 
         if (bean != null && bean instanceof Funzione) {
@@ -212,96 +276,74 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
 
     /**
-     * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla azienda corrente.
-     *
-     * @return lista di tutte le istanze di Funzione
-     */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Funzione> findAll() {
-        return findAll(CompanySessionLib.getCompany());
-    }// end of method
-
-    /**
-     * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla azienda passata come parametro.
-     *
-     * @return lista di tutte le istanze di Funzione
-     */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Funzione> findAll(BaseCompany company) {
-        return (ArrayList<Funzione>) CompanyQuery.getList(Funzione.class);
-    }// end of method
-
-    /**
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
      *
-     * @param company croce di appartenenza
-     * @param sigla   sigla di riferimento interna (obbligatoria)
+     * @param company      croce di appartenenza
+     * @param siglaInterna sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione
      */
-    public static Funzione crea(WamCompany company, String sigla) {
-        return crea(company, null, sigla, "", 0, "");
+    public static Funzione crea(WamCompany company, String siglaInterna) {
+        return crea(company, null, siglaInterna, "", 0, "");
     }// end of static method
 
     /**
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
      *
-     * @param company croce di appartenenza
-     * @param manager the EntityManager to use
-     * @param sigla   sigla di riferimento interna (obbligatoria)
+     * @param company      croce di appartenenza
+     * @param manager      the EntityManager to use
+     * @param siglaInterna sigla di riferimento interna (obbligatoria)
      * @return istanza di Funzione
      */
-    public static Funzione crea(WamCompany company, EntityManager manager, String sigla) {
-        return crea(company, manager, sigla, "", 0, "");
+    public static Funzione crea(WamCompany company, EntityManager manager, String siglaInterna) {
+        return crea(company, manager, siglaInterna, "", 0, "");
     }// end of static method
 
     /**
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
      *
-     * @param company     croce di appartenenza
-     * @param manager     the EntityManager to use
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @param ordine      di presentazione nelle liste
-     * @param note        di spiegazione (facoltative)
+     * @param company       croce di appartenenza
+     * @param manager       the EntityManager to use
+     * @param siglaInterna  sigla di riferimento interna (obbligatoria)
+     * @param siglaVisibile per il tabellone (obbligatoria)
+     * @param ordine        di presentazione nelle liste
+     * @param note          di spiegazione (facoltative)
      * @return istanza di Funzione
      */
-    public static Funzione crea(WamCompany company, EntityManager manager, String sigla, String descrizione, int ordine, String note) {
-        return crea(company, manager, sigla, descrizione, ordine, note, null);
+    public static Funzione crea(WamCompany company, EntityManager manager, String siglaInterna, String siglaVisibile, int ordine, String note) {
+        return crea(company, manager, siglaInterna, siglaVisibile, ordine, note, null);
     }// end of static method
 
     /**
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
      *
-     * @param company     croce di appartenenza
-     * @param manager     the EntityManager to use
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @param ordine      di presentazione nelle liste
-     * @param note        di spiegazione (facoltative)
-     * @param glyph       dell'icona (facoltativo)
+     * @param company       croce di appartenenza
+     * @param manager       the EntityManager to use
+     * @param siglaInterna  sigla di riferimento interna (obbligatoria)
+     * @param siglaVisibile per il tabellone (obbligatoria)
+     * @param ordine        di presentazione nelle liste
+     * @param note          di spiegazione (facoltative)
+     * @param glyph         dell'icona (facoltativo)
      * @return istanza di Funzione
      */
     public static Funzione crea(
             WamCompany company,
             EntityManager manager,
-            String sigla,
-            String descrizione,
+            String siglaInterna,
+            String siglaVisibile,
             int ordine,
             String note,
             FontAwesome glyph) {
-        Funzione funzione = Funzione.findBySigla(company, sigla);
+        Funzione funzione = Funzione.findBySigla(company, siglaInterna);
 
         if (funzione == null) {
             funzione = new Funzione();
             funzione.setCompany(company);
-            funzione.setSiglaInterna(sigla);
-            funzione.setSiglaVisibile(descrizione);
+            funzione.setSiglaInterna(siglaInterna);
+            funzione.setSiglaVisibile(siglaVisibile);
             funzione.setOrdine(ordine);
             funzione.setNote(note);
             funzione.setIcon(glyph);

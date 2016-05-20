@@ -7,6 +7,8 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -123,6 +125,63 @@ public class Servizio extends WamCompanyEntity {
         setOraFine(oraFine);
     }// end of constructor
 
+//    /**
+//     * Recupera il valore del numero totale di records della della Entity
+//     *
+//     * @return numero totale di records della tavola
+//     */
+//    public static int count() {
+//        int totRec = 0;
+//        long totTmp = AQuery.getCount(Servizio.class);
+//
+//        if (totTmp > 0) {
+//            totRec = (int) totTmp;
+//        }// fine del blocco if
+//
+//        return totRec;
+//    }// end of method
+
+    /**
+     * Recupera il totale dei records della Entity
+     * Filtrato sulla azienda corrente.
+     *
+     * @return numero totale di records nella Entity
+     */
+    public static int count() {
+        return count((WamCompany) CompanySessionLib.getCompany());
+    }// end of method
+
+
+    /**
+     * Recupera il totale dei records della Entity
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company croce di appartenenza
+     * @return numero totale di records della tavola
+     */
+    public static int count(WamCompany company) {
+        int totRec = 0;
+        long totTmp = CompanyQuery.getCount(Servizio.class, company);
+
+        if (totTmp > 0) {
+            totRec = (int) totTmp;
+        }// fine del blocco if
+
+        return totRec;
+    }// end of method
+
+
+    /**
+     * Recupera il totale dei records della Entity
+     * Senza filtri.
+     *
+     * @return numero totale di records nella Entity
+     */
+    public static int countAll() {
+        return count((WamCompany) null);
+    }// end of method
+
+
     /**
      * Recupera una istanza di Servizio usando la query standard della Primary Key
      *
@@ -141,6 +200,59 @@ public class Servizio extends WamCompanyEntity {
 
         return instance;
     }// end of method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla azienda corrente.
+     *
+     * @return lista di tutte le istanze di Funzione
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Servizio> findAll() {
+        return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class);
+    }// end of method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company croce di appartenenza
+     * @return lista di tutte le istanze di Funzione
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Servizio> findAll(WamCompany company) {
+        ArrayList<Servizio> lista = null;
+        ArrayList<Servizio> listaTmp;
+
+//        Container.Filter filter = new Compare.Equal(CompanyEntity_.company, company);
+        listaTmp = (ArrayList<Servizio>) AQuery.getLista(Servizio.class);
+        if (listaTmp != null && listaTmp.size() > 0) {
+            lista = new ArrayList<>();
+            for (Servizio ser : listaTmp) {
+                if (ser.getCompany().getId()==company.getId()) {
+                    lista.add(ser);
+                }// end of if cycle
+            }// end of for cycle
+        }// end of if cycle
+
+        return lista;
+    }// end of method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Senza filtri.
+     *
+     * @return lista di tutte le istanze di Funzione
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Servizio> findAllAll() {
+        return (ArrayList<Servizio>) AQuery.getLista(Servizio.class);
+    }// end of method
+
+
 
     /**
      * Recupera una istanza di Servizio usando la query di una property specifica
@@ -185,31 +297,7 @@ public class Servizio extends WamCompanyEntity {
         return instance;
     }// end of method
 
-    /**
-     * Recupera il valore del numero totale di records della della Entity
-     *
-     * @return numero totale di records della tavola
-     */
-    public static int count() {
-        int totRec = 0;
-        long totTmp = AQuery.getCount(Servizio.class);
 
-        if (totTmp > 0) {
-            totRec = (int) totTmp;
-        }// fine del blocco if
-
-        return totRec;
-    }// end of method
-
-    /**
-     * Recupera una lista (array) di tutti i records della Entity
-     *
-     * @return lista di tutte le istanze di Servizio
-     */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Servizio> findAll() {
-        return (ArrayList<Servizio>) AQuery.getList(Servizio.class);
-    }// end of method
 
     /**
      * Creazione iniziale di un servizio

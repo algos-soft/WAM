@@ -34,7 +34,7 @@ public abstract class BootService {
     public static void creaCompanyDemo() {
 
         WamCompany company = creaCroceDemo();
-        initCompany(company, true);
+        initCompany(company, true, true);
     }// end of static method
 
     /**
@@ -43,9 +43,11 @@ public abstract class BootService {
      * Crea alcune funzioni standard
      * Crea una lista di volontari di esempio
      * Crea alcuni servizi di esempio
+     *
+     * @param company croce di appartenenza
      */
     public static void initCompany(WamCompany company) {
-        initCompany(company, false);
+        initCompany(company, true, false);
     }// end of static method
 
     /**
@@ -55,21 +57,29 @@ public abstract class BootService {
      * Crea una lista di volontari di esempio
      * Crea alcuni servizi di esempio
      * Crea alcuni turni vuoti (opzionale)
-     * Riempie i turni creati (opzionale)
+     * Crea le iscrizioni per i turni creati (opzionale)
+     *
+     * @param company   croce di appartenenza
+     * @param creaTurni flag per la creazione di turni vuoti
+     * @param company   flag per la creazione delle iscrizioni per i turni
      */
-    public static void initCompany(WamCompany company, boolean creaTurni) {
+    public static void initCompany(WamCompany company, boolean creaTurni, boolean creaIscrizioni) {
         ArrayList<Funzione> listaFunzioni;
         ArrayList<Volontario> listaVolontari;
         ArrayList<Servizio> listaServizi;
-        ArrayList<Turno> listaTurni;
+        ArrayList<Turno> listaTurni = null;
         EntityManager manager = EM.createEntityManager();
 
         listaFunzioni = creaFunzioni(company, manager);
         listaVolontari = creaVolontari(company, manager, listaFunzioni);
         listaServizi = creaServizi(company, manager, listaFunzioni);
+
         if (creaTurni) {
-            listaTurni = creaTurniVuoti(company, listaServizi);
-            riempieTurni(company, listaVolontari, listaServizi, listaTurni);
+            listaTurni = creaTurniVuoti(company, manager, listaServizi);
+        }// end of if cycle
+
+        if (creaIscrizioni) {
+//            riempieTurni(company, listaVolontari, listaServizi, listaTurni);
         }// end of if cycle
 
         manager.close();
@@ -99,7 +109,7 @@ public abstract class BootService {
      * Creazione iniziale di alcune funzioni standard per la croce selezionata
      * Le crea SOLO se non esistono già
      *
-     * @param company croce selezionata
+     * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @return lista delle funzioni create
      */
@@ -162,12 +172,13 @@ public abstract class BootService {
      * Creazione iniziale di alcuni volontari per la croce selezionata
      * Li crea SOLO se non esistono già
      *
-     * @param company   croce selezionata
-     * @param manager   the EntityManager to use
-     * @param listaFunz ioni della company
+     * @param company croce di appartenenza
+     * @param manager the EntityManager to use
+     * @param funz    lista delle funzioni di questa croce
+     * @return lista dei volontari creati
      */
     @SuppressWarnings("unchecked")
-    private static ArrayList<Volontario> creaVolontari(WamCompany company, EntityManager manager, ArrayList<Funzione> listaFunz) {
+    private static ArrayList<Volontario> creaVolontari(WamCompany company, EntityManager manager, ArrayList<Funzione> funz) {
         ArrayList<Volontario> listaVolontari = new ArrayList<>();
         ArrayList lista = new ArrayList<>();
 
@@ -176,12 +187,12 @@ public abstract class BootService {
         }// end of if cycle
 
         lista.add(Arrays.asList("Mario", "Brambilla"));
-        lista.add(Arrays.asList("Giovanna", "Durante", listaFunz));
-        lista.add(Arrays.asList("Diego", "Bertini", listaFunz.get(3)));
-        lista.add(Arrays.asList("Roberto", "Marchetti", listaFunz.get(2), listaFunz.get(3)));
+        lista.add(Arrays.asList("Giovanna", "Durante", funz));
+        lista.add(Arrays.asList("Diego", "Bertini", funz.get(3)));
+        lista.add(Arrays.asList("Roberto", "Marchetti", funz.get(2), funz.get(3)));
         lista.add(Arrays.asList("Edoardo", "Politi"));
         lista.add(Arrays.asList("Sabina", "Roncelli"));
-        lista.add(Arrays.asList("Lucia", "Casaroli", listaFunz.get(1)));
+        lista.add(Arrays.asList("Lucia", "Casaroli", funz.get(1)));
 
         for (int k = 0; k < lista.size(); k++) {
             listaVolontari.add(creaVolBase(company, manager, (List) lista.get(k)));
@@ -237,12 +248,13 @@ public abstract class BootService {
      * Creazione iniziale di alcuni servizi per la croce selezionata
      * Li crea SOLO se non esistono già
      *
-     * @param company   croce selezionata
-     * @param manager   the EntityManager to use
-     * @param listaFunz ioni della company
+     * @param company croce di appartenenza
+     * @param manager the EntityManager to use
+     * @param funz    lista delle funzioni di questa croce
+     * @return lista dei servizi creati
      */
     @SuppressWarnings("unchecked")
-    private static ArrayList<Servizio> creaServizi(WamCompany company, EntityManager manager, ArrayList<Funzione> listaFunz) {
+    private static ArrayList<Servizio> creaServizi(WamCompany company, EntityManager manager, ArrayList<Funzione> funz) {
         ArrayList<Servizio> listaServizi = new ArrayList<>();
         ArrayList lista = new ArrayList<>();
         int azzurro = new Color(146, 189, 255).getRGB();
@@ -253,15 +265,15 @@ public abstract class BootService {
             return null;
         }// end of if cycle
 
-        lista.add(Arrays.asList("med-mat", "Automedica mattino", 8, 12, true, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5)));
-        lista.add(Arrays.asList("med-pom", "Automedica pomeriggio", 12, 18, true, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5)));
-        lista.add(Arrays.asList("med-sera", "Automedica sera", 18, 22, true, azzurro, listaFunz.get(0), listaFunz.get(2), listaFunz.get(5)));
-        lista.add(Arrays.asList("amb-mat", "Ambulanza mattino", 8, 12, true, verdino, listaFunz.get(1), listaFunz.get(3)));
-        lista.add(Arrays.asList("amb-pom", "Ambulanza pomeriggio", 12, 20, true, verdino, listaFunz.get(1), listaFunz.get(3)));
-        lista.add(Arrays.asList("amb-notte", "Ambulanza notte", 20, 8, true, verdino, listaFunz.get(1), listaFunz.get(3)));
-        lista.add(Arrays.asList("dim", "Dimissioni ordinarie", 0, 0, true, rosa, listaFunz.get(1), listaFunz.get(4)));
-        lista.add(Arrays.asList("ext", "Extra", 0, 0, true, rosa, listaFunz.get(1), listaFunz.get(4)));
-        lista.add(Arrays.asList("avis", "Avis", 0, 0, true, rosa, listaFunz.get(1)));
+        lista.add(Arrays.asList("med-mat", "Automedica mattino", 8, 12, true, azzurro, funz.get(0), funz.get(2), funz.get(5)));
+        lista.add(Arrays.asList("med-pom", "Automedica pomeriggio", 12, 18, true, azzurro, funz.get(0), funz.get(2), funz.get(5)));
+        lista.add(Arrays.asList("med-sera", "Automedica sera", 18, 22, true, azzurro, funz.get(0), funz.get(2), funz.get(5)));
+        lista.add(Arrays.asList("amb-mat", "Ambulanza mattino", 8, 12, true, verdino, funz.get(1), funz.get(3)));
+        lista.add(Arrays.asList("amb-pom", "Ambulanza pomeriggio", 12, 20, true, verdino, funz.get(1), funz.get(3)));
+        lista.add(Arrays.asList("amb-notte", "Ambulanza notte", 20, 8, true, verdino, funz.get(1), funz.get(3)));
+        lista.add(Arrays.asList("dim", "Dimissioni ordinarie", 0, 0, true, rosa, funz.get(1), funz.get(4)));
+        lista.add(Arrays.asList("ext", "Extra", 0, 0, true, rosa, funz.get(1), funz.get(4)));
+        lista.add(Arrays.asList("avis", "Avis", 0, 0, true, rosa, funz.get(1)));
 
         for (int k = 0; k < lista.size(); k++) {
             listaServizi.add(creaServBase(company, manager, k + 1, (List) lista.get(k)));
@@ -338,15 +350,18 @@ public abstract class BootService {
      * Creazione iniziale di alcuni turni vuoti per la croce selezionata
      * Li crea SOLO se non esistono già
      *
-     * @param company croce selezionata
+     * @param company croce di appartenenza
+     * @param manager the EntityManager to use
+     * @param servizi lista dei servizi di questa croce
+     * @return lista dei turni creati
      */
-    private static ArrayList<Turno> creaTurniVuoti(WamCompany company, ArrayList<Servizio> listaServizi) {
-        ArrayList<Turno> listaTurni = new ArrayList<Turno>();
+    private static ArrayList<Turno> creaTurniVuoti(WamCompany company, EntityManager manager, ArrayList<Servizio> servizi) {
+        ArrayList<Turno> listaTurni = new ArrayList<>();
         Date oggi = LibDate.today();
 
         for (int k = 0; k < 30; k++) {
-            for (Servizio serv : listaServizi) {
-                listaTurni.add(Turno.crea(company, serv, LibDate.add(oggi, k)));
+            for (Servizio servizio : servizi) {
+                listaTurni.add(Turno.crea(company, servizio, LibDate.add(oggi, k)));
             }// end of for cycle
         }// end of for cycle
 
