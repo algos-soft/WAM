@@ -65,6 +65,7 @@ public class ServizioForm extends ModuleForm {
         layout.setMargin(true);
         layout.setSpacing(true);
 
+
         sfEditors = new ArrayList();
 
         return creaCompDetail(layout);

@@ -50,7 +50,6 @@ public class WamUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
 
-        setTheme("wam");
 
 //        // set theme
 //        String themeName;
@@ -98,6 +97,7 @@ public class WamUI extends UI {
                 comp = new ErrorScreen("Nome azienda non specificato nell'url o non esistente");
             }// end of if/else cycle
         }// end of if/else cycle
+
 
         this.setContent(comp);
 
