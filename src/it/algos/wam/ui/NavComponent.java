@@ -1,11 +1,10 @@
 package it.algos.wam.ui;
 
 import com.vaadin.navigator.View;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
+import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.webbase.web.menu.AMenuBar;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.navigator.AlgosNavigator;
@@ -42,10 +41,23 @@ public class NavComponent extends VerticalLayout {
         setSpacing(true);
         setSizeFull();
 
-        menuBar.setWidth("100%");
 
         this.nav = new AlgosNavigator(ui, body);
-        this.addComponent(menuBar);
+
+//        MenuBar loginBar = new MenuBar();
+//        loginBar.addItem("Login", FontAwesome.USER, null);
+//        HorizontalLayout layout = new HorizontalLayout();
+//        layout.setWidth("100%");
+//        layout.setSpacing(true);
+//        layout.addComponent(menuBar);
+//        layout.addComponent(loginBar);
+//
+//        menuBar.setWidth("100%");
+//        layout.setExpandRatio(menuBar, 1);
+//
+//        this.addComponent(layout);
+
+        this.addComponent(new MenuBarWithLogin(menuBar));
         this.addComponent(body);
         this.addComponent(footer);
 

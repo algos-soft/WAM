@@ -47,6 +47,12 @@ public class TestUI extends UI {
         window.setCaption("Titolo");
         window.setHeight("90%");
 
+        comp.addStyleName("yellowBg");
+        window.addStyleName("greenBg");
+
+        //comp.setHeight("100%");
+
+
 //        comp.setHeightUndefined();
 //
 //        VerticalLayout l = new VerticalLayout();
@@ -135,6 +141,7 @@ public class TestUI extends UI {
     public class MyForm extends VerticalLayout {
         public MyForm(Component comp) {
             addComponent(comp);
+            //setExpandRatio(comp, 1);
         }
     }
 

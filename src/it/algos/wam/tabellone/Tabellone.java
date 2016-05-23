@@ -15,6 +15,7 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.login.Login;
 import it.algos.wam.login.LoginComponent;
+import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.field.DateField;
 import it.algos.webbase.web.field.IntegerField;
@@ -329,15 +330,10 @@ public class Tabellone extends VerticalLayout implements View {
         private GridTabellone gridTabellone;
 
         public TabComponent() {
-
-            HorizontalLayout menuPlaceholder = new HorizontalLayout();
-            menuPlaceholder.setSpacing(true);
-            menuPlaceholder.addComponent(new TabMenuBarHome());
-            menuPlaceholder.addComponent(new TabMenuBar());
-            menuPlaceholder.addComponent(new TabMenuBarLogin());
-
             setSpacing(true);
-            addComponent(menuPlaceholder);
+
+            Component menubar = new MenuBarWithLogin(new TabMenuBar());
+            addComponent(menubar);
             addComponent(gridPlaceholder);
 
         }
@@ -384,7 +380,15 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private class TabMenuBar extends MenuBar {
         public TabMenuBar() {
-            MenuItem item = addItem("indietro", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
+
+            addItem("Home", FontAwesome.HOME, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    goHome();
+                }
+            });
+
+            addItem("indietro", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
@@ -477,23 +481,23 @@ public class Tabellone extends VerticalLayout implements View {
         }
     }
 
-    /**
-     * Menu bar di login
-     */
-    private class TabMenuBarLogin extends MenuBar {
-
-        public TabMenuBarLogin() {
-
-            addItem("Login", FontAwesome.USER, new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    Login.login();
-                }
-            });
-
-
-        }
-    }
+//    /**
+//     * Menu bar di login
+//     */
+//    private class TabMenuBarLogin extends MenuBar {
+//
+//        public TabMenuBarLogin() {
+//
+//            addItem("Login", FontAwesome.USER, new MenuBar.Command() {
+//                @Override
+//                public void menuSelected(MenuBar.MenuItem selectedItem) {
+//                    Login.login();
+//                }
+//            });
+//
+//
+//        }
+//    }
 
 
     /**
