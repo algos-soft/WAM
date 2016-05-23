@@ -93,11 +93,10 @@ public abstract class BootService {
         WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
         if (company == null) {
-            company = new WamCompany(WAMApp.DEMO_COMPANY_CODE, "Demo");
+            company = new WamCompany(WAMApp.DEMO_COMPANY_CODE, "Demo","info@crocedemo.it");
             company.setAddress1("Via Turati, 12");
             company.setAddress1("20199 Garbagnate Milanese");
             company.setContact("Mario Bianchi");
-            company.setEmail("info@crocedemo.it");
             company.setVaiSubitoTabellone(true);
             company.save();
         }// end of if cycle
@@ -410,6 +409,7 @@ public abstract class BootService {
             turno.setIscrizioni(iscrizioni);
             turno.setAssegnato(true);
             turno.save(manager);
+            int a=87;
         } // fine del ciclo for
 
 ////        if (listaServizi != null && listaServizi.size() > 1) {

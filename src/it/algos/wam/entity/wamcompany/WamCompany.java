@@ -55,16 +55,17 @@ public class WamCompany extends BaseCompany {
      * Necessario per le specifiche JavaBean
      */
     public WamCompany() {
-        this("", "");
+        this("", "", "");
     }// end of constructor
 
     /**
-     * Costruttore minimo con tutte le properties obbligatorie
+     * Costruttore completo con tutte le properties obbligatorie
      *
      * @param companyCode sigla di riferimento interna (obbligatoria)
      * @param name        descrizione della company (obbligatoria)
+     * @param email       indirizzo elettronico (obbligatorio)
      */
-    public WamCompany(String companyCode, String name) {
+    public WamCompany(String companyCode, String name, String email) {
         super(companyCode, name);
     }// end of constructor
 
@@ -86,7 +87,7 @@ public class WamCompany extends BaseCompany {
     }// end of method
 
     /**
-     * Recupera una istanza di WamCompany usando la query standard della Primary Key
+     * Recupera una istanza della Entity usando la query standard della Primary Key
      * Nessun filtro sulla azienda, perché la primary key è unica
      *
      * @param id valore (unico) della Primary Key

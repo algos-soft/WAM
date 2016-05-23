@@ -123,9 +123,7 @@ public class Volontario extends WamCompanyEntity {
      */
     public Volontario(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
         super();
-        if (this.getCompany() == null) {
-            super.setCompany(company);
-        }// fine del blocco if
+        this.setCompany(company);
         setNome(nome);
         setCognome(cognome);
         setDataNascita(dataNascita);
