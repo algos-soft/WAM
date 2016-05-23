@@ -2,6 +2,7 @@ package it.algos.wam.bootstrap;
 
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -18,6 +19,8 @@ public abstract class TestService {
 
     public static void runTest() {
         System.out.println("Run test: ");
+
+        Turno turno= Turno.find(1351);
 
         testCompany();
         testFunzione();
