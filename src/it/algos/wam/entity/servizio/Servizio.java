@@ -13,6 +13,7 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.lib.LibArray;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -22,6 +23,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -50,7 +52,7 @@ public class Servizio extends WamCompanyEntity {
     // CascadeOnDelete: instaura l'integrità referenziale a livello di database (foreign key on delete cascade)
     @OneToMany(mappedBy = "servizio", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
-    private List<ServizioFunzione> servizioFunzioni = new ArrayList();
+    private List<ServizioFunzione> servizioFunzioni = new ArrayList<>();
 
 
     //--sigla di riferimento interna (obbligatoria)
@@ -247,7 +249,6 @@ public class Servizio extends WamCompanyEntity {
     }// end of method
 
 
-
     /**
      * Recupera una istanza di Servizio usando la query di una property specifica
      *
@@ -290,7 +291,6 @@ public class Servizio extends WamCompanyEntity {
 
         return instance;
     }// end of method
-
 
 
     /**
@@ -361,7 +361,7 @@ public class Servizio extends WamCompanyEntity {
      * @param oraFine     del servizio (facoltativo)
      * @param orario      servizio ad orario prefissato e fisso ogni giorno
      * @param colore      del gruppo (facoltativo)
-     * @param funzioni lista delle funzioni (facoltativa)
+     * @param funzioni    lista delle funzioni (facoltativa)
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, Funzione... funzioni) {
@@ -585,8 +585,23 @@ public class Servizio extends WamCompanyEntity {
         this.orario = orario;
     }//end of setter method
 
+    /**
+     * List NON garantissce l'ordinamento
+     */
     public List<ServizioFunzione> getServizioFunzioni() {
-        return servizioFunzioni;
+        List<ServizioFunzione> listaOrdinata = new ArrayList<ServizioFunzione>();
+        LinkedHashMap<Integer, ServizioFunzione> mappa = new LinkedHashMap();
+
+        for (ServizioFunzione serFunz : servizioFunzioni) {
+            mappa.put(serFunz.getFunzione().getOrdine(), serFunz);
+        }// end of for cycle
+
+        mappa = LibArray.ordinaMappa(mappa);
+        for (Integer key : mappa.keySet()) {
+            listaOrdinata.add(mappa.get(key));
+        }// end of for cycle
+
+        return listaOrdinata;
     }// end of getter method
 
     public void setServizioFunzioni(List<ServizioFunzione> servizioFunzioni) {

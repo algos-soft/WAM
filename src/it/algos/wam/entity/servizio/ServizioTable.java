@@ -138,7 +138,7 @@ public class ServizioTable extends ETable {
             Servizio serv = (Servizio) bi.getBean();
             String s = "";
             List<ServizioFunzione> lista = serv.getServizioFunzioni();
-            Collections.sort(lista);
+//            Collections.sort(lista);
             for (ServizioFunzione sf : lista) {
                 if (s.length() > 0) {
                     s += ", ";

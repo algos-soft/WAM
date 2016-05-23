@@ -2,19 +2,11 @@ package it.algos.wam.bootstrap;
 
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.webbase.multiazienda.CompanyEntity;
-import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
-import it.algos.webbase.web.entity.EM;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 
 /**
@@ -54,6 +46,7 @@ public abstract class TestService {
             System.out.println("Nessuna company selezionata");
         }// end of if/else cycle
 
+        System.out.println("");
     }// end of method
 
 
@@ -69,14 +62,22 @@ public abstract class TestService {
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         int numFunzioniCorrenti = Funzione.count(companyCorrente);
         ArrayList<Funzione> listaFunzioniCorrenti = Funzione.findAll(companyCorrente);
-        print("Numero di funzioni company corrente (count)", numFunzioniCorrenti);
-        print("Numero di funzioni company corrente (lista)", listaFunzioniCorrenti.size());
+        print("Numero di funzioni con company selezionata (count)", numFunzioniCorrenti);
+        print("Numero di funzioni con company selezionata (lista)", listaFunzioniCorrenti.size());
 
         int numFunzioniCorrenti2 = Funzione.count();
         ArrayList<Funzione> listaFunzioniCorrenti2 = Funzione.findAll();
-        print("Numero di funzioni company corrente (count)-2", numFunzioniCorrenti2);
-        print("Numero di funzioni company corrente (lista)-2", listaFunzioniCorrenti2.size());
+        print("Numero di funzioni con company corrente (count)-2", numFunzioniCorrenti2);
+        print("Numero di funzioni con company corrente (lista)-2", listaFunzioniCorrenti2.size());
 
+        CompanySessionLib.setCompany(null);
+        int numFunzioniCorrenti3 = Funzione.count();
+        ArrayList<Funzione> listaFunzioniCorrenti3 = Funzione.findAll();
+        print("Numero di funzioni con company nulla (count)", numFunzioniCorrenti3);
+        print("Numero di funzioni con company nulla (lista)", listaFunzioniCorrenti3.size());
+        CompanySessionLib.setCompany(companyCorrente);
+
+        riTestCompany();
     }// end of method
 
 
@@ -92,14 +93,22 @@ public abstract class TestService {
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         int numVolontariCorrenti = Volontario.count(companyCorrente);
         ArrayList<Volontario> listaVolontariCorrenti = Volontario.findAll(companyCorrente);
-        print("Numero di volontari company corrente (count)", numVolontariCorrenti);
-        print("Numero di volontari company corrente (lista)", listaVolontariCorrenti.size());
+        print("Numero di volontari con company selezionata (count)", numVolontariCorrenti);
+        print("Numero di volontari con company selezionata (lista)", listaVolontariCorrenti.size());
 
         int numVolontariCorrenti2 = Volontario.count();
         ArrayList<Volontario> listaVolontariCorrenti2 = Volontario.findAll();
-        print("Numero di volontari company corrente (count)-2", numVolontariCorrenti2);
-        print("Numero di volontari company corrente (lista)-2", listaVolontariCorrenti2.size());
+        print("Numero di volontari con company corrente (count)-2", numVolontariCorrenti2);
+        print("Numero di volontari con company corrente (lista)-2", listaVolontariCorrenti2.size());
 
+        CompanySessionLib.setCompany(null);
+        int numVolontariCorrenti3 = Volontario.count();
+        ArrayList<Volontario> listaVolontariCorrenti3 = Volontario.findAll();
+        print("Numero di volontari con company nulla (count)", numVolontariCorrenti3);
+        print("Numero di volontari con company nulla (lista)", listaVolontariCorrenti3.size());
+        CompanySessionLib.setCompany(companyCorrente);
+
+        riTestCompany();
     }// end of method
 
     /**
@@ -114,14 +123,36 @@ public abstract class TestService {
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         int numServiziCorrenti = Servizio.count(companyCorrente);
         ArrayList<Servizio> listaServiziCorrenti = Servizio.findAll(companyCorrente);
-        print("Numero di servizi company corrente (count)", numServiziCorrenti);
-        print("Numero di servizi company corrente (lista)", listaServiziCorrenti.size());
+        print("Numero di servizi con company selezionata (count)", numServiziCorrenti);
+        print("Numero di servizi con company selezionata (lista)", listaServiziCorrenti.size());
 
         int numServiziCorrenti2 = Servizio.count();
         ArrayList<Servizio> listaServiziCorrenti2 = Servizio.findAll();
-        print("Numero di servizi company corrente (count)-2", numServiziCorrenti2);
-        print("Numero di servizi company corrente (lista)-2", listaServiziCorrenti2.size());
+        print("Numero di servizi con company corrente (count)-2", numServiziCorrenti2);
+        print("Numero di servizi con company corrente (lista)-2", listaServiziCorrenti2.size());
 
+        CompanySessionLib.setCompany(null);
+        int numServiziCorrenti3 = Servizio.count();
+        ArrayList<Servizio> listaServiziCorrenti3 = Servizio.findAll();
+        print("Numero di servizi con company nulla (count)-2", numServiziCorrenti3);
+        print("Numero di servizi con company nulla (lista)-2", listaServiziCorrenti3.size());
+        CompanySessionLib.setCompany(companyCorrente);
+
+        riTestCompany();
+    }// end of method
+
+    /**
+     * Company
+     */
+    private static void riTestCompany() {
+        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        if (companyCorrente != null) {
+            print("ri-selezionata", companyCorrente.getCompanyCode());
+        } else {
+            System.out.println("Nessuna company selezionata");
+        }// end of if/else cycle
+
+        System.out.println("");
     }// end of method
 
     /**
