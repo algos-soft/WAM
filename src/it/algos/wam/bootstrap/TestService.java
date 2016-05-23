@@ -20,7 +20,7 @@ public abstract class TestService {
     public static void runTest() {
         System.out.println("Run test: ");
 
-        Turno turno= Turno.find(1351);
+        Turno turno= Turno.find(1081);
 
         testCompany();
         testFunzione();
