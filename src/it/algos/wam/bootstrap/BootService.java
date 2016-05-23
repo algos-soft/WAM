@@ -93,7 +93,7 @@ public abstract class BootService {
         WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
         if (company == null) {
-            company = new WamCompany(WAMApp.DEMO_COMPANY_CODE, "Demo","info@crocedemo.it");
+            company = new WamCompany(WAMApp.DEMO_COMPANY_CODE, "Demo", "info@crocedemo.it");
             company.setAddress1("Via Turati, 12");
             company.setAddress1("20199 Garbagnate Milanese");
             company.setContact("Mario Bianchi");
@@ -109,7 +109,6 @@ public abstract class BootService {
      *
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
-     *
      * @return lista delle funzioni create
      */
     @SuppressWarnings("unchecked")
@@ -155,7 +154,6 @@ public abstract class BootService {
      * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
-     *
      * @return istanza di Funzione
      */
     private static Funzione creaFunzBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -174,7 +172,6 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param funz    lista delle funzioni di questa croce
-     *
      * @return lista dei volontari creati
      */
     @SuppressWarnings("unchecked")
@@ -208,7 +205,6 @@ public abstract class BootService {
      * @param company  croce di appartenenza
      * @param manager  the EntityManager to use
      * @param listaTmp di alcune property
-     *
      * @return istanza di Volontario
      */
     private static Volontario creaVolBase(WamCompany company, EntityManager manager, List listaTmp) {
@@ -250,7 +246,6 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param funz    lista delle funzioni di questa croce
-     *
      * @return lista dei servizi creati
      */
     @SuppressWarnings("unchecked")
@@ -290,7 +285,6 @@ public abstract class BootService {
      * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
-     *
      * @return istanza di Servizio
      */
     private static Servizio creaServBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -352,7 +346,6 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param servizi lista dei servizi di questa croce
-     *
      * @return lista dei turni creati
      */
     private static ArrayList<Turno> creaTurniVuoti(WamCompany company, EntityManager manager, ArrayList<Servizio> servizi) {
@@ -361,7 +354,7 @@ public abstract class BootService {
 
         for (int k = 0; k < 30; k++) {
             for (Servizio servizio : servizi) {
-                listaTurni.add(Turno.crea(company, manager,servizio, LibDate.add(oggi, k)));
+                listaTurni.add(Turno.crea(company, manager, servizio, LibDate.add(oggi, k)));
             }// end of for cycle
         }// end of for cycle
 
@@ -400,7 +393,7 @@ public abstract class BootService {
                 for (Volontario vol : volontari) {
                     if (vol.haFunzione(funz)) {
 //                        isc = new Iscrizione(turno, vol, new ServizioFunzione(serv, funz));
-                        isc= Iscrizione.crea(company,manager,turno,vol,new ServizioFunzione(serv, funz));
+                        isc = Iscrizione.crea(company, manager, turno, vol, new ServizioFunzione(company, serv, funz));
 //                        isc.save(manager);
                         iscrizioni.add(isc);
                     }// fine del blocco if
@@ -409,7 +402,7 @@ public abstract class BootService {
             turno.setIscrizioni(iscrizioni);
             turno.setAssegnato(true);
             turno.save(manager);
-            int a=87;
+            int a = 87;
         } // fine del ciclo for
 
 ////        if (listaServizi != null && listaServizi.size() > 1) {
