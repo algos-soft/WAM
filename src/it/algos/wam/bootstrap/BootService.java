@@ -259,7 +259,7 @@ public abstract class BootService {
             obbligatori = (Integer) listaTmp.get(7);
         }// end of if cycle
 
-        return Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, obbligatori,funzioni);
+        return Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, obbligatori, funzioni);
     }// end of static method
 
 
@@ -381,17 +381,22 @@ public abstract class BootService {
         Turno turno;
         ArrayList<Funzione> funzioni;
         ArrayList<Iscrizione> iscrizioni = new ArrayList<>();
+        ArrayList<Volontario> volTurno;
 
         for (int k = 0; k < 5; k++) {
 //            for (int k = 0; k < turni.size(); k = k + 2) {
             turno = turni.get(k);
+            volTurno = new ArrayList<>();
             serv = turno.getServizio();
             funzioni = serv.getFunzioni();
             for (Funzione funz : funzioni) {
                 for (Volontario vol : volontari) {
                     if (vol.haFunzione(funz)) {
-                        isc = Iscrizione.crea(company, manager, turno, vol, new ServizioFunzione(company, serv, funz));
-                        iscrizioni.add(isc);
+                        if (!volTurno.contains(vol)) {
+                            isc = Iscrizione.crea(company, manager, turno, vol, new ServizioFunzione(company, serv, funz));
+                            iscrizioni.add(isc);
+                            volTurno.add(vol);
+                        }// end of if cycle
                     }// fine del blocco if
                 } // fine del ciclo for-each
             } // fine del ciclo for-each
