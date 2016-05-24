@@ -346,6 +346,29 @@ public class ServizioForm extends ModuleForm {
 
             setSpacing(true);
 
+            //@todo aggiunta gac
+            if (true) {
+                Button iconButton;
+                iconButton = new Button();
+                iconButton.setHtmlContentAllowed(true);
+                iconButton.addStyleName("bfunzione");
+                iconButton.setEnabled(false);
+                addComponent(iconButton);
+                if (serFun != null) {
+                    Funzione funz = serFun.getFunzione();
+                    int codepoint = funz.getIconCodepoint();
+                    FontAwesome glyph = null;
+                    try {
+                        glyph = FontAwesome.fromCodepoint(codepoint);
+                    } catch (Exception e) {
+                    }
+                    if (glyph != null) {
+                        iconButton.setCaption(glyph.getHtml());
+                    }// end of if cycle
+                }
+            }// end of if cycle
+
+
             comboFunzioni = new ERelatedComboField(Funzione.class);
             comboFunzioni.setWidth("12em");
             if (serFun != null) {

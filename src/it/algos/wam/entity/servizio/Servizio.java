@@ -344,7 +344,7 @@ public class Servizio extends WamCompanyEntity {
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, ArrayList<Funzione> listaFunz) {
-        return crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, listaFunz.toArray(new Funzione[listaFunz.size()]));
+        return crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, 0, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
 
 
@@ -361,10 +361,11 @@ public class Servizio extends WamCompanyEntity {
      * @param oraFine     del servizio (facoltativo)
      * @param orario      servizio ad orario prefissato e fisso ogni giorno
      * @param colore      del gruppo (facoltativo)
+     * @param obbligatori numero delle funzioni obbligatorie (facoltativa)
      * @param funzioni    lista delle funzioni (facoltativa)
      * @return istanza di Servizio
      */
-    public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, Funzione... funzioni) {
+    public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, int obbligatori, Funzione... funzioni) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
@@ -374,9 +375,9 @@ public class Servizio extends WamCompanyEntity {
             servizio.setColore(colore);
 
             if (funzioni != null) {
-                for (Funzione funz : funzioni) {
-                    servizio.servizioFunzioni.add(new ServizioFunzione(company, servizio, funz));
-                } // fine del ciclo for-each
+                for (int k = 0; k < funzioni.length; k++) {
+                    servizio.servizioFunzioni.add(new ServizioFunzione(company, servizio, funzioni[k], k < obbligatori));
+                }// end of for cycle
             }// fine del blocco if
 
             servizio = (Servizio) servizio.save(manager);

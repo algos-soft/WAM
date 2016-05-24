@@ -2,20 +2,16 @@ package it.algos.wam.entity.serviziofunzione;
 
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.query.WamQuery;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
-import org.eclipse.persistence.annotations.CascadeOnDelete;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Classe di tipo JavaBean.
@@ -61,11 +57,19 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
     /**
      * Costruttore completo
      */
-    public ServizioFunzione(WamCompany company,Servizio servizio, Funzione funzione) {
+    public ServizioFunzione(WamCompany company, Servizio servizio, Funzione funzione) {
+        this(company, servizio, funzione, false);
+    }// end of general constructor
+
+    /**
+     * Costruttore completo
+     */
+    public ServizioFunzione(WamCompany company, Servizio servizio, Funzione funzione, boolean obbligatoria) {
         super();
         this.setCompany(company);
         this.setServizio(servizio);
         this.setFunzione(funzione);
+        this.setObbligatoria(obbligatoria);
     }// end of general constructor
 
     /**
@@ -133,7 +137,6 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
     }// end of method
 
 
-
     public Servizio getServizio() {
         return servizio;
     }// end of getter method
@@ -180,8 +183,8 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
      */
     @Override
     public int compareTo(ServizioFunzione other) {
-        Funzione fnQuesto=getFunzione();
-        Funzione fnAltro=other.getFunzione();
+        Funzione fnQuesto = getFunzione();
+        Funzione fnAltro = other.getFunzione();
         return fnQuesto.compareTo(fnAltro);
     }
 

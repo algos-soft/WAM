@@ -138,7 +138,7 @@ public abstract class BootService {
         lista.add(Arrays.asList("bar-aff", "Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
 
         lista.add(Arrays.asList("avis", "Avis", "Operatore trasporto AVIS", FontAwesome.MEDKIT));
-        lista.add(Arrays.asList("cent", "Cen", "Centralinista", FontAwesome.VOLUME_UP));
+        lista.add(Arrays.asList("cent", "Cen", "Centralinista", FontAwesome.PHONE));
 
         for (int k = 0; k < lista.size(); k++) {
             listaFunzioni.add(creaFunzBase(company, manager, k + 1, (List) lista.get(k)));
@@ -188,15 +188,15 @@ public abstract class BootService {
             return null;
         }// end of if cycle
 
-        lista.add(Arrays.asList("med-mat", "Automedica mattino", 8, 12, true, azzurro, setMedica(funz)));
-        lista.add(Arrays.asList("med-pom", "Automedica pomeriggio", 12, 18, true, azzurro, setMedica(funz)));
-        lista.add(Arrays.asList("med-sera", "Automedica sera", 18, 22, true, azzurro, setMedica(funz)));
-        lista.add(Arrays.asList("amb-mat", "Ambulanza mattino", 8, 12, true, verdino, setAmbulanza(funz)));
-        lista.add(Arrays.asList("amb-pom", "Ambulanza pomeriggio", 12, 20, true, verdino, setAmbulanza(funz)));
-        lista.add(Arrays.asList("amb-notte", "Ambulanza notte", 20, 8, true, verdino, setAmbulanzaNotte(funz)));
-        lista.add(Arrays.asList("dim", "Dimissioni ordinarie", 0, 0, true, rosa, setDimissioni(funz)));
-        lista.add(Arrays.asList("ext", "Extra", 0, 0, true, rosa, setDimissioni(funz)));
-        lista.add(Arrays.asList("avis", "Avis", 0, 0, true, rosa, setAvis(funz)));
+        lista.add(Arrays.asList("med-mat", "Automedica mattino", 8, 12, true, azzurro, setMedica(funz), 2));
+        lista.add(Arrays.asList("med-pom", "Automedica pomeriggio", 12, 18, true, azzurro, setMedica(funz), 2));
+        lista.add(Arrays.asList("med-sera", "Automedica sera", 18, 22, true, azzurro, setMedica(funz), 2));
+        lista.add(Arrays.asList("amb-mat", "Ambulanza mattino", 8, 12, true, verdino, setAmbulanza(funz), 2));
+        lista.add(Arrays.asList("amb-pom", "Ambulanza pomeriggio", 12, 20, true, verdino, setAmbulanza(funz), 2));
+        lista.add(Arrays.asList("amb-notte", "Ambulanza notte", 20, 8, true, verdino, setAmbulanzaNotte(funz), 2));
+        lista.add(Arrays.asList("dim", "Dimissioni ordinarie", 0, 0, true, rosa, setDimissioni(funz), 2));
+        lista.add(Arrays.asList("ext", "Extra", 0, 0, true, rosa, setDimissioni(funz), 2));
+        lista.add(Arrays.asList("avis", "Avis", 0, 0, true, rosa, setAvis(funz), 1));
 
         for (int k = 0; k < lista.size(); k++) {
             listaServizi.add(creaServBase(company, manager, k + 1, (List) lista.get(k)));
@@ -224,6 +224,7 @@ public abstract class BootService {
         int colore = 0;
         Funzione[] funzioni = null;
         ArrayList lista = null;
+        int obbligatori = 0;
 
         if (listaTmp.size() > 0 && listaTmp.get(0) instanceof String) {
             sigla = (String) listaTmp.get(0);
@@ -249,22 +250,16 @@ public abstract class BootService {
             colore = (Integer) listaTmp.get(5);
         }// end of if cycle
 
-        if (listaTmp.size() > 6) {
-            if (listaTmp.get(6) instanceof ArrayList) {
-                lista = (ArrayList) listaTmp.get(6);
-                funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
-            } else {
-                lista = new ArrayList();
-                for (int k = 6; k < listaTmp.size(); k++) {
-                    if (listaTmp.get(k) instanceof Funzione) {
-                        lista.add(listaTmp.get(k));
-                    }// end of if cycle
-                }// end of for cycle
-                funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
-            }// end of if/else cycle
+        if (listaTmp.size() > 6 && listaTmp.get(6) instanceof ArrayList) {
+            lista = (ArrayList) listaTmp.get(6);
+            funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
         }// end of if cycle
 
-        return Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, funzioni);
+        if (listaTmp.size() > 7 && listaTmp.get(7) instanceof Integer) {
+            obbligatori = (Integer) listaTmp.get(7);
+        }// end of if cycle
+
+        return Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, obbligatori,funzioni);
     }// end of static method
 
 

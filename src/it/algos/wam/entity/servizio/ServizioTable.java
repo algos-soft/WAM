@@ -19,7 +19,6 @@ import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -144,12 +143,17 @@ public class ServizioTable extends ETable {
                     s += ", ";
                 }
                 if (sf.isObbligatoria()) {
-                    s += "<strong>";
-                }
+                    s += "<strong>" + "<span style=\"color:red;\">";
+                } else {
+                    s +=  "<span style=\"color:blue;\">";
+                }// end of if/else cycle
+
                 s += sf.getFunzione().getSiglaInterna();
                 if (sf.isObbligatoria()) {
-                    s += "</strong>";
-                }
+                    s += "</span>" + "</strong>";
+                } else {
+                    s += "</span>";
+                }// end of if/else cycle
             }
             return new Label(s, ContentMode.HTML);
         }
