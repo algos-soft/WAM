@@ -352,7 +352,9 @@ public class ServizioForm extends ModuleForm {
                 iconButton = new Button();
                 iconButton.setHtmlContentAllowed(true);
                 iconButton.addStyleName("bfunzione");
+                iconButton.setWidth("3em");
                 iconButton.setEnabled(false);
+
                 addComponent(iconButton);
                 if (serFun != null) {
                     Funzione funz = serFun.getFunzione();
