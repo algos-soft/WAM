@@ -33,6 +33,7 @@ import it.algos.webbase.web.screen.ErrorScreen;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Gac on 08 mar 2016.
@@ -40,6 +41,8 @@ import java.util.ArrayList;
  */
 @Theme("wam")
 public class WamUI extends UI {
+
+    private MenuBar menubar;
 
     // si registra chi è interessato alle modifiche delle company (aggiunta, cancellazione, modifica di quella corrente)
     private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
@@ -245,6 +248,7 @@ public class WamUI extends UI {
         /* creo un componente standard di navigazione */
         NavComponent nc = new NavComponent(this);
         MenuBar mb = nc.getMenuBar();
+        menubar=mb;
 
         // aggiungo le view - la menubar viene riempita automaticamente
         nc.addMod(new UtenteModulo("User"));
@@ -351,6 +355,8 @@ public class WamUI extends UI {
         // aggiungo un MenuItem con il tabellone.
         // volendo posso anche aggiungerlo nella posizione desiderata
         MenuBar mb = nc.getMenuBar();
+        menubar=mb;
+
         mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -358,6 +364,7 @@ public class WamUI extends UI {
                 setContent(tab);
             }
         }, itemFunzione);
+
 
         // da chiamare dopo che ho aggiunto tutti i MenuItems,
         // configura il Navigator in base alla MenuBar
@@ -431,5 +438,17 @@ public class WamUI extends UI {
             listener.companyChanged(company);
         }// end of for cycle
     }// end of method
+
+
+    public void removeMenuItem(String caption){
+        List<MenuBar.MenuItem> items= menubar.getItems();
+        for(MenuBar.MenuItem item : items){
+            if(item.getText().equals(caption)){
+                menubar.removeItem(item);
+                break;
+            }
+        }
+    }
+
 
 }// end of class

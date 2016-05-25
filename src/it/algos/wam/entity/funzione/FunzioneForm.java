@@ -3,6 +3,7 @@ package it.algos.wam.entity.funzione;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
+import it.algos.wam.ui.WamUI;
 import it.algos.webbase.web.field.TextArea;
 import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.form.ModuleForm;
@@ -238,6 +239,21 @@ public class FunzioneForm extends ModuleForm {
         layout.addComponent(fsigla);
         layout.addComponent(fdesc);
         layout.addComponent(fnote);
+
+
+        // test remove menu item
+        Button button=new Button("Remove menu");
+        button.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                UI ui = getUI();
+                if (ui instanceof WamUI) {
+                    WamUI wamUI = (WamUI)ui;
+                    wamUI.removeMenuItem(FunzioneMod.MENU_ADDRESS);
+                }
+            }
+        });
+        layout.addComponent(button);
 
         return layout;
     }
