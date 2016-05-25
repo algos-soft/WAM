@@ -7,6 +7,7 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.wam.entity.servizio.ServizioTable;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.ATable;
@@ -67,6 +68,11 @@ public class VolontarioMod extends WamMod {
     @Override
     public ModuleForm createForm(Item item) {
         return new VolontarioForm(item, this);
+    }// end of method
+
+    @Override
+    public ATable createTable() {
+        return new VolontarioTable(this);
     }// end of method
 
     /**

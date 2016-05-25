@@ -1,5 +1,7 @@
 package it.algos.wam.entity.serviziofunzione;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
@@ -9,6 +11,7 @@ import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -63,6 +66,11 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
 
     /**
      * Costruttore completo
+     *
+     * @param company      croce di appartenenza (obbligatorio)
+     * @param servizio     di riferimento (obbligatorio)
+     * @param funzione     di riferimento (obbligatorio)
+     * @param obbligatoria la funzione (facoltativo)
      */
     public ServizioFunzione(WamCompany company, Servizio servizio, Funzione funzione, boolean obbligatoria) {
         super();
@@ -93,18 +101,53 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
 
     /**
      * Recupera una istanza di ServizioFunzione usando la query di una property specifica
+     * Filtrato sulla azienda corrente.
      *
-     * @param sigla valore della property Sigla
+     * @param servizio di riferimento (obbligatorio)
+     * @param funzione di riferimento (obbligatorio)
      * @return istanza di ServizioFunzione, null se non trovata
      */
-    public static ServizioFunzione findByv(String sigla) {
+    @SuppressWarnings("unchecked")
+    public static ServizioFunzione findByServFunz(Servizio servizio, Funzione funzione) {
         ServizioFunzione instance = null;
-        BaseEntity entity = AQuery.queryOne(ServizioFunzione.class, ServizioFunzione_.sigla, sigla);
+        BaseEntity bean = null;
 
-        if (entity != null) {
-            if (entity instanceof ServizioFunzione) {
-                instance = (ServizioFunzione) entity;
-            }// end of if cycle
+//        EntityManager manager = EM.createEntityManager();
+//        bean = CompanyQuery.queryOne(ServizioFunzione.class, ServizioFunzione_.sigla,"");
+//        manager.close();
+
+        if (bean != null && bean instanceof ServizioFunzione) {
+            instance = (ServizioFunzione) bean;
+        }// end of if cycle
+
+        return instance;
+    }// end of method
+
+    /**
+     * Recupera una istanza di ServizioFunzione usando la query di una property specifica
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company  croce di appartenenza
+     * @param servizio di riferimento (obbligatorio)
+     * @param funzione di riferimento (obbligatorio)
+     * @return istanza di ServizioFunzione, null se non trovata
+     */
+    @SuppressWarnings("unchecked")
+    public static ServizioFunzione findByServFunz(WamCompany company, Servizio servizio, Funzione funzione) {
+        ServizioFunzione instance = null;
+        BaseEntity bean = null;
+        ArrayList<ServizioFunzione> lista;
+
+        Container.Filter filter = new Compare.Equal(ServizioFunzione_.servizio.getName(), servizio);
+        Container.Filter filter2 = new Compare.Equal(ServizioFunzione_.funzione.getName(), funzione);
+        lista = (ArrayList<ServizioFunzione>) AQuery.getLista(ServizioFunzione.class, filter, filter2);
+
+        if (lista.size() == 1) {
+            bean = lista.get(0);
+        }// end of if cycle
+
+        if (bean != null) {
+            instance = (ServizioFunzione) bean;
         }// end of if cycle
 
         return instance;
@@ -125,6 +168,28 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
 
         return totRec;
     }// end of method
+
+    /**
+     * Creazione iniziale di un ServizioFunzione
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company      croce di appartenenza (obbligatorio)
+     * @param manager      the EntityManager to use
+     * @param servizio     di riferimento (obbligatorio)
+     * @param funzione     di riferimento (obbligatorio)
+     * @param obbligatoria la funzione (facoltativo)
+     * @return istanza di ServizioFunzione
+     */
+    public static ServizioFunzione crea(WamCompany company, EntityManager manager, Servizio servizio, Funzione funzione, boolean obbligatoria) {
+        ServizioFunzione servFunz = ServizioFunzione.findByServFunz(company, servizio, funzione);
+
+        if (servFunz == null) {
+            servFunz = new ServizioFunzione(company, servizio, funzione, obbligatoria);
+            servFunz = (ServizioFunzione) servFunz.save(manager);
+        }// end of if cycle
+
+        return servFunz;
+    }// end of static method
 
     /**
      * Recupera una lista (array) di tutti i records della Entity

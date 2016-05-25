@@ -69,6 +69,7 @@ public abstract class BootService {
         ArrayList<Volontario> listaVolontari;
         ArrayList<Turno> listaTurni = null;
         EntityManager manager = EM.createEntityManager();
+        manager.getTransaction().begin();
 
         listaFunzioni = creaFunzioni(company, manager);
         listaServizi = creaServizi(company, manager, listaFunzioni);
@@ -82,6 +83,7 @@ public abstract class BootService {
             riempieTurni(company, manager, listaTurni, listaVolontari, listaServizi);
         }// end of if cycle
 
+        manager.getTransaction().commit();
         manager.close();
     }// end of static method
 
@@ -281,13 +283,16 @@ public abstract class BootService {
             return null;
         }// end of if cycle
 
-        lista.add(Arrays.asList("Mario", "Brambilla"));
+        lista.add(Arrays.asList("Stefano", "Brambilla", funz.get(1)));
+        lista.add(Arrays.asList("Mario", "Abbati", funz.get(2)));
         lista.add(Arrays.asList("Giovanna", "Durante", funz));
-        lista.add(Arrays.asList("Diego", "Bertini", funz.get(3)));
-        lista.add(Arrays.asList("Roberto", "Marchetti", funz.get(2), funz.get(3)));
-        lista.add(Arrays.asList("Edoardo", "Politi"));
-        lista.add(Arrays.asList("Sabina", "Roncelli"));
-        lista.add(Arrays.asList("Lucia", "Casaroli", funz.get(1)));
+        lista.add(Arrays.asList("Diego", "Bertini", funz.get(6)));
+        lista.add(Arrays.asList("Roberto", "Marchetti", funz.get(7), funz.get(9)));
+        lista.add(Arrays.asList("Mirella", "Pace", funz.get(8)));
+        lista.add(Arrays.asList("Edoardo", "Politi", funz.get(10)));
+        lista.add(Arrays.asList("Sabina", "Roncelli", funz.get(12)));
+        lista.add(Arrays.asList("Lucia", "Casaroli", funz.get(13)));
+        lista.add(Arrays.asList("Antonio", "Zambetti", funz.get(9)));
 
         for (int k = 0; k < lista.size(); k++) {
             listaVolontari.add(creaVolBase(company, manager, (List) lista.get(k)));
@@ -382,24 +387,31 @@ public abstract class BootService {
         ArrayList<Funzione> funzioni;
         ArrayList<Iscrizione> iscrizioni = new ArrayList<>();
         ArrayList<Volontario> volTurno;
+        ArrayList<ServizioFunzione> serviziFunzione;
+        ServizioFunzione servFunz;
 
-        for (int k = 0; k < 5; k++) {
-//            for (int k = 0; k < turni.size(); k = k + 2) {
+        for (int k = 0; k < turni.size(); k = k + 2) {
             turno = turni.get(k);
             volTurno = new ArrayList<>();
             serv = turno.getServizio();
             funzioni = serv.getFunzioni();
             for (Funzione funz : funzioni) {
+                servFunz = serv.getServizioFunzione(funz);
                 for (Volontario vol : volontari) {
                     if (vol.haFunzione(funz)) {
                         if (!volTurno.contains(vol)) {
-                            isc = Iscrizione.crea(company, manager, turno, vol, new ServizioFunzione(company, serv, funz));
+                            isc = Iscrizione.crea(company, manager, turno, vol, servFunz);
                             iscrizioni.add(isc);
                             volTurno.add(vol);
+                            break;
                         }// end of if cycle
+                        int a = 87;
                     }// fine del blocco if
+                    int axx = 87;
                 } // fine del ciclo for-each
+                int awww = 87;
             } // fine del ciclo for-each
+            int alkòlkòlk = 87;
             turno.setIscrizioni(iscrizioni);
             turno.setAssegnato(true);
             turno.save(manager);
@@ -410,6 +422,7 @@ public abstract class BootService {
     /**
      * Subset
      */
+    @SuppressWarnings("unchecked")
     private static ArrayList<Funzione> setMedica(ArrayList<Funzione> funz) {
         ArrayList<Funzione> subset = new ArrayList();
 
@@ -423,6 +436,7 @@ public abstract class BootService {
     /**
      * Subset
      */
+    @SuppressWarnings("unchecked")
     private static ArrayList<Funzione> setAmbulanza(ArrayList<Funzione> funz) {
         ArrayList<Funzione> subset = new ArrayList();
 
@@ -437,6 +451,7 @@ public abstract class BootService {
     /**
      * Subset
      */
+    @SuppressWarnings("unchecked")
     private static ArrayList<Funzione> setAmbulanzaNotte(ArrayList<Funzione> funz) {
         ArrayList<Funzione> subset = new ArrayList();
 
@@ -450,6 +465,7 @@ public abstract class BootService {
     /**
      * Subset
      */
+    @SuppressWarnings("unchecked")
     private static ArrayList<Funzione> setDimissioni(ArrayList<Funzione> funz) {
         ArrayList<Funzione> subset = new ArrayList();
 
@@ -462,6 +478,7 @@ public abstract class BootService {
     /**
      * Subset
      */
+    @SuppressWarnings("unchecked")
     private static ArrayList<Funzione> setAvis(ArrayList<Funzione> funz) {
         ArrayList<Funzione> subset = new ArrayList();
 
