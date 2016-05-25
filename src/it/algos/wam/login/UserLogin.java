@@ -9,6 +9,7 @@ import it.algos.webbase.web.lib.LibImage;
 import it.algos.webbase.web.lib.LibResource;
 import it.algos.webbase.web.login.Login;
 import it.algos.webbase.web.login.LoginListener;
+import it.algos.webbase.web.login.UserIF;
 
 /**
  * Componente di Login per l'utente
@@ -102,7 +103,7 @@ public class UserLogin extends VerticalLayout {
 	private void doLogin(){
 
 		// registra la company nella sessione in base all'utente loggato
-		Utente user = Login.getLogin().getUser();
+		UserIF user = Login.getLogin().getUser();
 		boolean success= CompanySessionLib.registerCompanyByUser(user);
 
 		if(success){

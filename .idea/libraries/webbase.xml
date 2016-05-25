@@ -6,6 +6,7 @@
     <JAVADOC />
     <SOURCES>
       <root url="file://$PROJECT_DIR$/../webbase/src" />
+      <root url="file://$PROJECT_DIR$/../webbase/src" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/../webbase/out/artifacts/webbase" recursive="false" />
   </library>
