@@ -31,7 +31,8 @@ public class FunzioneTable extends ETable {
             Sortable sortable = (Sortable) cont;
             sortable.sort(new Object[]{Funzione_.ordine.getName()}, new boolean[]{true});
         }
-
+        setColumnWidth(Funzione_.siglaInterna,100);
+        setColumnWidth(Funzione_.siglaVisibile,110);
     }
 
     protected Object[] getDisplayColumns() {
