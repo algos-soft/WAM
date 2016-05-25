@@ -106,9 +106,9 @@ public class Iscrizione extends WamCompanyEntity {
         Iscrizione instance = null;
         BaseEntity bean;
 
-        EntityManager manager = EM.createEntityManager();
+//        EntityManager manager = EM.createEntityManager();
         bean = CompanyQuery.queryOne(Iscrizione.class, Iscrizione_.turno ,turno);
-        manager.close();
+//        manager.close();
 
         if (bean != null && bean instanceof Iscrizione) {
             instance = (Iscrizione) bean;
@@ -119,16 +119,16 @@ public class Iscrizione extends WamCompanyEntity {
 
 
     /**
-     * Creazione iniziale di un volontario
-     * Lo crea SOLO se non esiste già
+     * Creazione iniziale di una iscrizione
+     * La crea SOLO se non esiste già
      *
      * @param company    croce di appartenenza
      * @param manager    the EntityManager to use
      * @param turno      turno di riferimento
-     * @param serFun     a quale funzione del servizio il volontario si iscrive
      * @param volontario milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
+     * @param serFun     a quale funzione del servizio il volontario si iscrive
      *
-     * @return istanza di Volontario
+     * @return istanza di Iscrizione
      */
     public static Iscrizione crea(WamCompany company, EntityManager manager,Turno turno, Volontario volontario, ServizioFunzione serFun) {
         Iscrizione isc = Iscrizione.findByTurno(company, turno);
