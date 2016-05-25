@@ -73,7 +73,7 @@ public class UserLogin extends VerticalLayout {
 				// quindi non posso farlo una volta sola alla costruzione della GUI)
 				Login.getLogin().setLoginListener(new LoginListener() {
 					@Override
-					public void onUserLogin(Utente utente, boolean b) {
+					public void onUserLogin(UserIF utente, boolean b) {
 						doLogin();
 					}
 				});

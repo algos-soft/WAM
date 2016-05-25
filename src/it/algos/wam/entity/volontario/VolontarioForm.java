@@ -4,9 +4,11 @@ import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.TextArea;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
-import it.algos.webbase.web.field.CheckBoxField;
+import it.algos.webbase.web.field.*;
+import it.algos.webbase.web.field.PasswordField;
 import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.module.ModulePop;
@@ -18,8 +20,6 @@ import java.util.List;
  * Created by webbase templates.
  */
 public class VolontarioForm extends ModuleForm {
-
-    private static String LAR_CAMPO = "300px";
 
     /**
      * The form used to edit an item.
@@ -34,11 +34,6 @@ public class VolontarioForm extends ModuleForm {
     }// end of constructor
 
 
-//    @Override
-//    protected void init() {
-//        super.init();
-//        readFunzioni();
-//    }
 
     /**
      * Populate the map to bind item properties to fields.
@@ -58,32 +53,30 @@ public class VolontarioForm extends ModuleForm {
         TextField field;
         CheckBoxField fieldCheck;
         TextArea fieldArea;
-//        super.createFields();
-
-        Attribute[] attributes = {
-                Volontario_.nome,
-                Volontario_.cognome,
-                Volontario_.dipendente,
-                Volontario_.attivo,
-                Volontario_.note,
-                Volontario_.admin
-        };
 
         field = new TextField(Volontario_.nome.getName());
-        field.setColumns(25);
+        field.setColumns(20);
         field.focus();
-        addField(attributes[0], field);
+        addField(Volontario_.nome, field);
+
         field = new TextField(Volontario_.cognome.getName());
-        field.setColumns(25);
-        addField(attributes[1], field);
+        field.setColumns(20);
+        addField(Volontario_.cognome, field);
+
+        PasswordField passFld = new PasswordField(Volontario_.password.getName());
+        passFld.setColumns(20);
+        addField(Volontario_.password, passFld);
+
         fieldCheck = new CheckBoxField(Volontario_.dipendente.getName());
-        addField(attributes[2], fieldCheck);
+        addField(Volontario_.dipendente, fieldCheck);
+
         fieldCheck = new CheckBoxField(Volontario_.attivo.getName());
-        addField(attributes[3], fieldCheck);
+        addField(Volontario_.attivo, fieldCheck);
+
         fieldArea = new TextArea(Volontario_.note.getName());
         fieldArea.setColumns(25);
         fieldArea.setRows(4);
-        addField(attributes[4], fieldArea);
+        addField(Volontario_.note, fieldArea);
 
         fieldCheck = new CheckBoxField(Volontario_.admin.getName());
         addField(Volontario_.admin, fieldCheck);
@@ -111,11 +104,12 @@ public class VolontarioForm extends ModuleForm {
         Label label;
 
         field = getField(Volontario_.nome.getName());
-        field.setWidth(LAR_CAMPO);
         layout.addComponent(field);
 
         field = getField(Volontario_.cognome.getName());
-        field.setWidth(LAR_CAMPO);
+        layout.addComponent(field);
+
+        field = getField(Volontario_.password.getName());
         layout.addComponent(field);
 
         HorizontalLayout layoutBox = new HorizontalLayout();
@@ -128,28 +122,6 @@ public class VolontarioForm extends ModuleForm {
 
         field = getField(Volontario_.admin.getName());
         layout.addComponent(field);
-
-
-//        layout.addComponent(new Label("Funzioni abilitate"));
-//
-//        //--funzioni del volontario
-//        volontario = (Volontario) getEntity();
-//        if (volontario != null) {
-//            listaFunzioni = volontario.getVolontarioFunzioni();
-//        }// end of if cycle
-
-//        if (listaFunzioni != null) {
-//            for (VolontarioFunzione funz : listaFunzioni) {
-//                funzText=funz.getFunzione().getDescrizione();
-//                label= new Label(funzText);
-//                label.setWidth(LAR_CAMPO);
-//                layoutBoxFunz = new HorizontalLayout();
-//                layoutBoxFunz.setSpacing(true);
-//                layoutBoxFunz.addComponent(label);
-//                layoutBoxFunz.addComponent(new CheckBoxField());
-//                layout.addComponent(layoutBoxFunz);
-//            }// end of for cycle
-//        }// end of if cycle
 
         layout.addComponent(creaCompFunzioni());
 

@@ -13,6 +13,7 @@ import java.util.Date;
 public class Volontario_ extends CompanyEntity_ {
     public static volatile SingularAttribute<Volontario, String> nome;
     public static volatile SingularAttribute<Volontario, String> cognome;
+    public static volatile SingularAttribute<Volontario, String> password;
     public static volatile SingularAttribute<Volontario, String> cellulare;
     public static volatile SingularAttribute<Volontario, String> telefono;
     public static volatile SingularAttribute<Volontario, String> email;

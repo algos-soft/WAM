@@ -64,6 +64,8 @@ public class Volontario extends WamCompanyEntity {
     private boolean dipendente = false;
     private boolean attivo = true;
 
+    private String password;
+
     // se è admin - provvisorio
     private boolean admin;
 
@@ -445,6 +447,14 @@ public class Volontario extends WamCompanyEntity {
     public void setAttivo(boolean attivo) {
         this.attivo = attivo;
     }//end of setter method
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public List<VolontarioFunzione> getVolontarioFunzioni() {
         return volontarioFunzioni;
