@@ -129,7 +129,6 @@ public class ServizioForm extends ModuleForm {
         });
         layout.addComponent(bNuova);
 
-
         return layout;
     }
 
