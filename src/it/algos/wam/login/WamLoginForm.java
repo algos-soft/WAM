@@ -2,7 +2,10 @@ package it.algos.wam.login;
 
 import com.vaadin.ui.Component;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.volontario.Volontario_;
+import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
+import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.login.DefaultLoginForm;
 import it.algos.webbase.web.login.UserIF;
 
@@ -13,10 +16,6 @@ public class WamLoginForm extends DefaultLoginForm {
 
     ERelatedComboField userCombo;
 
-    public WamLoginForm() {
-        //addComponent();
-    }
-
     @Override
     public Component createUsernameComponent() {
         userCombo = new ERelatedComboField(Volontario.class, "Utente");
@@ -25,7 +24,10 @@ public class WamLoginForm extends DefaultLoginForm {
 
     @Override
     public void setUsername(String name) {
-        //super.setUsername(name);
+        BaseEntity entity = CompanyQuery.queryOne(Volontario.class, Volontario_.cognome, name);
+        if(entity!=null){
+            userCombo.setValue(entity);
+        }
     }
 
 
@@ -35,7 +37,7 @@ public class WamLoginForm extends DefaultLoginForm {
      */
     public UserIF getSelectedUser(){
         UserIF user=null;
-        Object obj = userCombo.getValue();
+        Object obj = userCombo.getSelectedBean();
         if(obj!=null){
             if(obj instanceof UserIF){
                 user = (UserIF)obj;

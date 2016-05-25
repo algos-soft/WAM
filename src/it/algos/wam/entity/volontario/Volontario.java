@@ -7,6 +7,8 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.lib.LibCrypto;
+import it.algos.webbase.web.login.UserIF;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -32,7 +34,7 @@ import java.util.List;
  * <p>
  */
 @Entity
-public class Volontario extends WamCompanyEntity {
+public class Volontario extends WamCompanyEntity implements UserIF {
 
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
@@ -448,8 +450,29 @@ public class Volontario extends WamCompanyEntity {
         this.attivo = attivo;
     }//end of setter method
 
+    @Override
+    public String getNickname() {
+        return getCognome();
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    /**
+     * @inheritDoc
+     */
+    public boolean validatePassword(String password) {
+        boolean valid=false;
+        String encPassword=getPassword();
+        String clearPass= LibCrypto.decrypt(encPassword);
+        if(clearPass!=null){
+            if (clearPass.equals(password)) {
+                valid = true;
+            }
+        }
+        return valid;
     }
 
     public void setPassword(String password) {
