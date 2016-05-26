@@ -452,12 +452,17 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
     @Override
     public String getNickname() {
-        return getCognome();
+        return getNome()+getCognome();
     }
 
     public String getPassword() {
-        return password;
+        return LibCrypto.decrypt(password);
     }
+
+    public void setPassword(String password) {
+        this.password = LibCrypto.encrypt(password);
+    }
+
 
     @Override
     /**
@@ -475,9 +480,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         return valid;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public List<VolontarioFunzione> getVolontarioFunzioni() {
         return volontarioFunzioni;

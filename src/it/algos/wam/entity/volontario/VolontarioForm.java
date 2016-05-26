@@ -67,6 +67,10 @@ public class VolontarioForm extends ModuleForm {
         passFld.setColumns(20);
         addField(Volontario_.password, passFld);
 
+//        field = new TextField(Volontario_.password.getName());
+//        field.setColumns(20);
+//        addField(Volontario_.password, field);
+
         fieldCheck = new CheckBoxField(Volontario_.dipendente.getName());
         addField(Volontario_.dipendente, fieldCheck);
 
@@ -193,5 +197,6 @@ public class VolontarioForm extends ModuleForm {
         }
 
     }
+
 
 }// end of class
