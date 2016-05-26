@@ -2,10 +2,7 @@ package it.algos.wam.login;
 
 import com.vaadin.ui.Component;
 import it.algos.wam.entity.volontario.Volontario;
-import it.algos.wam.entity.volontario.Volontario_;
-import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
-import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.login.DefaultLoginForm;
 import it.algos.webbase.web.login.UserIF;
 

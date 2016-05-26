@@ -116,6 +116,8 @@ public class WamUI extends UI {
 
         this.setContent(comp);
 
+        //this.setContent(new WamSplashComponent());
+
         // log di partenza con uscita in Output
         TestService.runTest();
     }// end of method

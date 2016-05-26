@@ -11,7 +11,6 @@ import com.vaadin.ui.*;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
-import it.algos.wam.login.LoginComponent;
 import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.field.DateField;
@@ -79,7 +78,6 @@ public class Tabellone extends VerticalLayout implements View {
         navigator = new Navigator(UI.getCurrent(), this);
         navigator.addProvider(new TabNavViewProvider());
         navigator.addView(ADDR_TABELLONE, tabComponent);
-        navigator.addView(ADDR_LOGIN, new LoginComponent());
         navigator.setErrorView(new TabErrView());
         navigator.navigateTo(ADDR_TABELLONE);
 
