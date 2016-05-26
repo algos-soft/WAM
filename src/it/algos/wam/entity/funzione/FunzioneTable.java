@@ -9,7 +9,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
-import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
@@ -21,19 +20,64 @@ import it.algos.webbase.web.module.ModulePop;
  */
 public class FunzioneTable extends ETable {
 
-    protected static final String COL_ICON = "icona";
+    protected static final String COL_ICON = "Icona";
 
 
     public FunzioneTable(ModulePop module) {
         super(module);
-        Container cont = getContainerDataSource();
-        if (cont instanceof Sortable) {
-            Sortable sortable = (Sortable) cont;
-            sortable.sort(new Object[]{Funzione_.ordine.getName()}, new boolean[]{true});
-        }
-        setColumnWidth(Funzione_.siglaInterna,100);
-        setColumnWidth(Funzione_.siglaVisibile,110);
-    }
+    }// end of constructor
+
+
+    /**
+     * Initializes the table.
+     * Must be called from the costructor in each subclass
+     * Chiamato dal costruttore di ModuleTable
+     */
+    @Override
+    protected void init() {
+        super.init();
+
+        setColumnReorderingAllowed(true);
+
+        fixSort();
+        fixColumn();
+    }// end of method
+
+    private void fixSort() {
+        if (LibSession.isDeveloper()) {
+            Container cont = getContainerDataSource();
+            if (cont instanceof Sortable) {
+                Sortable sortable = (Sortable) cont;
+                sortable.sort(new Object[]{Funzione_.ordine.getName()}, new boolean[]{true});
+            }// end of if cycle
+        } else {
+            setSortEnabled(false);
+        }// end of if/else cycle
+    }// end of method
+
+
+    private void fixColumn() {
+        setColumnExpandRatio(Funzione_.siglaInterna, 1);
+        setColumnExpandRatio(Funzione_.siglaVisibile, 2);
+        setColumnExpandRatio(Funzione_.note, 2);
+
+        setColumnHeader(Funzione_.ordine, "#");
+        setColumnHeader(Funzione_.siglaInterna, "Interna");
+        setColumnHeader(Funzione_.siglaVisibile, "Visibile");
+        setColumnHeader(Funzione_.note, "Descrizione");
+
+        setColumnWidth(Funzione_.ordine, 55);
+        setColumnWidth(COL_ICON, 70);
+        setColumnWidth(Funzione_.siglaInterna, 110);
+        setColumnWidth(Funzione_.siglaVisibile, 110);
+    }// end of method
+
+
+    @Override
+    protected void createAdditionalColumns() {
+        addGeneratedColumn(COL_ICON, new IconColumnGenerator());
+    }// end of method
+
 
     protected Object[] getDisplayColumns() {
         if (LibSession.isDeveloper()) {
@@ -54,25 +98,6 @@ public class FunzioneTable extends ETable {
             };
         }// end of if/else cycle
     }// end of method
-
-    @Override
-    protected void createAdditionalColumns() {
-        addGeneratedColumn(COL_ICON, new IconColumnGenerator());
-    }
-
-
-    @Override
-    protected void init() {
-        super.init();
-
-        setColumnReorderingAllowed(true);
-        setSortEnabled(false);
-
-        setColumnExpandRatio(Funzione_.siglaInterna, 1);
-        setColumnExpandRatio(Funzione_.siglaVisibile, 2);
-        setColumnExpandRatio(Funzione_.note, 2);
-
-    }
 
 
     /**
@@ -139,4 +164,4 @@ public class FunzioneTable extends ETable {
     }
 
 
-}
+}// end of class
