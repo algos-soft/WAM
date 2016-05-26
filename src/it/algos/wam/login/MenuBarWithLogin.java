@@ -17,27 +17,11 @@ public class MenuBarWithLogin extends HorizontalLayout {
         setWidth("100%");
         setSpacing(true);
 
-//        MenuBar loginBar = new MenuBar();
-//        loginBar.addItem("Login", FontAwesome.USER, new MenuBar.Command() {
-//            @Override
-//            public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                Login.login();
-//            }
-//        });
-
-        LoginButton loginBar = new LoginButton();
-        Login login = Login.getLogin();
-        login.setLoginForm(new WamLoginForm());
-        loginBar.addLogformListener(login);
-
         addComponent(menubar);
-        addComponent(loginBar);
+        addComponent(new LoginButton());
 
         menubar.setWidth("100%");
         setExpandRatio(menubar, 1);
-
-
-
 
     }
 

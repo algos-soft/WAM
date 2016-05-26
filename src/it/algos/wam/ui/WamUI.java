@@ -19,6 +19,7 @@ import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
+import it.algos.wam.login.WamLogin;
 import it.algos.wam.tabellone.Tabellone;
 import it.algos.webbase.domain.log.LogMod;
 import it.algos.webbase.domain.pref.PrefMod;
@@ -28,6 +29,7 @@ import it.algos.webbase.domain.utente.UtenteModulo;
 import it.algos.webbase.domain.vers.VersMod;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.login.Login;
 import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.screen.ErrorScreen;
 
@@ -63,11 +65,17 @@ public class WamUI extends UI {
 //        }
 //        setTheme(themeName);
 
+        // Questa applicazione necessita di una logica di login specifica
+        // Inietto subito l'oggetto Login nella sessione
+        Login.setLogin(new WamLogin());
+
         // controlla l'accesso come programmatore
         leggeBackdoor(request);
 
         // legge la croce
         WamCompany company = leggeCompany();
+
+
 
         Component comp;
 
@@ -75,6 +83,10 @@ public class WamUI extends UI {
 
             // registra la Company nella sessione
             CompanySessionLib.setCompany(company);
+
+            // auto login from cookies (solo dopo che abbiamo la Company in sessione!)
+            boolean logged = Login.getLogin().loginFromCookies();
+
 
             //--controlla la property della croce, per sapere se far partire subito il tabellone
             if (company.isVaiSubitoTabellone()) {  // mostra subito il tabellone senza login

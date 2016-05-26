@@ -24,9 +24,11 @@ public class WamLoginForm extends DefaultLoginForm {
 
     @Override
     public void setUsername(String name) {
-        BaseEntity entity = CompanyQuery.queryOne(Volontario.class, Volontario_.cognome, name);
-        if(entity!=null){
-            userCombo.setValue(entity);
+        Volontario v = Volontario.queryByNick(name);
+        if(v!=null) {
+            userCombo.setValue(v.getId());
+        }else{
+            userCombo.setValue(null);   // no selection
         }
     }
 

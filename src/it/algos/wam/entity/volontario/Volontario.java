@@ -225,7 +225,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         if (listaTmp != null && listaTmp.size() > 0) {
             lista = new ArrayList<>();
             for (Volontario vol : listaTmp) {
-                if (vol.getCompany().getId()==company.getId()) {
+                if (vol.getCompany().getId() == company.getId()) {
                     lista.add(vol);
                 }// end of if cycle
             }// end of for cycle
@@ -245,7 +245,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     public static ArrayList<Volontario> findAllAll() {
         return (ArrayList<Volontario>) AQuery.getLista(Volontario.class);
     }// end of method
-
 
 
     /**
@@ -452,23 +451,27 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
     @Override
     public String getNickname() {
-        return getNome()+getCognome();
+        return getNome() + getCognome();
     }
 
     public String getPassword() {
-        String pass=null;
-        if(password!=null){
-            pass=LibCrypto.decrypt(password);
+        String pass = null;
+        if (password != null) {
+            pass = LibCrypto.decrypt(password);
         }
         return pass;
     }
 
     public void setPassword(String password) {
-        String pass=null;
-        if(password!=null){
+        String pass = null;
+        if (password != null) {
             pass = LibCrypto.encrypt(password);
         }
-        this.password=pass;
+        this.password = pass;
+    }
+
+    public String getEncryptedPassword() {
+        return password;
     }
 
 
@@ -477,10 +480,9 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @inheritDoc
      */
     public boolean validatePassword(String password) {
-        boolean valid=false;
-        String encPassword=getPassword();
-        String clearPass= LibCrypto.decrypt(encPassword);
-        if(clearPass!=null){
+        boolean valid = false;
+        String clearPass = getPassword();
+        if (clearPass != null) {
             if (clearPass.equals(password)) {
                 valid = true;
             }
@@ -597,4 +599,24 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         result = 31 * result + (dataNascita != null ? dataNascita.hashCode() : 0);
         return result;
     }
-}// end of domain class
+
+    /**
+     * Recupera un volontario della company corrente per nick
+     *
+     * @param nick il nick (come ritornato da getNickname())
+     * @return il volontario
+     */
+    public static Volontario queryByNick(String nick) {
+        Volontario found = null;
+        List<Volontario> list = (List<Volontario>)CompanyQuery.queryList(Volontario.class);
+        for(Volontario v : list){
+            if(v.getNickname().equals(nick)){
+                found=v;
+                break;
+
+            }
+        }
+        return found;
+    }
+
+}
