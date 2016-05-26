@@ -456,11 +456,19 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     }
 
     public String getPassword() {
-        return LibCrypto.decrypt(password);
+        String pass=null;
+        if(password!=null){
+            pass=LibCrypto.decrypt(password);
+        }
+        return pass;
     }
 
     public void setPassword(String password) {
-        this.password = LibCrypto.encrypt(password);
+        String pass=null;
+        if(password!=null){
+            pass = LibCrypto.encrypt(password);
+        }
+        this.password=pass;
     }
 
 
