@@ -21,6 +21,7 @@ import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
 import it.algos.wam.login.WamLogin;
 import it.algos.wam.tabellone.Tabellone;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.log.LogMod;
 import it.algos.webbase.domain.pref.PrefMod;
 import it.algos.webbase.domain.ruolo.Ruolo;
@@ -29,7 +30,7 @@ import it.algos.webbase.domain.utente.UtenteModulo;
 import it.algos.webbase.domain.vers.VersMod;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
-import it.algos.webbase.web.login.Login;
+import it.algos.webbase.web.login.*;
 import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.screen.ErrorScreen;
 
@@ -49,10 +50,113 @@ public class WamUI extends UI {
     // si registra chi è interessato alle modifiche delle company (aggiunta, cancellazione, modifica di quella corrente)
     private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
 
+
+
+
+
     /**
      * @param request the Vaadin request that caused this UI to be created
      */
-    @Override
+    //@Override
+    protected void initNew(VaadinRequest request) {
+
+        Component comp=null;
+
+        // Questa applicazione necessita di una logica di login specifica
+        // Inietto subito l'oggetto Login nella sessione
+        WamLogin login = new WamLogin();
+        Login.setLogin(login);
+
+        login.addLoginListener(new LoginListener() {
+            @Override
+            public void onUserLogin(LoginEvent e) {
+                Component comp = new Tabellone(getCurrentAddress());
+                setContent(comp);
+//                switch (e.getLoginType()) {
+//
+//                    case TYPE_FORM:
+//                        int a = 87;
+//                        break;
+//                    case TYPE_COOKIES:
+//                        int b = 87;
+//                        break;
+//                }
+            }
+        });
+
+        login.addLogoutListener(new LogoutListener() {
+            @Override
+            public void onUserLogout(LogoutEvent e) {
+                Component comp;
+                BaseCompany company = CompanySessionLib.getCompany();
+                if(company!=null){  // logout from company
+                    WamCompany wamComp = (WamCompany)company;
+                    if(wamComp.isVaiSubitoTabellone()){
+                        comp = new Tabellone(getCurrentAddress());
+                    }else{
+                        comp=new WamSplashComponent();
+                    }
+                }else{
+                    comp=new WamSplashComponent();
+                }
+
+                setContent(comp);
+
+            }
+        });
+
+
+        // controlla l'accesso come programmatore
+        boolean prog=leggeBackdoor(request);
+
+        if(!prog){
+
+            String companyName = getCompanyNameFromUrl();
+            if(companyName!=null){
+                WamCompany company = WamCompany.findByCode(companyName);
+                if(company!=null){
+
+                    // registra la Company nella sessione
+                    CompanySessionLib.setCompany(company);
+
+                    // auto login from cookies (solo dopo che abbiamo la Company in sessione!)
+                    boolean logged = Login.getLogin().loginFromCookies();
+
+                    if(company.isVaiSubitoTabellone()) {
+                        comp = new Tabellone(getCurrentAddress());
+                    } else {
+                        if(logged){
+                            comp = new Tabellone(getCurrentAddress());
+                        }else{
+                            comp = new WamSplashComponent();
+                        }
+                    }
+
+                }else{
+                    comp=new ErrorScreen("Company "+companyName+" non trovata");
+                }
+
+            }else{
+                comp=new ErrorScreen("Company non specificata");
+            }
+
+        }else{
+            comp = creaCompProgrammatore();
+        }
+
+        this.setContent(comp);
+
+
+
+
+    }
+
+
+
+    /**
+     * @param request the Vaadin request that caused this UI to be created
+     */
+    //@Override
     protected void init(VaadinRequest request) {
 
 
@@ -116,11 +220,13 @@ public class WamUI extends UI {
 
         this.setContent(comp);
 
-        //this.setContent(new WamSplashComponent());
 
         // log di partenza con uscita in Output
         TestService.runTest();
     }// end of method
+
+
+
 
     /**
      * Controlla se è la prima volta che passa di qui, nell'ambito della sessione
@@ -145,14 +251,19 @@ public class WamUI extends UI {
      *
      * @param request the Vaadin request that caused this UI to be created
      */
-    private void leggeBackdoor(VaadinRequest request) {
+    private boolean leggeBackdoor(VaadinRequest request) {
+        boolean isProg=false;
+
         String prog = request.getParameter(WamRuoli.developer.getNome());
 
         if (prog != null && !prog.isEmpty()) {
             if (prog.equals("gac") || prog.equals("alex")) {
                 LibSession.setDeveloper(true);
+                isProg=true;
             }// end of if cycle
         }// end of if cycle
+
+        return isProg;
 
     }// end of method
 
@@ -190,6 +301,31 @@ public class WamUI extends UI {
         return company;
 
     }// end of method
+
+
+    /**
+     * Estrae dall'url il nome della company
+     * @return il nome della company
+     */
+    private String getCompanyNameFromUrl() {
+        WamCompany company = null;
+
+        // recupero il codice della company dall'url
+        URI uri = Page.getCurrent().getLocation();
+        String path = uri.getPath();
+        String[] parti = path.split("/");
+        String siglaComp = null;
+        for (int i = 0; i < parti.length; i++) {
+            if (i > 1) {
+                siglaComp = parti[i];
+                break;
+            }
+        }
+
+        return siglaComp;
+
+    }// end of method
+
 
     /**
      * Crea il componente da visualizzare in funzione del ruolo.
@@ -386,6 +522,17 @@ public class WamUI extends UI {
 
         return nc;
 
+    }
+
+
+    /**
+     * Crea il componente per l'admin
+     *
+     * @return il componente creato
+     */
+    private Component creaCompAdmin(){
+        ErrorScreen comp = new ErrorScreen("Componente Admin - work in progress");
+        return comp;
     }
 
     /**

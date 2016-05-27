@@ -68,7 +68,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
     private String password;
 
-    // se è admin - provvisorio
+    // se è admin
     private boolean admin;
 
     //--scadenza certificati
