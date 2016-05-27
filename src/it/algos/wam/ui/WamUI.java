@@ -72,15 +72,6 @@ public class WamUI extends UI {
             public void onUserLogin(LoginEvent e) {
                 Component comp = new Tabellone(getCurrentAddress());
                 setContent(comp);
-//                switch (e.getLoginType()) {
-//
-//                    case TYPE_FORM:
-//                        int a = 87;
-//                        break;
-//                    case TYPE_COOKIES:
-//                        int b = 87;
-//                        break;
-//                }
             }
         });
 
