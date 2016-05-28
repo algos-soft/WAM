@@ -1,21 +1,15 @@
 package it.algos.wam.entity.volontario;
 
-import com.vaadin.client.ui.Icon;
-import com.vaadin.client.ui.ImageIcon;
 import com.vaadin.data.Container;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.FontIcon;
-import com.vaadin.server.Resource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.webbase.multiazienda.ETable;
-import it.algos.webbase.web.lib.LibResource;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 
@@ -27,6 +21,9 @@ import java.util.ArrayList;
  */
 public class VolontarioTable extends ETable {
 
+    // larghezza delle colonne funzioni
+    private static int LAR = 90;
+
 
     /**
      * Costruttore
@@ -35,19 +32,15 @@ public class VolontarioTable extends ETable {
      */
     public VolontarioTable(ModulePop module) {
         super(module);
-        inizia();
     }// end of constructor
 
 
-    private void inizia() {
-        Container cont = getContainerDataSource();
-        if (cont instanceof Container.Sortable) {
-            Container.Sortable sortable = (Container.Sortable) cont;
-            sortable.sort(new Object[]{Volontario_.cognome.getName()}, new boolean[]{true});
-        }// end of if cycle
-
-    }// end of method
-
+    /**
+     * Create additional columns
+     * (add generated columns, nested properties...)
+     * <p>
+     * Override in the subclass
+     */
     @Override
     protected void createAdditionalColumns() {
         ArrayList<Funzione> listaFunzioni = Funzione.findAll();
@@ -56,6 +49,15 @@ public class VolontarioTable extends ETable {
         }// end of for cycle
     }// end of method
 
+
+    /**
+     * Returns an array of the visible columns ids. Ids might be of type String
+     * or Attribute.<br>
+     * This implementations returns all the columns (no order).
+     *
+     * @return the list
+     */
+    @Override
     protected Object[] getDisplayColumns() {
         ArrayList lista = new ArrayList<>();
         ArrayList<Funzione> listaFunzioni = Funzione.findAll();
@@ -73,6 +75,45 @@ public class VolontarioTable extends ETable {
 
         return lista.toArray();
     }// end of method
+
+
+    /**
+     * Initializes the table.
+     * Must be called from the costructor in each subclass
+     * Chiamato dal costruttore di ModuleTable
+     */
+    @Override
+    protected void init() {
+        super.init();
+
+        setColumnReorderingAllowed(true);
+
+        fixSort();
+        fixColumn();
+    }// end of method
+
+
+    private void fixSort() {
+        if (LibSession.isDeveloper()) {
+            Container cont = getContainerDataSource();
+            if (cont instanceof Sortable) {
+                Sortable sortable = (Sortable) cont;
+                sortable.sort(new Object[]{Volontario_.cognome.getName()}, new boolean[]{true});
+            }// end of if cycle
+        } else {
+            setSortEnabled(false);
+        }// end of if/else cycle
+    }// end of method
+
+
+    private void fixColumn() {
+        ArrayList<Funzione> listaFunzioni = Funzione.findAll();
+
+        for (Funzione funz : listaFunzioni) {
+            setColumnWidth(funz.getSiglaInterna(), LAR);
+        }// end of for cycle
+    }// end of method
+
 
     /**
      * Colonna generata.
@@ -94,7 +135,7 @@ public class VolontarioTable extends ETable {
         public Component generateCell(Table source, Object itemId, Object columnId) {
             Volontario vol = null;
             VolontarioFunzione volFunz = null;
-            Label label =null;
+            Label label = null;
 
             if (itemId instanceof Long) {
                 vol = Volontario.find((Long) itemId);
