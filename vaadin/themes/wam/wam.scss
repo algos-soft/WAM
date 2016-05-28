@@ -274,5 +274,18 @@
     }
   }
 
+  // spunta dei volontari - ok
+  .labelsi {
+    .v-icon {
+      color:green;
+    }
+  }
+  // spunta dei volontari - no
+  .labelno {
+    .v-icon {
+      color:red;
+    }
+  }
+
 
 }

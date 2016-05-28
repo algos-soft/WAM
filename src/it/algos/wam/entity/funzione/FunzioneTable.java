@@ -20,12 +20,60 @@ import it.algos.webbase.web.module.ModulePop;
  */
 public class FunzioneTable extends ETable {
 
+
+    // id della colonna generata "Icona"
     protected static final String COL_ICON = "Icona";
 
 
+    /**
+     * Costruttore
+     *
+     * @param module di riferimento (obbligatorio)
+     */
     public FunzioneTable(ModulePop module) {
         super(module);
     }// end of constructor
+
+
+    /**
+     * Create additional columns
+     * (add generated columns, nested properties...)
+     * <p>
+     * Override in the subclass
+     */
+    @Override
+    protected void createAdditionalColumns() {
+        addGeneratedColumn(COL_ICON, new IconColumnGenerator());
+    }// end of method
+
+
+    /**
+     * Returns an array of the visible columns ids. Ids might be of type String
+     * or Attribute.<br>
+     * This implementations returns all the columns (no order).
+     *
+     * @return the list
+     */
+    @Override
+    protected Object[] getDisplayColumns() {
+        if (LibSession.isDeveloper()) {
+            return new Object[]{
+                    WamCompanyEntity_.company,
+                    Funzione_.ordine,
+                    COL_ICON,
+                    Funzione_.siglaInterna,
+                    Funzione_.siglaVisibile,
+                    Funzione_.note,
+            };// end of array
+        } else {
+            return new Object[]{
+                    COL_ICON,
+                    Funzione_.siglaInterna,
+                    Funzione_.siglaVisibile,
+                    Funzione_.note,
+            };// end of array
+        }// end of if/else cycle
+    }// end of method
 
 
     /**
@@ -43,6 +91,7 @@ public class FunzioneTable extends ETable {
         fixColumn();
     }// end of method
 
+
     private void fixSort() {
         if (LibSession.isDeveloper()) {
             Container cont = getContainerDataSource();
@@ -57,47 +106,21 @@ public class FunzioneTable extends ETable {
 
 
     private void fixColumn() {
-        setColumnExpandRatio(Funzione_.siglaInterna, 1);
-        setColumnExpandRatio(Funzione_.siglaVisibile, 2);
-        setColumnExpandRatio(Funzione_.note, 2);
-
         setColumnHeader(Funzione_.ordine, "#");
         setColumnHeader(Funzione_.siglaInterna, "Interna");
         setColumnHeader(Funzione_.siglaVisibile, "Visibile");
         setColumnHeader(Funzione_.note, "Descrizione");
 
+        setColumnExpandRatio(Funzione_.siglaInterna, 1);
+        setColumnExpandRatio(Funzione_.siglaVisibile, 2);
+        setColumnExpandRatio(Funzione_.note, 2);
+
         setColumnWidth(Funzione_.ordine, 55);
-        setColumnWidth(COL_ICON, 70);
+        setColumnWidth(COL_ICON, 68);
         setColumnWidth(Funzione_.siglaInterna, 110);
         setColumnWidth(Funzione_.siglaVisibile, 110);
     }// end of method
 
-
-    @Override
-    protected void createAdditionalColumns() {
-        addGeneratedColumn(COL_ICON, new IconColumnGenerator());
-    }// end of method
-
-
-    protected Object[] getDisplayColumns() {
-        if (LibSession.isDeveloper()) {
-            return new Object[]{
-                    WamCompanyEntity_.company,
-                    Funzione_.ordine,
-                    COL_ICON,
-                    Funzione_.siglaInterna,
-                    Funzione_.siglaVisibile,
-                    Funzione_.note,
-            };
-        } else {
-            return new Object[]{
-                    COL_ICON,
-                    Funzione_.siglaInterna,
-                    Funzione_.siglaVisibile,
-                    Funzione_.note,
-            };
-        }// end of if/else cycle
-    }// end of method
 
 
     /**
@@ -148,7 +171,6 @@ public class FunzioneTable extends ETable {
                 }
             });
 
-
             Property prop = item.getItemProperty(Funzione_.iconCodepoint.getName());
             if (prop != null) {
                 FontAwesome glyph = null;
@@ -160,8 +182,7 @@ public class FunzioneTable extends ETable {
                 }
             }
             return bIcon;
-        }
-    }
-
+        }// end of method
+    }// end of inner class
 
 }// end of class

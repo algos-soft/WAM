@@ -111,6 +111,9 @@ public class ServizioForm extends ModuleForm {
         layout.addComponent(placeholderOrario);
         placeholderOrario.setVisible(isOrarioPredefinito());
 
+        // aggiunge un po di spazio
+        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+
         // aggiunge il placeholder per le funzioni previste
         placeholderFunc = new VerticalLayout();
         placeholderFunc.setCaption("Funzioni previste");

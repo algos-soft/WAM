@@ -1,14 +1,22 @@
 package it.algos.wam.entity.volontario;
 
+import com.vaadin.client.ui.Icon;
+import com.vaadin.client.ui.ImageIcon;
 import com.vaadin.data.Container;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.FontIcon;
+import com.vaadin.server.Resource;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.webbase.multiazienda.ETable;
+import it.algos.webbase.web.lib.LibResource;
 import it.algos.webbase.web.lib.LibSession;
-import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.util.ArrayList;
@@ -20,6 +28,11 @@ import java.util.ArrayList;
 public class VolontarioTable extends ETable {
 
 
+    /**
+     * Costruttore
+     *
+     * @param module di riferimento (obbligatorio)
+     */
     public VolontarioTable(ModulePop module) {
         super(module);
         inizia();
@@ -35,7 +48,6 @@ public class VolontarioTable extends ETable {
 
     }// end of method
 
-
     @Override
     protected void createAdditionalColumns() {
         ArrayList<Funzione> listaFunzioni = Funzione.findAll();
@@ -43,7 +55,6 @@ public class VolontarioTable extends ETable {
             addGeneratedColumn(funz.getSiglaInterna(), new FunzioniColumnGenerator(funz));
         }// end of for cycle
     }// end of method
-
 
     protected Object[] getDisplayColumns() {
         ArrayList lista = new ArrayList<>();
@@ -63,7 +74,6 @@ public class VolontarioTable extends ETable {
         return lista.toArray();
     }// end of method
 
-
     /**
      * Colonna generata.
      */
@@ -82,11 +92,27 @@ public class VolontarioTable extends ETable {
          * Genera la cella.
          */
         public Component generateCell(Table source, Object itemId, Object columnId) {
-            String tag = funz.getSiglaInterna();
-            tag = tag.substring(0, 1);
-            tag = LibText.primaMaiuscola(tag);
+            Volontario vol = null;
+            VolontarioFunzione volFunz = null;
+            Label label =null;
 
-            return new Label(tag);
+            if (itemId instanceof Long) {
+                vol = Volontario.find((Long) itemId);
+            }// fine del blocco if
+
+            if (vol != null && funz != null) {
+                volFunz = VolontarioFunzione.findByVolFun(vol, funz);
+            }// fine del blocco if
+
+            if (volFunz != null) {
+                label = new Label(FontAwesome.CHECK.getHtml(), ContentMode.HTML);
+                label.addStyleName("labelsi");
+            } else {
+                label = new Label(FontAwesome.REMOVE.getHtml(), ContentMode.HTML);
+                label.addStyleName("labelno");
+            }// fine del blocco if-else
+
+            return label;
         }// end of method
     }// end of inner class
 

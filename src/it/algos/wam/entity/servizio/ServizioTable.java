@@ -13,6 +13,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
 import com.vaadin.ui.components.colorpicker.ColorChangeListener;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibBean;
@@ -28,15 +29,19 @@ import java.util.List;
 public class ServizioTable extends ETable {
 
     // id della colonna generata "durata"
-    protected static final String COL_DURATA = "durata";
+    protected static final String COL_DURATA = "Durata";
 
     // id della colonna generata "funzioni"
-    protected static final String COL_FUNZIONI = "funzioni";
+    protected static final String COL_FUNZIONI = "Funzioni";
 
     // id della colonna generata "colore"
-    protected static final String COL_COLORE = "colore";
+    protected static final String COL_COLORE = "Colore";
 
-
+    /**
+     * Costruttore
+     *
+     * @param module di riferimento (obbligatorio)
+     */
     public ServizioTable(ModulePop module) {
         super(module);
         Container cont = getContainerDataSource();
@@ -44,8 +49,29 @@ public class ServizioTable extends ETable {
             Sortable sortable = (Sortable) cont;
             sortable.sort(new Object[]{Servizio_.ordine.getName()}, new boolean[]{true});
         }
-    }
+    }// end of constructor
 
+    /**
+     * Create additional columns
+     * (add generated columns, nested properties...)
+     * <p>
+     * Override in the subclass
+     */
+    @Override
+    protected void createAdditionalColumns() {
+        addGeneratedColumn(COL_DURATA, new DurataColumnGenerator());
+        addGeneratedColumn(COL_FUNZIONI, new FunzioniColumnGenerator());
+        addGeneratedColumn(COL_COLORE, new ColoreColumnGenerator());
+    }// end of method
+
+    /**
+     * Returns an array of the visible columns ids. Ids might be of type String
+     * or Attribute.<br>
+     * This implementations returns all the columns (no order).
+     *
+     * @return the list
+     */
+    @Override
     protected Object[] getDisplayColumns() {
         if (LibSession.isDeveloper()) {
             return new Object[]{
@@ -56,7 +82,7 @@ public class ServizioTable extends ETable {
                     COL_DURATA,
                     COL_FUNZIONI,
                     COL_COLORE
-            };
+            };// end of array
         } else {
             return new Object[]{
                     Servizio_.sigla,
@@ -64,35 +90,54 @@ public class ServizioTable extends ETable {
                     COL_DURATA,
                     COL_FUNZIONI,
                     COL_COLORE
-            };
+            };// end of array
         }// end of if/else cycle
     }// end of method
 
-
+    /**
+     * Initializes the table.
+     * Must be called from the costructor in each subclass
+     * Chiamato dal costruttore di ModuleTable
+     */
     @Override
     protected void init() {
         super.init();
 
         setColumnReorderingAllowed(true);
-        setSortEnabled(false);
 
-        setColumnExpandRatio(Servizio_.sigla, 1);
-        setColumnExpandRatio(Servizio_.descrizione, 2);
-        setColumnExpandRatio(COL_DURATA, 1);
-        setColumnExpandRatio(COL_FUNZIONI, 2);
-        setColumnExpandRatio(COL_COLORE, 1);
+        fixSort();
+        fixColumn();
+
+    }// end of method
+
+
+    private void fixSort() {
+        if (LibSession.isDeveloper()) {
+            Container cont = getContainerDataSource();
+            if (cont instanceof Sortable) {
+                Sortable sortable = (Sortable) cont;
+                sortable.sort(new Object[]{Servizio_.ordine.getName()}, new boolean[]{true});
+            }// end of if cycle
+        } else {
+            setSortEnabled(false);
+        }// end of if/else cycle
+    }// end of method
+
+
+    private void fixColumn() {
+        setColumnHeader(Servizio_.ordine, "#");
+        setColumnHeader(Servizio_.sigla, "Sigla");
+        setColumnHeader(Servizio_.descrizione, "Descrizione");
 
         setColumnAlignment(COL_DURATA, Align.LEFT);
-    }
 
+        setColumnExpandRatio(COL_FUNZIONI, 2);
+        setColumnExpandRatio(Servizio_.sigla, 1);
+        setColumnExpandRatio(Servizio_.descrizione, 2);
 
-    @Override
-    protected void createAdditionalColumns() {
-        addGeneratedColumn(COL_DURATA, new DurataColumnGenerator());
-        addGeneratedColumn(COL_FUNZIONI, new FunzioniColumnGenerator());
-        addGeneratedColumn(COL_COLORE, new ColoreColumnGenerator());
-    }
-
+        setColumnWidth(COL_DURATA, 140);
+        setColumnWidth(COL_COLORE, 95);
+    }// end of method
 
     /**
      * Colonna generata: durata.
@@ -120,8 +165,9 @@ public class ServizioTable extends ETable {
             }
 
             return new Label(s);
-        }
-    }
+        }// end of method
+    }// end of inner class
+
 
     /**
      * Colonna generata: funzioni.
@@ -145,7 +191,7 @@ public class ServizioTable extends ETable {
                 if (sf.isObbligatoria()) {
                     s += "<strong>" + "<span style=\"color:red;\">";
                 } else {
-                    s +=  "<span style=\"color:blue;\">";
+                    s += "<span style=\"color:blue;\">";
                 }// end of if/else cycle
 
                 s += sf.getFunzione().getSiglaInterna();
@@ -156,8 +202,9 @@ public class ServizioTable extends ETable {
                 }// end of if/else cycle
             }
             return new Label(s, ContentMode.HTML);
-        }
-    }
+        }// end of method
+    }// end of inner class
+
 
     /**
      * Colonna generata: colore.
@@ -186,7 +233,7 @@ public class ServizioTable extends ETable {
                 }
             });
             return picker;
-        }
-    }
+        }// end of method
+    }// end of inner class
 
-}
+}// end of class
