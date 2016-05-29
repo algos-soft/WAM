@@ -8,9 +8,13 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.servizio.Servizio_;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.util.ArrayList;
@@ -108,6 +112,9 @@ public class VolontarioTable extends ETable {
 
     private void fixColumn() {
         ArrayList<Funzione> listaFunzioni = Funzione.findAll();
+
+        setColumnHeader(Volontario_.nome, "Nome");
+        setColumnHeader(Volontario_.cognome, "Cognome");
 
         for (Funzione funz : listaFunzioni) {
             setColumnWidth(funz.getSiglaInterna(), LAR);

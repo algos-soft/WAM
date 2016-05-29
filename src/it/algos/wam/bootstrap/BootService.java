@@ -122,21 +122,15 @@ public abstract class BootService {
             return null;
         }// end of if cycle
 
-        lista.add(Arrays.asList("aut", "Aut", "Autista", FontAwesome.AMBULANCE));
         lista.add(Arrays.asList("aut-msa", "Aut-msa", "Autista automedica abilitato 118", FontAwesome.AMBULANCE));
-        lista.add(Arrays.asList("aut-118", "Aut-118", "Autista emergenza abilitato 118", FontAwesome.AMBULANCE));
         lista.add(Arrays.asList("aut-amb", "Aut-amb", "Autista ambulanza abilitato 118", FontAwesome.AMBULANCE));
         lista.add(Arrays.asList("aut-ord", "Aut-ord", "Autista ordinario", FontAwesome.AMBULANCE));
 
-        lista.add(Arrays.asList("soc", "Soc", "Soccorritore", FontAwesome.HEART));
         lista.add(Arrays.asList("soc-dae", "DAE", "Soccorritore abilitato DAE", FontAwesome.HEART));
         lista.add(Arrays.asList("soc-pri", "1° Soc", "Primo soccorritore", FontAwesome.STETHOSCOPE));
         lista.add(Arrays.asList("soc-sec", "2° Soc", "Secondo soccorritore", FontAwesome.STETHOSCOPE));
 
         lista.add(Arrays.asList("bar", "Bar", "Barelliere", FontAwesome.USER));
-        lista.add(Arrays.asList("soc-ord", "Soc", "Soccorritore ordinario", FontAwesome.USER));
-
-        lista.add(Arrays.asList("soc-ter", "3° Soc", "Terzo soccorritore", FontAwesome.USER));
         lista.add(Arrays.asList("bar-aff", "Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
 
         lista.add(Arrays.asList("avis", "Avis", "Operatore trasporto AVIS", FontAwesome.MEDKIT));
@@ -192,13 +186,14 @@ public abstract class BootService {
 
         lista.add(Arrays.asList("med-mat", "Automedica mattino", 8, 12, true, azzurro, setMedica(funz), 2));
         lista.add(Arrays.asList("med-pom", "Automedica pomeriggio", 12, 18, true, azzurro, setMedica(funz), 2));
-        lista.add(Arrays.asList("med-sera", "Automedica sera", 18, 22, true, azzurro, setMedica(funz), 2));
+        lista.add(Arrays.asList("med-sera", "Automedica sera", 18, 22, true, azzurro, setMedicaNotte(funz), 2));
         lista.add(Arrays.asList("amb-mat", "Ambulanza mattino", 8, 12, true, verdino, setAmbulanza(funz), 2));
         lista.add(Arrays.asList("amb-pom", "Ambulanza pomeriggio", 12, 20, true, verdino, setAmbulanza(funz), 2));
         lista.add(Arrays.asList("amb-notte", "Ambulanza notte", 20, 8, true, verdino, setAmbulanzaNotte(funz), 2));
-        lista.add(Arrays.asList("dim", "Dimissioni ordinarie", 0, 0, true, rosa, setDimissioni(funz), 2));
-        lista.add(Arrays.asList("ext", "Extra", 0, 0, true, rosa, setDimissioni(funz), 2));
+        lista.add(Arrays.asList("dim", "Dimissioni ordinarie", 0, 0, true, rosa, setOrdinaria(funz), 2));
+        lista.add(Arrays.asList("ext", "Extra", 0, 0, true, rosa, setOrdinaria(funz), 2));
         lista.add(Arrays.asList("avis", "Avis", 0, 0, true, rosa, setAvis(funz), 1));
+        lista.add(Arrays.asList("cent", "Centralino", 0, 0, true, rosa, setCentralino(funz), 1));
 
         for (int k = 0; k < lista.size(); k++) {
             listaServizi.add(creaServBase(company, manager, k + 1, (List) lista.get(k)));
@@ -286,13 +281,13 @@ public abstract class BootService {
         lista.add(Arrays.asList("Stefano", "Brambilla", funz.get(1)));
         lista.add(Arrays.asList("Mario", "Abbati", funz.get(2)));
         lista.add(Arrays.asList("Giovanna", "Durante", funz));
-        lista.add(Arrays.asList("Diego", "Bertini", funz.get(6)));
+        lista.add(Arrays.asList("Diego", "Bertini", funz.get(3)));
         lista.add(Arrays.asList("Roberto", "Marchetti", funz.get(7), funz.get(9)));
-        lista.add(Arrays.asList("Mirella", "Pace", funz.get(8)));
-        lista.add(Arrays.asList("Edoardo", "Politi", funz.get(10)));
-        lista.add(Arrays.asList("Sabina", "Roncelli", funz.get(12)));
-        lista.add(Arrays.asList("Lucia", "Casaroli", funz.get(13)));
-        lista.add(Arrays.asList("Antonio", "Zambetti", funz.get(9)));
+        lista.add(Arrays.asList("Mirella", "Pace", funz.get(4)));
+        lista.add(Arrays.asList("Edoardo", "Politi", funz.get(5)));
+        lista.add(Arrays.asList("Sabina", "Roncelli", funz.get(6)));
+        lista.add(Arrays.asList("Lucia", "Casaroli", funz.get(0)));
+        lista.add(Arrays.asList("Antonio", "Zambetti", funz.get(8)));
 
         for (int k = 0; k < lista.size(); k++) {
             listaVolontari.add(creaVolBase(company, manager, (List) lista.get(k)));
@@ -426,9 +421,10 @@ public abstract class BootService {
     private static ArrayList<Funzione> setMedica(ArrayList<Funzione> funz) {
         ArrayList<Funzione> subset = new ArrayList();
 
-        subset.add(funz.get(1));
+        subset.add(funz.get(0));
+        subset.add(funz.get(3));
+        subset.add(funz.get(5));
         subset.add(funz.get(6));
-        subset.add(funz.get(9));
 
         return subset;
     }// end of static method
@@ -437,13 +433,28 @@ public abstract class BootService {
      * Subset
      */
     @SuppressWarnings("unchecked")
+    private static ArrayList<Funzione> setMedicaNotte(ArrayList<Funzione> funz) {
+        ArrayList<Funzione> subset = new ArrayList();
+
+        subset.add(funz.get(0));
+        subset.add(funz.get(3));
+        subset.add(funz.get(5));
+
+        return subset;
+    }// end of static method
+
+
+    /**
+     * Subset
+     */
+    @SuppressWarnings("unchecked")
     private static ArrayList<Funzione> setAmbulanza(ArrayList<Funzione> funz) {
         ArrayList<Funzione> subset = new ArrayList();
 
-        subset.add(funz.get(2));
-        subset.add(funz.get(7));
-        subset.add(funz.get(8));
-        subset.add(funz.get(12));
+        subset.add(funz.get(1));
+        subset.add(funz.get(3));
+        subset.add(funz.get(5));
+        subset.add(funz.get(6));
 
         return subset;
     }// end of static method
@@ -455,9 +466,9 @@ public abstract class BootService {
     private static ArrayList<Funzione> setAmbulanzaNotte(ArrayList<Funzione> funz) {
         ArrayList<Funzione> subset = new ArrayList();
 
-        subset.add(funz.get(2));
-        subset.add(funz.get(7));
-        subset.add(funz.get(9));
+        subset.add(funz.get(1));
+        subset.add(funz.get(3));
+        subset.add(funz.get(5));
 
         return subset;
     }// end of static method
@@ -466,11 +477,11 @@ public abstract class BootService {
      * Subset
      */
     @SuppressWarnings("unchecked")
-    private static ArrayList<Funzione> setDimissioni(ArrayList<Funzione> funz) {
+    private static ArrayList<Funzione> setOrdinaria(ArrayList<Funzione> funz) {
         ArrayList<Funzione> subset = new ArrayList();
 
-        subset.add(funz.get(3));
-        subset.add(funz.get(10));
+        subset.add(funz.get(2));
+        subset.add(funz.get(4));
 
         return subset;
     }// end of static method
@@ -482,7 +493,19 @@ public abstract class BootService {
     private static ArrayList<Funzione> setAvis(ArrayList<Funzione> funz) {
         ArrayList<Funzione> subset = new ArrayList();
 
-        subset.add(funz.get(13));
+        subset.add(funz.get(8));
+
+        return subset;
+    }// end of static method
+
+    /**
+     * Subset
+     */
+    @SuppressWarnings("unchecked")
+    private static ArrayList<Funzione> setCentralino(ArrayList<Funzione> funz) {
+        ArrayList<Funzione> subset = new ArrayList();
+
+        subset.add(funz.get(9));
 
         return subset;
     }// end of static method

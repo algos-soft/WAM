@@ -44,11 +44,6 @@ public class ServizioTable extends ETable {
      */
     public ServizioTable(ModulePop module) {
         super(module);
-        Container cont = getContainerDataSource();
-        if (cont instanceof Sortable) {
-            Sortable sortable = (Sortable) cont;
-            sortable.sort(new Object[]{Servizio_.ordine.getName()}, new boolean[]{true});
-        }
     }// end of constructor
 
     /**
