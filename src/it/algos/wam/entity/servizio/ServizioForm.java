@@ -12,6 +12,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
+import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.module.ModulePop;
@@ -340,7 +341,7 @@ public class ServizioForm extends ModuleForm {
         private CheckBox checkSel;
         private ERelatedComboField comboFunzioni;
         private CheckBox checkObbl;
-
+        private Button iconButton;
 
         public EditorSF(ServizioFunzione serFun) {
 
@@ -350,25 +351,16 @@ public class ServizioForm extends ModuleForm {
 
             //@todo aggiunta gac
             if (true) {
-                Button iconButton;
                 iconButton = new Button();
                 iconButton.setHtmlContentAllowed(true);
                 iconButton.addStyleName("bfunzione");
                 iconButton.setWidth("3em");
-                iconButton.setEnabled(false);
+                iconButton.addStyleName("labelsi");
 
                 addComponent(iconButton);
                 if (serFun != null) {
                     Funzione funz = serFun.getFunzione();
-                    int codepoint = funz.getIconCodepoint();
-                    FontAwesome glyph = null;
-                    try {
-                        glyph = FontAwesome.fromCodepoint(codepoint);
-                    } catch (Exception e) {
-                    }
-                    if (glyph != null) {
-                        iconButton.setCaption(glyph.getHtml());
-                    }// end of if cycle
+                    setIconButton(funz);
                 }
             }// end of if cycle
 
@@ -379,9 +371,25 @@ public class ServizioForm extends ModuleForm {
                 Funzione f = serFun.getFunzione();
                 if (f != null) {
                     comboFunzioni.setValue(f.getId());
-                }
-            }
-
+                }// end of if cycle
+            }// end of if cycle
+            comboFunzioni.addListener(new Listener() {
+                @Override
+                public void componentEvent(Event event) {
+                    Object obj = event.getSource();
+                    Object value;
+                    RelatedComboField combo;
+                    Funzione funz;
+                    if (obj instanceof RelatedComboField) {
+                        combo = (RelatedComboField) obj;
+                        value = combo.getValue();
+                        if (value instanceof Long) {
+                            funz = Funzione.find((Long) value);
+                            setIconButton(funz);
+                        }// end of if cycle
+                    }// end of if cycle
+                }// end of inner method
+            });// end of anonymous inner class
 
             checkObbl = new CheckBox("obbligatoria");
             // imposta il checkbox obbligatorio
@@ -480,7 +488,16 @@ public class ServizioForm extends ModuleForm {
         }
 
 
-    }
+        /**
+         * Assegna un'icona al bottone
+         */
+        private void setIconButton(Funzione funz) {
+            if (funz != null) {
+                iconButton.setCaption(funz.getIconHtml());
+            }// end of if cycle
+        }// end of inner method
+
+    }// end of inner class
 
 
     /**

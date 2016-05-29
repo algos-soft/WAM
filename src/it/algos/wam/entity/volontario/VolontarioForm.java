@@ -127,6 +127,9 @@ public class VolontarioForm extends ModuleForm {
         field = getField(Volontario_.admin.getName());
         layout.addComponent(field);
 
+        // aggiunge un po di spazio
+        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+
         layout.addComponent(creaCompFunzioni());
 
         return layout;
