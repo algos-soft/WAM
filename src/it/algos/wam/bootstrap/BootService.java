@@ -290,6 +290,10 @@ public abstract class BootService {
         lista.add(Arrays.asList("Sabina", "Roncelli", funz.get(6)));
         lista.add(Arrays.asList("Lucia", "Casaroli", funz.get(0)));
         lista.add(Arrays.asList("Antonio", "Zambetti", funz.get(8)));
+        lista.add(Arrays.asList("Flavia", "Robusti", funz.get(8),funz.get(9)));
+        lista.add(Arrays.asList("Aldo", "Terzino", funz.get(8),funz.get(9)));
+        lista.add(Arrays.asList("Marco", "Terzani", funz.get(8),funz.get(9)));
+        lista.add(Arrays.asList("Alice", "Mantovani", funz.get(8),funz.get(9)));
 
         for (int k = 0; k < lista.size(); k++) {
             listaVolontari.add(creaVolBase(company, manager, (List) lista.get(k)));
