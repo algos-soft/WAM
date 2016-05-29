@@ -587,10 +587,10 @@ public class Servizio extends WamCompanyEntity {
     }//end of setter method
 
     /**
-     * List NON garantissce l'ordinamento
+     * List NON garantisce l'ordinamento
      */
-    public List<ServizioFunzione> getServizioFunzioni() {
-        List<ServizioFunzione> listaOrdinata = new ArrayList<ServizioFunzione>();
+    public ArrayList<ServizioFunzione> getServizioFunzioni() {
+        ArrayList<ServizioFunzione> listaOrdinata = new ArrayList<ServizioFunzione>();
         LinkedHashMap<Integer, ServizioFunzione> mappa = new LinkedHashMap();
 
         for (ServizioFunzione serFunz : servizioFunzioni) {

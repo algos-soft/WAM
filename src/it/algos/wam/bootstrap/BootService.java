@@ -80,7 +80,7 @@ public abstract class BootService {
         }// end of if cycle
 
         if (creaIscrizioni) {
-            riempieTurni(company, manager, listaTurni, listaVolontari, listaServizi);
+            riempieTurni(company, manager, listaTurni, listaVolontari);
         }// end of if cycle
 
         manager.getTransaction().commit();
@@ -127,8 +127,8 @@ public abstract class BootService {
         lista.add(Arrays.asList("aut-ord", "Aut-ord", "Autista ordinario", FontAwesome.AMBULANCE));
 
         lista.add(Arrays.asList("soc-dae", "DAE", "Soccorritore abilitato DAE", FontAwesome.HEART));
-        lista.add(Arrays.asList("soc-pri", "1° Soc", "Primo soccorritore", FontAwesome.STETHOSCOPE));
-        lista.add(Arrays.asList("soc-sec", "2° Soc", "Secondo soccorritore", FontAwesome.STETHOSCOPE));
+        lista.add(Arrays.asList("soc-uno", "1° Soc", "Primo soccorritore", FontAwesome.STETHOSCOPE));
+        lista.add(Arrays.asList("soc-due", "2° Soc", "Secondo soccorritore", FontAwesome.STETHOSCOPE));
 
         lista.add(Arrays.asList("bar", "Bar", "Barelliere", FontAwesome.USER));
         lista.add(Arrays.asList("bar-aff", "Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
@@ -176,24 +176,26 @@ public abstract class BootService {
     private static ArrayList<Servizio> creaServizi(WamCompany company, EntityManager manager, ArrayList<Funzione> funz) {
         ArrayList<Servizio> listaServizi = new ArrayList<>();
         ArrayList lista = new ArrayList<>();
-        int azzurro = new Color(146, 189, 255).getRGB();
-        int verdino = new Color(146, 255, 189).getRGB();
-        int rosa = new Color(255, 146, 211).getRGB();
+        int azzurro = Color.BLUE.hashCode();
+        int verdino = Color.CYAN.hashCode();
+        int rosa = Color.MAGENTA.hashCode();
+        int giallo = Color.YELLOW.hashCode();
 
         if (company == null) {
             return null;
         }// end of if cycle
 
-        lista.add(Arrays.asList("med-mat", "Automedica mattino", 8, 12, true, azzurro, setMedica(funz), 2));
-        lista.add(Arrays.asList("med-pom", "Automedica pomeriggio", 12, 18, true, azzurro, setMedica(funz), 2));
+        lista.add(Arrays.asList("med-mat", "Automedica mattino", 8, 13, true, azzurro, setMedica(funz), 2));
+        lista.add(Arrays.asList("med-pom", "Automedica pomeriggio", 13, 18, true, azzurro, setMedica(funz), 2));
         lista.add(Arrays.asList("med-sera", "Automedica sera", 18, 22, true, azzurro, setMedicaNotte(funz), 2));
-        lista.add(Arrays.asList("amb-mat", "Ambulanza mattino", 8, 12, true, verdino, setAmbulanza(funz), 2));
-        lista.add(Arrays.asList("amb-pom", "Ambulanza pomeriggio", 12, 20, true, verdino, setAmbulanza(funz), 2));
+        lista.add(Arrays.asList("amb-mat", "Ambulanza mattino", 8, 14, true, verdino, setAmbulanza(funz), 2));
+        lista.add(Arrays.asList("amb-pom", "Ambulanza pomeriggio", 14, 20, true, verdino, setAmbulanza(funz), 2));
         lista.add(Arrays.asList("amb-notte", "Ambulanza notte", 20, 8, true, verdino, setAmbulanzaNotte(funz), 2));
         lista.add(Arrays.asList("dim", "Dimissioni ordinarie", 0, 0, true, rosa, setOrdinaria(funz), 2));
         lista.add(Arrays.asList("ext", "Extra", 0, 0, true, rosa, setOrdinaria(funz), 2));
         lista.add(Arrays.asList("avis", "Avis", 0, 0, true, rosa, setAvis(funz), 1));
-        lista.add(Arrays.asList("cent", "Centralino", 0, 0, true, rosa, setCentralino(funz), 1));
+        lista.add(Arrays.asList("cent-mat", "Centralino mattino", 8, 13, true, giallo, setCentralino(funz), 1));
+        lista.add(Arrays.asList("cent-pom", "Centralino pomeriggio", 13, 18, true, giallo, setCentralino(funz), 1));
 
         for (int k = 0; k < lista.size(); k++) {
             listaServizi.add(creaServBase(company, manager, k + 1, (List) lista.get(k)));
@@ -350,10 +352,12 @@ public abstract class BootService {
     private static ArrayList<Turno> creaTurniVuoti(WamCompany company, EntityManager manager, ArrayList<Servizio> servizi) {
         ArrayList<Turno> listaTurni = new ArrayList<>();
         Date oggi = LibDate.today();
+        Turno turno;
 
         for (int k = 0; k < 30; k++) {
             for (Servizio servizio : servizi) {
-                listaTurni.add(Turno.crea(company, manager, servizio, LibDate.add(oggi, k)));
+                turno = Turno.crea(company, manager, servizio, LibDate.add(oggi, k));
+                listaTurni.add(turno);
             }// end of for cycle
         }// end of for cycle
 
@@ -367,46 +371,40 @@ public abstract class BootService {
      * @param manager   the EntityManager to use
      * @param turni     lista dei turni di questa croce
      * @param volontari lista dei volontari di questa croce
-     * @param servizi   lista dei servizi di questa croce
      */
     private static void riempieTurni(
             WamCompany company,
             EntityManager manager,
             ArrayList<Turno> turni,
-            ArrayList<Volontario> volontari,
-            ArrayList<Servizio> servizi) {
-        Date oggi = LibDate.today();
+            ArrayList<Volontario> volontari) {
         Servizio serv;
         Iscrizione isc;
         Turno turno;
-        ArrayList<Funzione> funzioni;
         ArrayList<Iscrizione> iscrizioni = new ArrayList<>();
-        ArrayList<Volontario> volTurno;
+        ArrayList<Volontario> volGiorno = new ArrayList<>();
         ArrayList<ServizioFunzione> serviziFunzione;
-        ServizioFunzione servFunz;
+        long chiave = 0;
 
         for (int k = 0; k < turni.size(); k = k + 2) {
             turno = turni.get(k);
-            volTurno = new ArrayList<>();
+            if (chiave != turno.getChiave()) {
+                volGiorno = new ArrayList<>();
+                chiave = turno.getChiave();
+            }// end of if cycle
             serv = turno.getServizio();
-            funzioni = serv.getFunzioni();
-            for (Funzione funz : funzioni) {
-                servFunz = serv.getServizioFunzione(funz);
+            serviziFunzione = serv.getServizioFunzioni();
+            for (ServizioFunzione servFunz : serviziFunzione) {
                 for (Volontario vol : volontari) {
-                    if (vol.haFunzione(funz)) {
-                        if (!volTurno.contains(vol)) {
+                    if (vol.haFunzione(servFunz.getFunzione())) {
+                        if (!volGiorno.contains(vol)) {
                             isc = Iscrizione.crea(company, manager, turno, vol, servFunz);
                             iscrizioni.add(isc);
-                            volTurno.add(vol);
+                            volGiorno.add(vol);
                             break;
                         }// end of if cycle
-                        int a = 87;
                     }// fine del blocco if
-                    int axx = 87;
                 } // fine del ciclo for-each
-                int awww = 87;
             } // fine del ciclo for-each
-            int alkòlkòlk = 87;
             turno.setIscrizioni(iscrizioni);
             turno.setAssegnato(true);
             turno.save(manager);
