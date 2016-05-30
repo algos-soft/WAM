@@ -484,4 +484,24 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     }
 
 
+    /**
+     * Recupera l'icona in formato htlm
+     *
+     * @return l'icona
+     */
+    public String getIconHtml() {
+        String iconHtml = "";
+        int codepoint = this.getIconCodepoint();
+        FontAwesome glyph = null;
+        try {
+            glyph = FontAwesome.fromCodepoint(codepoint);
+        } catch (Exception e) {
+        }
+        if (glyph != null) {
+            iconHtml = glyph.getHtml();
+        }// end of if cycle
+
+        return iconHtml;
+    }// end of inner method
+
 }// end of domain class

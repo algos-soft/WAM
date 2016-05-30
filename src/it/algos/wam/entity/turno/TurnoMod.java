@@ -46,6 +46,7 @@ public class TurnoMod extends WamMod {
     protected Attribute<?, ?>[] creaFieldsList() {
         return new Attribute[]{
                 WamCompanyEntity_.company,
+                Turno_.chiave,
                 Turno_.servizio,
                 Turno_.inizio,
                 Turno_.fine,

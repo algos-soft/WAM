@@ -70,9 +70,9 @@ public class WamTablePortal extends TablePortal {
         BaseCompany company = CompanySessionLib.getCompany();
 
         if (company != null) {
-            syncCompany((WamCompany) company);
+            syncBaseCompany((WamCompany) company);
         } else {
-            syncCompany(null);
+            syncBaseCompany(null);
         }// end of if/else cycle
 
     }// end of method
@@ -279,7 +279,7 @@ public class WamTablePortal extends TablePortal {
      * Sincronizza lo stato dei bottoni.
      * Regola la company della sessione
      */
-    public void syncCompany(WamCompany companyNew) {
+    private void syncBaseCompany(WamCompany companyNew) {
 
         if (companyNew == null) {
             useAllCompany = true;
@@ -297,7 +297,18 @@ public class WamTablePortal extends TablePortal {
             bCroci.setText(LibText.primaMaiuscola(companyNew.getCompanyCode()));
         }// end of if/else cycle
         CompanySessionLib.setCompany(companyNew);
+    }// end of method
 
+    /**
+     * Sincronizza la company selezionata
+     * <p>
+     * Modificata la selezione della company.
+     * Regola il filtro sulla company
+     * Sincronizza lo stato dei bottoni.
+     * Regola la company della sessione
+     */
+    public void syncCompany(WamCompany companyNew) {
+        syncBaseCompany(companyNew);
         table.deselectAll();
         table.refresh();
     }// end of method

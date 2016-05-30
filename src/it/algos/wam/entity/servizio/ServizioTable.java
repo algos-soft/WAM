@@ -4,16 +4,14 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.ColorPicker;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
+import com.vaadin.ui.*;
 import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
 import com.vaadin.ui.components.colorpicker.ColorChangeListener;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
-import it.algos.wam.entity.funzione.Funzione_;
+import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibBean;
@@ -44,11 +42,6 @@ public class ServizioTable extends ETable {
      */
     public ServizioTable(ModulePop module) {
         super(module);
-        Container cont = getContainerDataSource();
-        if (cont instanceof Sortable) {
-            Sortable sortable = (Sortable) cont;
-            sortable.sort(new Object[]{Servizio_.ordine.getName()}, new boolean[]{true});
-        }
     }// end of constructor
 
     /**
@@ -136,7 +129,7 @@ public class ServizioTable extends ETable {
         setColumnExpandRatio(Servizio_.descrizione, 2);
 
         setColumnWidth(COL_DURATA, 140);
-        setColumnWidth(COL_COLORE, 70);
+        setColumnWidth(COL_COLORE, 95);
     }// end of method
 
     /**
@@ -178,30 +171,52 @@ public class ServizioTable extends ETable {
          * Genera la cella delle funzioni.
          */
         public Component generateCell(Table source, Object itemId, Object columnId) {
+            HorizontalLayout comp = new HorizontalLayout();
             Item item = source.getItem(itemId);
             BeanItem bi = LibBean.fromItem(item);
             Servizio serv = (Servizio) bi.getBean();
-            String s = "";
+            String testo;
             List<ServizioFunzione> lista = serv.getServizioFunzioni();
-//            Collections.sort(lista);
-            for (ServizioFunzione sf : lista) {
-                if (s.length() > 0) {
-                    s += ", ";
-                }
-                if (sf.isObbligatoria()) {
-                    s += "<strong>" + "<span style=\"color:red;\">";
+            Label label = null;
+            ServizioFunzione servFunz;
+            Funzione funz;
+            FontAwesome font;
+            int codePoint;
+
+            for (int k = 0; k < lista.size(); k++) {
+                servFunz = lista.get(k);
+                testo = "";
+                funz = servFunz.getFunzione();
+                codePoint = funz.getIconCodepoint();
+                font = FontAwesome.fromCodepoint(codePoint);
+                testo += font.getHtml() + "&nbsp;";
+                testo += "<strong>";
+
+                if (servFunz.isObbligatoria()) {
+                    testo += "<span style=\"color:red;\">";
                 } else {
-                    s += "<span style=\"color:blue;\">";
+                    testo += "<span style=\"color:blue;\">";
                 }// end of if/else cycle
 
-                s += sf.getFunzione().getSiglaInterna();
-                if (sf.isObbligatoria()) {
-                    s += "</span>" + "</strong>";
+                testo += servFunz.getFunzione().getSiglaInterna();
+
+                if (k < lista.size() - 1) {
+                    testo += ",&nbsp;";
+                }// end of if cycle
+
+                testo += "</span>" + "</strong>";
+                label = new Label(testo, ContentMode.HTML);
+
+                if (servFunz.isObbligatoria()) {
+                    label.addStyleName("labelno");
                 } else {
-                    s += "</span>";
+                    label.addStyleName("labelni");
                 }// end of if/else cycle
+
+                comp.addComponent(label);
             }
-            return new Label(s, ContentMode.HTML);
+
+            return comp;
         }// end of method
     }// end of inner class
 

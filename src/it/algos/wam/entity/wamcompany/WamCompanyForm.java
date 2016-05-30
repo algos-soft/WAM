@@ -228,6 +228,12 @@ public class WamCompanyForm extends ModuleForm {
 
     }// end of method
 
+
+    /**
+     * La company (croce) è stata creata/cambiata.
+     * Spedisce un avviso a tutti i listener.
+     *
+     */
     protected void fireCompanyAdded(WamCompany company) {
         UI ui = getModule().getUI();
         WamUI wamUI;

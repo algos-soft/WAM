@@ -327,6 +327,7 @@ public class Turno extends WamCompanyEntity {
 
             turno = new Turno(servizio, inizio, fine, assegnato);
             turno.setCompany(company);
+            turno.fixChiave();
             turno.save(manager);
         }// end of if cycle
 

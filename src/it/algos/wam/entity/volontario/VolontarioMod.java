@@ -7,10 +7,12 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
-import it.algos.wam.entity.servizio.ServizioTable;
+import it.algos.wam.entity.servizio.ServizioTablePortal;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.form.ModuleForm;
-import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.ATable;
+import it.algos.webbase.web.table.TablePortal;
+import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -44,23 +46,16 @@ public class VolontarioMod extends WamMod {
         addRecordSavedListener(new RecordSavedListener() {
             @Override
             public void recordCreated(RecordEvent e) {
-                int a = 87;
-                int b = a;
             }
 
             @Override
             public void recordSaved(RecordEvent e) {
-                int a = 87;
-                int b = a;
             }
         });
 
         addRecordDeletedListener(new RecordDeletedListener() {
             @Override
             public void recordDeleted(RecordEvent e) {
-                int a = 87;
-                int b=a;
-
             }
         });
     }// end of constructor
@@ -73,6 +68,11 @@ public class VolontarioMod extends WamMod {
     @Override
     public ATable createTable() {
         return new VolontarioTable(this);
+    }// end of method
+
+    @Override
+    public TablePortal createTablePortal() {
+        return new VolontarioTablePortal(this);
     }// end of method
 
     /**
@@ -132,6 +132,27 @@ public class VolontarioMod extends WamMod {
                 Volontario_.email,
                 Volontario_.dipendente,
                 Volontario_.attivo};
+    }// end of method
+
+    @Override
+    public void companyAdded(WamCompany company) {
+        super.companyAdded(company);
+    }// end of method
+
+    @Override
+    public void companyRemoved(WamCompany company) {
+        super.companyRemoved(company);
+    }// end of method
+
+    @Override
+    public void companyChanged(WamCompany company) {
+        super.companyChanged(company);
+
+//        tablePortal = createTablePortal();
+//        tablePortal.table = this.createTable();
+//        tablePortal.table.refresh();
+
+//        return new VolontarioTable(this);
     }// end of method
 
 }// end of class
