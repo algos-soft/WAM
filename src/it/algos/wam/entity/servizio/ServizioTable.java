@@ -208,9 +208,9 @@ public class ServizioTable extends ETable {
                 label = new Label(testo, ContentMode.HTML);
 
                 if (servFunz.isObbligatoria()) {
-                    label.addStyleName("labelno");
+                    label.addStyleName("rosso");
                 } else {
-                    label.addStyleName("labelni");
+                    label.addStyleName("blue");
                 }// end of if/else cycle
 
                 comp.addComponent(label);

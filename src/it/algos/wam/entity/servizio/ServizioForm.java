@@ -355,7 +355,7 @@ public class ServizioForm extends ModuleForm {
                 iconButton.setHtmlContentAllowed(true);
                 iconButton.addStyleName("bfunzione");
                 iconButton.setWidth("3em");
-                iconButton.addStyleName("labelsi");
+                iconButton.addStyleName("verde");
 
                 addComponent(iconButton);
                 if (serFun != null) {

@@ -154,10 +154,10 @@ public class VolontarioTable extends ETable {
 
             if (volFunz != null) {
                 label = new Label(FontAwesome.CHECK.getHtml(), ContentMode.HTML);
-                label.addStyleName("labelsi");
+                label.addStyleName("verde");
             } else {
                 label = new Label(FontAwesome.REMOVE.getHtml(), ContentMode.HTML);
-                label.addStyleName("labelno");
+                label.addStyleName("rosso");
             }// fine del blocco if-else
 
             return label;
