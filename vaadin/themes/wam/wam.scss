@@ -274,26 +274,47 @@
     }
   }
 
-  // spunta dei volontari - ok
-  .labelsi {
+  // verde - grigio platino
+  .verde {
     .v-label{
       color:green;
     }
     .v-icon {
       color:green;
+    }
+    .v-menubar-menuitem {
+      color: green;
+      background: #E5E4E2;
     }
   }
-  // spunta dei volontari - no
-  .labelno {
+  // salmone - grigio platino
+  .salmone {
     .v-label{
-      color:red;
+      color: #FA8072;
     }
     .v-icon {
-      color:red;
+      color: #FA8072;
+    }
+    .v-menubar-menuitem {
+      color: #FA8072;
+      background: #E5E4E2;
+    }
+  }
+  // rosso pompeiano - grigio platino
+  .rosso {
+    .v-label{
+      color: #D21F1B;
+    }
+    .v-icon {
+      color: #D21F1B;
+    }
+    .v-menubar-menuitem {
+      color: #D21F1B;
+      background: #E5E4E2;
     }
   }
   // altro colore
-  .labelni {
+  .blue {
     .v-label{
       color:blue;
     }

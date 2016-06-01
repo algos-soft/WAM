@@ -427,7 +427,7 @@ public class WamUI extends UI {
         // controlla se è un admin
         if (true) {
             MenuBar menuBarAdmin = new MenuBar();
-            menuBarAdmin.addStyleName("labelsi");
+            menuBarAdmin.addStyleName("salmone");
             MenuBar.MenuItem menuItem;
             menuItem = menuBarAdmin.addItem("Admin", FontAwesome.USER_MD, null);
             createMenuItem(menuItem, LogMod.class, "Logo", true, FontAwesome.TASKS);
@@ -439,7 +439,7 @@ public class WamUI extends UI {
         // controlla se è un developer
         if (true) {
             MenuBar menuBarDev = new MenuBar();
-            menuBarDev.addStyleName("labelno");
+            menuBarDev.addStyleName("rosso");
             MenuBar.MenuItem menuItem2;
             menuItem2 = menuBarDev.addItem("Prog", FontAwesome.LIGHTBULB_O, null);
             createMenuItem(menuItem2, UtenteModulo.class, "User", true, FontAwesome.TASKS);
