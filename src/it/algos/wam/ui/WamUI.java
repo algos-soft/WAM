@@ -57,12 +57,12 @@ public class WamUI extends UI {
      * @param request the Vaadin request that caused this UI to be created
      */
     //@Override
-    protected void initNew(VaadinRequest request) {
+    protected void init(VaadinRequest request) {
 
         Component comp = null;
 
-        // Questa applicazione necessita di una logica di login specifica
-        // Inietto subito l'oggetto Login nella sessione
+        // Questa applicazione necessita di una logica di login specifica.
+        // Inietto subito l'oggetto Login specifico nella sessione
         WamLogin login = new WamLogin();
         Login.setLogin(login);
 
@@ -144,7 +144,7 @@ public class WamUI extends UI {
      * @param request the Vaadin request that caused this UI to be created
      */
     //@Override
-    protected void init(VaadinRequest request) {
+    protected void initOld(VaadinRequest request) {
 
 
 //        // set theme
