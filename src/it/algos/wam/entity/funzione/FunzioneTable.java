@@ -93,15 +93,11 @@ public class FunzioneTable extends ETable {
 
 
     private void fixSort() {
-        if (LibSession.isDeveloper()) {
-            Container cont = getContainerDataSource();
-            if (cont instanceof Sortable) {
-                Sortable sortable = (Sortable) cont;
-                sortable.sort(new Object[]{Funzione_.ordine.getName()}, new boolean[]{true});
-            }// end of if cycle
-        } else {
-            setSortEnabled(false);
-        }// end of if/else cycle
+        Container cont = getContainerDataSource();
+        if (cont instanceof Sortable) {
+            Sortable sortable = (Sortable) cont;
+            sortable.sort(new Object[]{Funzione_.ordine.getName()}, new boolean[]{true});
+        }// end of if cycle
     }// end of method
 
 
@@ -120,7 +116,6 @@ public class FunzioneTable extends ETable {
         setColumnWidth(Funzione_.siglaInterna, 110);
         setColumnWidth(Funzione_.siglaVisibile, 110);
     }// end of method
-
 
 
     /**

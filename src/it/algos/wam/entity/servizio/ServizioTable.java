@@ -105,15 +105,11 @@ public class ServizioTable extends ETable {
 
 
     private void fixSort() {
-        if (LibSession.isDeveloper()) {
-            Container cont = getContainerDataSource();
-            if (cont instanceof Sortable) {
-                Sortable sortable = (Sortable) cont;
-                sortable.sort(new Object[]{Servizio_.ordine.getName()}, new boolean[]{true});
-            }// end of if cycle
-        } else {
-            setSortEnabled(false);
-        }// end of if/else cycle
+        Container cont = getContainerDataSource();
+        if (cont instanceof Sortable) {
+            Sortable sortable = (Sortable) cont;
+            sortable.sort(new Object[]{Servizio_.ordine.getName()}, new boolean[]{true});
+        }// end of if cycle
     }// end of method
 
 
