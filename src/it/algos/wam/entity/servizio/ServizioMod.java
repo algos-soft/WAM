@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Modulo del servizio (fisso o variabile) previsto o effettuato
  */
-public class ServizioMod extends WamModSposta  {
+public class ServizioMod extends WamModSposta {
 
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
@@ -32,6 +32,9 @@ public class ServizioMod extends WamModSposta  {
 
     // icona (eventuale) del modulo
     public static Resource ICON = FontAwesome.TASKS;
+
+    // etichetta del campo - usata sia nella lista che nel form
+    public static String LABEL_COLOR = "Gruppo";
 
     /**
      * Costruttore senza parametri
@@ -43,7 +46,6 @@ public class ServizioMod extends WamModSposta  {
      */
     public ServizioMod() {
         super(Servizio.class, MENU_ADDRESS, ICON);
-        getTable().setRowHeaderMode(Table.ROW_HEADER_MODE_INDEX);
     }// end of constructor
 
 

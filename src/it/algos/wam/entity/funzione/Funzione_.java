@@ -10,7 +10,7 @@ public class Funzione_ extends BaseEntity_ {
     public static volatile SingularAttribute<Funzione, String> siglaInterna;
     public static volatile SingularAttribute<Funzione, String> siglaVisibile;
     public static volatile SingularAttribute<Funzione, Integer> ordine;
-    public static volatile SingularAttribute<Funzione, String> note;
+    public static volatile SingularAttribute<Funzione, String> descrizione;
     //    public static volatile SingularAttribute<Funzione, Byte[]> icon;
     public static volatile SingularAttribute<Funzione, Integer> iconCodepoint;
 }// end of entity class

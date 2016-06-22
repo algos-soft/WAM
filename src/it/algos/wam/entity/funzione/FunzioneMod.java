@@ -36,7 +36,6 @@ public class FunzioneMod extends WamModSposta  {
      */
     public FunzioneMod() {
         super(Funzione.class, MENU_ADDRESS, ICON);
-        getTable().setRowHeaderMode(Table.ROW_HEADER_MODE_INDEX);
     }// end of constructor
 
 

@@ -7,6 +7,7 @@ import it.algos.wam.ui.WamUI;
 import it.algos.webbase.web.field.TextArea;
 import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.form.ModuleForm;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
 import javax.persistence.metamodel.Attribute;
@@ -118,7 +119,7 @@ public class FunzioneForm extends ModuleForm {
         Field fsigla = getField(Funzione_.siglaInterna);
         fsigla.focus();
         Field fdesc = getField(Funzione_.siglaVisibile);
-        Field fnote = getField(Funzione_.note);
+        Field fnote = getField(Funzione_.descrizione);
 
         Button b = new Button();
         b.setHtmlContentAllowed(true);
@@ -171,7 +172,7 @@ public class FunzioneForm extends ModuleForm {
 //        fsigla.focus();
 
         Field fdesc = getField(Funzione_.siglaVisibile);
-        Field fnote = getField(Funzione_.note);
+        Field fnote = getField(Funzione_.descrizione);
 
 //        iconButton = new Button();
 //        iconButton.setHtmlContentAllowed(true);
@@ -201,11 +202,11 @@ public class FunzioneForm extends ModuleForm {
         fsigla.focus();
 
         Field fdesc = getField(Funzione_.siglaVisibile);
-        Field fnote = getField(Funzione_.note);
+        Field fnote = getField(Funzione_.descrizione);
 
         iconButton = new Button();
         iconButton.setHtmlContentAllowed(true);
-        iconButton.addStyleName("bfunzione");
+        iconButton.addStyleName("verde");
         iconButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
@@ -263,11 +264,11 @@ public class FunzioneForm extends ModuleForm {
     @Override
     protected Field createField(Attribute attr) {
         Field field;
-        if (attr.equals(Funzione_.note)) {
+        if (attr.equals(Funzione_.descrizione)) {
             TextArea area = new TextArea();
             area.setColumns(20);
             area.setRows(2);
-            area.setCaption("Note");
+            area.setCaption(LibText.primaMaiuscola(Funzione_.descrizione.getName()));
             field = area;
         } else {
             field = super.createField(attr);

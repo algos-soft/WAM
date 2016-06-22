@@ -18,6 +18,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzioneMod;
 import it.algos.wam.entity.volontario.VolontarioMod;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
 import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.wam.login.WamLogin;
@@ -33,6 +34,7 @@ import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
 import it.algos.webbase.web.menu.AMenuBar;
+import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.screen.ErrorScreen;
 
@@ -111,34 +113,41 @@ public class WamUI extends UI {
 
                     // auto login from cookies (solo dopo che abbiamo la Company in sessione!)
                     boolean logged = Login.getLogin().loginFromCookies();
+                    logged = true; //@todo il form per desso non funziona
 
                     if (company.isVaiSubitoTabellone()) {
-                        comp = new Tabellone(getCurrentAddress());
-                    } else {
-                        if (logged) {
+                        if (checkFirstTime()) {
                             comp = new Tabellone(getCurrentAddress());
                         } else {
+                            if (logged) {
+                                comp = creaComponente();
+                            } else {
+                                comp = new WamSplashComponent();
+                            }// end of if/else cycle
+                        }// end of if/else cycle
+                    } else {
+                        if (logged) {
+                            comp = creaComponente();
+                        } else {
                             comp = new WamSplashComponent();
-                        }
-                    }
-
+                        }// end of if/else cycle
+                    }// end of if/else cycle
                 } else {
                     comp = new ErrorScreen("Company " + companyName + " non trovata");
-                }
+                }// end of if/else cycle
 
             } else {
                 comp = new ErrorScreen("Company non specificata");
-            }
+            }// end of if/else cycle
 
         } else {
-            comp = creaCompProgrammatore();
-        }
+            fixCompanySession();
+            comp = creaComponente();
+        }// end of if/else cycle
 
         this.setContent(comp);
 
-
-    }
-
+    }// end of method
 
     /**
      * @param request the Vaadin request that caused this UI to be created
@@ -164,7 +173,7 @@ public class WamUI extends UI {
         leggeBackdoor(request);
 
         // legge la croce
-        WamCompany company = leggeCompany();
+        WamCompany company = fixCompanySession();
 
 
         Component comp;
@@ -259,7 +268,7 @@ public class WamUI extends UI {
      *
      * @return la company selezionata
      */
-    private WamCompany leggeCompany() {
+    private WamCompany fixCompanySession() {
         WamCompany company = null;
 
         // recupero il codice della company dall'url
@@ -281,6 +290,9 @@ public class WamUI extends UI {
                 company = WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
             }// end of if cycle
         }
+
+        // registra la company nella sessione
+        CompanySessionLib.setCompany(company);
 
         return company;
 
@@ -451,6 +463,67 @@ public class WamUI extends UI {
         return nc;
     }// end of method
 
+    /**
+     * Crea il componente per il programmatore
+     *
+     * @return il componente creato
+     */
+    private Component creaComponente() {
+        // creo un componente standard di navigazione
+        NavComponent navComp = new NavComponent(this);
+        MenuBar menuBar = navComp.getMenuBar();
+
+        // aggiungo le view - la menubar viene riempita automaticamente
+        navComp.addView(FunzioneMod.class,FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
+        navComp.addView(ServizioMod.class,ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
+        navComp.addView(VolontarioMod.class,VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
+//        addMod(menuBar, new FunzioneMod());
+//        addMod(menuBar, new ServizioMod());
+//        addMod(menuBar, new VolontarioMod());
+
+        // aggiungo un MenuItem con il tabellone.
+        // volendo posso anche aggiungerlo nella posizione desiderata
+        menuBar.addItem("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                Tabellone tab = new Tabellone(getCurrentAddress());
+                setContent(tab);
+            }// end of inner method
+        });// end of anonymous inner class
+
+        MenuBarWithLogin menu = (MenuBarWithLogin) navComp.getComponent(0);
+        // controlla se è un admin
+        if (LibSession.isDeveloper()) {
+            MenuBar menuBarAdmin = new MenuBar();
+            menuBarAdmin.addStyleName("salmone");
+            MenuBar.MenuItem menuItem;
+            menuItem = menuBarAdmin.addItem("Admin", FontAwesome.USER_MD, null);
+            addMod(menuItem, new LogMod());
+            addMod(menuItem, new PrefMod());
+            menu.addMenu(menuBarAdmin);
+            navComp.setup(menuBarAdmin);
+        }// end of if cycle
+
+        // controlla se è un developer
+        if (LibSession.isDeveloper()) {
+            MenuBar menuBarDev = new MenuBar();
+            menuBarDev.addStyleName("rosso");
+            MenuBar.MenuItem menuItem2;
+            menuItem2 = menuBarDev.addItem("Prog", FontAwesome.LIGHTBULB_O, null);
+            addMod(menuItem2, new UtenteModulo("User"));
+            addMod(menuItem2, new VersMod());
+            addMod(menuItem2, new WamCompanyMod());
+            menu.addMenu(menuBarDev);
+            navComp.setup(menuBarDev);
+        }// end of if cycle
+
+        // da chiamare dopo che ho aggiunto tutti i MenuItems,
+        // configura il Navigator in base alla MenuBar
+        navComp.setup();
+
+        return navComp;
+    }// end of method
+
     private MenuBar.MenuItem createMenuItem(MenuBar.MenuItem menu, Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
         MenuBar.MenuItem menuItem;
 //        MenuCommand cmd = new MenuBar.Command(menu, viewClass, cached);
@@ -469,6 +542,55 @@ public class WamUI extends UI {
     private void addMod(NavComponent navComp, WamMod modulo) {
         this.addCompanyListeners(modulo);
         navComp.addMod(modulo);
+    }// end of method
+
+    /**
+     * Aggiunge un modulo alla UI
+     * Il modulo implementa la gestione delle company
+     *
+     * @param menu
+     * @param modulo  da visualizzare nel placeholder alla pressione del bottone di menu
+     */
+    private MenuBar.MenuItem addMod(MenuBar menu, ModulePop modulo) {
+        MenuBar.MenuItem menuItem = null;
+        String label = modulo.getMenuLabel();
+        Resource icon = modulo.getMenuIcon();
+
+        MenuCommand cmd = new MenuCommand(null, modulo);
+        menuItem = menu.addItem(label, icon, cmd);
+
+        if (modulo instanceof WamMod) {
+            addCompanyListeners((WamMod) modulo);
+        }// end of if cycle
+
+        return menuItem;
+    }// end of method
+
+
+    /**
+     * Aggiunge un modulo alla UI
+     * Il modulo implementa la gestione delle company
+     *
+     * @param menu
+     * @param modulo  da visualizzare nel placeholder alla pressione del bottone di menu
+     */
+    private MenuBar.MenuItem addMod(MenuBar.MenuItem menu, ModulePop modulo) {
+        MenuBar.MenuItem menuItem = null;
+        String label = modulo.getMenuLabel();
+        Resource icon = modulo.getMenuIcon();
+
+        MenuCommand cmd = new MenuCommand(null, modulo);
+        menuItem = menu.addItem(label, icon, cmd);
+
+        if (menuItem != null) {
+            modulo.addSottoMenu(menuItem);
+        }// end of if cycle
+
+        if (modulo instanceof WamMod) {
+            addCompanyListeners((WamMod) modulo);
+        }// end of if cycle
+
+        return menuItem;
     }// end of method
 
 //    /**
@@ -621,14 +743,18 @@ public class WamUI extends UI {
 
 
     public void removeMenuItem(String caption) {
+        if (menubar==null) {
+            return;
+        }// end of if cycle
+
         List<MenuBar.MenuItem> items = menubar.getItems();
         for (MenuBar.MenuItem item : items) {
             if (item.getText().equals(caption)) {
                 menubar.removeItem(item);
                 break;
-            }
-        }
-    }
+            }// fine del blocco if
+        }// end of for cycle
+    }// end of method
 
 
 }// end of class

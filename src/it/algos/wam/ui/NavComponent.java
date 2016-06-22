@@ -1,9 +1,11 @@
 package it.algos.wam.ui;
 
 import com.vaadin.navigator.View;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.webbase.web.menu.AMenuBar;
 import it.algos.webbase.web.module.ModulePop;
@@ -84,6 +86,15 @@ public class NavComponent extends VerticalLayout {
         }
     }
 
+
+    /**
+     * Da invocare per configurare il Navigator dopo aver aggiunto i componenti
+     */
+    public void setup(MenuBar menuBar) {
+        // configura il navigator in base alla MenuBar
+        nav.configureFromMenubar(menuBar);
+    }// end of method
+
     /**
      * Inserisce un componente nel footer
      */
@@ -117,8 +128,8 @@ public class NavComponent extends VerticalLayout {
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, String label, Resource icon) {
-        return addView(viewClass, true, label, icon);
-    }
+        return addView(menuBar, viewClass, true, label, icon);
+    }// end of method
 
     /**
      * Adds a View to the UI
@@ -134,9 +145,28 @@ public class NavComponent extends VerticalLayout {
      * @param icon       the icon for the menu item
      * @return menuItem appena creato
      */
-    public MenuBar.MenuItem addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
+    public MenuBar.MenuItem addView( Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
+        return addView(menuBar, viewClass, viewCached, label, icon);
+    }// end of method
 
-        MenuBar.MenuItem menuItem = createMenuItem(viewClass, label, viewCached, icon);
+    /**
+     * Adds a View to the UI
+     * <p>
+     * Will create a lazy (class-based) view provider
+     * The view will be instantiated by the view provider from the provided class
+     * The viewCached parameter controls if the view will be instantiated only once
+     * or each time is requested by the Navigator.
+     *
+     * @param menuBar    di riferimento
+     * @param viewClass  the view class to instantiate
+     * @param viewCached true to instantiated only once, false to instantiate each time
+     * @param label      the text for the menu item
+     * @param icon       the icon for the menu item
+     * @return menuItem appena creato
+     */
+    public MenuBar.MenuItem addView(MenuBar menuBar, Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
+
+        MenuBar.MenuItem menuItem = createMenuItem(menuBar, viewClass, label, viewCached, icon);
 
         if (menuItem != null) {
             String keyModulo = viewClass.getSimpleName();
@@ -151,18 +181,19 @@ public class NavComponent extends VerticalLayout {
      * Create the MenuBar Item for this view
      * <p>
      *
+     * @param menuBar   di riferimento
      * @param viewClass da visualizzare nell'area controllata dal navigatore
      *                  alla pressione del bottone di menu
      * @param icon      icona per il menu
      * @return menuItem appena creato
      */
-    private MenuBar.MenuItem createMenuItem(Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
+    private MenuBar.MenuItem createMenuItem(MenuBar menuBar, Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
         MenuBar.MenuItem menuItem;
         MenuCommand cmd = new MenuCommand(menuBar, viewClass, cached);
         menuItem = menuBar.addItem(label, icon, cmd);
         menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);
         return menuItem;
-    }
+    }// end of method
 
     /**
      * Aggiunge un modulo alla UI

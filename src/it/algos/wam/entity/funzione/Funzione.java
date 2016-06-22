@@ -68,7 +68,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     //--note di spiegazione (facoltative)
     @Column(columnDefinition = "text")
-    private String note = "";
+    private String descrizione = "";
 
 
     //--tavola di incrocio
@@ -119,7 +119,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         this.setSiglaVisibile(siglaVisibile);
         this.setOrdine(ordine);
         this.setIcon(glyph);
-        this.setNote(note);
+        this.setDescrizione(note);
     }// end of constructor
 
     /**
@@ -339,7 +339,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             funzione.setSiglaInterna(siglaInterna);
             funzione.setSiglaVisibile(siglaVisibile);
             funzione.setOrdine(ordine);
-            funzione.setNote(note);
+            funzione.setDescrizione(note);
             funzione.setIcon(glyph);
             funzione.save(manager);
         }// end of if cycle
@@ -400,21 +400,13 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         this.siglaVisibile = descrizione;
     }//end of setter method
 
-    public String getNote() {
-        return note;
+    public String getDescrizione() {
+        return descrizione;
     }// end of getter method
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
     }//end of setter method
-
-//    public byte[] getIcon() {
-//        return icon;
-//    }
-//
-//    public void setIcon(byte[] icon) {
-//        this.icon = icon;
-//    }
 
 
     // codepoint della icona FontAwesome

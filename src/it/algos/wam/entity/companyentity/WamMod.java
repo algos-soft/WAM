@@ -2,6 +2,7 @@ package it.algos.wam.entity.companyentity;
 
 
 import com.vaadin.server.Resource;
+import com.vaadin.ui.Table;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyModule;
 import it.algos.webbase.web.lib.LibSession;
@@ -28,7 +29,7 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
      * @param menuIcon icona del menu
      */
     public WamMod(Class entity, Resource menuIcon) {
-        super(entity, menuIcon);
+        this(entity, "", menuIcon);
     }// end of constructor
 
     /**
@@ -40,6 +41,7 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
      */
     public WamMod(Class entity, String menuLabel, Resource menuIcon) {
         super(entity, menuLabel, menuIcon);
+        getTable().setRowHeaderMode(Table.RowHeaderMode.INDEX);
     }// end of constructor
 
 
