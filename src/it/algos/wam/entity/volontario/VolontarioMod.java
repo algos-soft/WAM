@@ -41,7 +41,6 @@ public class VolontarioMod extends WamMod {
      */
     public VolontarioMod() {
         super(Volontario.class, MENU_ADDRESS, ICON);
-        getTable().setRowHeaderMode(Table.ROW_HEADER_MODE_INDEX);
 
         addRecordSavedListener(new RecordSavedListener() {
             @Override

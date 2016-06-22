@@ -33,7 +33,7 @@ public class ServizioTable extends ETable {
     protected static final String COL_FUNZIONI = "Funzioni";
 
     // id della colonna generata "colore"
-    protected static final String COL_COLORE = "Colore";
+    protected static final String COL_COLORE = ServizioMod.LABEL_COLOR;
 
     /**
      * Costruttore
@@ -97,7 +97,6 @@ public class ServizioTable extends ETable {
         super.init();
 
         setColumnReorderingAllowed(true);
-
         fixSort();
         fixColumn();
 
@@ -114,18 +113,20 @@ public class ServizioTable extends ETable {
 
 
     private void fixColumn() {
-        setColumnHeader(Servizio_.ordine, "#");
+        setColumnHeader(Servizio_.ordine, "##"); // visibile solo per il developer
         setColumnHeader(Servizio_.sigla, "Sigla");
         setColumnHeader(Servizio_.descrizione, "Descrizione");
 
         setColumnAlignment(COL_DURATA, Align.LEFT);
+        setColumnAlignment(COL_COLORE, Align.CENTER);
 
         setColumnExpandRatio(COL_FUNZIONI, 2);
         setColumnExpandRatio(Servizio_.sigla, 1);
         setColumnExpandRatio(Servizio_.descrizione, 2);
 
+        setColumnWidth(Servizio_.ordine, 50);
         setColumnWidth(COL_DURATA, 140);
-        setColumnWidth(COL_COLORE, 95);
+        setColumnWidth(COL_COLORE, 100);
     }// end of method
 
     /**
@@ -231,6 +232,7 @@ public class ServizioTable extends ETable {
             prop = item.getItemProperty(Servizio_.colore.getName());
             int codColore = (Integer) prop.getValue();
             ColorPicker picker = new ServizioColorPicker();
+            picker.setWidth("45");
             picker.setColor(new Color(codColore));
             picker.setCaption("&#8203;"); //zero-width space
             picker.addColorChangeListener(new ColorChangeListener() {

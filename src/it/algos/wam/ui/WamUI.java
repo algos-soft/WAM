@@ -743,14 +743,18 @@ public class WamUI extends UI {
 
 
     public void removeMenuItem(String caption) {
+        if (menubar==null) {
+            return;
+        }// end of if cycle
+
         List<MenuBar.MenuItem> items = menubar.getItems();
         for (MenuBar.MenuItem item : items) {
             if (item.getText().equals(caption)) {
                 menubar.removeItem(item);
                 break;
-            }
-        }
-    }
+            }// fine del blocco if
+        }// end of for cycle
+    }// end of method
 
 
 }// end of class

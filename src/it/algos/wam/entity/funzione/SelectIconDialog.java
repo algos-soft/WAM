@@ -89,7 +89,7 @@ class SelectIconDialog extends BaseDialog {
                 b.setHtmlContentAllowed(true);
                 b.setCaption(glyph.getHtml());
                 b.setWidth("3em");
-                b.addStyleName("bfunzione");
+                b.addStyleName("verde");
                 addComponent(b);
 
                 b.addClickListener(new Button.ClickListener() {

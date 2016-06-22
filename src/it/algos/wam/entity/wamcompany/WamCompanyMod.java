@@ -4,6 +4,7 @@ package it.algos.wam.entity.wamcompany;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany_;
@@ -39,6 +40,7 @@ public class WamCompanyMod extends ModulePop {
      */
     public WamCompanyMod() {
         super(WamCompany.class, MENU_ADDRESS, ICON);
+        getTable().setRowHeaderMode(Table.RowHeaderMode.INDEX);
     }// end of constructor
 
 

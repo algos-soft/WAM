@@ -63,14 +63,14 @@ public class FunzioneTable extends ETable {
                     COL_ICON,
                     Funzione_.siglaInterna,
                     Funzione_.siglaVisibile,
-                    Funzione_.note,
+                    Funzione_.descrizione,
             };// end of array
         } else {
             return new Object[]{
                     COL_ICON,
                     Funzione_.siglaInterna,
                     Funzione_.siglaVisibile,
-                    Funzione_.note,
+                    Funzione_.descrizione,
             };// end of array
         }// end of if/else cycle
     }// end of method
@@ -102,17 +102,18 @@ public class FunzioneTable extends ETable {
 
 
     private void fixColumn() {
-        setColumnHeader(Funzione_.ordine, "#");
+        setColumnHeader(Funzione_.ordine, "##"); // visibile solo per il developer
         setColumnHeader(Funzione_.siglaInterna, "Interna");
         setColumnHeader(Funzione_.siglaVisibile, "Visibile");
-        setColumnHeader(Funzione_.note, "Descrizione");
+
+        setColumnAlignment(COL_ICON, Align.CENTER);
 
         setColumnExpandRatio(Funzione_.siglaInterna, 1);
-        setColumnExpandRatio(Funzione_.siglaVisibile, 2);
-        setColumnExpandRatio(Funzione_.note, 2);
+        setColumnExpandRatio(Funzione_.siglaVisibile, 1);
+        setColumnExpandRatio(Funzione_.descrizione, 3);
 
-        setColumnWidth(Funzione_.ordine, 55);
-        setColumnWidth(COL_ICON, 68);
+        setColumnWidth(Funzione_.ordine, 50);
+        setColumnWidth(COL_ICON, 80);
         setColumnWidth(Funzione_.siglaInterna, 110);
         setColumnWidth(Funzione_.siglaVisibile, 110);
     }// end of method
@@ -130,7 +131,7 @@ public class FunzioneTable extends ETable {
             bIcon.setHtmlContentAllowed(true);
             bIcon.setWidth("3em");
             bIcon.setCaption("...");
-            bIcon.addStyleName("bfunzione");
+            bIcon.addStyleName("verde");
 
             bIcon.addClickListener(new Button.ClickListener() {
                 @Override
