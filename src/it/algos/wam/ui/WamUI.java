@@ -468,15 +468,15 @@ public class WamUI extends UI {
      *
      * @return il componente creato
      */
-    private Component creaComponente() {
+    private Component creaComponenteNoGood() {
         // creo un componente standard di navigazione
         NavComponent navComp = new NavComponent(this);
         MenuBar menuBar = navComp.getMenuBar();
 
         // aggiungo le view - la menubar viene riempita automaticamente
-        navComp.addView(FunzioneMod.class,FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
-        navComp.addView(ServizioMod.class,ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
-        navComp.addView(VolontarioMod.class,VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
+        navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
+        navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
+        navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
 //        addMod(menuBar, new FunzioneMod());
 //        addMod(menuBar, new ServizioMod());
 //        addMod(menuBar, new VolontarioMod());
@@ -524,6 +524,67 @@ public class WamUI extends UI {
         return navComp;
     }// end of method
 
+
+    /**
+     * Crea il componente per il programmatore
+     * Si possono usare sia i moduli lazy che quelli normali
+     *
+     * @return il componente creato
+     */
+    private Component creaComponente() {
+        // creo un componente standard di navigazione
+        NavComponent navComp = new NavComponent(this);
+        MenuBar menuBarUtente = navComp.getMenuBar();
+        MenuBar.MenuItem item;
+
+        // aggiungo le view - la menubar viene riempita automaticamente
+        navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
+        navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
+        navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
+//        addMod(menuBar, new FunzioneMod());
+//        addMod(menuBar, new ServizioMod());
+//        addMod(menuBar, new VolontarioMod());
+
+        // aggiungo un MenuItem con il tabellone.
+        // volendo posso anche aggiungerlo nella posizione desiderata
+        menuBarUtente.addItem("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                Tabellone tab = new Tabellone(getCurrentAddress());
+                setContent(tab);
+            }// end of inner method
+        });// end of anonymous inner class
+
+        MenuBarWithLogin menu = (MenuBarWithLogin) navComp.getComponent(0);
+        // controlla se è un admin
+        if (LibSession.isDeveloper()) {
+            MenuBar menuBarAdmin = new MenuBar();
+            menuBarAdmin.setStyleName("verde");
+            addMod(menuBarAdmin, new LogMod());
+            addMod(menuBarAdmin, new PrefMod());
+            menu.addMenu(menuBarAdmin);
+            navComp.setup(menuBarAdmin);
+        }// end of if cycle
+
+        // controlla se è un developer
+        if (LibSession.isDeveloper()) {
+            MenuBar menuBarDeveloper = new MenuBar();
+            menuBarDeveloper.addStyleName("rosso");
+            addMod(menuBarDeveloper, new UtenteModulo("User"));
+            addMod(menuBarDeveloper, new VersMod());
+            addMod(menuBarDeveloper, new WamCompanyMod());
+            menu.addMenu(menuBarDeveloper);
+            navComp.setup(menuBarDeveloper);
+        }// end of if cycle
+
+        // da chiamare dopo che ho aggiunto tutti i MenuItems,
+        // configura il Navigator in base alla MenuBar
+        navComp.setup();
+
+        return navComp;
+    }// end of method
+
+
     private MenuBar.MenuItem createMenuItem(MenuBar.MenuItem menu, Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
         MenuBar.MenuItem menuItem;
 //        MenuCommand cmd = new MenuBar.Command(menu, viewClass, cached);
@@ -549,7 +610,7 @@ public class WamUI extends UI {
      * Il modulo implementa la gestione delle company
      *
      * @param menu
-     * @param modulo  da visualizzare nel placeholder alla pressione del bottone di menu
+     * @param modulo da visualizzare nel placeholder alla pressione del bottone di menu
      */
     private MenuBar.MenuItem addMod(MenuBar menu, ModulePop modulo) {
         MenuBar.MenuItem menuItem = null;
@@ -572,7 +633,7 @@ public class WamUI extends UI {
      * Il modulo implementa la gestione delle company
      *
      * @param menu
-     * @param modulo  da visualizzare nel placeholder alla pressione del bottone di menu
+     * @param modulo da visualizzare nel placeholder alla pressione del bottone di menu
      */
     private MenuBar.MenuItem addMod(MenuBar.MenuItem menu, ModulePop modulo) {
         MenuBar.MenuItem menuItem = null;
@@ -743,7 +804,7 @@ public class WamUI extends UI {
 
 
     public void removeMenuItem(String caption) {
-        if (menubar==null) {
+        if (menubar == null) {
             return;
         }// end of if cycle
 
