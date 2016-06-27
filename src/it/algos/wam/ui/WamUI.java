@@ -526,7 +526,8 @@ public class WamUI extends UI {
 
 
     /**
-     * Crea il componente per il programmatore
+     * Crea il componente per l'utente normale
+     * Aggiunge i menu per l'admin e per il programmatore (eventuali)
      * Si possono usare sia i moduli lazy che quelli normali
      *
      * @return il componente creato
