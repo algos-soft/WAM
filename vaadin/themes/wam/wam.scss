@@ -64,7 +64,6 @@
 
   }
 
-
   //// titolo servizio a orario variabile
   //$dark: rgb(186, 180, 0);
   //$light: rgba(186, 180, 0, 0.6);
@@ -81,9 +80,7 @@
     cursor: pointer;
   }
 
-
-
-    // componente nome nel componente servizio
+  // componente nome nel componente servizio
   .cservizio-nome {
     font-weight: bold;
     //margin-left: 10%;
@@ -167,11 +164,6 @@
     background: linear-gradient(top, $dark, $light, $dark);
   }
 
-
-
-
-
-
   // componente turno di base
   .cturno {
     @extend .cbasecell;
@@ -201,9 +193,8 @@
     background: rgba(206, 18, 10, 0.89);
   }
 
-
   // titolo del turno
-  .cturno-title{
+  .cturno-title {
     font-size: small;
     text-align: center;
     white-space: nowrap;
@@ -229,36 +220,35 @@
     cursor: pointer;
   }
 
-
   // componente iscrizione
   .ciscrizione {
     @extend .cbasecell;
     border-radius: 6px;
     border-bottom-width: thin;
     border-bottom-style: solid;
-    border-bottom-color: rgba(255, 255, 255,0.9);
+    border-bottom-color: rgba(255, 255, 255, 0.9);
     padding-left: 0.2em;
     padding-right: 0.2em;
     text-align: left;
 
     // label nel componente iscrizione
-    .v-label{
+    .v-label {
       font-size: 0.9em;
     }
 
     // icona nel componente iscrizione
-    .v-icon{
+    .v-icon {
       font-size: 0.7em;
     }
   }
 
   // componente iscrizione - testo scuro
-  .ciscrizione-dark{
+  .ciscrizione-dark {
     $color: rgba(0, 0, 0, 0.75);
-    .v-label{
+    .v-label {
       color: $color;
     }
-    .v-icon{
+    .v-icon {
       color: $color;
     }
   }
@@ -266,30 +256,30 @@
   // componente iscrizione - testo chiaro
   .ciscrizione-light {
     $color: rgba(255, 255, 255, 0.95);
-    .v-label{
+    .v-label {
       color: $color;
     }
-    .v-icon{
+    .v-icon {
       color: $color;
     }
   }
 
-  // verde - grigio platino
+  // verde
   .verde {
-    .v-label{
-      color:green;
+    .v-label {
+      color: green;
     }
     .v-icon {
-      color:green;
+      color: green;
     }
     .v-menubar-menuitem {
       color: green;
       background: #E5E4E2;
     }
   }
-  // salmone - grigio platino
+  // salmone
   .salmone {
-    .v-label{
+    .v-label {
       color: #FA8072;
     }
     .v-icon {
@@ -300,9 +290,9 @@
       background: #E5E4E2;
     }
   }
-  // rosso pompeiano - grigio platino
+  // rosso pompeiano
   .rosso {
-    .v-label{
+    .v-label {
       color: #D21F1B;
     }
     .v-icon {
@@ -315,13 +305,12 @@
   }
   // altro colore
   .blue {
-    .v-label{
-      color:blue;
+    .v-label {
+      color: blue;
     }
     .v-icon {
-      color:blue;
+      color: blue;
     }
   }
-
 
 }
