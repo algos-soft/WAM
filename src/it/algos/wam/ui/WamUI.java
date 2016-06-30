@@ -58,7 +58,7 @@ public class WamUI extends UI {
     /**
      * @param request the Vaadin request that caused this UI to be created
      */
-    //@Override
+    @Override
     protected void init(VaadinRequest request) {
 
         Component comp = null;
