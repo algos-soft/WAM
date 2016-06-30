@@ -111,6 +111,7 @@ public abstract class BootService {
      *
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
+     *
      * @return lista delle funzioni create
      */
     @SuppressWarnings("unchecked")
@@ -151,6 +152,7 @@ public abstract class BootService {
      * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
+     *
      * @return istanza di Funzione
      */
     private static Funzione creaFunzBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -162,7 +164,6 @@ public abstract class BootService {
         return Funzione.crea(company, manager, sigla, descrizione, ordine, note, glyph);
     }// end of static method
 
-
     /**
      * Creazione iniziale di alcuni servizi per la croce selezionata
      * Li crea SOLO se non esistono già
@@ -170,6 +171,7 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param funz    lista delle funzioni di questa croce
+     *
      * @return lista dei servizi creati
      */
     @SuppressWarnings("unchecked")
@@ -191,9 +193,9 @@ public abstract class BootService {
         lista.add(Arrays.asList("amb-mat", "Ambulanza mattino", 8, 14, true, verdino, setAmbulanza(funz), 2));
         lista.add(Arrays.asList("amb-pom", "Ambulanza pomeriggio", 14, 20, true, verdino, setAmbulanza(funz), 2));
         lista.add(Arrays.asList("amb-notte", "Ambulanza notte", 20, 8, true, verdino, setAmbulanzaNotte(funz), 2));
-        lista.add(Arrays.asList("dim", "Dimissioni ordinarie", 0, 0, true, rosa, setOrdinaria(funz), 2));
-        lista.add(Arrays.asList("ext", "Extra", 0, 0, true, rosa, setOrdinaria(funz), 2));
-        lista.add(Arrays.asList("avis", "Avis", 0, 0, true, rosa, setAvis(funz), 1));
+        lista.add(Arrays.asList("dim", "Dimissioni ordinarie", 0, 0, false, rosa, setOrdinaria(funz), 2));
+        lista.add(Arrays.asList("ext", "Extra", 0, 0, false, rosa, setOrdinaria(funz), 2));
+        lista.add(Arrays.asList("avis", "Avis", 0, 0, false, rosa, setAvis(funz), 1));
         lista.add(Arrays.asList("cent-mat", "Centralino mattino", 8, 13, true, giallo, setCentralino(funz), 1));
         lista.add(Arrays.asList("cent-pom", "Centralino pomeriggio", 13, 18, true, giallo, setCentralino(funz), 1));
 
@@ -212,6 +214,7 @@ public abstract class BootService {
      * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
+     *
      * @return istanza di Servizio
      */
     private static Servizio creaServBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -261,7 +264,6 @@ public abstract class BootService {
         return Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, obbligatori, funzioni);
     }// end of static method
 
-
     /**
      * Creazione iniziale di alcuni volontari per la croce selezionata
      * Li crea SOLO se non esistono già
@@ -269,6 +271,7 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param funz    lista delle funzioni di questa croce
+     *
      * @return lista dei volontari creati
      */
     @SuppressWarnings("unchecked")
@@ -280,20 +283,20 @@ public abstract class BootService {
             return null;
         }// end of if cycle
 
-        lista.add(Arrays.asList("Stefano", "Brambilla", funz.get(1)));
-        lista.add(Arrays.asList("Mario", "Abbati", funz.get(2)));
-        lista.add(Arrays.asList("Giovanna", "Durante", funz));
-        lista.add(Arrays.asList("Diego", "Bertini", funz.get(3)));
-        lista.add(Arrays.asList("Roberto", "Marchetti", funz.get(7), funz.get(9)));
-        lista.add(Arrays.asList("Mirella", "Pace", funz.get(4)));
-        lista.add(Arrays.asList("Edoardo", "Politi", funz.get(5)));
-        lista.add(Arrays.asList("Sabina", "Roncelli", funz.get(6)));
-        lista.add(Arrays.asList("Lucia", "Casaroli", funz.get(0)));
-        lista.add(Arrays.asList("Antonio", "Zambetti", funz.get(8)));
-        lista.add(Arrays.asList("Flavia", "Robusti", funz.get(8),funz.get(9)));
-        lista.add(Arrays.asList("Aldo", "Terzino", funz.get(8),funz.get(9)));
-        lista.add(Arrays.asList("Marco", "Terzani", funz.get(8),funz.get(9)));
-        lista.add(Arrays.asList("Alice", "Mantovani", funz.get(8),funz.get(9)));
+        lista.add(Arrays.asList("Stefano", "Brambilla", "bra", false, funz.get(1)));
+        lista.add(Arrays.asList("Mario", "Abbati", "abb", false, funz.get(2)));
+        lista.add(Arrays.asList("Giovanna", "Durante", "dur", false, funz));
+        lista.add(Arrays.asList("Diego", "Bertini", "ber", true, funz.get(3)));
+        lista.add(Arrays.asList("Roberto", "Marchetti", "mar", false, funz.get(7), funz.get(9)));
+        lista.add(Arrays.asList("Mirella", "Pace", "pac", false, funz.get(4)));
+        lista.add(Arrays.asList("Edoardo", "Politi", "pol", false, funz.get(5)));
+        lista.add(Arrays.asList("Sabina", "Roncelli", "ron", false, funz.get(6)));
+        lista.add(Arrays.asList("Lucia", "Casaroli", "cas", true, funz.get(0)));
+        lista.add(Arrays.asList("Antonio", "Zambetti", "zam", false, funz.get(8)));
+        lista.add(Arrays.asList("Flavia", "Robusti", "rob", false, funz.get(8), funz.get(9)));
+        lista.add(Arrays.asList("Aldo", "Terzino", "ter", false, funz.get(8), funz.get(9)));
+        lista.add(Arrays.asList("Marco", "Terzani", "ter", false, funz.get(8), funz.get(9)));
+        lista.add(Arrays.asList("Alice", "Mantovani", "man", false, funz.get(8), funz.get(9)));
 
         for (int k = 0; k < lista.size(); k++) {
             listaVolontari.add(creaVolBase(company, manager, (List) lista.get(k)));
@@ -309,11 +312,14 @@ public abstract class BootService {
      * @param company  croce di appartenenza
      * @param manager  the EntityManager to use
      * @param listaTmp di alcune property
+     *
      * @return istanza di Volontario
      */
     private static Volontario creaVolBase(WamCompany company, EntityManager manager, List listaTmp) {
         String nome = "";
         String cognome = "";
+        String password = "";
+        boolean admin=false;
         Funzione[] funzioni = null;
         ArrayList lista = null;
 
@@ -325,13 +331,21 @@ public abstract class BootService {
             cognome = (String) listaTmp.get(1);
         }// end of if cycle
 
-        if (listaTmp.size() > 2) {
-            if (listaTmp.get(2) instanceof ArrayList) {
-                lista = (ArrayList) listaTmp.get(2);
+        if (listaTmp.size() > 2 && listaTmp.get(2) instanceof String) {
+            password = (String) listaTmp.get(2);
+        }// end of if cycle
+
+        if (listaTmp.size() > 3 && listaTmp.get(3) instanceof Boolean) {
+            admin = (Boolean) listaTmp.get(3);
+        }// end of if cycle
+
+        if (listaTmp.size() > 4) {
+            if (listaTmp.get(4) instanceof ArrayList) {
+                lista = (ArrayList) listaTmp.get(4);
                 funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
             } else {
                 lista = new ArrayList();
-                for (int k = 2; k < listaTmp.size(); k++) {
+                for (int k = 4; k < listaTmp.size(); k++) {
                     if (listaTmp.get(k) instanceof Funzione) {
                         lista.add(listaTmp.get(k));
                     }// end of if cycle
@@ -340,9 +354,8 @@ public abstract class BootService {
             }// end of if/else cycle
         }// end of if cycle
 
-        return Volontario.crea(company, manager, nome, cognome, funzioni);
+        return Volontario.crea(company, manager, nome, cognome, password, admin, funzioni);
     }// end of static method
-
 
     /**
      * Creazione iniziale di alcuni turni vuoti per la croce selezionata
@@ -351,6 +364,7 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param servizi lista dei servizi di questa croce
+     *
      * @return lista dei turni creati
      */
     private static ArrayList<Turno> creaTurniVuoti(WamCompany company, EntityManager manager, ArrayList<Servizio> servizi) {
@@ -444,7 +458,6 @@ public abstract class BootService {
 
         return subset;
     }// end of static method
-
 
     /**
      * Subset

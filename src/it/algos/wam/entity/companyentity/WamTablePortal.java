@@ -45,19 +45,24 @@ public class WamTablePortal extends TablePortal {
     }// end of constructor
 
     public TableToolbar createToolbar() {
-        boolean utenteSviluppatore = LibSession.isDeveloper();
+        boolean developer = LibSession.isDeveloper();
+        boolean admin = LibSession.isAdmin();
         toolbar = super.createToolbar();
         toolbar.setCreate(true);
 
-        if (utenteSviluppatore) {
+        if (developer) {
             useAllCompany = true;
             addMenuCroci();
             fixInizialeCompany();
         } else {
-            useAllCompany = false;
-            if (isUsaBottoniSpostamento()) {
-                syncButtonsSpostamento(true);
-            }// end of if cycle
+            if (admin) {
+                useAllCompany = false;
+                if (isUsaBottoniSpostamento()) {
+                    syncButtonsSpostamento(true);
+                }// end of if cycle
+            } else {
+                toolbar = null;
+            }// fine del blocco if-else
         }// end of if/else cycle
 
         return toolbar;
@@ -115,7 +120,6 @@ public class WamTablePortal extends TablePortal {
 
         return subItem;
     }// end of method
-
 
     /*
      * Spostamento in su ed in giu dei singoli records.
@@ -255,7 +259,6 @@ public class WamTablePortal extends TablePortal {
         deleteMenu(companyNew);
         syncCompany(companyNew);
     }// end of method
-
 
     /**
      * Cancella il menu selezionato

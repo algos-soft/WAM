@@ -135,7 +135,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         setDipendente(dipendente);
     }// end of constructor
 
-
     /**
      * Recupera il totale dei records della Entity
      * Filtrato sulla azienda corrente.
@@ -146,12 +145,12 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         return count((WamCompany) CompanySessionLib.getCompany());
     }// end of method
 
-
     /**
      * Recupera il totale dei records della Entity
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company croce di appartenenza
+     *
      * @return numero totale di records della tavola
      */
     public static int count(WamCompany company) {
@@ -164,7 +163,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
         return totRec;
     }// end of method
-
 
     /**
      * Recupera il totale dei records della Entity
@@ -180,6 +178,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Recupera una istanza di Volontario usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
+     *
      * @return istanza di Volontario, null se non trovata
      */
     public static Volontario find(long id) {
@@ -195,7 +194,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         return instance;
     }// end of method
 
-
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Filtrato sulla azienda corrente.
@@ -207,12 +205,12 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         return (ArrayList<Volontario>) CompanyQuery.getList(Volontario.class);
     }// end of method
 
-
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company croce di appartenenza
+     *
      * @return lista di tutte le istanze di Funzione
      */
     @SuppressWarnings("unchecked")
@@ -234,7 +232,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         return lista;
     }// end of method
 
-
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Senza filtri.
@@ -246,13 +243,13 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         return (ArrayList<Volontario>) AQuery.getLista(Volontario.class);
     }// end of method
 
-
     /**
      * Recupera una istanza di Volontario usando la query di tutte e sole le property obbligatorie
      *
      * @param company valore della property Company
      * @param nome    valore della property Nome
      * @param cognome valore della property Cognome
+     *
      * @return istanza di Volontario, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -284,7 +281,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         return instance;
     }// end of method
 
-
     /**
      * Creazione iniziale di un volontario
      * Lo crea SOLO se non esiste già
@@ -292,12 +288,12 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param company croce di appartenenza
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
+     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, String nome, String cognome) {
         return crea(company, null, nome, cognome, new ArrayList<Funzione>());
     }// end of static method
-
 
     /**
      * Creazione iniziale di un volontario
@@ -307,6 +303,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param manager the EntityManager to use
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
+     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome) {
@@ -322,6 +319,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param nome      del volontario/milite (obbligatorio)
      * @param cognome   del volontario/milite (obbligatorio)
      * @param listaFunz lista delle funzioni (facoltativa)
+     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, ArrayList<Funzione> listaFunz) {
@@ -337,13 +335,34 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param nome     del volontario/milite (obbligatorio)
      * @param cognome  del volontario/milite (obbligatorio)
      * @param funzioni lista delle funzioni (facoltativa)
+     *
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, Funzione... funzioni) {
+        return crea(company, manager, nome, cognome, "", false, funzioni);
+    }// end of static method
+
+    /**
+     * Creazione iniziale di un volontario
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company  croce di appartenenza
+     * @param manager  the EntityManager to use
+     * @param nome     del volontario/milite (obbligatorio)
+     * @param cognome  del volontario/milite (obbligatorio)
+     * @param password del volontario/milite (facoltativa)
+     * @param admin    flag per il ruolo (facoltativa)
+     * @param funzioni lista delle funzioni (facoltativa)
+     *
+     * @return istanza di Volontario
+     */
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String password, boolean admin, Funzione... funzioni) {
         Volontario vol = Volontario.find(company, nome, cognome);
 
         if (vol == null) {
             vol = new Volontario(company, nome, cognome);
+            vol.setPassword(password);
+            vol.setAdmin(admin);
             vol.setDipendente(false);
             vol.setAttivo(true);
 
@@ -358,6 +377,26 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
         return vol;
     }// end of static method
+
+    /**
+     * Recupera un volontario della company corrente per nick
+     *
+     * @param nick il nick (come ritornato da getNickname())
+     *
+     * @return il volontario
+     */
+    public static Volontario queryByNick(String nick) {
+        Volontario found = null;
+        List<Volontario> list = (List<Volontario>) CompanyQuery.queryList(Volontario.class);
+        for (Volontario v : list) {
+            if (v.getNickname().equals(nick)) {
+                found = v;
+                break;
+
+            }
+        }
+        return found;
+    }
 
     /**
      * Abbreviazione visibile nel tabellone e nei popup
@@ -474,7 +513,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         return password;
     }
 
-
     @Override
     /**
      * @inheritDoc
@@ -489,7 +527,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         }
         return valid;
     }
-
 
     public List<VolontarioFunzione> getVolontarioFunzioni() {
         return volontarioFunzioni;
@@ -515,7 +552,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         }// end of if cycle
     }// end of method
 
-
     /**
      * Rimuove una funzione dal volontario
      */
@@ -528,11 +564,11 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         }
     }
 
-
     /**
      * Verifica se il volontario ha una data funzione
      *
      * @param funz la funzione da verificare
+     *
      * @return true se ha la funzione
      */
     public boolean haFunzione(Funzione funz) {
@@ -598,25 +634,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (dataNascita != null ? dataNascita.hashCode() : 0);
         return result;
-    }
-
-    /**
-     * Recupera un volontario della company corrente per nick
-     *
-     * @param nick il nick (come ritornato da getNickname())
-     * @return il volontario
-     */
-    public static Volontario queryByNick(String nick) {
-        Volontario found = null;
-        List<Volontario> list = (List<Volontario>)CompanyQuery.queryList(Volontario.class);
-        for(Volontario v : list){
-            if(v.getNickname().equals(nick)){
-                found=v;
-                break;
-
-            }
-        }
-        return found;
     }
 
 }

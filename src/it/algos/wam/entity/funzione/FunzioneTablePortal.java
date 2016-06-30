@@ -3,7 +3,9 @@ package it.algos.wam.entity.funzione;
 import it.algos.wam.entity.companyentity.WamTablePortalSposta;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.toolbar.TableToolbar;
 
 /**
  * Created by alex on 08/04/16.
@@ -11,11 +13,9 @@ import it.algos.webbase.web.module.ModulePop;
  */
 public class FunzioneTablePortal extends WamTablePortalSposta {
 
-
     public FunzioneTablePortal(ModulePop modulo) {
         super(modulo);
     }// end of constructor
-
 
     /**
      * Spostamento effettivo, in su o in giu del singolo record.
@@ -32,7 +32,6 @@ public class FunzioneTablePortal extends WamTablePortalSposta {
         }// end of if cycle
     }// end of method
 
-
     /**
      * Scambia il numero d'ordine di due record
      */
@@ -46,7 +45,6 @@ public class FunzioneTablePortal extends WamTablePortalSposta {
         super.swapCommit(f1, f2);
     }// end of method
 
-
     /**
      * Shows in the table only the needed wamcompany
      * Creates a filter corresponding to the needed wamcompany in the table
@@ -57,6 +55,5 @@ public class FunzioneTablePortal extends WamTablePortalSposta {
 //        getTable().setColumnCollapsed(Funzione_.ordine.getName(), useAllCompany);
         getTable().refresh();
     }// end of method
-
 
 }// end of class

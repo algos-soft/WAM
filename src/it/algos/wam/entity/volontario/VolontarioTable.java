@@ -148,8 +148,9 @@ public class VolontarioTable extends ETable {
                 label = new Label(FontAwesome.CHECK.getHtml(), ContentMode.HTML);
                 label.addStyleName("verde");
             } else {
-                label = new Label(FontAwesome.REMOVE.getHtml(), ContentMode.HTML);
-                label.addStyleName("rosso");
+//                label = new Label(FontAwesome.REMOVE.getHtml(), ContentMode.HTML);
+//                label.addStyleName("rosso");
+
             }// fine del blocco if-else
 
             return label;

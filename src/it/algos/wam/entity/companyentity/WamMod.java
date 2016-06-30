@@ -1,13 +1,15 @@
 package it.algos.wam.entity.companyentity;
 
-
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyModule;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.TablePortal;
+import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
@@ -20,7 +22,6 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
 
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
-
 
     /**
      * Costruttore
@@ -44,7 +45,6 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
         getTable().setRowHeaderMode(Table.RowHeaderMode.INDEX);
     }// end of constructor
 
-
     /**
      * Aggiunge il campo company
      * <p>
@@ -66,7 +66,6 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
         return lista.toArray(new Attribute[lista.size()]);
     }// end of method
 
-
     /**
      * Create the Table Portal
      * <p>
@@ -84,7 +83,6 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
     public void search() {
         super.search();
     }// end of method
-
 
     @Override
     public void companyAdded(WamCompany company) {
@@ -113,6 +111,27 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
 
     @Override
     public void recordSaved(RecordEvent e) {
+
+    }// end of method
+
+    /**
+     * Invoked when table data changes
+     */
+    protected void tableDataChanged() {
+        String infoStandard;
+        BaseCompany croce = CompanySessionLib.getCompany();
+        super.tableDataChanged();
+
+        if (LibSession.isDeveloper() && croce != null) {
+            TablePortal tablePortal = getTablePortal();
+            if (tablePortal != null) {
+                TableToolbar tableToolbar = tablePortal.getToolbar();
+                if (tableToolbar != null) {
+                    infoStandard = tableToolbar.getInfoText();
+                    tableToolbar.setInfoText(infoStandard + " della croce " + croce.getName());
+                }// fine del blocco if
+            }// fine del blocco if
+        }// fine del blocco if
 
     }// end of method
 
