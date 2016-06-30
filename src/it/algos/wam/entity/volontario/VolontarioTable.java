@@ -69,6 +69,10 @@ public class VolontarioTable extends ETable {
         lista.add(Volontario_.nome);
         lista.add(Volontario_.cognome);
 
+        if (LibSession.isDeveloper()||LibSession.isAdmin()) {
+            lista.add(Volontario_.admin);
+        }// end of if cycle
+
         for (Funzione funz : listaFunzioni) {
             lista.add(funz.getSiglaInterna());
         }// end of for cycle

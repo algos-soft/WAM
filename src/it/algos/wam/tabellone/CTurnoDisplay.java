@@ -11,6 +11,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.webbase.web.lib.LibSession;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -109,12 +110,12 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         blank.setWidth("100%");
         blank.setHeight("100%");
         blank.addStyleName("cnoturno");
-        if(WAMApp.isAdmin()){
+        if(LibSession.isAdmin()){
             blank.addStyleName("cursor-pointer");
         }
 
         // solo admin: listener quando viene cliccata l'area iscrizioni
-        if(WAMApp.isAdmin()){
+        if(LibSession.isAdmin()){
             blank.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
                 @Override
                 public void layoutClick(LayoutEvents.LayoutClickEvent event) {

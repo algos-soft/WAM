@@ -18,6 +18,7 @@ import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.form.AForm;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.Lib;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.screen.ErrorScreen;
 
 import javax.persistence.EntityManager;
@@ -444,7 +445,7 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            if(WAMApp.isAdmin()){
+            if(LibSession.isAdmin()){
                 menuVai.addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
                     @Override
                     public void menuSelected(MenuBar.MenuItem selectedItem) {

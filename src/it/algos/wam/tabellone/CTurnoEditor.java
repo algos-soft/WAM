@@ -22,6 +22,7 @@ import it.algos.webbase.web.component.HHMMComponent;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.lib.DateConvertUtils;
+import it.algos.webbase.web.lib.LibSession;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -157,7 +158,7 @@ public class CTurnoEditor extends CTabelloneEditor {
         });
 
         // funzione elimina solo se admin e solo se è un turno persisted
-        if(WAMApp.isAdmin()){
+        if(LibSession.isAdmin()){
             // controllo se il turno è persisted
             if (turno.getId() != null) {
                 layout.addComponent(bElimina);
@@ -362,7 +363,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             if (isMultiIscrizione()) {
                 comp = creaCompPopup();
             } else {
-                if (WAMApp.isAdmin()) {
+                if (LibSession.isAdmin()) {
                     comp = creaCompPopup();
                 } else {
                     comp = creaCompBottoni();
@@ -695,7 +696,7 @@ public class CTurnoEditor extends CTabelloneEditor {
      * (un volontario può iscrivere anche gli altri)
      */
     private boolean isMultiIscrizione() {
-        return WAMApp.isAdmin();
+        return LibSession.isAdmin();
     }
 
 
