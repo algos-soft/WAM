@@ -335,7 +335,9 @@ public class WamTablePortal extends TablePortal {
     }// end of method
 
     protected void syncButtons(boolean singleSelected, boolean multiSelected) {
-        toolbar.syncButtons(singleSelected, multiSelected);
+        if(toolbar!=null){
+            toolbar.syncButtons(singleSelected, multiSelected);
+        }
 
         if (bMoveUp != null) {
             bMoveUp.setEnabled(singleSelected);
