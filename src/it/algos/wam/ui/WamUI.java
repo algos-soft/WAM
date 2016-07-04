@@ -22,6 +22,7 @@ import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
 import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.wam.login.WamLogin;
+import it.algos.wam.menu.WamMenuCommand;
 import it.algos.wam.tabellone.Tabellone;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.log.LogMod;
@@ -618,7 +619,7 @@ public class WamUI extends UI {
         String label = modulo.getMenuLabel();
         Resource icon = modulo.getMenuIcon();
 
-        MenuCommand cmd = new MenuCommand(null, modulo);
+        WamMenuCommand cmd = new WamMenuCommand(null, modulo, this);
         menuItem = menu.addItem(label, icon, cmd);
 
         if (modulo instanceof WamMod) {
@@ -641,7 +642,7 @@ public class WamUI extends UI {
         String label = modulo.getMenuLabel();
         Resource icon = modulo.getMenuIcon();
 
-        MenuCommand cmd = new MenuCommand(null, modulo);
+        WamMenuCommand cmd = new WamMenuCommand(null, modulo, this);
         menuItem = menu.addItem(label, icon, cmd);
 
         if (menuItem != null) {
@@ -818,5 +819,12 @@ public class WamUI extends UI {
         }// end of for cycle
     }// end of method
 
+    /**
+     * The item has been selected.
+     * Navigate to the View and select the item in the menubar
+     */
+    public void menuSelected(MenuBar.MenuItem selectedItem) {
+        int a = 87;
+    }// end of method
 
 }// end of class
