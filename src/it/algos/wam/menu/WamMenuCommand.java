@@ -12,17 +12,18 @@ import it.algos.webbase.web.navigator.MenuCommand;
  */
 public class WamMenuCommand extends MenuCommand {
 
-    private WamUI wamUi;
+    private WamUI wamUI;
 
     /**
      * Constructor - lazy, cached
      *
      * @param mb    the MenuBar
      * @param clazz the view to diplay
+     * @param wamUI l'interfaccia di riferimento
      */
-    public WamMenuCommand(MenuBar mb, Class clazz, WamUI wamUi) {
+    public WamMenuCommand(MenuBar mb, Class clazz, WamUI wamUI) {
         super(mb, clazz);
-        this.wamUi = wamUi;
+        this.wamUI = wamUI;
     }// end of constructor
 
     /**
@@ -30,12 +31,13 @@ public class WamMenuCommand extends MenuCommand {
      * Will create a heavyweight view provider
      * The view provided here will be used
      *
-     * @param mb   the MenuBar
-     * @param view the view to diplay
+     * @param mb    the MenuBar
+     * @param view  the view to diplay
+     * @param wamUI l'interfaccia di riferimento
      */
-    public WamMenuCommand(MenuBar mb, View view, WamUI wamUi) {
+    public WamMenuCommand(MenuBar mb, View view, WamUI wamUI) {
         super(mb, view);
-        this.wamUi = wamUi;
+        this.wamUI = wamUI;
     }// end of constructor
 
     /**
@@ -45,7 +47,7 @@ public class WamMenuCommand extends MenuCommand {
     @Override
     public void menuSelected(MenuBar.MenuItem selectedItem) {
         super.menuSelected(selectedItem);
-        wamUi.menuSelected(selectedItem);
+        wamUI.menuSelected(selectedItem);
     }// end of method
 
 }// end of class

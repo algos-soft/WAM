@@ -7,6 +7,7 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import it.algos.wam.login.MenuBarWithLogin;
+import it.algos.wam.menu.WamMenuCommand;
 import it.algos.webbase.web.menu.AMenuBar;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.navigator.AlgosNavigator;
@@ -103,33 +104,68 @@ public class NavComponent extends VerticalLayout {
         this.footer.addComponent(footer);
     }
 
-    /**
-     * Aggiunge un modulo al Navigator
-     * <p>
-     * the view is cached and will be instantiated only once
-     *
-     * @param viewClass the class to instantiate (must implement View)
-     */
-    public void addView(Class<? extends View> viewClass) {
-        String label = viewClass.getSimpleName();
-        addView(viewClass, true, label, null);
-    }
-
-    /**
-     * Adds a cached View to the UI
-     * <p>
-     * Will create a lazy (class-based) view provider
-     * The view will be instantiated by the view provider from the provided class
-     * The view will be instantiated only once, then re-used
-     *
-     * @param viewClass the view class to instantiate
-     * @param label     the text for the menu item
-     * @param icon      the icon for the menu item
-     * @return menuItem appena creato
-     */
-    public MenuBar.MenuItem addView(Class<? extends View> viewClass, String label, Resource icon) {
-        return addView(menuBar, viewClass, true, label, icon);
-    }// end of method
+//    /**
+//     * Aggiunge un modulo al Navigator
+//     * <p>
+//     * the view is cached and will be instantiated only once
+//     *
+//     * @param viewClass the class to instantiate (must implement View)
+//     */
+//    public void addView(Class<? extends View> viewClass) {
+//        String label = viewClass.getSimpleName();
+//        addView(viewClass, true, label, null);
+//    }
+//
+//    /**
+//     * Adds a cached View to the UI
+//     * <p>
+//     * Will create a lazy (class-based) view provider
+//     * The view will be instantiated by the view provider from the provided class
+//     * The view will be instantiated only once, then re-used
+//     *
+//     * @param viewClass the view class to instantiate
+//     * @param label     the text for the menu item
+//     * @param icon      the icon for the menu item
+//     * @return menuItem appena creato
+//     */
+//    public MenuBar.MenuItem addView(Class<? extends View> viewClass, String label, Resource icon) {
+//        return addView(menuBar, viewClass, true, label, icon);
+//    }// end of method
+//
+//    /**
+//     * Adds a View to the UI
+//     * <p>
+//     * Will create a lazy (class-based) view provider
+//     * The view will be instantiated by the view provider from the provided class
+//     * The viewCached parameter controls if the view will be instantiated only once
+//     * or each time is requested by the Navigator.
+//     *
+//     * @param viewClass  the view class to instantiate
+//     * @param viewCached true to instantiated only once, false to instantiate each time
+//     * @param label      the text for the menu item
+//     * @param icon       the icon for the menu item
+//     * @return menuItem appena creato
+//     */
+//    public MenuBar.MenuItem addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
+//        return addView(menuBar, viewClass, viewCached, label, icon);
+//    }// end of method
+//
+//    /**
+//     * Adds a View to the UI
+//     * <p>
+//     * Will create a lazy (class-based) view provider
+//     * The view will be instantiated by the view provider from the provided class
+//     * The viewCached parameter controls if the view will be instantiated only once
+//     * or each time is requested by the Navigator.
+//     *
+//     * @param viewClass the view class to instantiate
+//     * @param label     the text for the menu item
+//     * @param icon      the icon for the menu item
+//     * @return menuItem appena creato
+//     */
+//    public MenuBar.MenuItem addView(MenuBar menuBar, Class<? extends View> viewClass, String label, Resource icon) {
+//        return addView(menuBar, viewClass, true, label, icon);
+//    }// end of method
 
     /**
      * Adds a View to the UI
@@ -139,24 +175,7 @@ public class NavComponent extends VerticalLayout {
      * The viewCached parameter controls if the view will be instantiated only once
      * or each time is requested by the Navigator.
      *
-     * @param viewClass  the view class to instantiate
-     * @param viewCached true to instantiated only once, false to instantiate each time
-     * @param label      the text for the menu item
-     * @param icon       the icon for the menu item
-     * @return menuItem appena creato
-     */
-    public MenuBar.MenuItem addView( Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
-        return addView(menuBar, viewClass, viewCached, label, icon);
-    }// end of method
-
-    /**
-     * Adds a View to the UI
-     * <p>
-     * Will create a lazy (class-based) view provider
-     * The view will be instantiated by the view provider from the provided class
-     * The viewCached parameter controls if the view will be instantiated only once
-     * or each time is requested by the Navigator.
-     *
+     * @param wamUI l'interfaccia di riferimento
      * @param menuBar    di riferimento
      * @param viewClass  the view class to instantiate
      * @param viewCached true to instantiated only once, false to instantiate each time
@@ -164,9 +183,9 @@ public class NavComponent extends VerticalLayout {
      * @param icon       the icon for the menu item
      * @return menuItem appena creato
      */
-    public MenuBar.MenuItem addView(MenuBar menuBar, Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
+    public MenuBar.MenuItem addView(WamUI wamUI,MenuBar menuBar, Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
 
-        MenuBar.MenuItem menuItem = createMenuItem(menuBar, viewClass, label, viewCached, icon);
+        MenuBar.MenuItem menuItem = createMenuItem(wamUI,menuBar, viewClass, label, viewCached, icon);
 
         if (menuItem != null) {
             String keyModulo = viewClass.getSimpleName();
@@ -181,15 +200,16 @@ public class NavComponent extends VerticalLayout {
      * Create the MenuBar Item for this view
      * <p>
      *
+     * @param wamUI l'interfaccia di riferimento
      * @param menuBar   di riferimento
      * @param viewClass da visualizzare nell'area controllata dal navigatore
      *                  alla pressione del bottone di menu
      * @param icon      icona per il menu
      * @return menuItem appena creato
      */
-    private MenuBar.MenuItem createMenuItem(MenuBar menuBar, Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
+    private MenuBar.MenuItem createMenuItem(WamUI wamUI,MenuBar menuBar, Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
         MenuBar.MenuItem menuItem;
-        MenuCommand cmd = new MenuCommand(menuBar, viewClass, cached);
+        WamMenuCommand cmd = new WamMenuCommand(menuBar, viewClass,wamUI);
         menuItem = menuBar.addItem(label, icon, cmd);
         menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);
         return menuItem;
