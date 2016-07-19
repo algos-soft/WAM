@@ -33,8 +33,8 @@ public abstract class WAMApp extends AlgosApp {
             user = login.getUser();
             if (user instanceof Volontario) {
                 volontario = (Volontario) user;
-            }// fine del blocco if
-        }// fine del blocco if
+            }
+        }
 
         return volontario;
     }

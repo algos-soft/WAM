@@ -60,35 +60,104 @@ public class WamUI extends UI {
      */
     @Override
     protected void init(VaadinRequest request) {
+
         // controlla l'accesso come programmatore come parametro nell'url
         // attiva il flag developer nella sessione
         leggeBackdoor(request);
         if(LibSession.isDeveloper()){
             developerInit();
-        }else{
-            // recupera la company dall'url
-            String companyName = getCompanyNameFromUrl();
-            if (companyName != null) {
-                WamCompany company = WamCompany.findByCode(companyName);
-                if (company != null) {
-                    // Questa applicazione necessita di una logica di login specifica.
-                    // Se non già esistente, inietto l'oggetto Login specifico nella sessione
-                    Object obj = LibSession.getAttribute(Login.LOGIN_KEY_IN_SESSION);
-                    if(obj==null){
-                        WamLogin login = new WamLogin();
-                        Login.setLogin(login);
-                    }
-                    standardInit(company);
-                } else {    // company non presente nel db
-                    Component comp = new ErrorScreen("Company " + companyName + " non trovata nel database");
-                    this.setContent(comp);
-                }
-            } else {    // no company nell'url
-                Component comp = new ErrorScreen("Company non specificata");
+            return;
+        }
+
+        // da qui in poi non è programmatore
+
+        // recupera la company dall'url
+        String companyName = getCompanyNameFromUrl();
+
+        // la company deve esistere nell'url
+        if (companyName == null) {
+            Component comp = new ErrorScreen("Company non specificata");
+            this.setContent(comp);
+            return;
+        }
+
+        // la company deve esistere nel db
+        WamCompany company = WamCompany.findByCode(companyName);
+        if (company == null) {
+            Component comp = new ErrorScreen("Company " + companyName + " non trovata nel database");
+            this.setContent(comp);
+            return;
+        }
+
+        // Se esiste una company corrente nella sessione, la company dell'url
+        // deve essere uguale alla company corrente
+        BaseCompany currCompany=CompanySessionLib.getCompany();
+        if(currCompany!=null){
+            if(!company.equals(currCompany)){
+                Component comp = new ErrorScreen("Company diversa da quella corrente.\nEffettua il logout prima di cambiare company");
                 this.setContent(comp);
+                return;
             }
         }
+
+        // Questa applicazione necessita di una logica di login specifica.
+        // Se non già esistente, inietto l'oggetto Login specifico nella sessione
+        Object obj = LibSession.getAttribute(Login.LOGIN_KEY_IN_SESSION);
+        if(obj==null){
+            WamLogin login = new WamLogin();
+            Login.setLogin(login);
+            CompanySessionLib.setCompany(company);
+        }
+
+        standardInit(company);
+
     }
+
+//    /**
+//     * @param request the Vaadin request that caused this UI to be created
+//     */
+//    protected void initEx(VaadinRequest request) {
+//        // controlla l'accesso come programmatore come parametro nell'url
+//        // attiva il flag developer nella sessione
+//        leggeBackdoor(request);
+//        if(LibSession.isDeveloper()){
+//            developerInit();
+//        }else{
+//            // recupera la company dall'url
+//            String companyName = getCompanyNameFromUrl();
+//            if (companyName != null) {
+//                WamCompany company = WamCompany.findByCode(companyName);
+//                if (company != null) {
+//
+//                    // se c'è già una Company nella sessione, deve essere la stessa
+//                    BaseCompany currCompany=CompanySessionLib.getCompany();
+//                    if(currCompany!=null){
+//
+//                    }else{
+//
+//                    }
+//
+//
+//
+//
+//                    // Questa applicazione necessita di una logica di login specifica.
+//                    // Se non già esistente, inietto l'oggetto Login specifico nella sessione
+//                    Object obj = LibSession.getAttribute(Login.LOGIN_KEY_IN_SESSION);
+//                    if(obj==null){
+//                        WamLogin login = new WamLogin();
+//                        Login.setLogin(login);
+//                    }
+//                    standardInit(company);
+//                } else {    // company non presente nel db
+//                    Component comp = new ErrorScreen("Company " + companyName + " non trovata nel database");
+//                    this.setContent(comp);
+//                }
+//            } else {    // no company nell'url
+//                Component comp = new ErrorScreen("Company non specificata");
+//                this.setContent(comp);
+//            }
+//        }
+//    }
 
     /**
      * Init per il developer
@@ -105,6 +174,8 @@ public class WamUI extends UI {
      * @param company la company specificata nell'url
      */
     private void standardInit(WamCompany company) {
+        Component comp = creaComponente();
+        this.setContent(comp);
     }
 
 
