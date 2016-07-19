@@ -39,6 +39,7 @@ import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.screen.ErrorScreen;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,14 +90,16 @@ public class WamUI extends UI {
             return;
         }
 
-        // Se esiste una company corrente nella sessione, la company dell'url
-        // deve essere uguale alla company corrente
-        BaseCompany currCompany = CompanySessionLib.getCompany();
-        if (currCompany != null) {
-            if (!company.equals(currCompany)) {
-                Component comp = new ErrorScreen("Company non valida (diversa da quella corrente)");
-                setContent(comp);
-                return;
+        // Se è loggato, la company dell'url
+        // deve essere uguale alla company loggata
+        if(Login.getLogin().isLogged()){
+            BaseCompany currCompany = CompanySessionLib.getCompany();
+            if (currCompany != null) {
+                if (!company.equals(currCompany)) {
+                    Component comp = new ErrorScreen("Company non valida (diversa da quella corrente)");
+                    setContent(comp);
+                    return;
+                }
             }
         }
 
@@ -124,7 +127,23 @@ public class WamUI extends UI {
                 @Override
                 public void onUserLogout(LogoutEvent e) {
                     Login.setLogin(null);
-                    init(request);
+                    getPage().reload();
+//                    getPage().init(request);
+//                    init(request);
+
+                    //getPage().getJavaScript().execute("javascript:vaadin.forceSync();");
+
+//                    HttpServletRequest req = (HttpServletRequest) request;
+//                    String path = req.getRequestURI().substring(req.getContextPath().length());
+//
+//                    getPage().setLocation(path);
+//                    getPage().getJavaScript()
+                    //close();
+//                    Page.open
+//                    //getMainWindow().executeJavaScript("window.location.reload();");
+//
+//                    //init(request);
+//                    refresh(request);
                 }
             });
 
