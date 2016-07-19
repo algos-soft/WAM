@@ -11,7 +11,7 @@ import it.algos.webbase.web.login.UserIF;
  */
 public class WamLoginForm extends DefaultLoginForm {
 
-    ERelatedComboField userCombo;
+    private ERelatedComboField userCombo;
 
     @Override
     public Component createUsernameComponent() {
