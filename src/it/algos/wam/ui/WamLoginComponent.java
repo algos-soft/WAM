@@ -1,7 +1,9 @@
 package it.algos.wam.ui;
 
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.login.WamLogin;
 
 /**
@@ -24,8 +26,10 @@ public class WamLoginComponent extends WamLogoComponent {
 
         FormLayout fl = new FormLayout();
         comp = login.getLoginForm().getUsernameField();
+        comp.setWidth("15em");
         fl.addComponent(comp);
         comp = login.getLoginForm().getPassField();
+        comp.setWidth("15em");
         fl.addComponent(comp);
         comp = login.getLoginForm().getRememberField();
         fl.addComponent(comp);
@@ -39,6 +43,9 @@ public class WamLoginComponent extends WamLogoComponent {
                 login.attemptLogin();
             }
         });
+
+        lb.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        lb.addStyleName(ValoTheme.BUTTON_PRIMARY);
 
         return fl;
 

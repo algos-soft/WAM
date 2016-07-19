@@ -2,6 +2,7 @@ package it.algos.wam.login;
 
 import com.vaadin.ui.Component;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.login.DefaultLoginForm;
 import it.algos.webbase.web.login.UserIF;
@@ -16,6 +17,7 @@ public class WamLoginForm extends DefaultLoginForm {
     @Override
     public Component createUsernameComponent() {
         userCombo = new ERelatedComboField(Volontario.class, "Utente");
+        userCombo.sort(Volontario_.cognome, Volontario_.nome);
         return userCombo;
     }
 
