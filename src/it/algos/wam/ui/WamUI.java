@@ -8,8 +8,8 @@ import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
-import it.algos.wam.bootstrap.TestService;
 import it.algos.wam.entity.companyentity.CompanyListener;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
@@ -39,7 +39,6 @@ import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.navigator.MenuCommand;
 import it.algos.webbase.web.screen.ErrorScreen;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +55,7 @@ public class WamUI extends UI {
     // si registra chi è interessato alle modifiche delle company (aggiunta, cancellazione, modifica di quella corrente)
     private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
 
+
     /**
      * @param request the Vaadin request that caused this UI to be created
      */
@@ -64,7 +64,7 @@ public class WamUI extends UI {
 
         // controlla l'accesso come programmatore come parametro nell'url
         // attiva il flag developer nella sessione
-        checkDevekoper(request);
+        checkDeveloper(request);
         if (LibSession.isDeveloper()) {
             developerInit();
             return;
@@ -77,7 +77,7 @@ public class WamUI extends UI {
 
         // la company deve esistere nell'url
         if (companyName == null) {
-            Component comp = new ErrorScreen("Company non specificata");
+            Component comp = new WamErrComponent("Company non specificata");
             setContent(comp);
             return;
         }
@@ -85,18 +85,18 @@ public class WamUI extends UI {
         // la company deve esistere nel db
         WamCompany company = WamCompany.findByCode(companyName);
         if (company == null) {
-            Component comp = new ErrorScreen("Company " + companyName + " non trovata nel database");
+            Component comp = new WamErrComponent("Company " + companyName + " non trovata nel database");
             setContent(comp);
             return;
         }
 
         // Se è loggato, la company dell'url
         // deve essere uguale alla company loggata
-        if(Login.getLogin().isLogged()){
+        if (Login.getLogin().isLogged()) {
             BaseCompany currCompany = CompanySessionLib.getCompany();
             if (currCompany != null) {
                 if (!company.equals(currCompany)) {
-                    Component comp = new ErrorScreen("Company non valida (diversa da quella corrente)");
+                    Component comp = new WamErrComponent("Company non valida (diversa da quella corrente)");
                     setContent(comp);
                     return;
                 }
@@ -107,17 +107,18 @@ public class WamUI extends UI {
         // Se non già loggato, inietto Login e Company nella sessione.
         if (!Login.getLogin().isLogged()) {
             CompanySessionLib.setCompany(company);  // inietto subito company per filtrare popup utenti
+
             WamLogin login = new WamLogin();
 
             login.setLoginListener(new LoginListener() {
                 @Override
                 public void onUserLogin(LoginEvent e) {
-                    if(e.isSuccess()) {
+                    if (e.isSuccess()) {
                         Login.setLogin(login);
                         standardInit();
-                    }else{
-                        Component comp = new ErrorScreen("Username o password errati");
-                        setContent(comp);
+                    } else {
+                        Notification notif = new Notification("Username o password errati", "", Notification.Type.ERROR_MESSAGE);
+                        notif.show(Page.getCurrent());
                         return;
                     }
                 }
@@ -127,31 +128,17 @@ public class WamUI extends UI {
                 @Override
                 public void onUserLogout(LogoutEvent e) {
                     Login.setLogin(null);
-                    getPage().reload();
-//                    getPage().init(request);
-//                    init(request);
-
-                    //getPage().getJavaScript().execute("javascript:vaadin.forceSync();");
-
-//                    HttpServletRequest req = (HttpServletRequest) request;
-//                    String path = req.getRequestURI().substring(req.getContextPath().length());
-//
-//                    getPage().setLocation(path);
-//                    getPage().getJavaScript()
-                    //close();
-//                    Page.open
-//                    //getMainWindow().executeJavaScript("window.location.reload();");
-//
-//                    //init(request);
-//                    refresh(request);
+                    Page.getCurrent().reload();
                 }
             });
 
             this.setContent(new WamLoginComponent(login));
+
             return;
 
         }
 
+        // se arrivo qui sono loggato
         standardInit();
 
     }
@@ -176,187 +163,6 @@ public class WamUI extends UI {
 
 
     /**
-     * @param request the Vaadin request that caused this UI to be created
-     */
-//    @Override
-    protected void initOldOld(VaadinRequest request) {
-
-        Component comp = null;
-
-        // Questa applicazione necessita di una logica di login specifica.
-        // Inietto subito l'oggetto Login specifico nella sessione
-        WamLogin login = new WamLogin();
-        Login.setLogin(login);
-
-        login.addLoginListener(new LoginListener() {
-            @Override
-            public void onUserLogin(LoginEvent e) {
-                Component comp = new Tabellone(getCurrentAddress());
-                setContent(comp);
-            }
-        });
-
-        login.addLogoutListener(new LogoutListener() {
-            @Override
-            public void onUserLogout(LogoutEvent e) {
-                Component comp;
-                BaseCompany company = CompanySessionLib.getCompany();
-                if (company != null) {  // logout from company
-                    WamCompany wamComp = (WamCompany) company;
-                    if (wamComp.isVaiSubitoTabellone()) {
-                        comp = new Tabellone(getCurrentAddress());
-                    } else {
-                        comp = new WamSplashComponent();
-                    }
-                } else {
-                    comp = new WamSplashComponent();
-                }
-
-                setContent(comp);
-
-            }
-        });
-
-
-        // controlla l'accesso come programmatore
-        boolean prog = checkDevekoper(request);
-
-        if (!prog) {
-
-            String companyName = getCompanyNameFromUrl();
-            if (companyName != null) {
-                WamCompany company = WamCompany.findByCode(companyName);
-                if (company != null) {
-
-                    // registra la Company nella sessione
-                    CompanySessionLib.setCompany(company);
-
-                    // auto login from cookies (solo dopo che abbiamo la Company in sessione!)
-                    boolean logged = Login.getLogin().loginFromCookies();
-                    logged = true; //@todo il form per desso non funziona
-
-                    if (company.isVaiSubitoTabellone()) {
-                        if (checkFirstTime()) {
-                            comp = new Tabellone(getCurrentAddress());
-                        } else {
-                            if (logged) {
-                                comp = creaComponente();
-                            } else {
-                                comp = new WamSplashComponent();
-                            }// end of if/else cycle
-                        }// end of if/else cycle
-                    } else {
-                        if (logged) {
-                            comp = creaComponente();
-                        } else {
-                            comp = new WamSplashComponent();
-                        }// end of if/else cycle
-                    }// end of if/else cycle
-                } else {
-                    comp = new ErrorScreen("Company " + companyName + " non trovata");
-                }// end of if/else cycle
-
-            } else {
-                comp = new ErrorScreen("Company non specificata");
-            }// end of if/else cycle
-
-        } else {
-            fixCompanySession();
-            comp = creaComponente();
-        }// end of if/else cycle
-
-        this.setContent(comp);
-
-    }// end of method
-
-    /**
-     * @param request the Vaadin request that caused this UI to be created
-     */
-    //@Override
-    protected void initOld(VaadinRequest request) {
-
-
-//        // set theme
-//        String themeName;
-//        if (Page.getCurrent().getWebBrowser().isTouchDevice()) {
-//            themeName = "wam-mob";
-//        } else {
-//            themeName = "wam";
-//        }
-//        setTheme(themeName);
-
-        // Questa applicazione necessita di una logica di login specifica
-        // Inietto subito l'oggetto Login nella sessione
-        Login.setLogin(new WamLogin());
-
-        // controlla l'accesso come programmatore
-        checkDevekoper(request);
-
-        // legge la croce
-        WamCompany company = fixCompanySession();
-
-
-        Component comp;
-
-        if (company != null) {
-
-            // registra la Company nella sessione
-            CompanySessionLib.setCompany(company);
-
-            // auto login from cookies (solo dopo che abbiamo la Company in sessione!)
-            boolean logged = Login.getLogin().loginFromCookies();
-
-
-            //--controlla la property della croce, per sapere se far partire subito il tabellone
-            if (company.isVaiSubitoTabellone()) {  // mostra subito il tabellone senza login
-                if (checkFirstTime()) {
-                    comp = new Tabellone(getCurrentAddress());
-                } else {
-                    comp = creaCompPerRuolo();
-                }
-            } else {
-                //--crea il componente da visualizzare in funzione del ruolo.
-                comp = creaCompPerRuolo();
-                if (comp == null) {
-                    comp = new ErrorScreen("Login fallito");
-                }// end of if cycle
-            }// end of if/else cycle
-
-        } else {
-            if (LibSession.isDeveloper()) {
-                comp = creaCompProgrammatore();
-            } else {
-                // company non specificata nell'url
-                // company non trovata nel db
-                comp = new ErrorScreen("Nome azienda non specificato nell'url o non esistente");
-            }// end of if/else cycle
-        }// end of if/else cycle
-
-
-        this.setContent(comp);
-
-
-        // log di partenza con uscita in Output
-        TestService.runTest();
-    }// end of method
-
-
-    /**
-     * Controlla se è la prima volta che passa di qui, nell'ambito della sessione
-     * Registra la condizione nella sessione corrente
-     */
-    private boolean checkFirstTime() {
-        boolean primaVolta = false;
-
-        if (LibSession.isFirstTime()) {
-            primaVolta = true;
-        }// end of if/else cycle
-        LibSession.setFirstTime(false);
-
-        return primaVolta;
-    }// end of method
-
-    /**
      * Elabora l'URL della Request ed estrae (se esiste) il parametro programmatore
      * Se non trova nulla, di default parte come utente normale
      * È sempre possibile effettuare il login
@@ -364,7 +170,7 @@ public class WamUI extends UI {
      *
      * @param request the Vaadin request that caused this UI to be created
      */
-    private boolean checkDevekoper(VaadinRequest request) {
+    private boolean checkDeveloper(VaadinRequest request) {
         boolean isProg = false;
 
         String prog = request.getParameter(WamRuoli.developer.getNome());
