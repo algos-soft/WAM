@@ -59,6 +59,41 @@ public class WamUI extends UI {
      */
     @Override
     protected void init(VaadinRequest request) {
+        // controlla l'accesso come programmatore come parametro nell'url
+        // attiva il flag developer nella sessione
+        leggeBackdoor(request);
+        if(LibSession.isDeveloper()){
+            developerInit();
+        }else{
+            // recupera la company dall'url
+            String companyName = getCompanyNameFromUrl();
+            if (companyName != null) {
+                WamCompany company = WamCompany.findByCode(companyName);
+                if (company != null) {
+                    // Questa applicazione necessita di una logica di login specifica.
+                    // Se non già esistente, inietto l'oggetto Login specifico nella sessione
+                    Object obj = LibSession.getAttribute(Login.LOGIN_KEY_IN_SESSION);
+                    if(obj==null){
+                        WamLogin login = new WamLogin();
+                        Login.setLogin(login);
+                    }
+                    standardInit(company);
+                } else {    // company non presente nel db
+                    Component comp = new ErrorScreen("Company " + companyName + " non trovata nel database");
+                    this.setContent(comp);
+                }
+            } else {    // no company nell'url
+                Component comp = new ErrorScreen("Company non specificata");
+                this.setContent(comp);
+            }
+        }
+    }
+
+    /**
+     * @param request the Vaadin request that caused this UI to be created
+     */
+//    @Override
+    protected void initOld(VaadinRequest request) {
 
         // controlla l'accesso come programmatore come parametro nell'url
         // attiva il flag developer nella sessione
@@ -107,10 +142,34 @@ public class WamUI extends UI {
     }
 
 
+<<<<<<< Updated upstream
 //        /**
 //         * @param request the Vaadin request that caused this UI to be created
 //         */
 //    @Override
+=======
+    /**
+     * Init per il developer
+     */
+    private void developerInit() {
+        fixCompanySession();
+        Component comp = creaComponente();
+        this.setContent(comp);
+    }
+
+    /**
+     * Init per tutti i non developer
+     *
+     * @param company la company specificata nell'url
+     */
+    private void standardInit(WamCompany company) {
+    }
+
+//    /**
+//     * @param request the Vaadin request that caused this UI to be created
+//     */
+//    //@Override
+>>>>>>> Stashed changes
 //    protected void initOld(VaadinRequest request) {
 //
 //
