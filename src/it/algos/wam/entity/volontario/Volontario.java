@@ -7,6 +7,7 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.lib.LibCrypto;
 import it.algos.webbase.web.login.UserIF;
 import it.algos.webbase.web.query.AQuery;

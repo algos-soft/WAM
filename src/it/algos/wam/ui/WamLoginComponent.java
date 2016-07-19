@@ -28,6 +28,9 @@ public class WamLoginComponent extends WamLogoComponent {
         comp = login.getLoginForm().getUsernameField();
         comp.setWidth("15em");
         fl.addComponent(comp);
+        if(comp instanceof Focusable){
+            ((Focusable)comp).focus();
+        }
         comp = login.getLoginForm().getPassField();
         comp.setWidth("15em");
         fl.addComponent(comp);
