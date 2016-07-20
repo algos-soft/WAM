@@ -27,15 +27,15 @@
             it.algos.wam.bootstrap.WAMBootStrap
         </listener-class>
     </listener>
-    <listener>
-        <listener-class>
-            it.algos.wam.bootstrap.SecBootStrap
-        </listener-class>
-    </listener>
-    <listener>
-        <listener-class>
-            it.algos.wam.bootstrap.VersBootStrap
-        </listener-class>
-    </listener>
+    <!--<listener>-->
+        <!--<listener-class>-->
+            <!--it.algos.wam.bootstrap.SecBootStrap-->
+        <!--</listener-class>-->
+    <!--</listener>-->
+    <!--<listener>-->
+        <!--<listener-class>-->
+            <!--it.algos.wam.bootstrap.VersBootStrap-->
+        <!--</listener-class>-->
+    <!--</listener>-->
 
 </web-app>

@@ -54,4 +54,9 @@ public class WamLoginComponent extends WamLogoComponent {
         return fl;
 
     }
+
+    private Login getLogin(){
+        return Login.getLogin();
+    }
+
 }

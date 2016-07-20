@@ -78,7 +78,7 @@ public class WamUI extends UI {
         // la company deve esistere nell'url
         if (companyName == null) {
             Component comp = new WamErrComponent("Company non specificata");
-            setContent(comp);
+            UI.getCurrent().setContent(comp);
             return;
         }
 
@@ -89,7 +89,7 @@ public class WamUI extends UI {
             CompanySessionLib.setCompany(company);
         }else{
             Component comp = new WamErrComponent("Company " + companyName + " non trovata nel database");
-            setContent(comp);
+            UI.getCurrent().setContent(comp);
             return;
         }
 
@@ -98,39 +98,6 @@ public class WamUI extends UI {
         // (quando viene creato, l'oggetto non è in stato logged).
         if(!Login.isLogin()){
             Login.setLogin(new WamLogin(company));
-        }
-
-        // se la company prevede tabellone pubblico, mostra sempre il tabellone
-        // Questo viene fatto solo la prima volta quindi a questo punto l'utente non è ancora loggato
-        if(!LibSession.isAttribute("SUBSEQUENT")){
-            if(company.isVaiSubitoTabellone()){
-                CompanySessionLib.setCompany(company);  // inietto company per funzionamento tabellone
-                Tabellone tab = new Tabellone(getCurrentAddress());
-                setContent(tab);
-                LibSession.setAttribute("SUBSEQUENT", true);    // il valore non è usato
-                return;
-            }
-        }
-
-        // Se è loggato, la company dell'url
-        // deve essere uguale alla company loggata
-        if (Login.getLogin().isLogged()) {
-            BaseCompany currCompany = CompanySessionLib.getCompany();
-            if (currCompany != null) {
-                if (!company.equals(currCompany)) {
-                    Component comp = new WamErrComponent("Company non valida (diversa da quella corrente)");
-                    setContent(comp);
-                    return;
-                }
-            }
-        }
-
-        // Questa applicazione necessita di una logica di login specifica.
-        // Se non già loggato, inietto Login e Company nella sessione.
-        if (!Login.getLogin().isLogged()) {
-
-//            WamLogin login = new WamLogin(company);
-//            Login.setLogin(login);
 
             Login.getLogin().setLoginListener(new LoginListener() {
                 @Override
@@ -152,11 +119,38 @@ public class WamUI extends UI {
                 }
             });
 
+        }
+
+        // se la company prevede tabellone pubblico, mostra sempre il tabellone
+        // Questo viene fatto solo la prima volta quindi a questo punto l'utente non è ancora loggato
+        if(company.isVaiSubitoTabellone()){
+            if(LibSession.isAttribute("FROMTAB")) {
+                LibSession.setAttribute("FROMTAB", null);
+            }else{
+                Tabellone tab = new Tabellone(getCurrentAddress());
+                UI.getCurrent().setContent(tab);
+                return;
+            }
+        }
+
+        // Se è loggato, la company dell'url
+        // deve essere uguale alla company loggata
+        if (Login.getLogin().isLogged()) {
+            BaseCompany currCompany = CompanySessionLib.getCompany();
+            if (currCompany != null) {
+                if (!company.equals(currCompany)) {
+                    Component comp = new WamErrComponent("Company non valida (diversa da quella corrente)");
+                    UI.getCurrent().setContent(comp);
+                    return;
+                }
+            }
+        }
+
+        // Se non già loggato, presento la pagina di login
+        if (!Login.getLogin().isLogged()) {
             Login.getLogin().readCookies();
-            this.setContent(new WamLoginComponent(Login.getLogin()));
-
+            UI.getCurrent().setContent(new WamLoginComponent(Login.getLogin()));
             return;
-
         }
 
         // se arrivo qui sono loggato
@@ -171,7 +165,7 @@ public class WamUI extends UI {
     private void developerInit() {
         fixCompanySession();
         Component comp = creaComponente();
-        this.setContent(comp);
+        UI.getCurrent().setContent(comp);
     }
 
     /**
@@ -179,7 +173,8 @@ public class WamUI extends UI {
      */
     private void standardInit() {
         Component comp = creaComponente();
-        this.setContent(comp);
+        UI.getCurrent().setContent(comp);
+        //this.setContent(comp);
     }
 
 
@@ -293,7 +288,7 @@ public class WamUI extends UI {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 Tabellone tab = new Tabellone(getCurrentAddress());
-                setContent(tab);
+                UI.getCurrent().setContent(tab);
             }
         });
 
@@ -433,7 +428,7 @@ public class WamUI extends UI {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 Tabellone tab = new Tabellone(getCurrentAddress());
-                setContent(tab);
+                UI.getCurrent().setContent(tab);
             }
         }, itemFunzione);
 

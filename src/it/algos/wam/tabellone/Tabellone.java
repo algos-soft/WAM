@@ -317,6 +317,7 @@ public class Tabellone extends VerticalLayout implements View {
      * Manda il browser all'indirizzo definito nella homeURI (se esiste)
      */
     private void goHome() {
+        LibSession.setAttribute("FROMTAB", true);
         this.getUI().getPage().open(homeURI.toString(), null);
     }
 
