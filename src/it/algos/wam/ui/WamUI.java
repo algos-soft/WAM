@@ -109,6 +109,7 @@ public class WamUI extends UI {
             CompanySessionLib.setCompany(company);  // inietto subito company per filtrare popup utenti
 
             WamLogin login = new WamLogin();
+            login.setCookiePrefix(company.getCompanyCode());
 
             login.setLoginListener(new LoginListener() {
                 @Override
