@@ -36,10 +36,6 @@ public class VersBootStrap implements ServletContextListener {
     public void contextInitialized(ServletContextEvent contextEvent) {
         int k = 0;
 
-//        VaadinSession s = new VaadinSession(null);
-//        VaadinSession.setCurrent(s);
-//        s.setAttribute("company", c);
-
         //--prima installazione del programma
         //--non fa nulla, solo informativo
         if (LibVers.installa(++k)) {

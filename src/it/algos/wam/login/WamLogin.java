@@ -1,6 +1,8 @@
 package it.algos.wam.login;
 
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.web.login.AbsLoginForm;
 import it.algos.webbase.web.login.Login;
 import it.algos.webbase.web.login.UserIF;
@@ -12,7 +14,8 @@ public class WamLogin extends Login {
 
     private WamLoginForm loginForm;
 
-    public WamLogin() {
+    public WamLogin(BaseCompany company) {
+        setCookiePrefix(company.getCompanyCode());
         loginForm = new WamLoginForm();
     }
 

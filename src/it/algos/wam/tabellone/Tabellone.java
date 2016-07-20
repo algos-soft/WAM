@@ -12,6 +12,9 @@ import it.algos.wam.WAMApp;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.login.MenuBarWithLogin;
+import it.algos.wam.login.WamLogin;
+import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.field.DateField;
 import it.algos.webbase.web.field.IntegerField;
@@ -341,8 +344,9 @@ public class Tabellone extends VerticalLayout implements View {
             TabMenuBar tbm = new TabMenuBar();
             MenuBarWithLogin menubar = new MenuBarWithLogin(tbm);
 
-            // al login e al logout aggiunge e toglie i comandi admin dalla menubar
-            Login login = menubar.getLoginButton().getLogin();
+            Login login=Login.getLogin();
+
+            // al login e al logout, aggiunge e toglie i comandi admin dalla menubar
             login.addLoginListener(new LoginListener() {
                 @Override
                 public void onUserLogin(LoginEvent e) {
@@ -368,15 +372,15 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            // alla creazione, se è loggato come admin aggiunge subito i comandi admin
-            if (LibSession.isAdmin()) {
-                itemCreaTurni = tbm.getMenuAltro().addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
-                    @Override
-                    public void menuSelected(MenuBar.MenuItem selectedItem) {
-                        navigator.navigateTo(ADDR_GENERATE);
-                    }
-                });
-            }
+//            // alla creazione, se è loggato come admin aggiunge subito i comandi admin
+//            if (LibSession.isAdmin()) {
+//                itemCreaTurni = tbm.getMenuAltro().addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
+//                    @Override
+//                    public void menuSelected(MenuBar.MenuItem selectedItem) {
+//                        navigator.navigateTo(ADDR_GENERATE);
+//                    }
+//                });
+//            }
 
 
             addComponent(menubar);

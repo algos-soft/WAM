@@ -10,7 +10,7 @@ import javax.servlet.annotation.WebServlet;
 /**
  * Created by alex on 21/05/16.
  */
-@WebServlet(urlPatterns = { "/wamtest/*"}, asyncSupported = true, displayName = "Test")
+//@WebServlet(urlPatterns = { "/wamtest/*"}, asyncSupported = true, displayName = "Test")
 @VaadinServletConfiguration(productionMode = false, ui = TestUI.class)
 public class TestServlet extends VaadinServlet {
 }

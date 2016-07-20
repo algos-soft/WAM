@@ -60,8 +60,10 @@ public class WamUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
 
+
         // controlla l'accesso come programmatore come parametro nell'url
         // attiva il flag developer nella sessione
+
         checkDeveloper(request);
         if (LibSession.isDeveloper()) {
             developerInit();
@@ -81,21 +83,34 @@ public class WamUI extends UI {
         }
 
         // la company deve esistere nel db
+        // inietto la company appena disponibile
         WamCompany company = WamCompany.findByCode(companyName);
-        if (company == null) {
+        if (company != null) {
+            CompanySessionLib.setCompany(company);
+        }else{
             Component comp = new WamErrComponent("Company " + companyName + " non trovata nel database");
             setContent(comp);
             return;
         }
 
-//        // se la company prevede tabellone pubblico, mostra sempre il tabellone
-//        // qui l'utente potrebbe essere loggato o meno
-//        if(company.isVaiSubitoTabellone()){
-//            CompanySessionLib.setCompany(company);  // inietto company per funzionamento tabellone
-//            Tabellone tab = new Tabellone(getCurrentAddress());
-//            setContent(tab);
-//            return;
-//        }
+        // Questa applicazione necessita di una logica di login specifica.
+        // se non c'è ancora l'oggetto Login, lo crea ora e lo inietta nella sessione.
+        // (quando viene creato, l'oggetto non è in stato logged).
+        if(!Login.isLogin()){
+            Login.setLogin(new WamLogin(company));
+        }
+
+        // se la company prevede tabellone pubblico, mostra sempre il tabellone
+        // Questo viene fatto solo la prima volta quindi a questo punto l'utente non è ancora loggato
+        if(!LibSession.isAttribute("SUBSEQUENT")){
+            if(company.isVaiSubitoTabellone()){
+                CompanySessionLib.setCompany(company);  // inietto company per funzionamento tabellone
+                Tabellone tab = new Tabellone(getCurrentAddress());
+                setContent(tab);
+                LibSession.setAttribute("SUBSEQUENT", true);    // il valore non è usato
+                return;
+            }
+        }
 
         // Se è loggato, la company dell'url
         // deve essere uguale alla company loggata
@@ -113,16 +128,14 @@ public class WamUI extends UI {
         // Questa applicazione necessita di una logica di login specifica.
         // Se non già loggato, inietto Login e Company nella sessione.
         if (!Login.getLogin().isLogged()) {
-            CompanySessionLib.setCompany(company);  // inietto subito company per filtrare popup utenti
 
-            WamLogin login = new WamLogin();
-            login.setCookiePrefix(company.getCompanyCode());
+//            WamLogin login = new WamLogin(company);
+//            Login.setLogin(login);
 
-            login.setLoginListener(new LoginListener() {
+            Login.getLogin().setLoginListener(new LoginListener() {
                 @Override
                 public void onUserLogin(LoginEvent e) {
                     if (e.isSuccess()) {
-                        Login.setLogin(login);
                         standardInit();
                     } else {
                         Notification notif = new Notification("Username o password errati", "", Notification.Type.ERROR_MESSAGE);
@@ -132,16 +145,15 @@ public class WamUI extends UI {
                 }
             });
 
-            login.addLogoutListener(new LogoutListener() {
+            Login.getLogin().addLogoutListener(new LogoutListener() {
                 @Override
                 public void onUserLogout(LogoutEvent e) {
-                    Login.setLogin(null);
                     Page.getCurrent().reload();
                 }
             });
 
-            login.readCookies();
-            this.setContent(new WamLoginComponent(login));
+            Login.getLogin().readCookies();
+            this.setContent(new WamLoginComponent(Login.getLogin()));
 
             return;
 
@@ -282,10 +294,9 @@ public class WamUI extends UI {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 Tabellone tab = new Tabellone(getCurrentAddress());
                 setContent(tab);
-            }// end of inner method
-        });// end of anonymous inner class
+            }
+        });
 
-        //navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
         navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
         navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
         navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);

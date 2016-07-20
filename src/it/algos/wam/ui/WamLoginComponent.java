@@ -5,15 +5,16 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.login.WamLogin;
+import it.algos.webbase.web.login.Login;
 
 /**
  * Componente di Login
  * Created by alex on 19-07-2016.
  */
 public class WamLoginComponent extends WamLogoComponent {
-    private WamLogin login;
+    private Login login;
 
-    public WamLoginComponent(WamLogin login) {
+    public WamLoginComponent(Login login) {
         super();
         this.login=login;
 
