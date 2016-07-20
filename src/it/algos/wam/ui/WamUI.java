@@ -132,6 +132,7 @@ public class WamUI extends UI {
                 }
             });
 
+            login.readCookies();
             this.setContent(new WamLoginComponent(login));
 
             return;
