@@ -242,19 +242,19 @@ public class FunzioneForm extends ModuleForm {
         layout.addComponent(fnote);
 
 
-        // test remove menu item
-        Button button=new Button("Remove menu");
-        button.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent clickEvent) {
-                UI ui = getUI();
-                if (ui instanceof WamUI) {
-                    WamUI wamUI = (WamUI)ui;
-                    wamUI.removeMenuItem(FunzioneMod.MENU_ADDRESS);
-                }
-            }
-        });
-        layout.addComponent(button);
+//        // test remove menu item
+//        Button button=new Button("Remove menu");
+//        button.addClickListener(new Button.ClickListener() {
+//            @Override
+//            public void buttonClick(Button.ClickEvent clickEvent) {
+//                UI ui = getUI();
+//                if (ui instanceof WamUI) {
+//                    WamUI wamUI = (WamUI)ui;
+//                    wamUI.removeMenuItem(FunzioneMod.MENU_ADDRESS);
+//                }
+//            }
+//        });
+//        layout.addComponent(button);
 
         return layout;
     }

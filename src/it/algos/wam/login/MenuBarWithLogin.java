@@ -11,6 +11,7 @@ import it.algos.webbase.web.login.LoginButton;
  */
 public class MenuBarWithLogin extends HorizontalLayout {
 
+    private LoginButton loginButton;
 
     public MenuBarWithLogin(MenuBar menubar) {
 
@@ -18,7 +19,9 @@ public class MenuBarWithLogin extends HorizontalLayout {
         setSpacing(true);
 
         addComponent(menubar);
-        addComponent(new LoginButton());
+
+        loginButton=new WamLoginButton();
+        addComponent(loginButton);
 
         menubar.setWidth("100%");
         setExpandRatio(menubar, 1);
@@ -31,6 +34,10 @@ public class MenuBarWithLogin extends HorizontalLayout {
      */
     public void addMenu(Component altroMenu) {
         addComponent(altroMenu, this.getComponentCount() - 1);
-    }// end of method
+    }
+
+    public LoginButton getLoginButton() {
+        return loginButton;
+    }
 
 }// end of class

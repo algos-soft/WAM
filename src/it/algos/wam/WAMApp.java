@@ -18,26 +18,6 @@ public abstract class WAMApp extends AlgosApp {
      */
     public static final String IMG_FOLDER_NAME = "WEB-INF/data/img/";
 
-    /**
-     * PROVVISORIO
-     * Ritorna l'utente correntemente loggato
-     *
-     * @return l'utente loggato
-     */
-    public static Volontario getLoggedUser() {
-        Volontario volontario = null;
-        Login login = Login.getLogin();
-        UserIF user = null;
-
-        if (login != null) {
-            user = login.getUser();
-            if (user instanceof Volontario) {
-                volontario = (Volontario) user;
-            }
-        }
-
-        return volontario;
-    }
 
 //    /**
 //     * PROVVISORIO

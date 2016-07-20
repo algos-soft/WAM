@@ -26,4 +26,24 @@ public class WamLogin extends Login {
         return Volontario.queryByNick(username);
     }
 
+    /**
+     * Ritorna il volontario correntemente loggato
+     *
+     * @return il volontario loggato
+     */
+    public static Volontario getLoggedVolontario() {
+        Volontario volontario = null;
+        Login login = Login.getLogin();
+        if(login.isLogged()){
+            if (login != null) {
+                UserIF user = login.getUser();
+                if (user instanceof Volontario) {
+                    volontario = (Volontario) user;
+                }
+            }
+        }
+
+        return volontario;
+    }
+
 }

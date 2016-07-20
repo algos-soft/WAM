@@ -19,6 +19,7 @@ import it.algos.webbase.web.form.AForm;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.login.*;
 import it.algos.webbase.web.screen.ErrorScreen;
 
 import javax.persistence.EntityManager;
@@ -138,27 +139,33 @@ public class Tabellone extends VerticalLayout implements View {
 
         @Override
         public String getViewName(String name) {
-            String outName=null;
-            switch (name){
-                case ADDR_GENERATE:outName=name;break;
-                case ADDR_SEARCH:outName=name;break;
-                case ADDR_EDIT_TURNO:outName=name;break;
+            String outName = null;
+            switch (name) {
+                case ADDR_GENERATE:
+                    outName = name;
+                    break;
+                case ADDR_SEARCH:
+                    outName = name;
+                    break;
+                case ADDR_EDIT_TURNO:
+                    outName = name;
+                    break;
             }
             return outName;
         }
 
         @Override
         public View getView(String name) {
-            View view=null;
-            switch (name){
+            View view = null;
+            switch (name) {
                 case ADDR_GENERATE:
-                    view=new GeneratorPage();
+                    view = new GeneratorPage();
                     break;
                 case ADDR_SEARCH:
-                    view=new SearchPage();
+                    view = new SearchPage();
                     break;
                 case ADDR_EDIT_TURNO:
-                    view=getEditorPage();
+                    view = getEditorPage();
                     break;
             }
 
@@ -284,9 +291,9 @@ public class Tabellone extends VerticalLayout implements View {
      * è sempre la stessa istanza
      * se non c'è la crea ora
      */
-    private EditorPage getEditorPage(){
-        if(editorPage==null){
-            editorPage=new EditorPage();
+    private EditorPage getEditorPage() {
+        if (editorPage == null) {
+            editorPage = new EditorPage();
         }
         return editorPage;
     }
@@ -296,10 +303,10 @@ public class Tabellone extends VerticalLayout implements View {
      * Aggiunge una ulteriore riga per un dato servizio.
      * La riga viene aggiunta dopo quella specificata in row
      */
-    private void addRigaServizio(final Servizio servizio, int col, int row){
+    private void addRigaServizio(final Servizio servizio, int col, int row) {
         GridTabellone grid = tabComponent.getGridTabellone();
         WRigaTab riga = new WRigaTab(servizio, new Turno[0]);
-        EngineTab.insertRiga(grid, riga, row+1);
+        EngineTab.insertRiga(grid, riga, row + 1);
     }
 
 
@@ -325,10 +332,53 @@ public class Tabellone extends VerticalLayout implements View {
         private VerticalLayout gridPlaceholder = new VerticalLayout();
         private GridTabellone gridTabellone;
 
+        private MenuBar.MenuItem itemCreaTurni;
+
+
         public TabComponent() {
             setSpacing(true);
 
-            Component menubar = new MenuBarWithLogin(new TabMenuBar());
+            TabMenuBar tbm = new TabMenuBar();
+            MenuBarWithLogin menubar = new MenuBarWithLogin(tbm);
+
+            // al login e al logout aggiunge e toglie i comandi admin dalla menubar
+            Login login = menubar.getLoginButton().getLogin();
+            login.addLoginListener(new LoginListener() {
+                @Override
+                public void onUserLogin(LoginEvent e) {
+                    if (e.isSuccess()) {
+                        if(e.getUser().isAdmin()){
+                            itemCreaTurni = tbm.getMenuAltro().addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
+                                @Override
+                                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                                    navigator.navigateTo(ADDR_GENERATE);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
+            login.addLogoutListener(new LogoutListener() {
+                @Override
+                public void onUserLogout(LogoutEvent e) {
+                    if (itemCreaTurni != null) {
+                        tbm.getMenuAltro().removeChild(itemCreaTurni);
+                    }
+                }
+            });
+
+            // alla creazione, se è loggato come admin aggiunge subito i comandi admin
+            if (LibSession.isAdmin()) {
+                itemCreaTurni = tbm.getMenuAltro().addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
+                    @Override
+                    public void menuSelected(MenuBar.MenuItem selectedItem) {
+                        navigator.navigateTo(ADDR_GENERATE);
+                    }
+                });
+            }
+
+
             addComponent(menubar);
             addComponent(gridPlaceholder);
 
@@ -375,6 +425,9 @@ public class Tabellone extends VerticalLayout implements View {
      * Menu bar con i comandi di movimento del tabellone
      */
     private class TabMenuBar extends MenuBar {
+
+        private MenuItem menuAltro;
+
         public TabMenuBar() {
 
             addItem("Home", FontAwesome.HOME, new MenuBar.Command() {
@@ -419,10 +472,10 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            MenuItem menuVai = addItem("altro", FontAwesome.BARS, null);
+            menuAltro = addItem("altro", FontAwesome.BARS, null);
 
 
-            menuVai.addItem("vai al giorno precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
+            menuAltro.addItem("vai al giorno precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
@@ -430,7 +483,7 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            menuVai.addItem("vai al giorno successivo", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
+            menuAltro.addItem("vai al giorno successivo", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
@@ -438,15 +491,15 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            menuVai.addItem("cerca periodo", FontAwesome.SEARCH, new MenuBar.Command() {
+            menuAltro.addItem("cerca periodo", FontAwesome.SEARCH, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     navigator.navigateTo(ADDR_SEARCH);
                 }
             });
 
-            if(LibSession.isAdmin()){
-                menuVai.addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
+            if (LibSession.isAdmin()) {
+                menuAltro.addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
                     @Override
                     public void menuSelected(MenuBar.MenuItem selectedItem) {
                         navigator.navigateTo(ADDR_GENERATE);
@@ -456,6 +509,10 @@ public class Tabellone extends VerticalLayout implements View {
 
 
 
+        }
+
+        public MenuItem getMenuAltro() {
+            return menuAltro;
         }
     }
 
@@ -524,7 +581,6 @@ public class Tabellone extends VerticalLayout implements View {
         }
 
     }
-
 
 
     /**
