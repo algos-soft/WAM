@@ -13,7 +13,7 @@ public class WamLoginButton extends LoginButton {
      * Constructor
      */
     public WamLoginButton() {
-        super(new WamLogin());
+        super();
     }
 
 }
