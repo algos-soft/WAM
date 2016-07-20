@@ -1,11 +1,13 @@
 package it.algos.wam.login;
 
+import com.vaadin.server.Page;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Window;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.ui.WamLoginComponent;
 import it.algos.webbase.domain.company.BaseCompany;
-import it.algos.webbase.web.login.AbsLoginForm;
-import it.algos.webbase.web.login.Login;
-import it.algos.webbase.web.login.UserIF;
+import it.algos.webbase.web.login.*;
 
 /**
  * Created by alex on 15-03-2016.
@@ -48,5 +50,17 @@ public class WamLogin extends Login {
 
         return volontario;
     }
+
+    /**
+     * Displays the Login form
+     * Cra un nuovo form prima di ogni visualizzazione
+     */
+    public void showLoginForm() {
+        loginForm = new WamLoginForm();
+        super.showLoginForm();
+    }
+
+
+
 
 }

@@ -5,6 +5,8 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.login.WamLogin;
+import it.algos.wam.login.WamLoginForm;
+import it.algos.webbase.web.login.AbsLoginForm;
 import it.algos.webbase.web.login.Login;
 
 /**
@@ -25,17 +27,22 @@ public class WamLoginComponent extends WamLogoComponent {
     private Component createLoginLayout() {
         Component comp;
 
+        AbsLoginForm form = login.getLoginForm();
+//        AbsLoginForm form = new WamLoginForm();
+
         FormLayout fl = new FormLayout();
-        comp = login.getLoginForm().getUsernameField();
+        comp = form.getUsernameField();
         comp.setWidth("15em");
         fl.addComponent(comp);
         if(comp instanceof Focusable){
             ((Focusable)comp).focus();
         }
-        comp = login.getLoginForm().getPassField();
+
+        comp = form.getPassField();
         comp.setWidth("15em");
         fl.addComponent(comp);
-        comp = login.getLoginForm().getRememberField();
+
+        comp = form.getRememberField();
         fl.addComponent(comp);
 
         Button lb = new Button("Login");
