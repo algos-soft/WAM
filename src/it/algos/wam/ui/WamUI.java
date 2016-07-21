@@ -50,7 +50,7 @@ import java.util.List;
 public class WamUI extends UI {
 
     private MenuBar menubar;
-    public static final String KEY_TABVISIBLE="tabvisible";
+    public static final String KEY_TABVISIBLE = "tabvisible";
 
     // si registra chi è interessato alle modifiche delle company (aggiunta, cancellazione, modifica di quella corrente)
     private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
@@ -64,10 +64,12 @@ public class WamUI extends UI {
 
         // controlla l'accesso come programmatore come parametro nell'url
         // attiva il flag developer nella sessione
-        checkDeveloper(request);
-        if (LibSession.isDeveloper()) {
+        if (checkDeveloper(request)) {
+            LibSession.setDeveloper(true);
             developerInit();
             return;
+        } else {
+            LibSession.setDeveloper(false);
         }
 
         // da qui in poi non è programmatore
@@ -87,7 +89,7 @@ public class WamUI extends UI {
         WamCompany company = WamCompany.findByCode(companyName);
         if (company != null) {
             CompanySessionLib.setCompany(company);
-        }else{
+        } else {
             Component comp = new WamErrComponent("Company " + companyName + " non trovata nel database");
             UI.getCurrent().setContent(comp);
             return;
@@ -97,7 +99,7 @@ public class WamUI extends UI {
         // L'oggetto Login è unico nella sessione.
         // Questa applicazione necessita di una logica di login specifica (WamLogin)
         // (inizialmente il Login non ha user e quindi non è in stato logged).
-        if(!Login.isLogin()){
+        if (!Login.isLogin()) {
             Login.setLogin(new WamLogin(company));
 
             // listener dei tentativi di login
@@ -105,7 +107,7 @@ public class WamUI extends UI {
                 @Override
                 public void onUserLogin(LoginEvent e) {
                     if (e.isSuccess()) {
-                        if(!LibSession.isAttribute(WamUI.KEY_TABVISIBLE)){
+                        if (!LibSession.isAttribute(WamUI.KEY_TABVISIBLE)) {
                             UI.getCurrent().setContent(getTabellone());
                         }
                     } else {
@@ -141,15 +143,14 @@ public class WamUI extends UI {
 
         // Se la company prevede tabellone pubblico, mostra sempre il tabellone
         // Questo viene fatto solo la prima volta quindi a questo punto l'utente non è ancora loggato
-        if(company.isVaiSubitoTabellone()){
-            if(!LibSession.isAttribute("TABVISIBLE")) {
-                if(!Login.getLogin().isLogged()){
+        if (company.isVaiSubitoTabellone()) {
+            if (!LibSession.isAttribute("TABVISIBLE")) {
+                if (!Login.getLogin().isLogged()) {
                     UI.getCurrent().setContent(getTabellone());
                     return;
                 }
             }
         }
-
 
         // Se non già loggato, presento la pagina di login
         if (!Login.getLogin().isLogged()) {
@@ -166,7 +167,6 @@ public class WamUI extends UI {
     }
 
 
-
     /**
      * Init per il developer
      */
@@ -177,14 +177,11 @@ public class WamUI extends UI {
     }
 
 
-
     /**
      * Elabora l'URL della Request ed estrae (se esiste) il parametro programmatore
-     * Se non trova nulla, di default parte come utente normale
-     * È sempre possibile effettuare il login
-     * Registra la condizione (di Prog) nella Sessione corrente
      *
      * @param request the Vaadin request that caused this UI to be created
+     * @return true se l'url è di un developer
      */
     private boolean checkDeveloper(VaadinRequest request) {
         boolean isProg = false;
@@ -193,14 +190,13 @@ public class WamUI extends UI {
 
         if (prog != null && !prog.isEmpty()) {
             if (prog.equals("gac") || prog.equals("alex")) {
-                LibSession.setDeveloper(true);
                 isProg = true;
-            }// end of if cycle
-        }// end of if cycle
+            }
+        }
 
         return isProg;
 
-    }// end of method
+    }
 
     /**
      * Solo per il developer
@@ -294,15 +290,10 @@ public class WamUI extends UI {
         navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
         navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
         navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
-        if(LibSession.isAdmin()){
+        if (LibSession.isAdmin()) {
             navComp.addView(LogMod.class, "Log", FontAwesome.CLOCK_O);
             navComp.addView(ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
         }
-
-
-
-
-
 
 
         MenuBarWithLogin menu = (MenuBarWithLogin) navComp.getComponent(0);
@@ -444,7 +435,6 @@ public class WamUI extends UI {
     }
 
 
-
     /**
      * Crea i sottomenu specifici per le tavole di incrocio (solo per developer, ovviamente)
      * <p>
@@ -523,14 +513,14 @@ public class WamUI extends UI {
     /**
      * Ritorna la unica istanza per sessione del Tabellone
      */
-    private Tabellone getTabellone(){
+    private Tabellone getTabellone() {
         Tabellone tab;
         Object obj = LibSession.getAttribute("TABELLONE");
-        if(obj==null) {
+        if (obj == null) {
             tab = new Tabellone(getCurrentAddress());
             LibSession.setAttribute("TABELLONE", tab);
-        }else{
-            tab=(Tabellone)obj;
+        } else {
+            tab = (Tabellone) obj;
         }
         return tab;
     }
