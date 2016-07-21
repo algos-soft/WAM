@@ -13,6 +13,7 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.wam.login.WamLogin;
+import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.EM;
@@ -180,13 +181,13 @@ public class Tabellone extends VerticalLayout implements View {
     @Override
     public void attach() {
         super.attach();
-        LibSession.setAttribute("TABVISIBLE", true);
+        LibSession.setAttribute(WamUI.KEY_TABVISIBLE, true);
     }
 
     @Override
     public void detach() {
         super.detach();
-        LibSession.setAttribute("TABVISIBLE", null);
+        LibSession.setAttribute(WamUI.KEY_TABVISIBLE, null);
     }
 
     /**
@@ -324,8 +325,11 @@ public class Tabellone extends VerticalLayout implements View {
      * Manda il browser all'indirizzo definito nella homeURI (se esiste)
      */
     private void goHome() {
-        LibSession.setAttribute("FROMTAB", true);
-        this.getUI().getPage().open(homeURI.toString(), null);
+        if(Login.getLogin().isLogged()){
+            this.getUI().getPage().open(homeURI.toString(), null);
+        }else{
+            Notification.show("Per accedere alla Home devi eseguire il login", Notification.Type.ERROR_MESSAGE);
+        }
     }
 
 
