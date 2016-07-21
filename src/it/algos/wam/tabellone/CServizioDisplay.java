@@ -91,8 +91,12 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
         private LayoutEvents.LayoutClickListener listener = new LayoutEvents.LayoutClickListener() {
             @Override
             public void layoutClick(LayoutEvents.LayoutClickEvent layoutClickEvent) {
-                tabellone.cellClicked(CellType.SERVIZIO, x, y, servizio);
-                setCreaNuova(false);    // una volta che ho creato la nuova riga, questa riga perde la possibilità di crearne altre
+                if(Login.getLogin().isLogged()){
+                    tabellone.cellClicked(CellType.SERVIZIO, x, y, servizio);
+                    setCreaNuova(false);    // una volta che ho creato la nuova riga, questa riga perde la possibilità di crearne altre
+                }else{
+                    Login.getLogin().showLoginForm();
+                }
             }
         };
 
@@ -138,7 +142,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
          * @param crea true per mostrare il bottone, false per nasconderlo
          */
         public void setCreaNuova(boolean crea){
-            if(crea && Login.getLogin().isLogged()){
+            if(crea){
                 labelTitolo.setValue(FontAwesome.PLUS_CIRCLE.getHtml() + " crea nuovo");
                 layoutTitle.addLayoutClickListener(listener);
                 layoutTitle.addStyleName("cpointer");
