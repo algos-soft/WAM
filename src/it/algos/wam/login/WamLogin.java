@@ -51,6 +51,7 @@ public class WamLogin extends Login {
         return volontario;
     }
 
+
     /**
      * Displays the Login form
      * Cra un nuovo form prima di ogni visualizzazione

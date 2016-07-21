@@ -1,5 +1,6 @@
 package it.algos.wam.login;
 
+import com.vaadin.data.Property;
 import com.vaadin.ui.Component;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.Volontario_;
@@ -18,6 +19,12 @@ public class WamLoginForm extends DefaultLoginForm {
     public Component createUsernameComponent() {
         userCombo = new ERelatedComboField(Volontario.class, "Utente");
         userCombo.sort(Volontario_.cognome, Volontario_.nome);
+        userCombo.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                getPassField().clear();
+            }
+        });
         return userCombo;
     }
 
