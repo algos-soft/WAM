@@ -50,6 +50,7 @@ import java.util.List;
 public class WamUI extends UI {
 
     private MenuBar menubar;
+    private Tabellone tabellone;
 
     // si registra chi è interessato alle modifiche delle company (aggiunta, cancellazione, modifica di quella corrente)
     private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
@@ -103,7 +104,9 @@ public class WamUI extends UI {
                 @Override
                 public void onUserLogin(LoginEvent e) {
                     if (e.isSuccess()) {
-                        standardInit();
+                        if(!LibSession.isAttribute("TABVISIBLE")){
+                            UI.getCurrent().setContent(getTabellone());
+                        }
                     } else {
                         Notification notif = new Notification("Username o password errati", "", Notification.Type.ERROR_MESSAGE);
                         notif.show(Page.getCurrent());
@@ -127,7 +130,7 @@ public class WamUI extends UI {
             if(LibSession.isAttribute("FROMTAB")) {
                 LibSession.setAttribute("FROMTAB", null);
             }else{
-                Tabellone tab = new Tabellone(getCurrentAddress());
+                Tabellone tab=getTabellone();
                 UI.getCurrent().setContent(tab);
                 return;
             }
@@ -174,7 +177,6 @@ public class WamUI extends UI {
     private void standardInit() {
         Component comp = creaComponente();
         UI.getCurrent().setContent(comp);
-        //this.setContent(comp);
     }
 
 
@@ -287,8 +289,7 @@ public class WamUI extends UI {
         menuBarUtente.addItem("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Tabellone tab = new Tabellone(getCurrentAddress());
-                UI.getCurrent().setContent(tab);
+                UI.getCurrent().setContent(getTabellone());
             }
         });
 
@@ -299,6 +300,10 @@ public class WamUI extends UI {
             navComp.addView(LogMod.class, "Log", FontAwesome.CLOCK_O);
             navComp.addView(ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
         }
+
+
+
+
 
 
 
@@ -427,7 +432,7 @@ public class WamUI extends UI {
         mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Tabellone tab = new Tabellone(getCurrentAddress());
+                Tabellone tab = getTabellone();
                 UI.getCurrent().setContent(tab);
             }
         }, itemFunzione);
@@ -515,5 +520,21 @@ public class WamUI extends UI {
     public void menuSelected(MenuBar.MenuItem selectedItem) {
         int a = 87;
     }// end of method
+
+
+    /**
+     * Ritorna la unica istanza per sessione del Tabellone
+     */
+    private Tabellone getTabellone(){
+        Tabellone tab;
+        Object obj = LibSession.getAttribute("TABELLONE");
+        if(obj==null) {
+            tab = new Tabellone(getCurrentAddress());
+            LibSession.setAttribute("TABELLONE", tab);
+        }else{
+            tab=(Tabellone)obj;
+        }
+        return tab;
+    }
 
 }// end of class

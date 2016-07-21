@@ -128,12 +128,6 @@ public class Tabellone extends VerticalLayout implements View {
 
     }
 
-    /**
-     * Costruttore.
-     */
-    public Tabellone() {
-        this(null);
-    }
 
     /**
      * Provider di view per il Navigator interno al tabellone
@@ -180,6 +174,19 @@ public class Tabellone extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
 
+    }
+
+
+    @Override
+    public void attach() {
+        super.attach();
+        LibSession.setAttribute("TABVISIBLE", true);
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        LibSession.setAttribute("TABVISIBLE", null);
     }
 
     /**
