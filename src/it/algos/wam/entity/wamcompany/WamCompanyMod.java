@@ -71,7 +71,7 @@ public class WamCompanyMod extends ModulePop {
                 BaseCompany_.name,
                 BaseCompany_.contact,
                 BaseCompany_.email,
-                WamCompany_.vaiSubitoTabellone
+                WamCompany_.tabellonePubblico
         };
     }// end of method
 

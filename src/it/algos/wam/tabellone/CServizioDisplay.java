@@ -9,6 +9,7 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.web.lib.LibColor;
+import it.algos.webbase.web.login.Login;
 
 import java.util.Collections;
 import java.util.List;
@@ -137,7 +138,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
          * @param crea true per mostrare il bottone, false per nasconderlo
          */
         public void setCreaNuova(boolean crea){
-            if(crea){
+            if(crea && Login.getLogin().isLogged()){
                 labelTitolo.setValue(FontAwesome.PLUS_CIRCLE.getHtml() + " crea nuovo");
                 layoutTitle.addLayoutClickListener(listener);
                 layoutTitle.addStyleName("cpointer");

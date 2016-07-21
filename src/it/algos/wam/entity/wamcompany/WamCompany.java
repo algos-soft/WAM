@@ -29,7 +29,7 @@ public class WamCompany extends BaseCompany {
     public static String DEMO_COMPANY_CODE = "demo";
 
     //--mostra il tabellone alla partenza; in caso contrario va alla home
-    private boolean vaiSubitoTabellone = true;
+    private boolean tabellonePubblico = true;
 
     // elenco delle relazioni OneToMany
     // servono per creare le foreign key sul db
@@ -166,12 +166,12 @@ public class WamCompany extends BaseCompany {
         return getCompanyCode();
     }// end of method
 
-    public boolean isVaiSubitoTabellone() {
-        return vaiSubitoTabellone;
+    public boolean isTabellonePubblico() {
+        return tabellonePubblico;
     }// end of getter method
 
-    public void setVaiSubitoTabellone(boolean vaiSubitoTabellone) {
-        this.vaiSubitoTabellone = vaiSubitoTabellone;
+    public void setTabellonePubblico(boolean tabellonePubblico) {
+        this.tabellonePubblico = tabellonePubblico;
     }//end of setter method
 
     /**

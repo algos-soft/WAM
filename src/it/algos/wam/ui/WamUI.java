@@ -36,21 +36,21 @@ import it.algos.webbase.web.login.*;
 import it.algos.webbase.web.menu.AMenuBar;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.navigator.MenuCommand;
-import it.algos.webbase.web.screen.ErrorScreen;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Gac on 08 mar 2016.
- * .
+ * UI principale e unica del programma.
  */
 @Theme("wam")
 public class WamUI extends UI {
 
     private MenuBar menubar;
+    public static final String KEY_TABELLONE = "tabellone";
     public static final String KEY_TABVISIBLE = "tabvisible";
+    public static final String KEY_GOHOME = "gohome";
 
     // si registra chi è interessato alle modifiche delle company (aggiunta, cancellazione, modifica di quella corrente)
     private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
@@ -107,9 +107,8 @@ public class WamUI extends UI {
                 @Override
                 public void onUserLogin(LoginEvent e) {
                     if (e.isSuccess()) {
-                        if (!LibSession.isAttribute(WamUI.KEY_TABVISIBLE)) {
-                            UI.getCurrent().setContent(getTabellone());
-                        }
+                        LibSession.setAttribute(KEY_TABELLONE, null); // annulla il tabellone di sessione per farlo ricreare
+                        UI.getCurrent().setContent(getTabellone());
                     } else {
                         Notification notif = new Notification("Username o password errati", "", Notification.Type.ERROR_MESSAGE);
                         notif.show(Page.getCurrent());
@@ -122,6 +121,7 @@ public class WamUI extends UI {
             Login.getLogin().addLogoutListener(new LogoutListener() {
                 @Override
                 public void onUserLogout(LogoutEvent e) {
+                    LibSession.setAttribute(KEY_TABELLONE, null); // annulla il tabellone di sessione per farlo ricreare
                     Page.getCurrent().reload();
                 }
             });
@@ -141,15 +141,14 @@ public class WamUI extends UI {
             }
         }
 
-        // Se la company prevede tabellone pubblico, mostra sempre il tabellone
-        // Questo viene fatto solo la prima volta quindi a questo punto l'utente non è ancora loggato
-        if (company.isVaiSubitoTabellone()) {
-            if (!LibSession.isAttribute("TABVISIBLE")) {
-                if (!Login.getLogin().isLogged()) {
-                    UI.getCurrent().setContent(getTabellone());
-                    return;
-                }
+        // Se la company prevede tabellone pubblico, mostra il tabellone prima del login
+        // (se non viene dal goHome() del tabellone stesso)
+        if (company.isTabellonePubblico()) {
+            if (!LibSession.isAttribute(KEY_GOHOME)) {
+                UI.getCurrent().setContent(getTabellone());
+                return;
             }
+            LibSession.setAttribute(KEY_GOHOME, null);
         }
 
         // Se non già loggato, presento la pagina di login
@@ -515,10 +514,10 @@ public class WamUI extends UI {
      */
     private Tabellone getTabellone() {
         Tabellone tab;
-        Object obj = LibSession.getAttribute("TABELLONE");
+        Object obj = LibSession.getAttribute(KEY_TABELLONE);
         if (obj == null) {
             tab = new Tabellone(getCurrentAddress());
-            LibSession.setAttribute("TABELLONE", tab);
+            LibSession.setAttribute(KEY_TABELLONE, tab);
         } else {
             tab = (Tabellone) obj;
         }

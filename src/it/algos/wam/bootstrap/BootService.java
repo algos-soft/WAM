@@ -99,7 +99,7 @@ public abstract class BootService {
             company.setAddress1("Via Turati, 12");
             company.setAddress1("20199 Garbagnate Milanese");
             company.setContact("Mario Bianchi");
-            company.setVaiSubitoTabellone(true);
+            company.setTabellonePubblico(true);
             company.save();
         }// end of if cycle
         return company;

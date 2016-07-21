@@ -233,28 +233,33 @@ public class Tabellone extends VerticalLayout implements View {
      * @param cellObject l'oggetto specifico trasportato nella cella
      */
     private void cellClicked(CellType tipo, int col, int row, Object cellObject) {
-        Turno turno;
 
-        switch (tipo) {
-            case TURNO:
-                turno = (Turno) cellObject;
-                editCellTurno(turno, col, row);
-                break;
-            case NO_TURNO:
-                InfoNewTurnoWrap wrapper = (InfoNewTurnoWrap) cellObject;
-                LocalDate dInizio = wrapper.getData();
-                Servizio serv = wrapper.getServizio();
-                turno = new Turno();
-                turno.setInizio(DateConvertUtils.asUtilDate(dInizio));
-                turno.setServizio(serv);
-                editCellTurno(turno, col, row);
-                break;
-            case SERVIZIO:
-                Servizio servizio = (Servizio) cellObject;
+        if(Login.getLogin().isLogged()) {
+
+            Turno turno;
+            switch (tipo) {
+                case TURNO:
+                    turno = (Turno) cellObject;
+                    editCellTurno(turno, col, row);
+                    break;
+                case NO_TURNO:
+                    InfoNewTurnoWrap wrapper = (InfoNewTurnoWrap) cellObject;
+                    LocalDate dInizio = wrapper.getData();
+                    Servizio serv = wrapper.getServizio();
+                    turno = new Turno();
+                    turno.setInizio(DateConvertUtils.asUtilDate(dInizio));
+                    turno.setServizio(serv);
+                    editCellTurno(turno, col, row);
+                    break;
+                case SERVIZIO:
+                    Servizio servizio = (Servizio) cellObject;
 //                editCellServizio(servizio, col, row);
-                addRigaServizio(servizio, col, row);
-                break;
+                    addRigaServizio(servizio, col, row);
+                    break;
+            }
 
+        }else{
+            Login.getLogin().showLoginForm();
         }
 
 
@@ -326,6 +331,7 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private void goHome() {
         if(Login.getLogin().isLogged()){
+            LibSession.setAttribute(WamUI.KEY_GOHOME, true);
             this.getUI().getPage().open(homeURI.toString(), null);
         }else{
             Notification.show("Per accedere alla Home devi eseguire il login", Notification.Type.ERROR_MESSAGE);
@@ -347,53 +353,11 @@ public class Tabellone extends VerticalLayout implements View {
         private VerticalLayout gridPlaceholder = new VerticalLayout();
         private GridTabellone gridTabellone;
 
-        private MenuBar.MenuItem itemCreaTurni;
-
-
         public TabComponent() {
             setSpacing(true);
 
             TabMenuBar tbm = new TabMenuBar();
             MenuBarWithLogin menubar = new MenuBarWithLogin(tbm);
-
-            Login login=Login.getLogin();
-
-            // al login e al logout, aggiunge e toglie i comandi admin dalla menubar
-            login.addLoginListener(new LoginListener() {
-                @Override
-                public void onUserLogin(LoginEvent e) {
-                    if (e.isSuccess()) {
-                        if(e.getUser().isAdmin()){
-                            itemCreaTurni = tbm.getMenuAltro().addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
-                                @Override
-                                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                                    navigator.navigateTo(ADDR_GENERATE);
-                                }
-                            });
-                        }
-                    }
-                }
-            });
-
-            login.addLogoutListener(new LogoutListener() {
-                @Override
-                public void onUserLogout(LogoutEvent e) {
-                    if (itemCreaTurni != null) {
-                        tbm.getMenuAltro().removeChild(itemCreaTurni);
-                    }
-                }
-            });
-
-//            // alla creazione, se è loggato come admin aggiunge subito i comandi admin
-//            if (LibSession.isAdmin()) {
-//                itemCreaTurni = tbm.getMenuAltro().addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
-//                    @Override
-//                    public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                        navigator.navigateTo(ADDR_GENERATE);
-//                    }
-//                });
-//            }
-
 
             addComponent(menubar);
             addComponent(gridPlaceholder);
