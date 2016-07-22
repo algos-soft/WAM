@@ -8,9 +8,10 @@ import java.util.ArrayList;
 public class TurniGenerator {
 
     private GeneratorData data;
-    private ArrayList<TurnoDoneListener> turnoDoneListeners = new ArrayList<>();
+    private ArrayList<TurnoProgressListener> turnoProgressListeners = new ArrayList<>();
     private ArrayList<EngineDoneListener> engineDoneListeners = new ArrayList<>();
     private boolean abort;
+    private long lastUpdateMillis;
 
     private static final int MAX=50;
 
@@ -26,13 +27,22 @@ public class TurniGenerator {
      */
     public void start(){
 
+        lastUpdateMillis=System.currentTimeMillis();
 
+        int done=0;
 
         for(int i=0; i<MAX; i++){
 
             try {
                 Thread.sleep(100);
-                fireTurnoDoneListeners();
+                done++;
+
+                // progress update max 1 al secondo
+                if((System.currentTimeMillis()-lastUpdateMillis)>1000){
+                    lastUpdateMillis=System.currentTimeMillis();
+                    fireTurnoProgressListeners(done);
+                }
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -62,20 +72,20 @@ public class TurniGenerator {
         abort=true;
     }
 
-    private void fireTurnoDoneListeners(){
-        for(TurnoDoneListener l : turnoDoneListeners){
-            l.turnoDone();
+    private void fireTurnoProgressListeners(int progress){
+        for(TurnoProgressListener l : turnoProgressListeners){
+            l.progressUpdate(progress);
         }
     }
 
 
-    public void addTurnoDoneListener(TurnoDoneListener l){
-        turnoDoneListeners.add(l);
+    public void addTurnoProgressListener(TurnoProgressListener l){
+        turnoProgressListeners.add(l);
     }
 
 
-    public interface TurnoDoneListener{
-        void turnoDone();
+    public interface TurnoProgressListener {
+        void progressUpdate(int progress);
     }
 
 

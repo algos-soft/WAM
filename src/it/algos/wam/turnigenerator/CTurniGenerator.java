@@ -3,7 +3,6 @@ package it.algos.wam.turnigenerator;
 import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -18,7 +17,6 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.Future;
 
 /**
  * Componente per preparare il generatore/eliminatore di turni vuoti
@@ -274,19 +272,20 @@ public class CTurniGenerator extends CTabelloneEditor {
 
                     // aggiunge un listener per essere informato ogni volta che un turno è fatto
                     // e aggiornare la progressbar
-                    generator.addTurnoDoneListener(new TurniGenerator.TurnoDoneListener() {
+                    generator.addTurnoProgressListener(new TurniGenerator.TurnoProgressListener() {
 
-                        int done = 0;
+                        int quanti = 0;
 
                         @Override
-                        public void turnoDone() {
-                            done++;
+                        public void progressUpdate(int progress) {
+
+                            quanti =progress;
 
                             getUI().access(new Runnable() {
                                 @Override
                                 public void run() {
-                                    float progress = (float) done / (generator.getQuantiTurni());
-                                    progressBar.setCaption(done+"/"+generator.getQuantiTurni());
+                                    float progress = (float) quanti / (generator.getQuantiTurni());
+                                    progressBar.setCaption(quanti + "/" + generator.getQuantiTurni());
                                     progressBar.setValue(progress);
                                 }
                             });
