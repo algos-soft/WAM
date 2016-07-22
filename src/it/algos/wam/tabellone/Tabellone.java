@@ -334,7 +334,7 @@ public class Tabellone extends VerticalLayout implements View {
             LibSession.setAttribute(WamUI.KEY_GOHOME, true);
             this.getUI().getPage().open(homeURI.toString(), null);
         }else{
-            Notification.show("Per accedere alla Home devi eseguire il login", Notification.Type.ERROR_MESSAGE);
+            Login.getLogin().showLoginForm();
         }
     }
 
