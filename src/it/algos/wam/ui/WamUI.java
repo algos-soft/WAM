@@ -7,6 +7,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
@@ -47,7 +48,7 @@ import java.util.List;
  * UI principale e unica del programma.
  */
 @Theme("wam")
-@Push(transport= Transport.WEBSOCKET_XHR)   // se non uso questo Transport i cookies non funzionano
+@Push(value=PushMode.AUTOMATIC, transport=Transport.WEBSOCKET_XHR)   // se non uso questo tipo di transport i cookies non funzionano
 public class WamUI extends UI {
 
     private MenuBar menubar;

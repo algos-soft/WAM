@@ -261,9 +261,16 @@ public class CTurniGenerator extends CTabelloneEditor {
                         }
                     });
 
-
+                    // crea i dati e controlla se sono validi
                     GeneratorData data = createGeneratorData();
+                    String err= data.checkValid();
+                    if(!err.equals("")){
+                        Notification.show("Dati non validi", err, Notification.Type.ERROR_MESSAGE);
+                        return;
+                    }
+
                     generator = new TurniGenerator(data);
+
 
                     // aggiunge un listener per essere informato ogni volta che un turno è fatto
                     // e aggiornare la progressbar
@@ -306,6 +313,7 @@ public class CTurniGenerator extends CTabelloneEditor {
 
                                     fireDismissListeners(new DismissEvent(bAnnulla, false, false));
                                     generatorRunning=false;
+
                                 }
                             });
                         }
