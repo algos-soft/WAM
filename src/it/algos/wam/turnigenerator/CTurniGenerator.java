@@ -342,8 +342,6 @@ public class CTurniGenerator extends CTabelloneEditor {
 
                 }
 
-
-
             }
 
         });
@@ -362,7 +360,6 @@ public class CTurniGenerator extends CTabelloneEditor {
         GeneratorData data = new GeneratorData(getData1(), getData2(), GeneratorData.ACTION_CREATE);
         return data;
     }
-
 
 
 
@@ -385,7 +382,6 @@ public class CTurniGenerator extends CTabelloneEditor {
             layOff.addLayoutClickListener(layoutClickEvent -> {
                 swListener.clickedOff();
             });
-
 
             addComponent(layOn);
             addComponent(layOff);
