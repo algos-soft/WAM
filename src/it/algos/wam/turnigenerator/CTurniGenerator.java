@@ -251,6 +251,7 @@ public class CTurniGenerator extends CTabelloneEditor {
                 if(!generatorRunning){
 
                     // resetta la progress bar
+                    // Attenzione! la UI deve essere @Push per usare UI.access()
                     getUI().access(new Runnable() {
                         @Override
                         public void run() {
