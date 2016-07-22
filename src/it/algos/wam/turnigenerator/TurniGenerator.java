@@ -10,7 +10,9 @@ public class TurniGenerator {
     private GeneratorData data;
     private ArrayList<TurnoDoneListener> turnoDoneListeners = new ArrayList<>();
     private ArrayList<EngineDoneListener> engineDoneListeners = new ArrayList<>();
-    boolean abort;
+    private boolean abort;
+
+    private static final int MAX=50;
 
     /**
      * @param data i dati di impostazione del motore
@@ -25,12 +27,11 @@ public class TurniGenerator {
     public void start(){
 
 
-        int max=10;
 
-        for(int i=0; i<max; i++){
+        for(int i=0; i<MAX; i++){
 
             try {
-                Thread.sleep(500);
+                Thread.sleep(100);
                 fireTurnoDoneListeners();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -38,7 +39,7 @@ public class TurniGenerator {
 
             // se abort è acceso forza uscita
             if(abort){
-                i=max;
+                i=MAX;
             }
 
         }
@@ -51,7 +52,7 @@ public class TurniGenerator {
      * Ritorna il numero totale di turni da creare / cancellare
      * */
     public int getQuantiTurni(){
-        return 10;
+        return MAX;
     }
 
     /**
