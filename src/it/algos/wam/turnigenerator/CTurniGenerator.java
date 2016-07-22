@@ -3,12 +3,14 @@ package it.algos.wam.turnigenerator;
 import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.query.WamQuery;
 import it.algos.wam.tabellone.CTabelloneEditor;
+import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.field.DateField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 
@@ -25,7 +27,8 @@ public class CTurniGenerator extends CTabelloneEditor {
 
     private DateField dateField1;
     private DateField dateField2;
-    private final ProgressBar progressBar;
+    private ProgressBar progressBar;
+    private boolean generatorRunning;
 
     public CTurniGenerator(EntityManager entityManager) {
         super(entityManager);
@@ -33,15 +36,10 @@ public class CTurniGenerator extends CTabelloneEditor {
         addComponent(creaCompTitolo());
         addComponent(creaCompDettaglio());
 
-        progressBar = new ProgressBar();
-        addComponent(progressBar);
-        progressBar.setCaption("");
-        progressBar.setWidth("100%");
-        progressBar.addStyleName("invisible");
+        Component panComandi=creaPanComandi();
+        addComponent(panComandi);
 
-        Component comp = creaPanComandi();
-        addComponent(comp);
-        setComponentAlignment(comp, Alignment.BOTTOM_CENTER);
+        setComponentAlignment(panComandi, Alignment.BOTTOM_CENTER);
 
     }
 
@@ -228,6 +226,11 @@ public class CTurniGenerator extends CTabelloneEditor {
         layout.setMargin(true);
         layout.setSpacing(true);
 
+        progressBar = new ProgressBar();
+        progressBar.setCaption("");
+        progressBar.setWidth("12em");
+//        progressBar.addStyleName("invisible");
+
         Button bAnnulla = new Button("Annulla");
         bAnnulla.addClickListener(new Button.ClickListener() {
             @Override
@@ -237,19 +240,107 @@ public class CTurniGenerator extends CTabelloneEditor {
         });
 
         Button bEsegui = new Button("Esegui");
+        bEsegui.setWidth("8em");
         bEsegui.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         bEsegui.addStyleName(ValoTheme.BUTTON_PRIMARY);    // "primary" not "default"
         bEsegui.addClickListener(new Button.ClickListener() {
 
+            TurniGenerator generator;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                GeneratorData data = createGeneratorData();
-                TurniGenerator generator = new TurniGenerator(data);
-                new GeneratorThread(generator, progressBar).start();
+
+                if(!generatorRunning){
+
+                    // resetta la progress bar
+                    getUI().access(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar.setCaption("");
+                            progressBar.setValue(0f);
+                        }
+                    });
+
+
+                    GeneratorData data = createGeneratorData();
+                    generator = new TurniGenerator(data);
+
+                    // aggiunge un listener per essere informato ogni volta che un turno è fatto
+                    // e aggiornare la progressbar
+                    generator.addTurnoDoneListener(new TurniGenerator.TurnoDoneListener() {
+
+                        int done = 0;
+
+                        @Override
+                        public void turnoDone() {
+                            done++;
+
+                            getUI().access(new Runnable() {
+                                @Override
+                                public void run() {
+                                    float progress = (float) done / (generator.getQuantiTurni());
+                                    progressBar.setCaption(done+"/"+generator.getQuantiTurni());
+                                    progressBar.setValue(progress);
+                                }
+                            });
+
+
+                        }
+                    });
+
+                    // aggiunge un listener per essere informato quando il lavoro è finito
+                    generator.addEngineDoneListener(new TurniGenerator.EngineDoneListener() {
+                        @Override
+                        public void engineDone() {
+                            getUI().access(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    // aspetta un attimo che il thread finisca di aggiornare la barra
+                                    // prima di lanciare l'evento di fine
+                                    try {
+                                        Thread.sleep(200);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    fireDismissListeners(new DismissEvent(bAnnulla, false, false));
+                                    generatorRunning=false;
+                                }
+                            });
+                        }
+                    });
+
+                    // avvia il generatore in un thread separato
+                    GeneratorThread thread = new GeneratorThread(generator);
+                    thread.start();
+                    generatorRunning=true;
+
+                    // disabilita i bottoni
+                    bAnnulla.setEnabled(false);
+                    bEsegui.setCaption("Interrompi");
+
+                }else{
+
+                    new ConfirmDialog("", "Sei sicuro?", new ConfirmDialog.Listener() {
+                        @Override
+                        public void onClose(ConfirmDialog dialog, boolean confirmed) {
+                            if(confirmed){
+                                generator.abort();
+                                bEsegui.setCaption("Esegui");
+                            }
+                        }
+                    }).show();
+
+                }
+
+
+
             }
 
         });
 
+        layout.addComponent(progressBar);
         layout.addComponent(bAnnulla);
         layout.addComponent(bEsegui);
 
@@ -273,7 +364,7 @@ public class CTurniGenerator extends CTabelloneEditor {
 
             setSizeUndefined();
             setSpacing(true);
-            addStyleName("icon-red");
+            addStyleName("icon-green");
 
             HorizontalLayout layOn = new HorizontalLayout();
             layOn.addComponent(new Label(iconOn.getHtml() , ContentMode.HTML));
@@ -309,7 +400,7 @@ public class CTurniGenerator extends CTabelloneEditor {
 
             setSizeUndefined();
             setSpacing(false);
-            addStyleName("icon-red");
+            addStyleName("icon-green");
 
             HorizontalLayout layOn = new HorizontalLayout();
             layOn.addComponent(new Label(FontAwesome.CHECK_SQUARE_O.getHtml() , ContentMode.HTML));

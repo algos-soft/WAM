@@ -9,6 +9,8 @@ public class TurniGenerator {
 
     private GeneratorData data;
     private ArrayList<TurnoDoneListener> turnoDoneListeners = new ArrayList<>();
+    private ArrayList<EngineDoneListener> engineDoneListeners = new ArrayList<>();
+    boolean abort;
 
     /**
      * @param data i dati di impostazione del motore
@@ -21,7 +23,11 @@ public class TurniGenerator {
      * Avvia il motore
      */
     public void start(){
-        for(int i=0; i<10; i++){
+
+
+        int max=10;
+
+        for(int i=0; i<max; i++){
 
             try {
                 Thread.sleep(500);
@@ -30,7 +36,15 @@ public class TurniGenerator {
                 e.printStackTrace();
             }
 
+            // se abort è acceso forza uscita
+            if(abort){
+                i=max;
+            }
+
         }
+
+        fireEngineDoneListeners();
+
     }
 
     /**
@@ -38,6 +52,13 @@ public class TurniGenerator {
      * */
     public int getQuantiTurni(){
         return 10;
+    }
+
+    /**
+     * Abortisce l'esecuzione
+     */
+    public void abort(){
+        abort=true;
     }
 
     private void fireTurnoDoneListeners(){
@@ -55,4 +76,22 @@ public class TurniGenerator {
     public interface TurnoDoneListener{
         void turnoDone();
     }
+
+
+    private void fireEngineDoneListeners(){
+        for(EngineDoneListener l : engineDoneListeners){
+            l.engineDone();
+        }
+    }
+
+
+    public void addEngineDoneListener(EngineDoneListener l){
+        engineDoneListeners.add(l);
+    }
+
+
+    public interface EngineDoneListener{
+        void engineDone();
+    }
+
 }

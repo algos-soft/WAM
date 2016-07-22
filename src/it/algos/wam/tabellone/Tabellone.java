@@ -476,7 +476,7 @@ public class Tabellone extends VerticalLayout implements View {
             });
 
             if (LibSession.isAdmin()) {
-                menuAltro.addItem("crea/cancella turni vuoti", FontAwesome.CALENDAR, new MenuBar.Command() {
+                menuAltro.addItem("genera turni", FontAwesome.CALENDAR, new MenuBar.Command() {
                     @Override
                     public void menuSelected(MenuBar.MenuItem selectedItem) {
                         navigator.navigateTo(ADDR_GENERATE);
