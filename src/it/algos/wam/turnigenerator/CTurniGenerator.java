@@ -27,6 +27,8 @@ public class CTurniGenerator extends CTabelloneEditor {
     private DateField dateField2;
     private ProgressBar progressBar;
     private boolean generatorRunning;
+    ArrayList<Servizio> servizi;
+    CheckBox[][] matrix;
 
     public CTurniGenerator(EntityManager entityManager) {
         super(entityManager);
@@ -50,7 +52,6 @@ public class CTurniGenerator extends CTabelloneEditor {
     private Component creaCompTitolo() {
         VerticalLayout layout = new VerticalLayout();
         layout.addComponent(new Label("<strong>" + "Generatore turni vuoti" + "</strong>", ContentMode.HTML));
-
         return layout;
     }
 
@@ -93,7 +94,7 @@ public class CTurniGenerator extends CTabelloneEditor {
         layoutDate.addComponent(dateField1);
         layoutDate.addComponent(dateField2);
 
-        ArrayList<Servizio> servizi=new ArrayList<>();
+        servizi=new ArrayList<>();
         servizi.addAll(WamQuery.queryServizi(entityManager, true));
         servizi.addAll(WamQuery.queryServizi(entityManager, false));
 
@@ -110,7 +111,7 @@ public class CTurniGenerator extends CTabelloneEditor {
 
         int rows = servizi.size();
         int cols = 7;
-        CheckBox[][] matrix = new CheckBox[rows][cols];
+        matrix = new CheckBox[rows][cols];
 
         int row=0;
         for(Servizio serv : servizi){
@@ -243,7 +244,7 @@ public class CTurniGenerator extends CTabelloneEditor {
         bEsegui.addStyleName(ValoTheme.BUTTON_PRIMARY);    // "primary" not "default"
         bEsegui.addClickListener(new Button.ClickListener() {
 
-            TurniGenerator generator;
+            TurniGenEngine generator;
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -268,12 +269,12 @@ public class CTurniGenerator extends CTabelloneEditor {
                         return;
                     }
 
-                    generator = new TurniGenerator(data);
+                    generator = new TurniGenEngine(data);
 
 
                     // aggiunge un listener per essere informato ogni volta che un turno è fatto
                     // e aggiornare la progressbar
-                    generator.addTurnoProgressListener(new TurniGenerator.TurnoProgressListener() {
+                    generator.addTurnoProgressListener(new TurniGenEngine.TurnoProgressListener() {
 
                         int quanti = 0;
 
@@ -296,7 +297,7 @@ public class CTurniGenerator extends CTabelloneEditor {
                     });
 
                     // aggiunge un listener per essere informato quando il lavoro è finito
-                    generator.addEngineDoneListener(new TurniGenerator.EngineDoneListener() {
+                    generator.addEngineDoneListener(new TurniGenEngine.EngineDoneListener() {
                         @Override
                         public void engineDone() {
                             getUI().access(new Runnable() {
@@ -355,9 +356,23 @@ public class CTurniGenerator extends CTabelloneEditor {
 
     /**
      * Crea il wrapper dei dati per il motore di generazione
+     * @return il wrapper dei dati
      */
     private GeneratorData createGeneratorData() {
         GeneratorData data = new GeneratorData(getData1(), getData2(), GeneratorData.ACTION_CREATE);
+
+        for(int giorno=0; giorno<7; giorno++){
+            ArrayList<Servizio> servChecked=new ArrayList<>();
+            int row=0;
+            for(Servizio serv : servizi){
+                CheckBox check = matrix[row][giorno];
+                if(check.getValue()){
+                    servChecked.add(serv);
+                }
+                row++;
+            }
+            data.putGiorno(giorno, servChecked.toArray(new Servizio[0]));
+        }
         return data;
     }
 

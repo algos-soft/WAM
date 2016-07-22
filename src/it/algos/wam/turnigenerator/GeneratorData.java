@@ -1,6 +1,9 @@
 package it.algos.wam.turnigenerator;
 
+import it.algos.wam.entity.servizio.Servizio;
+
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Wrapper dei dati di configurazione per il motore di generazione turni.
@@ -10,6 +13,8 @@ public class GeneratorData {
     private Date d2;
     private int action;
 
+    private HashMap<Integer, Servizio[]> mapServiziGiorno = new HashMap<>();
+
     public static final int ACTION_CREATE = 1;
     public static final int ACTION_DELETE = 2;
 
@@ -17,6 +22,18 @@ public class GeneratorData {
         this.d1 = d1;
         this.d2 = d2;
         this.action = action;
+    }
+
+
+    /**
+     * Registra l'elenco dei servizi abilitati per un dato giorno
+     * della settimana
+     *
+     * @param giorno l'indice del giorno (0=lun)
+     * @param servizi l'array dei servizi del giorno
+     */
+    public void putGiorno(int giorno, Servizio[] servizi) {
+        mapServiziGiorno.put(giorno, servizi);
     }
 
 

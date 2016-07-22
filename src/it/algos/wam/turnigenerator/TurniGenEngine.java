@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Motore di generazione/eliminazione di turni
  */
-public class TurniGenerator {
+public class TurniGenEngine {
 
     private GeneratorData data;
     private ArrayList<TurnoProgressListener> turnoProgressListeners = new ArrayList<>();
@@ -18,7 +18,7 @@ public class TurniGenerator {
     /**
      * @param data i dati di impostazione del motore
      */
-    public TurniGenerator(GeneratorData data) {
+    public TurniGenEngine(GeneratorData data) {
         this.data = data;
     }
 
