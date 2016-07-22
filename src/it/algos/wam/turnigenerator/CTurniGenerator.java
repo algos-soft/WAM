@@ -1,4 +1,4 @@
-package it.algos.wam.tabellone;
+package it.algos.wam.turnigenerator;
 
 import com.vaadin.data.Property;
 import com.vaadin.event.ShortcutAction;
@@ -8,6 +8,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.query.WamQuery;
+import it.algos.wam.tabellone.CTabelloneEditor;
 import it.algos.webbase.web.field.DateField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 
@@ -15,20 +16,28 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.Future;
 
 /**
- * Componente per impostare il generatore/eliminatore di turni vuoti
+ * Componente per preparare il generatore/eliminatore di turni vuoti
  */
 public class CTurniGenerator extends CTabelloneEditor {
 
     private DateField dateField1;
     private DateField dateField2;
+    private final ProgressBar progressBar;
 
     public CTurniGenerator(EntityManager entityManager) {
         super(entityManager);
 
         addComponent(creaCompTitolo());
         addComponent(creaCompDettaglio());
+
+        progressBar = new ProgressBar();
+        addComponent(progressBar);
+        progressBar.setCaption("");
+        progressBar.setWidth("100%");
+        progressBar.addStyleName("invisible");
 
         Component comp = creaPanComandi();
         addComponent(comp);
@@ -234,8 +243,11 @@ public class CTurniGenerator extends CTabelloneEditor {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-
+                GeneratorData data = createGeneratorData();
+                TurniGenerator generator = new TurniGenerator(data);
+                new GeneratorThread(generator, progressBar).start();
             }
+
         });
 
         layout.addComponent(bAnnulla);
@@ -243,6 +255,17 @@ public class CTurniGenerator extends CTabelloneEditor {
 
         return layout;
     }
+
+    /**
+     * Crea il wrapper dei dati per il motore di generazione
+     */
+    private GeneratorData createGeneratorData() {
+        GeneratorData data = new GeneratorData(getData1(), getData2(), GeneratorData.ACTION_CREATE);
+        return data;
+    }
+
+
+
 
     private class SwitchOnOffH extends HorizontalLayout{
 
@@ -308,6 +331,14 @@ public class CTurniGenerator extends CTabelloneEditor {
 
     }
 
+
+    private Date getData1(){
+        return dateField1.getValue();
+    }
+
+    private Date getData2(){
+        return dateField2.getValue();
+    }
 
 
 }

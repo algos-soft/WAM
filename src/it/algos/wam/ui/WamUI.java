@@ -1,5 +1,6 @@
 package it.algos.wam.ui;
 
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
@@ -45,10 +46,12 @@ import java.util.List;
  * UI principale e unica del programma.
  */
 @Theme("wam")
+@Push
 public class WamUI extends UI {
 
     private MenuBar menubar;
     public static final String KEY_TABELLONE = "tabellone";
+    public static final String KEY_MAIN_COMP = "maincomp";
     public static final String KEY_TABVISIBLE = "tabvisible";
     public static final String KEY_GOHOME = "gohome";
 
@@ -107,12 +110,17 @@ public class WamUI extends UI {
                 @Override
                 public void onUserLogin(LoginEvent e) {
                     if (e.isSuccess()) {
-                        LibSession.setAttribute(KEY_TABELLONE, null); // annulla il tabellone di sessione per farlo ricreare
+
+                        // al login, annulla il tabellone e il main component di sessione per farli ricreare
+                        LibSession.setAttribute(KEY_TABELLONE, null);
+                        LibSession.setAttribute(KEY_MAIN_COMP, null);
+
+                        // si parte sempre dal tabellone
                         UI.getCurrent().setContent(getTabellone());
+
                     } else {
                         Notification notif = new Notification("Username o password errati", "", Notification.Type.ERROR_MESSAGE);
                         notif.show(Page.getCurrent());
-                        return;
                     }
                 }
             });
@@ -160,8 +168,7 @@ public class WamUI extends UI {
 
         // se arrivo qui sono già loggato
         // presento la home
-        Component comp = creaComponente();
-        UI.getCurrent().setContent(comp);
+        UI.getCurrent().setContent(getMainComponent());
 
     }
 
@@ -171,8 +178,7 @@ public class WamUI extends UI {
      */
     private void developerInit() {
         fixCompanySession();
-        Component comp = creaComponente();
-        UI.getCurrent().setContent(comp);
+        UI.getCurrent().setContent(getMainComponent());
     }
 
 
@@ -273,7 +279,6 @@ public class WamUI extends UI {
         // creo un componente standard di navigazione
         NavComponent navComp = new NavComponent(this);
         MenuBar menuBarUtente = navComp.getMenuBar();
-        MenuBar.MenuItem item;
 
         // aggiungo le view - la menubar viene riempita automaticamente
 
@@ -289,12 +294,14 @@ public class WamUI extends UI {
         navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
         navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
         navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
+
+        // aggiunge alla menubar le funzioni di Admin
         if (LibSession.isAdmin()) {
             navComp.addView(LogMod.class, "Log", FontAwesome.CLOCK_O);
             navComp.addView(ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
         }
 
-
+        // todo -- aggiunge le funzioni di developer (da sistemare)
         MenuBarWithLogin menu = (MenuBarWithLogin) navComp.getComponent(0);
 
         // controlla se è un admin
@@ -305,8 +312,7 @@ public class WamUI extends UI {
             addMod(menuBarAdmin, new PrefMod());
             menu.addMenu(menuBarAdmin);
             navComp.setup(menuBarAdmin);
-        }// end of if cycle
-
+        }
         // controlla se è un developer
         if (LibSession.isDeveloper()) {
             MenuBar menuBarDeveloper = new MenuBar();
@@ -316,14 +322,25 @@ public class WamUI extends UI {
             addMod(menuBarDeveloper, new WamCompanyMod());
             menu.addMenu(menuBarDeveloper);
             navComp.setup(menuBarDeveloper);
-        }// end of if cycle
+        }
+        // todo -- end da sistemare
+
 
         // da chiamare dopo che ho aggiunto tutti i MenuItems,
         // configura il Navigator in base alla MenuBar
         navComp.setup();
 
+        // seleziona inizialmente il menuItem Funzioni
+        List<MenuBar.MenuItem> items = menuBarUtente.getItems();
+        for (MenuBar.MenuItem item : items) {
+            if (item.getText().equals(FunzioneMod.MENU_ADDRESS)) {
+                item.getCommand().menuSelected(item);
+                break;
+            }
+        }
+
         return navComp;
-    }// end of method
+    }
 
 
     private MenuBar.MenuItem createMenuItem(MenuBar.MenuItem menu, Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
@@ -523,5 +540,24 @@ public class WamUI extends UI {
         }
         return tab;
     }
+
+
+    /**
+     * Ritorna la unica istanza per sessione del componente main
+     */
+    private Component getMainComponent() {
+//        Component comp;
+//        Object obj = LibSession.getAttribute(KEY_MAIN_COMP);
+//        if (obj == null) {
+//            comp = creaComponente();
+//            LibSession.setAttribute(KEY_MAIN_COMP, comp);
+//        } else {
+//            comp = (Component) obj;
+//        }
+//        return comp;
+
+        return creaComponente();    // per ora è sempre nuova istanza
+    }
+
 
 }// end of class

@@ -66,8 +66,8 @@ public class VolontarioTable extends ETable {
             lista.add(WamCompanyEntity_.company);
         }// end of if cycle
 
-        lista.add(Volontario_.nome);
         lista.add(Volontario_.cognome);
+        lista.add(Volontario_.nome);
         lista.add(Volontario_.admin);
 
 //        if (LibSession.isDeveloper()||LibSession.isAdmin()) {
