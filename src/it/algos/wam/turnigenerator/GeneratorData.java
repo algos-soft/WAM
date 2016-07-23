@@ -1,6 +1,7 @@
 package it.algos.wam.turnigenerator;
 
 import it.algos.wam.entity.servizio.Servizio;
+import org.joda.time.DateTime;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -43,6 +44,24 @@ public class GeneratorData {
      * @return stringa vuota se ok, motivo se non validi
      */
     public String checkValid() {
+        if(d1==null){
+            return "La data iniziale non può essere nulla";
+        }
+
+        if(d2==null){
+            return "La data finale non può essere nulla";
+        }
+
+        DateTime dt1=new DateTime(d1);
+        DateTime dt2=new DateTime(d2);
+        if(dt2.isBefore(dt1)){
+            return "La data iniziale non può essere successiva alla data finale";
+        }
+
+        if((action != ACTION_CREATE) & (action != ACTION_DELETE)){
+            return "Azione "+action+" non riconosciuta";
+        }
+
         return "";
     }
 

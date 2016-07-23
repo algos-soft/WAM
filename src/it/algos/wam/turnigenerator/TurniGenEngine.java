@@ -37,7 +37,7 @@ public class TurniGenEngine {
                 Thread.sleep(100);
                 done++;
 
-                // progress update max 1 al secondo
+                // progress update - max 1 al secondo
                 if((System.currentTimeMillis()-lastUpdateMillis)>1000){
                     lastUpdateMillis=System.currentTimeMillis();
                     fireTurnoProgressListeners(done);
