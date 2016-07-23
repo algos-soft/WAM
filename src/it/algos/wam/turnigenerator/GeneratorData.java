@@ -62,6 +62,10 @@ public class GeneratorData {
             return "Azione "+action+" non riconosciuta";
         }
 
+        if(mapServiziGiorno.isEmpty()){
+            return "Non ci sono operazioni da eseguire";
+        }
+
         return "";
     }
 
