@@ -63,6 +63,9 @@ public class VolontarioForm extends ModuleForm {
         field.setColumns(20);
         addField(Volontario_.cognome, field);
 
+        field = new EmailField(Volontario_.email.getName());
+        addField(Volontario_.email, field);
+
         PasswordField passFld = new PasswordField(Volontario_.password.getName());
         passFld.setColumns(20);
         addField(Volontario_.password, passFld);
@@ -111,6 +114,9 @@ public class VolontarioForm extends ModuleForm {
         layout.addComponent(field);
 
         field = getField(Volontario_.cognome.getName());
+        layout.addComponent(field);
+
+        field = getField(Volontario_.email.getName());
         layout.addComponent(field);
 
         field = getField(Volontario_.password.getName());
