@@ -532,15 +532,17 @@ public class WamUI extends UI {
      * Ritorna la unica istanza per sessione del Tabellone
      */
     private Tabellone getTabellone() {
-        Tabellone tab;
-        Object obj = LibSession.getAttribute(KEY_TABELLONE);
-        if (obj == null) {
-            tab = new Tabellone(getCurrentAddress());
-            LibSession.setAttribute(KEY_TABELLONE, tab);
-        } else {
-            tab = (Tabellone) obj;
-        }
-        return tab;
+//        Tabellone tab;
+//        Object obj = LibSession.getAttribute(KEY_TABELLONE);
+//        if (obj == null) {
+//            tab = new Tabellone(getCurrentAddress());
+//            LibSession.setAttribute(KEY_TABELLONE, tab);
+//        } else {
+//            tab = (Tabellone) obj;
+//        }
+//        return tab;
+
+        return new Tabellone(getCurrentAddress());
     }
 
 
