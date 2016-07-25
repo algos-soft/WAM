@@ -122,6 +122,56 @@ public class WamQuery {
 
 
     /**
+     * Un turno per un dato servizio in un dato giorno.
+     *
+     * @param em       l'EntityManager da utilizzare (se nullo lo crea qui)
+     * @param servizio il servizio di riferimento
+     * @param giorno   il giorno di inizio
+     * @return il turno, null se non esiste
+     * se ne esiste più di 1 (non dovrebbe mai succedere) ritorna il primo
+     */
+    public static Turno queryTurnoServizioGiorno(EntityManager em, Servizio servizio, LocalDate giorno) {
+
+        Turno turno = null;
+
+        // se non specificato EM, ne crea uno locale
+        boolean localEM = false;
+        if (em == null) {
+            em = EM.createEntityManager();
+            localEM = true;
+        }
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Turno> cq = cb.createQuery(Turno.class);
+        Root<Turno> root = cq.from(Turno.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
+        predicates.add(cb.equal(root.get(Turno_.servizio), servizio));
+        Date data1 = DateConvertUtils.asUtilDate(giorno);
+        predicates.add(cb.equal(root.get(Turno_.inizio), data1));
+        cq.where(predicates.toArray(new Predicate[]{}));
+
+        TypedQuery<Turno> q = em.createQuery(cq);
+        List<Turno> turni = q.getResultList();
+
+        // estrae il primo (e unico) turno
+        if (turni != null) {
+            if (turni.size() > 0) {
+                turno = turni.get(0);
+            }
+        }
+
+        // eventualmente chiude l'EM locale
+        if (localEM) {
+            em.close();
+        }
+
+        return turno;
+    }
+
+
+    /**
      * Tutte le iscrizioni relative a un dato ServizioFunzione.
      *
      * @param em l'EntityManager da utilizzare (se nullo lo crea qui)
@@ -148,6 +198,44 @@ public class WamQuery {
         TypedQuery<Iscrizione> q = em.createQuery(cq);
         List<Iscrizione> lista = q.getResultList();
 
+
+        // eventualmente chiude l'EM locale
+        if (localEM) {
+            em.close();
+        }
+
+        return lista;
+
+    }
+
+
+    /**
+     * Tutte le iscrizioni relative a un dato Turno.
+     *
+     * @param em l'EntityManager da utilizzare (se nullo lo crea qui)
+     * @param turno il turno
+     * @return la lista delle iscrizioni
+     */
+    public static List<Iscrizione> queryIscrizioniTurno(EntityManager em, Turno turno) {
+
+        // se non specificato EM, ne crea uno locale
+        boolean localEM = false;
+        if (em == null) {
+            em = EM.createEntityManager();
+            localEM = true;
+        }
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Iscrizione> cq = cb.createQuery(Iscrizione.class);
+        Root<Iscrizione> root = cq.from(Iscrizione.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
+        predicates.add(cb.equal(root.get(Iscrizione_.turno), turno));
+        cq.where(predicates.toArray(new Predicate[]{}));
+
+        TypedQuery<Iscrizione> q = em.createQuery(cq);
+        List<Iscrizione> lista = q.getResultList();
 
         // eventualmente chiude l'EM locale
         if (localEM) {

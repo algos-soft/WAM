@@ -7,6 +7,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
@@ -574,6 +575,9 @@ public class Tabellone extends VerticalLayout implements View {
                 @Override
                 public void editorDismissed(CTabelloneEditor.DismissEvent e) {
                     navigator.navigateTo(ADDR_TABELLONE);
+                    if(e.isSaved()){
+                        creaGrid(tabComponent.getDataStart(), tabComponent.getNumGiorni());
+                    }
                 }
             });
 

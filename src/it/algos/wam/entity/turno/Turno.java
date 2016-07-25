@@ -385,6 +385,14 @@ public class Turno extends WamCompanyEntity {
 
     public void setInizio(Date inizio) {
         this.inizio = inizio;
+
+        // regola la chiave (campo calcolato)
+        if(inizio!=null){
+            fixChiave();
+        }else{
+            setChiave(0);
+        }
+
     }//end of setter method
 
     /**

@@ -12,8 +12,10 @@ import it.algos.wam.tabellone.CTabelloneEditor;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.field.DateField;
 import it.algos.webbase.web.lib.DateConvertUtils;
+import it.algos.webbase.web.lib.LibDate;
 
 import javax.persistence.EntityManager;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,11 +29,16 @@ public class CTurniGenerator extends CTabelloneEditor {
     private DateField dateField2;
     private ProgressBar progressBar;
     private boolean generatorRunning;
-    ArrayList<Servizio> servizi;
-    CheckBox[][] matrix;
+    private ArrayList<Servizio> servizi;
+    private CheckBox[][] matrix;
+    private boolean genera; //true=genera, false=cancella
+    private Button bEsegui;
+    private MenuBar.MenuItem itemGenera;
 
     public CTurniGenerator(EntityManager entityManager) {
         super(entityManager);
+
+        this.genera=true;
 
         addComponent(creaCompTitolo());
         addComponent(creaCompDettaglio());
@@ -40,6 +47,9 @@ public class CTurniGenerator extends CTabelloneEditor {
         addComponent(panComandi);
 
         setComponentAlignment(panComandi, Alignment.BOTTOM_CENTER);
+
+        // seleziona l'item Genera
+        itemGenera.getCommand().menuSelected(itemGenera);
 
     }
 
@@ -51,7 +61,7 @@ public class CTurniGenerator extends CTabelloneEditor {
      */
     private Component creaCompTitolo() {
         VerticalLayout layout = new VerticalLayout();
-        layout.addComponent(new Label("<strong>" + "Generatore turni vuoti" + "</strong>", ContentMode.HTML));
+        layout.addComponent(new Label("<strong>" + "Generatore turni" + "</strong>", ContentMode.HTML));
         return layout;
     }
 
@@ -70,6 +80,8 @@ public class CTurniGenerator extends CTabelloneEditor {
 
         HorizontalLayout layoutDate = new HorizontalLayout();
         layoutDate.setSpacing(true);
+        layoutDate.setDefaultComponentAlignment(Alignment.BOTTOM_CENTER);
+
         dateField1 = new DateField("Dal giorno");
         LocalDate tomorrow=LocalDate.now().plusDays(1);
         dateField1.setValue(DateConvertUtils.asUtilDate(tomorrow));
@@ -91,8 +103,37 @@ public class CTurniGenerator extends CTabelloneEditor {
         Date duWeek=DateConvertUtils.asUtilDate(date.plusWeeks(1));
         dateField2.setValue(duWeek);
 
+        // menubar genera / cancella
+        MenuBar actionBar=new MenuBar();
+        itemGenera = actionBar.addItem("Genera", new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem menuItem) {
+                for(MenuBar.MenuItem item : actionBar.getItems()){
+                    item.setStyleName(null);
+                }
+                menuItem.setStyleName("highlight");
+                bEsegui.setCaption("Genera turni");
+                genera=true;
+            }
+        });
+        itemGenera.setDescription("Genera i turni vuoti per i giorni e i servizi specificati");
+
+        MenuBar.MenuItem itemCancella = actionBar.addItem("Cancella", new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem menuItem) {
+                for (MenuBar.MenuItem item : actionBar.getItems()) {
+                    item.setStyleName(null);
+                }
+                menuItem.setStyleName("highlight");
+                bEsegui.setCaption("Cancella turni");
+                genera = false;
+            }
+        });
+        itemCancella.setDescription("Cancella i turni per i giorni e i servizi specificati. I turni vengono cancellati solo se nessuno è iscritto.");
+
         layoutDate.addComponent(dateField1);
         layoutDate.addComponent(dateField2);
+        layoutDate.addComponent(actionBar);
 
         servizi=new ArrayList<>();
         servizi.addAll(WamQuery.queryServizi(entityManager, true));
@@ -238,8 +279,8 @@ public class CTurniGenerator extends CTabelloneEditor {
             }
         });
 
-        Button bEsegui = new Button("Esegui");
-        bEsegui.setWidth("8em");
+        bEsegui = new Button("Genera turni");
+        bEsegui.setWidth("10em");
         bEsegui.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         bEsegui.addStyleName(ValoTheme.BUTTON_PRIMARY);    // "primary" not "default"
         bEsegui.addClickListener(new Button.ClickListener() {
@@ -252,7 +293,7 @@ public class CTurniGenerator extends CTabelloneEditor {
                 if(!generatorRunning){
 
                     // resetta la progress bar
-                    // Attenzione! la UI deve essere @Push per usare UI.access()
+                    // Attenzione! la UI deve essere annotata con @Push per usare UI.access()
                     getUI().access(new Runnable() {
                         @Override
                         public void run() {
@@ -269,12 +310,12 @@ public class CTurniGenerator extends CTabelloneEditor {
                         return;
                     }
 
-                    generator = new TurniGenEngine(data);
+                    generator = new TurniGenEngine(data, null);
 
 
-                    // aggiunge un listener per essere informato ogni volta che un turno è fatto
+                    // aggiunge un listener per essere informato ogni volta che un giorno è fatto
                     // e aggiornare la progressbar
-                    generator.addTurnoProgressListener(new TurniGenEngine.TurnoProgressListener() {
+                    generator.addGiornoProgressListener(new TurniGenEngine.GiornoProgressListener() {
 
                         int quanti = 0;
 
@@ -286,8 +327,9 @@ public class CTurniGenerator extends CTabelloneEditor {
                             getUI().access(new Runnable() {
                                 @Override
                                 public void run() {
-                                    float progress = (float) quanti / (generator.getQuantiTurni());
-                                    progressBar.setCaption(quanti + "/" + generator.getQuantiTurni());
+                                    int tot=generator.getQuantiGiorni();
+                                    float progress = (float) quanti / (tot);
+                                    progressBar.setCaption(quanti + "/" + tot);
                                     progressBar.setValue(progress);
                                 }
                             });
@@ -299,7 +341,7 @@ public class CTurniGenerator extends CTabelloneEditor {
                     // aggiunge un listener per essere informato quando il lavoro è finito
                     generator.addEngineDoneListener(new TurniGenEngine.EngineDoneListener() {
                         @Override
-                        public void engineDone() {
+                        public void engineDone(boolean success) {
                             getUI().access(new Runnable() {
                                 @Override
                                 public void run() {
@@ -312,7 +354,7 @@ public class CTurniGenerator extends CTabelloneEditor {
                                         e.printStackTrace();
                                     }
 
-                                    fireDismissListeners(new DismissEvent(bAnnulla, false, false));
+                                    fireDismissListeners(new DismissEvent(bAnnulla, success, false));
                                     generatorRunning=false;
 
                                 }
@@ -359,7 +401,14 @@ public class CTurniGenerator extends CTabelloneEditor {
      * @return il wrapper dei dati
      */
     private GeneratorData createGeneratorData() {
-        GeneratorData data = new GeneratorData(getData1(), getData2(), GeneratorData.ACTION_CREATE);
+        int action;
+        if(genera){
+            action=GeneratorData.ACTION_CREATE;
+        }else{
+            action=GeneratorData.ACTION_DELETE;
+        }
+
+        GeneratorData data = new GeneratorData(getData1(), getData2(), action);
 
         for(int giorno=0; giorno<7; giorno++){
             ArrayList<Servizio> servChecked=new ArrayList<>();
@@ -371,7 +420,9 @@ public class CTurniGenerator extends CTabelloneEditor {
                 }
                 row++;
             }
-            data.putGiorno(giorno, servChecked.toArray(new Servizio[0]));
+
+            DayOfWeek dow = DayOfWeek.of(giorno+1);
+            data.putGiorno(dow, servChecked.toArray(new Servizio[0]));
         }
         return data;
     }
@@ -442,12 +493,12 @@ public class CTurniGenerator extends CTabelloneEditor {
     }
 
 
-    private Date getData1(){
-        return dateField1.getValue();
+    private LocalDate getData1(){
+        return DateConvertUtils.asLocalDate(dateField1.getValue());
     }
 
-    private Date getData2(){
-        return dateField2.getValue();
+    private LocalDate getData2(){
+        return DateConvertUtils.asLocalDate(dateField2.getValue());
     }
 
 

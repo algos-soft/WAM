@@ -1,25 +1,29 @@
 package it.algos.wam.turnigenerator;
 
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.webbase.web.lib.DateConvertUtils;
 import org.joda.time.DateTime;
 
-import java.util.Date;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.HashMap;
+import java.time.temporal.ChronoUnit;
+
 
 /**
  * Wrapper dei dati di configurazione per il motore di generazione turni.
  */
 public class GeneratorData {
-    private Date d1;
-    private Date d2;
+    private LocalDate d1;
+    private LocalDate d2;
     private int action;
 
-    private HashMap<Integer, Servizio[]> mapServiziGiorno = new HashMap<>();
+    private HashMap<DayOfWeek, Servizio[]> mapServiziGiorno = new HashMap<>();
 
     public static final int ACTION_CREATE = 1;
     public static final int ACTION_DELETE = 2;
 
-    public GeneratorData(Date d1, Date d2, int action) {
+    public GeneratorData(LocalDate d1, LocalDate d2, int action) {
         this.d1 = d1;
         this.d2 = d2;
         this.action = action;
@@ -30,10 +34,10 @@ public class GeneratorData {
      * Registra l'elenco dei servizi abilitati per un dato giorno
      * della settimana
      *
-     * @param giorno l'indice del giorno (0=lun)
+     * @param giorno il giorno della settimana
      * @param servizi l'array dei servizi del giorno
      */
-    public void putGiorno(int giorno, Servizio[] servizi) {
+    public void putGiorno(DayOfWeek giorno, Servizio[] servizi) {
         mapServiziGiorno.put(giorno, servizi);
     }
 
@@ -52,9 +56,7 @@ public class GeneratorData {
             return "La data finale non può essere nulla";
         }
 
-        DateTime dt1=new DateTime(d1);
-        DateTime dt2=new DateTime(d2);
-        if(dt2.isBefore(dt1)){
+        if(d2.isBefore(d1)){
             return "La data iniziale non può essere successiva alla data finale";
         }
 
@@ -62,18 +64,52 @@ public class GeneratorData {
             return "Azione "+action+" non riconosciuta";
         }
 
-        if(mapServiziGiorno.isEmpty()){
+        if(mapServiziGiorno== null || mapServiziGiorno.isEmpty()){
+            return "Non ci sono operazioni da eseguire (mappa nulla o vuota)";
+        }
+
+        if(!isWorkToDo()){
             return "Non ci sono operazioni da eseguire";
         }
+
 
         return "";
     }
 
-    public Date getD1() {
+    /**
+     * Controlla se ci sono operazioni da fare
+     */
+    private boolean isWorkToDo(){
+        boolean work=false;
+        for(Servizio[] listaServ : mapServiziGiorno.values()){
+            if(listaServ.length>0){
+                work=true;
+                break;
+            }
+
+        }
+        return work;
+    }
+
+    /**
+     * @return il numero di giorni da elaborare
+     */
+    public int getNumGiorni(){
+        return (int)ChronoUnit.DAYS.between(getD1(), getD2())+1;
+    }
+
+    /**
+     * @return l'elenco dei servizi per un dato giorno della settimana - null se non ce ne sono
+     */
+    public Servizio[] getServizi(DayOfWeek dow){
+        return mapServiziGiorno.get(dow);
+    }
+
+    public LocalDate getD1() {
         return d1;
     }
 
-    public Date getD2() {
+    public LocalDate getD2() {
         return d2;
     }
 
