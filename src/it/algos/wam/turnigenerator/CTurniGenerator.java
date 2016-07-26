@@ -137,7 +137,7 @@ public class CTurniGenerator extends CTabelloneEditor {
 
         servizi=new ArrayList<>();
         servizi.addAll(WamQuery.queryServizi(entityManager, true));
-        servizi.addAll(WamQuery.queryServizi(entityManager, false));
+//        servizi.addAll(WamQuery.queryServizi(entityManager, false));
 
         GridLayout grid = new GridLayout(9,servizi.size()+2);
         grid.setSpacing(true);

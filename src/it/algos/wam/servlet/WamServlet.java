@@ -21,7 +21,7 @@ public class WamServlet extends AlgosServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.service(request, response);
-    }
+    }// end of method
 
     /**
      * Invoked when a new Vaadin service session is initialized for that service.

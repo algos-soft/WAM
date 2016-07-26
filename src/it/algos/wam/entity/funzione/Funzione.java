@@ -42,7 +42,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
 
     //--sigla di riferimento interna NON visibile nel tabellone (obbligatoria)
-    //@todo cambiare nome della property in siglaInterna
     @NotEmpty
     @Column(length = 20)
     @Index
@@ -50,7 +49,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
 
     //--descrizione visibile nel tabellone (obbligatoria)
-    //@todo cambiare nome della property in siglaVisibile
     @NotEmpty
     @Column(length = 100)
     @Index

@@ -48,15 +48,14 @@ import java.util.List;
  * UI principale e unica del programma.
  */
 @Theme("wam")
-@Push(value=PushMode.AUTOMATIC, transport=Transport.WEBSOCKET_XHR)   // se non uso questo tipo di transport i cookies non funzionano
+@Push(value = PushMode.AUTOMATIC, transport = Transport.WEBSOCKET_XHR)   // se non uso questo tipo di transport i cookies non funzionano
 public class WamUI extends UI {
 
-    private MenuBar menubar;
     public static final String KEY_TABELLONE = "tabellone";
     public static final String KEY_MAIN_COMP = "maincomp";
     public static final String KEY_TABVISIBLE = "tabvisible";
     public static final String KEY_GOHOME = "gohome";
-
+    private MenuBar menubar;
     // si registra chi è interessato alle modifiche delle company (aggiunta, cancellazione, modifica di quella corrente)
     private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
 
@@ -92,19 +91,32 @@ public class WamUI extends UI {
         // la company deve esistere nel db
         // appena la company è disponibile la inietto nella sessione
         WamCompany company = WamCompany.findByCode(companyName);
-        if (company != null) {
-            CompanySessionLib.setCompany(company);
-        } else {
+        if (company == null) {
             Component comp = new WamErrComponent("Company " + companyName + " non trovata nel database");
             UI.getCurrent().setContent(comp);
             return;
         }
 
+        // Se sono loggato e la company dell'URL è diversa dalla company della sessione
+        // errore
+        if (LibSession.isLogged()) {
+            if (!company.equals(CompanySessionLib.getCompany())) {
+                Login.getLogin().logout();
+//                Component comp = new WamErrComponent("Company " + companyName + " indicata diversa da quella corrente. Esegui un logout, prima");
+//                UI.getCurrent().setContent(comp);
+                return;
+            }// end of if cycle
+        }// end of if cycle
+
+        // registra la company nella sessione
+        CompanySessionLib.setCompany(company);
+
+
         // Se non c'è ancora l'oggetto Login, lo crea ora e lo inietta nella sessione.
         // L'oggetto Login è unico nella sessione.
         // Questa applicazione necessita di una logica di login specifica (WamLogin)
         // (inizialmente il Login non ha user e quindi non è in stato logged).
-        if (!Login.isLogin()) {
+        if (!Login.isEsisteLoginInSessione()) {
             Login.setLogin(new WamLogin(company));
 
             // listener dei tentativi di login
