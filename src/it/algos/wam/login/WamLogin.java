@@ -7,6 +7,7 @@ import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.ui.WamLoginComponent;
 import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.login.*;
 
 /**
@@ -31,6 +32,7 @@ public class WamLogin extends Login {
         return Volontario.queryByNick(username);
     }
 
+
     /**
      * Ritorna il volontario correntemente loggato
      *
@@ -39,8 +41,8 @@ public class WamLogin extends Login {
     public static Volontario getLoggedVolontario() {
         Volontario volontario = null;
         Login login = Login.getLogin();
-        if(login.isLogged()){
-            if (login != null) {
+        if(login!=null){
+            if(login.isLogged()){
                 UserIF user = login.getUser();
                 if (user instanceof Volontario) {
                     volontario = (Volontario) user;
@@ -62,6 +64,9 @@ public class WamLogin extends Login {
     }
 
 
-
-
+    @Override
+    public void logout() {
+        super.logout();
+        CompanySessionLib.setCompany(null);
+    }
 }

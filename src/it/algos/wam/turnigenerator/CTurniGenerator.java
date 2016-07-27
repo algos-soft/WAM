@@ -116,7 +116,7 @@ public class CTurniGenerator extends CTabelloneEditor {
                 genera=true;
             }
         });
-        itemGenera.setDescription("Genera i turni vuoti per i giorni e i servizi specificati");
+        itemGenera.setDescription("Genera i turni vuoti per i giorni e i servizi specificati. I turni già esistenti non vengono ricreati.");
 
         MenuBar.MenuItem itemCancella = actionBar.addItem("Cancella", new MenuBar.Command() {
             @Override
@@ -220,7 +220,7 @@ public class CTurniGenerator extends CTabelloneEditor {
                     turnRow(matrix, row, false);
                 }
             }
-        }, FontAwesome.CHECK_SQUARE, FontAwesome.SQUARE);
+        }, FontAwesome.CHECK_SQUARE, FontAwesome.TIMES);
         // nell' ultima cella in basso a dx
 //        onOffGen.setCaption("tutto");
         grid.addComponent(onOffGen, grid.getColumns()-1, grid.getRows()-1);
@@ -435,15 +435,16 @@ public class CTurniGenerator extends CTabelloneEditor {
 
             setSizeUndefined();
             setSpacing(true);
-            addStyleName("icon-green");
 
             HorizontalLayout layOn = new HorizontalLayout();
+            layOn.addStyleName("icon-green");
             layOn.addComponent(new Label(iconOn.getHtml() , ContentMode.HTML));
             layOn.addLayoutClickListener(layoutClickEvent -> {
                 swListener.clickedOn();
             });
 
             HorizontalLayout layOff = new HorizontalLayout();
+            layOff.addStyleName("icon-red");
             layOff.addComponent(new Label(iconOff.getHtml() , ContentMode.HTML));
             layOff.addLayoutClickListener(layoutClickEvent -> {
                 swListener.clickedOff();
@@ -455,7 +456,7 @@ public class CTurniGenerator extends CTabelloneEditor {
         }
 
         public SwitchOnOffH(SwitchListener swListener) {
-            this(swListener, FontAwesome.CHECK_SQUARE_O, FontAwesome.SQUARE_O);
+            this(swListener, FontAwesome.CHECK_SQUARE_O, FontAwesome.TIMES);
         }
     }
 
@@ -470,16 +471,17 @@ public class CTurniGenerator extends CTabelloneEditor {
 
             setSizeUndefined();
             setSpacing(false);
-            addStyleName("icon-green");
 
             HorizontalLayout layOn = new HorizontalLayout();
+            layOn.addStyleName("icon-green");
             layOn.addComponent(new Label(FontAwesome.CHECK_SQUARE_O.getHtml() , ContentMode.HTML));
             layOn.addLayoutClickListener(layoutClickEvent -> {
                 swListener.clickedOn();
             });
 
             HorizontalLayout layOff = new HorizontalLayout();
-            layOff.addComponent(new Label(FontAwesome.SQUARE_O.getHtml() , ContentMode.HTML));
+            layOff.addStyleName("icon-red");
+            layOff.addComponent(new Label(FontAwesome.TIMES.getHtml() , ContentMode.HTML));
             layOff.addLayoutClickListener(layoutClickEvent -> {
                 swListener.clickedOff();
             });

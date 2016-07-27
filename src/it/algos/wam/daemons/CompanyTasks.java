@@ -3,12 +3,23 @@ package it.algos.wam.daemons;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerFactory;
+import com.vaadin.data.Validator;
+import com.vaadin.data.validator.EmailValidator;
+import it.algos.wam.email.WamEmailService;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.iscrizione.Iscrizione;
+import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.EM;
+import org.apache.commons.mail.EmailException;
 import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +48,6 @@ public class CompanyTasks implements Runnable {
 
         // spazzola tutte le company
         // se la preferenza è ON e l'ora corrisponde, esegue il controllo
-        logger.log(Level.INFO, "start esecuzione tasks per tutte le company");
 
         DateTime dt = new DateTime();
         //int currentHour = dt.getHourOfDay();
@@ -51,24 +61,15 @@ public class CompanyTasks implements Runnable {
             WamCompany company = item.getEntity();
             run(company);
 
-//            boolean doChecks = Lib.getBool(CompanyPrefs.doRunSolleciti.get(company));
-//            if (doChecks) {
-//                int checkHour = Lib.getInt(CompanyPrefs.oraRunSolleciti.get(company));
-//                if (checkHour == currentHour) {
-//                    run(company);
-//                }
-//            }
-
         }
         manager.close();
 
-        logger.log(Level.INFO, "end esecuzione tasks per tutte le company");
 
     }
 
 
     /**
-     * Esegue tutti i tasks per una data company.
+     * Esegue tutti i tasks per una singola company.
      * - 1) NON usare mai CompanyQuery perché la company nella sessione è nulla;
      * - 2) Passare sempre esplicitamente la company ai metodi chiamati;
      * - 3) Assegnare esplicitamente la company al record se creano dei record.
@@ -79,12 +80,62 @@ public class CompanyTasks implements Runnable {
 
         logger.log(Level.INFO, "start tasks "+company);
 
-        // qui il codice da eseguire per ogni Company
+        // invia le notifiche per i turni che iniziano prossimamente
+        notificaInizioTurno(company);
+
+        // qui eventuale altro codice da eseguire per ogni Company
         // ...
 
-        logger.log(Level.INFO, "end tasks "+company);
     }
 
+    /**
+     * Manda una notifica a tutti i volontari che iniziano il turno prossimamente
+     */
+    private void notificaInizioTurno(WamCompany company) {
+
+        // recupera l'elenco delle iscrizioni che iniziano prossimamente e non sono ancora state notificate
+        Iscrizione[] iscrizioniDaNotificare = new Iscrizione[0];
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd hh:mm");
+
+        // per ogni iscrizione, invia la notifica
+        for(Iscrizione iscrizione : iscrizioniDaNotificare){
+            Volontario volontario = iscrizione.getVolontario();
+            String email = volontario.getEmail();
+            if(email!=null && !email.isEmpty()){
+
+                Turno turno = iscrizione.getTurno();
+                Servizio serv = turno.getServizio();
+                String dataora = dateFormat.format(turno.getInizio());
+
+                String subject = "Inizio turno "+serv.getDescrizione()+" il "+dataora;
+
+                String text =subject;
+
+                List<Iscrizione> iscrizioni = turno.getIscrizioni();
+                if(iscrizioni.size()>0) {
+                    text="Attualmente sono iscritti al turno:";
+                    for(Iscrizione i : iscrizioni){
+                        Funzione funz = i.getServizioFunzione().getFunzione();
+                        text+="\n";
+                        text+=i.getVolontario().getNickname();
+                        text+=" (";
+                        text+=funz.getSiglaVisibile();
+                        text+=")";
+                    }
+                }
+
+                try {
+                    WamEmailService.sendMail(email, null, subject, text);
+                } catch (EmailException e) {
+                    e.printStackTrace();
+                }
+
+            }// end if
+
+        }// end for
+
+    }
 
 
 }

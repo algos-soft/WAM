@@ -58,7 +58,7 @@ public class Turno extends WamCompanyEntity {
     private Date inizio;
 
     //--giorno, ora e minuto di fine turno
-    //--i servizi senza orario (fisso) vengono creati solo con la data di inizio; la data di fine viene aggiunata dopo
+    //--i servizi senza orario (fisso) vengono creati solo con la data di inizio; la data di fine viene aggiunta dopo
     @Temporal(TemporalType.TIMESTAMP)
     private Date fine;
 

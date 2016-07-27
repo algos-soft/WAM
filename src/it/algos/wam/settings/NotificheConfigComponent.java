@@ -58,15 +58,15 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 
 		// sender adress
 		senderField = new EmailField("Indirizzo mittente");
-		senderField.setDescription("L'indirizzo che risulta come mittente di tutte le email in uscita. I destinatari potrebbero rispondere a questo indirizzo.");
+		senderField.setDescription("L'indirizzo che risulta come mittente di tutte le base_email in uscita. I destinatari potrebbero rispondere a questo indirizzo.");
 
-		// execute backup email
-		sendBackupMailField = new CheckBoxField("Invia una copia di tutte le email");
-		sendBackupMailField.setDescription("Invia una copia di tutte le email in uscita a un proprio indirizzo");
+		// execute backup base_email
+		sendBackupMailField = new CheckBoxField("Invia una copia di tutte le base_email");
+		sendBackupMailField.setDescription("Invia una copia di tutte le base_email in uscita a un proprio indirizzo");
 
-		// backup email address
-		backupEmailAddressField = new EmailField("Indirizzo email per copie");
-		backupEmailAddressField.setDescription("L'indirizzo al quale inviare le copie delle email in uscita");
+		// backup base_email address
+		backupEmailAddressField = new EmailField("Indirizzo base_email per copie");
+		backupEmailAddressField.setDescription("L'indirizzo al quale inviare le copie delle base_email in uscita");
 
 		// bind fields to properties
 		getGroup().bind(senderField, KEY_SENDER);
@@ -108,12 +108,12 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 			Object obj;
 			boolean cont = true;
 			
-			// se backup email attivo ci deve essere l'indirizzo
+			// se backup base_email attivo ci deve essere l'indirizzo
 			boolean bkemail = (boolean)getItemProperty(KEY_BACKUP_EMAIL).getValue();
 			if (bkemail) {
 				String bkaddress = (String)getItemProperty(KEY_BACKUP_ADDRESS).getValue();
 				if (bkaddress.equals("")) {
-					Notification.show("Inserire l'indirizzo email per copie");
+					Notification.show("Inserire l'indirizzo base_email per copie");
 					cont=false;
 				}
 			}

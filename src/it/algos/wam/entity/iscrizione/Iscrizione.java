@@ -56,6 +56,9 @@ public class Iscrizione extends WamCompanyEntity {
     //--serve per evidenziare il problema nel tabellone
     private String nota;
 
+    // se è stata inviata la notifica di inizio turno dal sistema di notifiche automatiche
+    private boolean notificaInviata;
+
     /**
      * Costruttore vuoto
      */
@@ -204,4 +207,11 @@ public class Iscrizione extends WamCompanyEntity {
         return (getNota() != null && !getNota().isEmpty());
     }
 
+    public boolean isNotificaInviata() {
+        return notificaInviata;
+    }
+
+    public void setNotificaInviata(boolean notificaInviata) {
+        this.notificaInviata = notificaInviata;
+    }
 }// end of class

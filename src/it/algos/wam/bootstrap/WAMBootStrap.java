@@ -1,21 +1,20 @@
 package it.algos.wam.bootstrap;
 
 import it.algos.wam.WAMApp;
+import it.algos.wam.daemons.WamScheduler;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.web.AlgosApp;
 import it.algos.webbase.web.bootstrap.ABootStrap;
 import it.algos.webbase.web.toolbar.Toolbar;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+import java.util.List;
 
 /**
- * Bootstrap dell'applicazione
  * Executed on container startup
  * Setup non-UI logic here
  * <p>
- * Classe eseguita solo quando l'applicazione viene caricata/parte nel server (Tomcat od altri) <br>
- * Eseguita quindi ad ogni avvio/riavvio del server e NON ad ogni sessione <br>
- * È OBBLIGATORIO aggiungere questa classe nei listeners del file web.WEB-INF.web.xml
  */
 public class WAMBootStrap extends ABootStrap {
 
@@ -27,9 +26,7 @@ public class WAMBootStrap extends ABootStrap {
      * initialized (when the Web application is deployed).
      * You can initialize servlet context related data here.
      * <p>
-     * Viene normalmente sovrascritta dalla sottoclasse per regolare alcuni flag dell'applicazione <br>
-     * Deve (DEVE) richiamare anche il metodo della superclasse (questo)
-     * prima (PRIMA) di eseguire le regolazioni specifiche <br>
+     * Deve richiamare anche il metodo della superclasse
      */
     @Override
     public void contextInitialized(ServletContextEvent contextEvent) {
@@ -39,29 +36,37 @@ public class WAMBootStrap extends ABootStrap {
         // registra il servlet context non appena è disponibile
         WAMApp.setServletContext(svltCtx);
 
-        // eventuali modifiche allle dimensioni dei bottoni
-//        Toolbar.ALTEZZA_BOTTONI = 40;
-//        Toolbar.LARGHEZZA_BOTTONI = 140;
-        //TextField.LARGHEZZA_DEFAULT="320px";  // non trova questa variabile - alex 01-03-16
-
         // eventuali modifiche ai flag generali di regolazione
         AlgosApp.USE_SECURITY = false; //@todo per adesso false
         AlgosApp.USE_LOG = false;
         AlgosApp.USE_VERS = true;
         AlgosApp.USE_PREF = true;
 
-        //@todo la creazione della demo è in VersBootStrap
-//        if (Company.getDemo() == null) {
-//            creaDemoCompany();
-//        }
-
-
         // avvia lo schedulatore che esegue periodicamente i task sul server
 //        WamScheduler.getInstance().start();
 
+        // Qui eventuali revisioni dei dati in funzione della versione
 
-    }// end of method
+        // Esegue dei controlli iniziali per ogni Company
+        List<BaseCompany> comps = BaseCompany.query.getList();
+        for (BaseCompany company : comps) {
+            doForCompany(company);
+        }
 
+        // Avvia lo schedulatore che esegue i task periodici sul server
+        if (false) {
+            WamScheduler.getInstance().start();
+        }
+
+    }
+
+    /**
+     * Esegue delle operazioni su una data company
+     * @param company la company
+     */
+    private void doForCompany(BaseCompany company) {
+
+    }
 
 
 //    private void creaDemoCompany() {
@@ -75,6 +80,7 @@ public class WAMBootStrap extends ABootStrap {
 //        wamcompany.save();
 //    }
 //
+
     /**
      * This method is invoked when the Servlet Context
      * (the Web application) is undeployed or

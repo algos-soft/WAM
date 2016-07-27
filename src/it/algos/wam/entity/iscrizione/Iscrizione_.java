@@ -21,5 +21,6 @@ public class Iscrizione_ extends BaseEntity_ {
 	public static volatile SingularAttribute<Iscrizione, Integer> minutiEffettivi;
 	public static volatile SingularAttribute<Iscrizione, Boolean> esisteProblema;
 	public static volatile SingularAttribute<Iscrizione, String> nota;
+	public static volatile SingularAttribute<Iscrizione, Boolean> notificaInviata;
 
 }// end of entity class

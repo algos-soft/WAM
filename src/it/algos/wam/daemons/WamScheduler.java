@@ -52,7 +52,7 @@ public class WamScheduler extends Scheduler {
 
 			// Schedule task.
 			schedule("0 * * * *", new WamTask());
-			logger.log(Level.INFO, "WAM daemon attivato (esegue ogni ora).");
+			logger.log(Level.INFO, "WAM daemon attivato (eseguirà all'inizio di ogni ora).");
 
 		}
 

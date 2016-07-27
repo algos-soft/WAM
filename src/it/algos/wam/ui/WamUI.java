@@ -97,16 +97,16 @@ public class WamUI extends UI {
             return;
         }
 
-        // Se sono loggato e la company dell'URL è diversa dalla company della sessione
-        // errore
-        if (LibSession.isLogged()) {
-            if (!company.equals(CompanySessionLib.getCompany())) {
+
+        // Se c'è una company nella sessione e la company dell'URL è diversa dalla company della sessione
+        // eseguo un logout automatico (che elimina la company dalla sessione)
+        BaseCompany sessionComp = CompanySessionLib.getCompany();
+        if(sessionComp!=null){
+            if (!company.equals(sessionComp)) {
                 Login.getLogin().logout();
-//                Component comp = new WamErrComponent("Company " + companyName + " indicata diversa da quella corrente. Esegui un logout, prima");
-//                UI.getCurrent().setContent(comp);
                 return;
-            }// end of if cycle
-        }// end of if cycle
+            }
+        }
 
         // registra la company nella sessione
         CompanySessionLib.setCompany(company);
