@@ -8,16 +8,26 @@ import com.vaadin.data.validator.EmailValidator;
 import it.algos.wam.email.WamEmailService;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
+import it.algos.wam.entity.iscrizione.Iscrizione_;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.entity.turno.Turno_;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanyEntity_;
+import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.EM;
+import it.algos.webbase.web.lib.DateConvertUtils;
 import org.apache.commons.mail.EmailException;
 import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,7 +42,11 @@ import java.util.logging.Logger;
  */
 public class CompanyTasks implements Runnable {
     private final static Logger logger = Logger.getLogger(CompanyTasks.class.getName());
+    EntityManager manager;
 
+    public CompanyTasks() {
+        manager = EM.createEntityManager();
+    }
 
     /**
      * Esegue un task per tutte le company.<p>
@@ -46,13 +60,8 @@ public class CompanyTasks implements Runnable {
     @Override
     public void run() {
 
-        // spazzola tutte le company
-        // se la preferenza è ON e l'ora corrisponde, esegue il controllo
-
-        DateTime dt = new DateTime();
-        //int currentHour = dt.getHourOfDay();
-
-        EntityManager manager = EM.createEntityManager();
+        // spazzola tutte le company ed esegue il controllo
+        manager = EM.createEntityManager();
         JPAContainer<WamCompany> companies = JPAContainerFactory.makeNonCachedReadOnly(WamCompany.class, manager);
         for (Iterator<Object> i = companies.getItemIds().iterator(); i.hasNext(); ) {
 
@@ -78,7 +87,7 @@ public class CompanyTasks implements Runnable {
      */
     public void run(WamCompany company) {
 
-        logger.log(Level.INFO, "start tasks "+company);
+        logger.log(Level.INFO, "start tasks " + company);
 
         // invia le notifiche per i turni che iniziano prossimamente
         notificaInizioTurno(company);
@@ -94,34 +103,34 @@ public class CompanyTasks implements Runnable {
     private void notificaInizioTurno(WamCompany company) {
 
         // recupera l'elenco delle iscrizioni che iniziano prossimamente e non sono ancora state notificate
-        Iscrizione[] iscrizioniDaNotificare = new Iscrizione[0];
+        Iscrizione[] iscrizioniDaNotificare = getIscrizioniDaNotificare(company, 24);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd hh:mm");
 
         // per ogni iscrizione, invia la notifica
-        for(Iscrizione iscrizione : iscrizioniDaNotificare){
+        for (Iscrizione iscrizione : iscrizioniDaNotificare) {
             Volontario volontario = iscrizione.getVolontario();
             String email = volontario.getEmail();
-            if(email!=null && !email.isEmpty()){
+            if (email != null && !email.isEmpty()) {
 
                 Turno turno = iscrizione.getTurno();
                 Servizio serv = turno.getServizio();
                 String dataora = dateFormat.format(turno.getInizio());
 
-                String subject = "Inizio turno "+serv.getDescrizione()+" il "+dataora;
+                String subject = "Inizio turno " + serv.getDescrizione() + " il " + dataora;
 
-                String text =subject;
+                String text = subject;
 
                 List<Iscrizione> iscrizioni = turno.getIscrizioni();
-                if(iscrizioni.size()>0) {
-                    text="Attualmente sono iscritti al turno:";
-                    for(Iscrizione i : iscrizioni){
+                if (iscrizioni.size() > 0) {
+                    text = "Attualmente sono iscritti al turno:";
+                    for (Iscrizione i : iscrizioni) {
                         Funzione funz = i.getServizioFunzione().getFunzione();
-                        text+="\n";
-                        text+=i.getVolontario().getNickname();
-                        text+=" (";
-                        text+=funz.getSiglaVisibile();
-                        text+=")";
+                        text += "\n";
+                        text += i.getVolontario().getNickname();
+                        text += " (";
+                        text += funz.getSiglaVisibile();
+                        text += ")";
                     }
                 }
 
@@ -136,6 +145,40 @@ public class CompanyTasks implements Runnable {
         }// end for
 
     }
+
+    /**
+     * Tutte le iscrizioni non notificate relative a turni
+     * che iniziano entro un certo numero di ore da adesso,
+     * per una data company
+     *
+     * @param company     la company
+     * @param oreInAvanti le ore in avanti da adesso
+     */
+    private Iscrizione[] getIscrizioniDaNotificare(WamCompany company, int oreInAvanti) {
+
+        CriteriaBuilder cb = manager.getCriteriaBuilder();
+        CriteriaQuery<Iscrizione> cq = cb.createQuery(Iscrizione.class);
+        Root<Iscrizione> root = cq.from(Iscrizione.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(root.get(CompanyEntity_.company), company));
+        predicates.add(cb.equal(root.get(Iscrizione_.notificaInviata), false));
+
+        // le iscrizioni che iniziano entro oreInAvanti da adesso
+        LocalDateTime currDateTime = LocalDateTime.now().withSecond(0).withNano(0);
+        LocalDateTime maxDateTime = currDateTime.plusHours(oreInAvanti);
+        Join<Iscrizione, Turno> jTurno = root.join(Iscrizione_.turno);
+        predicates.add(cb.greaterThan(jTurno.get(Turno_.inizio), DateConvertUtils.asUtilDate(currDateTime)));
+        predicates.add(cb.lessThanOrEqualTo(jTurno.get(Turno_.inizio), DateConvertUtils.asUtilDate(maxDateTime)));
+
+        cq.where(predicates.toArray(new Predicate[]{}));
+        TypedQuery<Iscrizione> q = manager.createQuery(cq);
+        List<Iscrizione> lista = q.getResultList();
+
+        return lista.toArray(new Iscrizione[0]);
+    }
+
+
 
 
 }

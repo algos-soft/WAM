@@ -9,6 +9,7 @@ import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.ui.*;
+import it.algos.wam.daemons.CompanyTasks;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.login.MenuBarWithLogin;
@@ -447,6 +448,14 @@ public class Tabellone extends VerticalLayout implements View {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
                     creaGrid(tabComponent.getDataStart().plusDays(gg), gg);
+                }
+            });
+
+            addItem("test", null, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    Runnable checker = new CompanyTasks();
+                    checker.run();
                 }
             });
 

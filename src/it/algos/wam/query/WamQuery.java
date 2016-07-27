@@ -247,6 +247,7 @@ public class WamQuery {
     }
 
 
+
     /**
      * Il servizio adiacente ad un dato servizio (per numero d'ordine).
      *
