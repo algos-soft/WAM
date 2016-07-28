@@ -292,8 +292,8 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, String nome, String cognome) {
-        return crea(company, null, nome, cognome, new ArrayList<Funzione>());
+    public static Volontario crea(WamCompany company, String nome, String cognome, String email) {
+        return crea(company, null, nome, cognome, email, new ArrayList<Funzione>());
     }// end of static method
 
     /**
@@ -307,8 +307,8 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome) {
-        return crea(company, manager, nome, cognome, new ArrayList<Funzione>());
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email) {
+        return crea(company, manager, nome, cognome, email, new ArrayList<Funzione>());
     }// end of static method
 
     /**
@@ -323,8 +323,8 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, ArrayList<Funzione> listaFunz) {
-        return crea(company, manager, nome, cognome, listaFunz.toArray(new Funzione[listaFunz.size()]));
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, ArrayList<Funzione> listaFunz) {
+        return crea(company, manager, nome, cognome, email, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
 
     /**
@@ -339,8 +339,8 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, Funzione... funzioni) {
-        return crea(company, manager, nome, cognome, "", false, funzioni);
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, Funzione... funzioni) {
+        return crea(company, manager, nome, cognome, email, "", false, funzioni);
     }// end of static method
 
     /**
@@ -351,17 +351,19 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param manager  the EntityManager to use
      * @param nome     del volontario/milite (obbligatorio)
      * @param cognome  del volontario/milite (obbligatorio)
+     * @param email     del volontario/milite
      * @param password del volontario/milite (facoltativa)
      * @param admin    flag per il ruolo (facoltativa)
      * @param funzioni lista delle funzioni (facoltativa)
      *
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String password, boolean admin, Funzione... funzioni) {
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, String password, boolean admin, Funzione... funzioni) {
         Volontario vol = Volontario.find(company, nome, cognome);
 
         if (vol == null) {
             vol = new Volontario(company, nome, cognome);
+            vol.setEmail(email);
             vol.setPassword(password);
             vol.setAdmin(admin);
             vol.setDipendente(false);

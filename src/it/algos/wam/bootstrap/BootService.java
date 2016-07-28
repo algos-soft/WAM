@@ -283,20 +283,20 @@ public abstract class BootService {
             return null;
         }// end of if cycle
 
-        lista.add(Arrays.asList("Stefano", "Brambilla", "bra", false, funz.get(1)));
-        lista.add(Arrays.asList("Mario", "Abbati", "abb", false, funz.get(2)));
-        lista.add(Arrays.asList("Giovanna", "Durante", "dur", false, funz));
-        lista.add(Arrays.asList("Diego", "Bertini", "ber", true, funz.get(3)));
-        lista.add(Arrays.asList("Roberto", "Marchetti", "mar", false, funz.get(7), funz.get(9)));
-        lista.add(Arrays.asList("Mirella", "Pace", "pac", false, funz.get(4)));
-        lista.add(Arrays.asList("Edoardo", "Politi", "pol", false, funz.get(5)));
-        lista.add(Arrays.asList("Sabina", "Roncelli", "ron", false, funz.get(6)));
-        lista.add(Arrays.asList("Lucia", "Casaroli", "cas", true, funz.get(0)));
-        lista.add(Arrays.asList("Antonio", "Zambetti", "zam", false, funz.get(8)));
-        lista.add(Arrays.asList("Flavia", "Robusti", "rob", false, funz.get(8), funz.get(9)));
-        lista.add(Arrays.asList("Aldo", "Terzino", "ter", false, funz.get(8), funz.get(9)));
-        lista.add(Arrays.asList("Marco", "Terzani", "ter", false, funz.get(8), funz.get(9)));
-        lista.add(Arrays.asList("Alice", "Mantovani", "man", false, funz.get(8), funz.get(9)));
+        lista.add(Arrays.asList("Stefano", "Brambilla", "stefano.brambilla@wamdemo.it", "bra", false, funz.get(1)));
+        lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it","abb", false, funz.get(2)));
+        lista.add(Arrays.asList("Giovanna", "Durante", "giovanna.durante@wamdemo.it","dur", false, funz));
+        lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it","ber", true, funz.get(3)));
+        lista.add(Arrays.asList("Roberto", "Marchetti", "roberto.marchetti@wamdemo.it","mar", false, funz.get(7), funz.get(9)));
+        lista.add(Arrays.asList("Mirella", "Pace", "mirella.pace@wamdemo.it","pac", false, funz.get(4)));
+        lista.add(Arrays.asList("Edoardo", "Politi", "edoardo.politi@wamdemo.it","pol", false, funz.get(5)));
+        lista.add(Arrays.asList("Sabina", "Roncelli", "sabina.roncelli@wamdemo.it","ron", false, funz.get(6)));
+        lista.add(Arrays.asList("Lucia", "Casaroli", "lucia.casaroli@wamdemo.it","cas", true, funz.get(0)));
+        lista.add(Arrays.asList("Antonio", "Zambetti", "antonio.zambetti@wamdemo.it","zam", false, funz.get(8)));
+        lista.add(Arrays.asList("Flavia", "Robusti", "flavia.robusti@wamdemo.it","rob", false, funz.get(8), funz.get(9)));
+        lista.add(Arrays.asList("Aldo", "Terzino", "aldo.terzino@wamdemo.it","ter", false, funz.get(8), funz.get(9)));
+        lista.add(Arrays.asList("Marco", "Terzani","marco.terzani@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
+        lista.add(Arrays.asList("Alice", "Mantovani", "alice.mantovani@wamdemo.it","man", false, funz.get(8), funz.get(9)));
 
         for (int k = 0; k < lista.size(); k++) {
             listaVolontari.add(creaVolBase(company, manager, (List) lista.get(k)));
@@ -319,6 +319,7 @@ public abstract class BootService {
         String nome = "";
         String cognome = "";
         String password = "";
+        String email="";
         boolean admin=false;
         Funzione[] funzioni = null;
         ArrayList lista = null;
@@ -332,20 +333,24 @@ public abstract class BootService {
         }// end of if cycle
 
         if (listaTmp.size() > 2 && listaTmp.get(2) instanceof String) {
-            password = (String) listaTmp.get(2);
+            email = (String) listaTmp.get(2);
         }// end of if cycle
 
-        if (listaTmp.size() > 3 && listaTmp.get(3) instanceof Boolean) {
-            admin = (Boolean) listaTmp.get(3);
+        if (listaTmp.size() > 3 && listaTmp.get(3) instanceof String) {
+            password = (String) listaTmp.get(3);
         }// end of if cycle
 
-        if (listaTmp.size() > 4) {
-            if (listaTmp.get(4) instanceof ArrayList) {
-                lista = (ArrayList) listaTmp.get(4);
+        if (listaTmp.size() > 4 && listaTmp.get(4) instanceof Boolean) {
+            admin = (Boolean) listaTmp.get(4);
+        }// end of if cycle
+
+        if (listaTmp.size() > 5) {
+            if (listaTmp.get(5) instanceof ArrayList) {
+                lista = (ArrayList) listaTmp.get(5);
                 funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
             } else {
                 lista = new ArrayList();
-                for (int k = 4; k < listaTmp.size(); k++) {
+                for (int k = 5; k < listaTmp.size(); k++) {
                     if (listaTmp.get(k) instanceof Funzione) {
                         lista.add(listaTmp.get(k));
                     }// end of if cycle
@@ -354,7 +359,7 @@ public abstract class BootService {
             }// end of if/else cycle
         }// end of if cycle
 
-        return Volontario.crea(company, manager, nome, cognome, password, admin, funzioni);
+        return Volontario.crea(company, manager, nome, cognome, email, password, admin, funzioni);
     }// end of static method
 
     /**
