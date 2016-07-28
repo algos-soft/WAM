@@ -28,13 +28,6 @@ public class WamCompany extends BaseCompany {
 
     public static String DEMO_COMPANY_CODE = "demo";
 
-    //--mostra il tabellone alla partenza; in caso contrario va alla home
-    private boolean tabellonePubblico = true;
-
-    // elenco delle relazioni OneToMany
-    // servono per creare le foreign key sul db
-    // che consentono la cancellazione a cascata
-
     @OneToMany(mappedBy = "company")
     @CascadeOnDelete
     private List<Servizio> servizi;
@@ -48,6 +41,21 @@ public class WamCompany extends BaseCompany {
     private List<Volontario> volontari;
 
     // le altre tabelle sono cancellate a cascata a partire da queste
+
+
+    //--mostra il tabellone alla partenza; in caso contrario va alla home
+    private boolean tabellonePubblico = true;
+
+    // se invia ogni mail anche a una casella di backup
+    private boolean sendMailToBackup;
+
+    // la casella di backup delle email
+    private String backupMailbox;
+
+    // elenco delle relazioni OneToMany
+    // servono per creare le foreign key sul db
+    // che consentono la cancellazione a cascata
+
 
 
     /**
@@ -173,6 +181,22 @@ public class WamCompany extends BaseCompany {
     public void setTabellonePubblico(boolean tabellonePubblico) {
         this.tabellonePubblico = tabellonePubblico;
     }//end of setter method
+
+    public boolean isSendMailToBackup() {
+        return sendMailToBackup;
+    }
+
+    public void setSendMailToBackup(boolean sendMailToBackup) {
+        this.sendMailToBackup = sendMailToBackup;
+    }
+
+    public String getBackupMailbox() {
+        return backupMailbox;
+    }
+
+    public void setBackupMailbox(String backupMailbox) {
+        this.backupMailbox = backupMailbox;
+    }
 
     /**
      * Elimina tutti i dati di questa azienda.

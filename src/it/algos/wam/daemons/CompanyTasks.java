@@ -135,7 +135,7 @@ public class CompanyTasks implements Runnable {
                 }
 
                 try {
-                    WamEmailService.sendMail(email, null, subject, text);
+                    WamEmailService.sendMail(company, email, subject, text);
                 } catch (EmailException e) {
                     e.printStackTrace();
                 }
@@ -146,8 +146,9 @@ public class CompanyTasks implements Runnable {
 
     }
 
+
     /**
-     * Tutte le iscrizioni non notificate relative a turni
+     * Recupera tutte le iscrizioni non notificate relative a turni
      * che iniziano entro un certo numero di ore da adesso,
      * per una data company
      *

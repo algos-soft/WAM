@@ -9,4 +9,6 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(BaseCompany.class)
 public class WamCompany_ extends BaseCompany_ {
 	public static volatile SingularAttribute<WamCompany, Boolean> tabellonePubblico;
-}// end of entity class
+	public static volatile SingularAttribute<WamCompany, Boolean> sendMailToBackup;
+	public static volatile SingularAttribute<WamCompany, String> backupMailbox;
+}
