@@ -527,7 +527,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             // bottone remove
             Button bRemove = new Button();
             bRemove.setIcon(FontAwesome.REMOVE);
-            bRemove.addStyleName("icon-green");
+            bRemove.addStyleName("icon-red");
             bRemove.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
