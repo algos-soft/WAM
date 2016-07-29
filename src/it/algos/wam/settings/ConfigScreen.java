@@ -17,6 +17,7 @@ public class ConfigScreen extends Accordion implements View {
 
         configComponents = new ArrayList<>();
         configComponents.add(new NotificheConfigComponent());
+        configComponents.add(new EmailConfigComponent());
         configComponents.add(new PermessiConfigComponent());
 
         for (ConfigComponent comp : configComponents) {

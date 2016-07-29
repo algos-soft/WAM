@@ -2,15 +2,20 @@ package it.algos.wam.settings;
 
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
-import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.web.component.Spacer;
 import it.algos.webbase.web.field.CheckBoxField;
 import it.algos.webbase.web.field.EmailField;
 import it.algos.webbase.web.field.TextField;
+import it.algos.webbase.web.lib.LibSession;
 
 @SuppressWarnings("serial")
-public class PermessiConfigComponent extends BaseConfigPanel {
+/**
+ * Componente di configurazione email
+ */
+public class EmailConfigComponent extends BaseConfigPanel {
 
 	private static final String KEY_SENDER = "sender";
 	private static final String KEY_BACKUP_EMAIL = "emailbackup";
@@ -22,9 +27,8 @@ public class PermessiConfigComponent extends BaseConfigPanel {
 	private TextField backupEmailAddressField;
 
 
-	public PermessiConfigComponent() {
+	public EmailConfigComponent() {
 		super();
-		//addStyleName("yellowBg");
 
 		// crea i fields
 		createFields();
@@ -34,19 +38,13 @@ public class PermessiConfigComponent extends BaseConfigPanel {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
-		FormLayout fl = new FormLayout();
-		fl.setSpacing(true);
-		fl.addComponent(sendBackupMailField);
-		fl.addComponent(backupEmailAddressField);
-		fl.addComponent(senderField);
-		layout.addComponent(fl);
+		layout.addComponent(senderField);
+		layout.addComponent(new Spacer());
+		layout.addComponent(sendBackupMailField);
+		layout.addComponent(backupEmailAddressField);
 
 		addComponent(layout);
 		addComponent(createButtonPanel());
-
-		// sincronizza i checks
-		//syncMailChecks();
-
 
 	}
 	
@@ -54,12 +52,16 @@ public class PermessiConfigComponent extends BaseConfigPanel {
 	private void createFields(){
 
 		// create and add fields and other components
-		senderField = new EmailField("Indirizzo mittente");
+
+		// sender adress
+		senderField = new EmailField("Indirizzo del mittente");
 		senderField.setDescription("L'indirizzo che risulta come mittente di tutte le email in uscita. I destinatari potrebbero rispondere a questo indirizzo.");
 
-		// backup email
+		// execute backup email
 		sendBackupMailField = new CheckBoxField("Invia una copia di tutte le email");
-		sendBackupMailField.setDescription("Invia una copia di tutte le email in uscita a un proprio indirizzo");
+		sendBackupMailField.setDescription("Invia una copia di tutte le email in uscita a una casella di backup");
+
+		// backup email address
 		backupEmailAddressField = new EmailField("Indirizzo email per copie");
 		backupEmailAddressField.setDescription("L'indirizzo al quale inviare le copie delle email in uscita");
 
@@ -76,30 +78,32 @@ public class PermessiConfigComponent extends BaseConfigPanel {
 	}
 
 	public PrefSetItem createItem() {
-		return new NotificheSetItem();
+		return new DataSetItem();
 	}
 
 	/**
 	 * Item containing form data
 	 */
-	private class NotificheSetItem extends PropertysetItem implements PrefSetItem {
+	private class DataSetItem extends PropertysetItem implements PrefSetItem {
 
-		public NotificheSetItem() {
+		public DataSetItem() {
 			super();
+			
+			WamCompany company = WamCompany.getCurrent();
+			String sender = company.getSenderAddress();
+			sender = (sender==null? "" : sender);
+			boolean doBackup=company.isSendMailToBackup();
+			String backAddr = company.getBackupMailbox();
+			backAddr = (backAddr==null? "" : backAddr);
 
-//			addItemProperty(KEY_SENDER, new ObjectProperty<String>(CompanyPrefs.senderEmailAddress.getString()));
-//			addItemProperty(KEY_BACKUP_EMAIL, new ObjectProperty<Boolean>(CompanyPrefs.backupEmail.getBool()));
-//			addItemProperty(KEY_BACKUP_ADDRESS, new ObjectProperty<String>(CompanyPrefs.backupEmailAddress.getString()));
+			addItemProperty(KEY_SENDER, new ObjectProperty<String>(sender));
+			addItemProperty(KEY_BACKUP_EMAIL, new ObjectProperty<Boolean>(doBackup));
+			addItemProperty(KEY_BACKUP_ADDRESS, new ObjectProperty<String>(backAddr));
 
-			// PROVVISORIO!!
-			addItemProperty(KEY_SENDER, new ObjectProperty<String>("info@algos.it"));
-			addItemProperty(KEY_BACKUP_EMAIL, new ObjectProperty<Boolean>(true));
-			addItemProperty(KEY_BACKUP_ADDRESS, new ObjectProperty<String>("backup@algos.it"));
 
 		}
 
 		public void persist() {
-			Object obj;
 			boolean cont = true;
 			
 			// se backup email attivo ci deve essere l'indirizzo
@@ -114,14 +118,18 @@ public class PermessiConfigComponent extends BaseConfigPanel {
 			
 			if (cont) {
 
-				obj = getItemProperty(KEY_SENDER).getValue();
-//				CompanyPrefs.senderEmailAddress.put(obj);
+				WamCompany company = WamCompany.getCurrent();
 
-				obj = getItemProperty(KEY_BACKUP_EMAIL).getValue();
-//				CompanyPrefs.backupEmail.put(obj);
+				String sender = (String)getItemProperty(KEY_SENDER).getValue();
+				company.setSenderAddress(sender);
 
-				obj = getItemProperty(KEY_BACKUP_ADDRESS).getValue();
-//				CompanyPrefs.backupEmailAddress.put(obj);
+				boolean doBackup = (Boolean)getItemProperty(KEY_BACKUP_EMAIL).getValue();
+				company.setSendMailToBackup(doBackup);
+
+				String backAddr = (String)getItemProperty(KEY_BACKUP_ADDRESS).getValue();
+				company.setBackupMailbox(backAddr);
+
+				company.save();
 
 			}
 
@@ -131,7 +139,7 @@ public class PermessiConfigComponent extends BaseConfigPanel {
 
 	@Override
 	public String getTitle() {
-		return "Configurazione permessi";
+		return "Impostazione email";
 	}
 
 }

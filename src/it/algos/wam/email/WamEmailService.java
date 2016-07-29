@@ -31,24 +31,24 @@ public class WamEmailService {
 
         // qui recuperare i parametri di configurazione email WAM (e toglierli dai parametri richiesti da questo metodo)
         //...
-        boolean useAuth = false;
-        String username = "";
-        String password = "";
-        String hostName = "smtp.myhost.com";
-        String from = "wam@algos.it";
-        int smtpPort = 99;
+        String hostName = "smtp.algos.it";
+        int smtpPort = 25;
+        boolean useAuth = true;
+        String username = "alex@algos.it";
+        String password = "barbapapa";
+        String from = company.getSenderAddress();
 
         // se per la company è previsto backup di tutte le email, aggiunge la mailbox di backup al bcc
         if(company.isSendMailToBackup()){
             String bkMailbox=company.getBackupMailbox();
             if(!bkMailbox.equals("")){
-                if(cc==null){
-                    cc="";
+                if(bcc==null){
+                    bcc="";
                 }
-                if(!cc.equals("")){
-                    cc+=", ";
+                if(!bcc.equals("")){
+                    bcc+=", ";
                 }
-                cc+=company.getBackupMailbox();
+                bcc+=company.getBackupMailbox();
             }
         }
 

@@ -9,6 +9,7 @@ import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.company.BaseCompany_;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.query.AQuery;
@@ -28,6 +29,10 @@ public class WamCompany extends BaseCompany {
 
     public static String DEMO_COMPANY_CODE = "demo";
 
+    // elenco delle relazioni OneToMany
+    // servono per creare le foreign key sul db
+    // che consentono la cancellazione a cascata
+
     @OneToMany(mappedBy = "company")
     @CascadeOnDelete
     private List<Servizio> servizi;
@@ -40,11 +45,12 @@ public class WamCompany extends BaseCompany {
     @CascadeOnDelete
     private List<Volontario> volontari;
 
-    // le altre tabelle sono cancellate a cascata a partire da queste
 
-
-    //--mostra il tabellone alla partenza; in caso contrario va alla home
+    // se il tabellone è liberamente accessibile in visione senza login
     private boolean tabellonePubblico = true;
+
+    // indirizzo email del mittente
+    private String senderAddress;
 
     // se invia ogni mail anche a una casella di backup
     private boolean sendMailToBackup;
@@ -52,10 +58,11 @@ public class WamCompany extends BaseCompany {
     // la casella di backup delle email
     private String backupMailbox;
 
-    // elenco delle relazioni OneToMany
-    // servono per creare le foreign key sul db
-    // che consentono la cancellazione a cascata
+    // se invia le notifiche di inizio turno
+    private boolean inviaNotificaInizioTurno;
 
+    // quante ore prima invia le notifiche di inizio turno
+    private int quanteOrePrimaNotificaInizioTurno;
 
 
     /**
@@ -153,6 +160,22 @@ public class WamCompany extends BaseCompany {
     }// end of method
 
     /**
+     * Ritorna la Company corrente
+     * (correntemente in sessione)
+     *
+     * @return la Company corrente, null se non c'è
+     */
+    public static WamCompany getCurrent() {
+        WamCompany wamCompany=null;
+        BaseCompany company = CompanySessionLib.getCompany();
+        if(company!=null){
+            wamCompany=(WamCompany)company;
+        }
+        return wamCompany;
+    }
+
+
+    /**
      * Ritorna la Demo Company
      *
      * @return la Demo Company, null se non esiste
@@ -196,6 +219,31 @@ public class WamCompany extends BaseCompany {
 
     public void setBackupMailbox(String backupMailbox) {
         this.backupMailbox = backupMailbox;
+    }
+
+
+    public String getSenderAddress() {
+        return senderAddress;
+    }
+
+    public void setSenderAddress(String senderAddress) {
+        this.senderAddress = senderAddress;
+    }
+
+    public boolean isInviaNotificaInizioTurno() {
+        return inviaNotificaInizioTurno;
+    }
+
+    public void setInviaNotificaInizioTurno(boolean inviaNotificaInizioTurno) {
+        this.inviaNotificaInizioTurno = inviaNotificaInizioTurno;
+    }
+
+    public int getQuanteOrePrimaNotificaInizioTurno() {
+        return quanteOrePrimaNotificaInizioTurno;
+    }
+
+    public void setQuanteOrePrimaNotificaInizioTurno(int quanteOrePrimaNotificaInizioTurno) {
+        this.quanteOrePrimaNotificaInizioTurno = quanteOrePrimaNotificaInizioTurno;
     }
 
     /**

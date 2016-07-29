@@ -2,30 +2,23 @@ package it.algos.wam.settings;
 
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.field.CheckBoxField;
-import it.algos.webbase.web.field.EmailField;
-import it.algos.webbase.web.field.TextField;
+import it.algos.webbase.web.field.IntegerField;
 
 @SuppressWarnings("serial")
 public class NotificheConfigComponent extends BaseConfigPanel {
 
-	private static final String KEY_SENDER = "sender";
-	private static final String KEY_BACKUP_EMAIL = "emailbackup";
-	private static final String KEY_BACKUP_ADDRESS = "emailbackupaddress";
+	private static final String KEY_INVIA_NOTIFICA = "invianotifica";
+	private static final String KEY_ORE_PRIMA = "oreprima";
 
-
-	private TextField senderField;
-	private CheckBoxField sendBackupMailField;
-	private TextField backupEmailAddressField;
-
+	private CheckBoxField fldInviaNotificaInizioTurno;
+	private IntegerField fldNotificaQuanteOrePrima;
 
 	public NotificheConfigComponent() {
 		super();
-		//addStyleName("yellowBg");
 
 		// crea i fields
 		createFields();
@@ -35,19 +28,11 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
-		FormLayout fl = new FormLayout();
-		fl.setSpacing(true);
-		fl.addComponent(sendBackupMailField);
-		fl.addComponent(backupEmailAddressField);
-		fl.addComponent(senderField);
-		layout.addComponent(fl);
+		layout.addComponent(fldInviaNotificaInizioTurno);
+		layout.addComponent(fldNotificaQuanteOrePrima);
 
 		addComponent(layout);
 		addComponent(createButtonPanel());
-
-		// sincronizza i checks
-		//syncMailChecks();
-
 
 	}
 	
@@ -56,22 +41,18 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 
 		// create and add fields and other components
 
-		// sender adress
-		senderField = new EmailField("Indirizzo mittente");
-		senderField.setDescription("L'indirizzo che risulta come mittente di tutte le base_email in uscita. I destinatari potrebbero rispondere a questo indirizzo.");
+		// invia notifica inizio turno
+		fldInviaNotificaInizioTurno = new CheckBoxField("Invia una notifica di inizio turno");
+		fldInviaNotificaInizioTurno.setDescription("Invia una notifica via email al volontario prima dell'inizio del turno");
 
-		// execute backup base_email
-		sendBackupMailField = new CheckBoxField("Invia una copia di tutte le base_email");
-		sendBackupMailField.setDescription("Invia una copia di tutte le base_email in uscita a un proprio indirizzo");
+		// notifica inizio turno quante ore prima
+		fldNotificaQuanteOrePrima = new IntegerField("Quante ore prima");
+		fldNotificaQuanteOrePrima.setDescription("Quante ore prima dell'inizio del turno va inviata la notifica");
 
-		// backup base_email address
-		backupEmailAddressField = new EmailField("Indirizzo base_email per copie");
-		backupEmailAddressField.setDescription("L'indirizzo al quale inviare le copie delle base_email in uscita");
 
 		// bind fields to properties
-		getGroup().bind(senderField, KEY_SENDER);
-		getGroup().bind(sendBackupMailField, KEY_BACKUP_EMAIL);
-		getGroup().bind(backupEmailAddressField, KEY_BACKUP_ADDRESS);
+		getGroup().bind(fldInviaNotificaInizioTurno, KEY_INVIA_NOTIFICA);
+		getGroup().bind(fldNotificaQuanteOrePrima, KEY_ORE_PRIMA);
 
 	}
 
@@ -81,25 +62,23 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 	}
 
 	public PrefSetItem createItem() {
-		return new NotificheSetItem();
+		return new DataSetItem();
 	}
 
 	/**
 	 * Item containing form data
 	 */
-	private class NotificheSetItem extends PropertysetItem implements PrefSetItem {
+	private class DataSetItem extends PropertysetItem implements PrefSetItem {
 
-		public NotificheSetItem() {
+		public DataSetItem() {
 			super();
-			
-//			addItemProperty(KEY_SENDER, new ObjectProperty<String>(CompanyPrefs.senderEmailAddress.getString()));
-//			addItemProperty(KEY_BACKUP_EMAIL, new ObjectProperty<Boolean>(CompanyPrefs.backupEmail.getBool()));
-//			addItemProperty(KEY_BACKUP_ADDRESS, new ObjectProperty<String>(CompanyPrefs.backupEmailAddress.getString()));
 
-			// PROVVISORIO!!
-			addItemProperty(KEY_SENDER, new ObjectProperty<String>("info@algos.it"));
-			addItemProperty(KEY_BACKUP_EMAIL, new ObjectProperty<Boolean>(true));
-			addItemProperty(KEY_BACKUP_ADDRESS, new ObjectProperty<String>("backup@algos.it"));
+			WamCompany company = WamCompany.getCurrent();
+			boolean doInviaNotifInizioTurno=company.isInviaNotificaInizioTurno();
+			int orePrima = company.getQuanteOrePrimaNotificaInizioTurno();
+
+			addItemProperty(KEY_INVIA_NOTIFICA, new ObjectProperty<Boolean>(doInviaNotifInizioTurno));
+			addItemProperty(KEY_ORE_PRIMA, new ObjectProperty<Integer>(orePrima));
 
 
 		}
@@ -108,26 +87,27 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 			Object obj;
 			boolean cont = true;
 			
-			// se backup base_email attivo ci deve essere l'indirizzo
-			boolean bkemail = (boolean)getItemProperty(KEY_BACKUP_EMAIL).getValue();
-			if (bkemail) {
-				String bkaddress = (String)getItemProperty(KEY_BACKUP_ADDRESS).getValue();
-				if (bkaddress.equals("")) {
-					Notification.show("Inserire l'indirizzo base_email per copie");
+			// se invia notifica attivo ci devono essere le ore prima
+			boolean inviaNotifica = (boolean)getItemProperty(KEY_INVIA_NOTIFICA).getValue();
+			if (inviaNotifica) {
+				Integer oreprima = (Integer)getItemProperty(KEY_ORE_PRIMA).getValue();
+				if (oreprima<=0) {
+					Notification.show("Indicare quante ore prima va inviata la notifica.");
 					cont=false;
 				}
 			}
 			
 			if (cont) {
 
-				obj = getItemProperty(KEY_SENDER).getValue();
-//				CompanyPrefs.senderEmailAddress.put(obj);
+				WamCompany company = WamCompany.getCurrent();
 
-				obj = getItemProperty(KEY_BACKUP_EMAIL).getValue();
-//				CompanyPrefs.backupEmail.put(obj);
+				boolean doInviaNotifInizioTurno = (Boolean)getItemProperty(KEY_INVIA_NOTIFICA).getValue();
+				company.setInviaNotificaInizioTurno(doInviaNotifInizioTurno);
 
-				obj = getItemProperty(KEY_BACKUP_ADDRESS).getValue();
-//				CompanyPrefs.backupEmailAddress.put(obj);
+				int orePrima = (int)getItemProperty(KEY_ORE_PRIMA).getValue();
+				company.setQuanteOrePrimaNotificaInizioTurno(orePrima);
+
+				company.save();
 
 			}
 
@@ -137,7 +117,7 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 
 	@Override
 	public String getTitle() {
-		return "Configurazione notifiche";
+		return "Invio notifiche";
 	}
 
 }

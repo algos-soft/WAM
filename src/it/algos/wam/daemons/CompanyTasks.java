@@ -25,6 +25,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -90,7 +91,13 @@ public class CompanyTasks implements Runnable {
         logger.log(Level.INFO, "start tasks " + company);
 
         // invia le notifiche per i turni che iniziano prossimamente
-        notificaInizioTurno(company);
+        if(company.isInviaNotificaInizioTurno()){
+            try {
+                notificaInizioTurno(company);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
 
         // qui eventuale altro codice da eseguire per ogni Company
         // ...
@@ -100,12 +107,20 @@ public class CompanyTasks implements Runnable {
     /**
      * Manda una notifica a tutti i volontari che iniziano il turno prossimamente
      */
-    private void notificaInizioTurno(WamCompany company) {
+    private void notificaInizioTurno(WamCompany company) throws Exception {
+
+        // controlla che la funzione sia correttamente configurata
+        if(company.getQuanteOrePrimaNotificaInizioTurno()<=0){
+            throw new Exception("ore prima notifica inizio turno non configurate");
+        }
+        if(company.getSenderAddress().equals("")){
+            throw new Exception("indirizzo mittente non configurato");
+        }
 
         // recupera l'elenco delle iscrizioni che iniziano prossimamente e non sono ancora state notificate
-        Iscrizione[] iscrizioniDaNotificare = getIscrizioniDaNotificare(company, 24);
+        Iscrizione[] iscrizioniDaNotificare = getIscrizioniDaNotificare(company);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd hh:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM 'ore' HH:mm");
 
         // per ogni iscrizione, invia la notifica
         for (Iscrizione iscrizione : iscrizioniDaNotificare) {
@@ -115,7 +130,17 @@ public class CompanyTasks implements Runnable {
 
                 Turno turno = iscrizione.getTurno();
                 Servizio serv = turno.getServizio();
-                String dataora = dateFormat.format(turno.getInizio());
+
+                // stringa con data e ora di inizio
+                Date dataInizio = turno.getInizio();
+                int oraInizio = serv.getOraInizio();
+                int minutoInizio = serv.getMinutiInizio();
+                LocalDate date = DateConvertUtils.asLocalDate(dataInizio);
+                LocalDateTime datetime = date.atStartOfDay();
+                datetime=datetime.plusHours(oraInizio);
+                datetime=datetime.plusMinutes(minutoInizio);
+                Date newDate = DateConvertUtils.asUtilDate(datetime);
+                String dataora = dateFormat.format(newDate);
 
                 String subject = "Inizio turno " + serv.getDescrizione() + " il " + dataora;
 
@@ -123,10 +148,10 @@ public class CompanyTasks implements Runnable {
 
                 List<Iscrizione> iscrizioni = turno.getIscrizioni();
                 if (iscrizioni.size() > 0) {
-                    text = "Attualmente sono iscritti al turno:";
+                    text = "Attualmente sono iscritti:";
                     for (Iscrizione i : iscrizioni) {
                         Funzione funz = i.getServizioFunzione().getFunzione();
-                        text += "\n";
+                        text += "\n- ";
                         text += i.getVolontario().getNickname();
                         text += " (";
                         text += funz.getSiglaVisibile();
@@ -153,9 +178,10 @@ public class CompanyTasks implements Runnable {
      * per una data company
      *
      * @param company     la company
-     * @param oreInAvanti le ore in avanti da adesso
      */
-    private Iscrizione[] getIscrizioniDaNotificare(WamCompany company, int oreInAvanti) {
+    private Iscrizione[] getIscrizioniDaNotificare(WamCompany company) {
+
+        int oreInAvanti=company.getQuanteOrePrimaNotificaInizioTurno();
 
         CriteriaBuilder cb = manager.getCriteriaBuilder();
         CriteriaQuery<Iscrizione> cq = cb.createQuery(Iscrizione.class);

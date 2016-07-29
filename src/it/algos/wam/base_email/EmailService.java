@@ -34,7 +34,7 @@ public class EmailService {
             }
         }
 
-        // Create the base_email message
+        // Create the email message
         if (hostName != null && !hostName.equals("")) {
             email.setHostName(hostName);
         }
@@ -43,7 +43,7 @@ public class EmailService {
 
         if (useAuth) {
             email.setAuthenticator(new DefaultAuthenticator(username, password));
-            //base_email.setSSLOnConnect(false);
+            //email.setSSLOnConnect(false);
             email.setStartTLSEnabled(true);
         }
 
@@ -95,7 +95,7 @@ public class EmailService {
             email.setDataSourceResolver(resolver);
         }
 
-        // send the base_email
+        // send the email
         email.send();
         spedita = true;
 
