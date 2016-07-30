@@ -38,6 +38,18 @@ public abstract class BootService {
     }// end of static method
 
     /**
+     * Creazione iniziale di una croce test
+     * Visibile a tutti
+     * <p>
+     * La crea SOLO se non esiste già
+     */
+    public static void creaCompanyTest() {
+
+        WamCompany company = creaCroceTest();
+        initCompany(company, true, true);
+    }// end of static method
+
+    /**
      * Inizializza una croce appena creata, con alcuni dati di esempio
      * Visibile solo a noi (developer)
      * Crea alcune funzioni standard
@@ -99,6 +111,24 @@ public abstract class BootService {
             company.setAddress1("Via Turati, 12");
             company.setAddress1("20199 Garbagnate Milanese");
             company.setContact("Mario Bianchi");
+            company.setTabellonePubblico(true);
+            company.save();
+        }// end of if cycle
+        return company;
+    }// end of static method
+
+    /**
+     * Creazione iniziale dei dati generali per la croce test
+     * Li crea SOLO se non esistono già
+     */
+    private static WamCompany creaCroceTest() {
+        WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
+
+        if (company == null) {
+            company = new WamCompany(WAMApp.TEST_COMPANY_CODE, "Test", "info@crocetest.it");
+            company.setAddress1("Piazza Napoli, 51");
+            company.setAddress1("20100 Milano");
+            company.setContact("Giovanni Rossi");
             company.setTabellonePubblico(true);
             company.save();
         }// end of if cycle
@@ -283,20 +313,25 @@ public abstract class BootService {
             return null;
         }// end of if cycle
 
-        lista.add(Arrays.asList("Stefano", "Brambilla", "stefano.brambilla@wamdemo.it", "bra", false, funz.get(1)));
-        lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it","abb", false, funz.get(2)));
-        lista.add(Arrays.asList("Giovanna", "Durante", "giovanna.durante@wamdemo.it","dur", false, funz));
-        lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it","ber", true, funz.get(3)));
-        lista.add(Arrays.asList("Roberto", "Marchetti", "roberto.marchetti@wamdemo.it","mar", false, funz.get(7), funz.get(9)));
-        lista.add(Arrays.asList("Mirella", "Pace", "mirella.pace@wamdemo.it","pac", false, funz.get(4)));
-        lista.add(Arrays.asList("Edoardo", "Politi", "edoardo.politi@wamdemo.it","pol", false, funz.get(5)));
-        lista.add(Arrays.asList("Sabina", "Roncelli", "sabina.roncelli@wamdemo.it","ron", false, funz.get(6)));
-        lista.add(Arrays.asList("Lucia", "Casaroli", "lucia.casaroli@wamdemo.it","cas", true, funz.get(0)));
-        lista.add(Arrays.asList("Antonio", "Zambetti", "antonio.zambetti@wamdemo.it","zam", false, funz.get(8)));
-        lista.add(Arrays.asList("Flavia", "Robusti", "flavia.robusti@wamdemo.it","rob", false, funz.get(8), funz.get(9)));
-        lista.add(Arrays.asList("Aldo", "Terzino", "aldo.terzino@wamdemo.it","ter", false, funz.get(8), funz.get(9)));
-        lista.add(Arrays.asList("Marco", "Terzani","marco.terzani@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
-        lista.add(Arrays.asList("Alice", "Mantovani", "alice.mantovani@wamdemo.it","man", false, funz.get(8), funz.get(9)));
+        if (company.getCompanyCode().equals(WAMApp.DEMO_COMPANY_CODE)) {
+            lista.add(Arrays.asList("Stefano", "Brambilla", "stefano.brambilla@wamdemo.it", "bra", false, funz.get(1)));
+            lista.add(Arrays.asList("Giovanna", "Durante", "giovanna.durante@wamdemo.it","dur", false, funz));
+            lista.add(Arrays.asList("Roberto", "Marchetti", "roberto.marchetti@wamdemo.it","mar", false, funz.get(7), funz.get(9)));
+            lista.add(Arrays.asList("Edoardo", "Politi", "edoardo.politi@wamdemo.it","pol", false, funz.get(5)));
+            lista.add(Arrays.asList("Lucia", "Casaroli", "lucia.casaroli@wamdemo.it","cas", true, funz.get(0)));
+            lista.add(Arrays.asList("Flavia", "Robusti", "flavia.robusti@wamdemo.it","rob", false, funz.get(8), funz.get(9)));
+            lista.add(Arrays.asList("Marco", "Terzani","marco.terzani@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
+        }// end of if cycle
+
+        if (company.getCompanyCode().equals(WAMApp.TEST_COMPANY_CODE)) {
+            lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it","abb", false, funz.get(2)));
+            lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it","ber", true, funz.get(3)));
+            lista.add(Arrays.asList("Mirella", "Pace", "mirella.pace@wamdemo.it","pac", false, funz.get(4)));
+            lista.add(Arrays.asList("Sabina", "Roncelli", "sabina.roncelli@wamdemo.it","ron", false, funz.get(6)));
+            lista.add(Arrays.asList("Antonio", "Zambetti", "antonio.zambetti@wamdemo.it","zam", false, funz.get(8)));
+            lista.add(Arrays.asList("Aldo", "Terzino", "aldo.terzino@wamdemo.it","ter", false, funz.get(8), funz.get(9)));
+            lista.add(Arrays.asList("Alice", "Mantovani", "alice.mantovani@wamdemo.it","man", false, funz.get(8), funz.get(9)));
+        }// end of if cycle
 
         for (int k = 0; k < lista.size(); k++) {
             listaVolontari.add(creaVolBase(company, manager, (List) lista.get(k)));
