@@ -31,8 +31,6 @@ public class PermessiConfigComponent extends BaseConfigPanel {
 		
 		// crea la UI
 		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
-		layout.setSpacing(true);
 
 		FormLayout fl = new FormLayout();
 		fl.setSpacing(true);
@@ -41,8 +39,8 @@ public class PermessiConfigComponent extends BaseConfigPanel {
 		fl.addComponent(senderField);
 		layout.addComponent(fl);
 
-		addComponent(layout);
-		addComponent(createButtonPanel());
+//		addComponent(layout);
+//		addComponent(createButtonPanel());
 
 		// sincronizza i checks
 		//syncMailChecks();

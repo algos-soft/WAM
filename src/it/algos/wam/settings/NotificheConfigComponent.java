@@ -5,6 +5,7 @@ import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.web.component.Spacer;
 import it.algos.webbase.web.field.CheckBoxField;
 import it.algos.webbase.web.field.IntegerField;
 
@@ -24,15 +25,25 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 		createFields();
 		
 		// crea la UI
+//		VerticalLayout layout = new VerticalLayout();
+//
+//		layout.addComponent(fldInviaNotificaInizioTurno);
+//		layout.addComponent(fldNotificaQuanteOrePrima);
+
+//		addComponent(layout);
+//		addComponent(createButtonPanel());
+
+		// crea la UI
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
-		layout.setSpacing(true);
 
 		layout.addComponent(fldInviaNotificaInizioTurno);
 		layout.addComponent(fldNotificaQuanteOrePrima);
+		layout.addComponent(new Spacer());
+		layout.addComponent(createSaveButton());
 
-		addComponent(layout);
-		addComponent(createButtonPanel());
+		setCompositionRoot(layout);
+
 
 	}
 	

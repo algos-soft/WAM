@@ -3,14 +3,11 @@ package it.algos.wam.settings;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
 
 @SuppressWarnings("serial")
-public abstract class BaseConfigPanel extends FormLayout implements ConfigComponent {
+public abstract class BaseConfigPanel extends CustomComponent implements ConfigComponent {
 
 	private FieldGroup group;
 	protected PrefSetItem item;
@@ -18,8 +15,8 @@ public abstract class BaseConfigPanel extends FormLayout implements ConfigCompon
 	public BaseConfigPanel() {
 		super();
 
-		setMargin(true);
-		setSpacing(true);
+//		setMargin(true);
+//		setSpacing(true);
 
 		group = new FieldGroup();
 
@@ -30,10 +27,7 @@ public abstract class BaseConfigPanel extends FormLayout implements ConfigCompon
 	/**
 	 * Create the button panel
 	 */
-	protected Component createButtonPanel() {
-		HorizontalLayout layout = new HorizontalLayout();
-		layout.setMargin(true);
-		layout.setSpacing(true);
+	protected Button createSaveButton() {
 		Button bSave = new Button("Registra");
 		bSave.addClickListener(new ClickListener() {
 			@Override
@@ -46,10 +40,8 @@ public abstract class BaseConfigPanel extends FormLayout implements ConfigCompon
 				}
 			}
 		});
-		layout.addComponent(bSave);
-		
-		
-		return layout;
+
+		return bSave;
 
 	}
 

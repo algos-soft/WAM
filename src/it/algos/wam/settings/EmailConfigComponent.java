@@ -9,7 +9,6 @@ import it.algos.webbase.web.component.Spacer;
 import it.algos.webbase.web.field.CheckBoxField;
 import it.algos.webbase.web.field.EmailField;
 import it.algos.webbase.web.field.TextField;
-import it.algos.webbase.web.lib.LibSession;
 
 @SuppressWarnings("serial")
 /**
@@ -36,15 +35,15 @@ public class EmailConfigComponent extends BaseConfigPanel {
 		// crea la UI
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
-		layout.setSpacing(true);
 
 		layout.addComponent(senderField);
 		layout.addComponent(new Spacer());
 		layout.addComponent(sendBackupMailField);
 		layout.addComponent(backupEmailAddressField);
+		layout.addComponent(new Spacer());
+		layout.addComponent(createSaveButton());
 
-		addComponent(layout);
-		addComponent(createButtonPanel());
+		setCompositionRoot(layout);
 
 	}
 	
