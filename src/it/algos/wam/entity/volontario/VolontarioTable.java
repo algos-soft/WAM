@@ -1,6 +1,7 @@
 package it.algos.wam.entity.volontario;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
