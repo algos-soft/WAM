@@ -249,7 +249,7 @@ public class ServizioTable extends ETable {
             picker.setEnabled(LibSession.isAdmin());
 
             return picker;
-        }// end of method
-    }// end of inner class
+        }
+    }
 
-}// end of class
+}
