@@ -18,23 +18,17 @@ import java.util.Date;
 
 public enum ManagerPrefs {
 
-    // se il tabellone è liberamente accessibile in visione senza login
-    tabellonePubblico("tabellonePubblico", PrefType.bool, true),
+    smtpServer("smtpServer", PrefType.string, ""),
 
-    // indirizzo email del mittente
-    senderAddress("senderAddress", PrefType.string, ""),
+    smtpPort("smtpPort", PrefType.integer, 25),
 
-    // se invia ogni mail anche a una casella di backup
-    sendMailToBackup("sendMailToBackup", PrefType.bool, false),
+    smtpUseAuth("smtpUseAuth", PrefType.bool, false),
 
-    // la casella di backup delle email
-    backupMailbox("backupMailbox", PrefType.string, ""),
+    smtpPassword("smtpPassword", PrefType.string, ""),
 
-    // se invia le notifiche di inizio turno
-    inviaNotificaInizioTurno("inviaNotificaInizioTurno", PrefType.bool, true),
+    smtpUserName("smtpUser", PrefType.string, ""),
 
-    // quante ore prima invia le notifiche di inizio turno
-    quanteOrePrimaNotificaInizioTurno("quanteOrePrimaNotificaInizioTurno", PrefType.integer, 24),;
+    startDaemonAtStartup("startDaemonAtStartup", PrefType.bool, false);
 
     private String code;
     private PrefType type;
@@ -46,60 +40,61 @@ public enum ManagerPrefs {
         this.defaultValue = defaultValue;
     }
 
+
     /**
      * Retrieves this preference's value as boolean
      */
     public boolean getBool() {
-        return Pref.getBool(code, null, defaultValue);
+        return Pref.getBool(code, null,defaultValue);
     }
 
     /**
      * Retrieves this preference's value as byte[]
      */
     public byte[] getBytes() {
-        return Pref.getBytes(code, null, defaultValue);
+        return Pref.getBytes(code, null,defaultValue);
     }
 
     /**
      * Retrieves this preference's value as Date
      */
     public Date getDate() {
-        return Pref.getDate(code, null, defaultValue);
+        return Pref.getDate(code, null,defaultValue);
     }
 
     /**
      * Retrieves this preference's value as BigDecimal
      */
     public BigDecimal getDecimal() {
-        return Pref.getDecimal(code, null, defaultValue);
+        return Pref.getDecimal(code, null,defaultValue);
     }
 
     /**
      * Retrieves this preference's value as int
      */
     public int getInt() {
-        return Pref.getInt(code, null, defaultValue);
+        return Pref.getInt(code, null,defaultValue);
     }
 
     /**
      * Retrieves this preference's value as String
      */
     public String getString() {
-        return Pref.getString(code, null, defaultValue);
+        return Pref.getString(code, null,defaultValue);
     }
 
     /**
      * Retrieves this preference's value as Image
      */
     public Image getImage() {
-        return Pref.getImage(code, null, defaultValue);
+        return Pref.getImage(code, null,defaultValue);
     }
 
     /**
      * Retrieves this preference's value as Resource
      */
     public Resource getResource() {
-        return Pref.getResource(code, null, defaultValue);
+        return Pref.getResource(code, null,defaultValue);
     }
 
     /**
@@ -122,4 +117,4 @@ public enum ManagerPrefs {
     }
 
 
-}
+    }
