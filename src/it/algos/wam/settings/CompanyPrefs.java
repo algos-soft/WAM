@@ -193,6 +193,18 @@ public enum CompanyPrefs {
         Pref.put(code, company, type, value);
     }// end of method
 
+    /**
+     * Writes a value in the storage for this preference
+     * <p>
+     * If the preference does not exist it is created now.
+     *
+     * @param company the company
+     * @param value   the value
+     */
+    public void put(WamCompany company, Object value, String descrizione) {
+        Pref.put(code, company, type, value, descrizione);
+    }// end of method
+
 
     /**
      * Removes this preference from the storage.
