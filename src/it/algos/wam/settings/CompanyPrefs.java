@@ -34,9 +34,7 @@ public enum CompanyPrefs  {
     inviaNotificaInizioTurno("inviaNotificaInizioTurno", PrefType.bool, true),
 
     // quante ore prima invia le notifiche di inizio turno
-    quanteOrePrimaNotificaInizioTurno("quanteOrePrimaNotificaInizioTurno", PrefType.integer, 24),;
-
-
+    quanteOrePrimaNotificaInizioTurno("quanteOrePrimaNotificaInizioTurno", PrefType.integer, 24)
     ;
 
     private String code;

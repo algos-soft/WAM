@@ -10,6 +10,9 @@ import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
@@ -44,7 +47,7 @@ public class VolontarioTable extends ETable {
      */
     @Override
     protected void createAdditionalColumns() {
-        ArrayList<Funzione> listaFunzioni = Funzione.findAll();
+        ArrayList<Funzione> listaFunzioni = Funzione.findAll((WamCompany)CompanySessionLib.getCompany());
         for (Funzione funz : listaFunzioni) {
             addGeneratedColumn(funz.getSiglaInterna(), new FunzioniColumnGenerator(funz));
         }// end of for cycle
@@ -61,7 +64,7 @@ public class VolontarioTable extends ETable {
     @Override
     protected Object[] getDisplayColumns() {
         ArrayList lista = new ArrayList<>();
-        ArrayList<Funzione> listaFunzioni = Funzione.findAll();
+        ArrayList<Funzione> listaFunzioni = Funzione.findAll((WamCompany)CompanySessionLib.getCompany());
 
         if (LibSession.isDeveloper()) {
             lista.add(WamCompanyEntity_.company);
