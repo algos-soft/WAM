@@ -127,7 +127,7 @@ public class GeneralDaemonConfigComponent extends BaseConfigPanel implements Vie
 
 	@Override
 	public String getTitle() {
-		return "Controllo daemon check posizioni scadute";
+		return "Servizio di controllo iscrizioni";
 	}
 	
 	

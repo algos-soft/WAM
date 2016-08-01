@@ -45,56 +45,56 @@ public enum ManagerPrefs {
      * Retrieves this preference's value as boolean
      */
     public boolean getBool() {
-        return Pref.getBool(code, null,defaultValue);
+        return Pref.getBool(code, null, defaultValue);
     }
 
     /**
      * Retrieves this preference's value as byte[]
      */
     public byte[] getBytes() {
-        return Pref.getBytes(code, null,defaultValue);
+        return Pref.getBytes(code, null, defaultValue);
     }
 
     /**
      * Retrieves this preference's value as Date
      */
     public Date getDate() {
-        return Pref.getDate(code, null,defaultValue);
+        return Pref.getDate(code, null, defaultValue);
     }
 
     /**
      * Retrieves this preference's value as BigDecimal
      */
     public BigDecimal getDecimal() {
-        return Pref.getDecimal(code, null,defaultValue);
+        return Pref.getDecimal(code, null, defaultValue);
     }
 
     /**
      * Retrieves this preference's value as int
      */
     public int getInt() {
-        return Pref.getInt(code, null,defaultValue);
+        return Pref.getInt(code, null, defaultValue);
     }
 
     /**
      * Retrieves this preference's value as String
      */
     public String getString() {
-        return Pref.getString(code, null,defaultValue);
+        return Pref.getString(code, null, defaultValue);
     }
 
     /**
      * Retrieves this preference's value as Image
      */
     public Image getImage() {
-        return Pref.getImage(code, null,defaultValue);
+        return Pref.getImage(code, null, defaultValue);
     }
 
     /**
      * Retrieves this preference's value as Resource
      */
     public Resource getResource() {
-        return Pref.getResource(code, null,defaultValue);
+        return Pref.getResource(code, null, defaultValue);
     }
 
     /**
@@ -105,7 +105,7 @@ public enum ManagerPrefs {
      * @param value the value
      */
     public void put(Object value) {
-        Pref.put(code, value, type);
+        Pref.put(code, type, value);
     }
 
     /**
@@ -117,4 +117,4 @@ public enum ManagerPrefs {
     }
 
 
-    }
+}

@@ -245,6 +245,9 @@ public class ServizioTable extends ETable {
                     serv.save();
                 }
             });
+
+            picker.setEnabled(LibSession.isAdmin());
+
             return picker;
         }// end of method
     }// end of inner class
