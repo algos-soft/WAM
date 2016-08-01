@@ -46,24 +46,6 @@ public class WamCompany extends BaseCompany {
     private List<Volontario> volontari;
 
 
-//    // se il tabellone è liberamente accessibile in visione senza login
-//    private boolean tabellonePubblico = true;
-//
-//    // indirizzo email del mittente
-//    private String senderAddress="";
-//
-//    // se invia ogni mail anche a una casella di backup
-//    private boolean sendMailToBackup=false;
-//
-//    // la casella di backup delle email
-//    private String backupMailbox="";
-//
-//    // se invia le notifiche di inizio turno
-//    private boolean inviaNotificaInizioTurno=true;
-//
-//    // quante ore prima invia le notifiche di inizio turno
-//    private int quanteOrePrimaNotificaInizioTurno=24;
-
 
     /**
      * Costruttore senza argomenti
@@ -197,54 +179,6 @@ public class WamCompany extends BaseCompany {
         return getCompanyCode();
     }// end of method
 
-//    public boolean isTabellonePubblico() {
-//        return tabellonePubblico;
-//    }// end of getter method
-//
-//    public void setTabellonePubblico(boolean tabellonePubblico) {
-//        this.tabellonePubblico = tabellonePubblico;
-//    }//end of setter method
-//
-//    public boolean isSendMailToBackup() {
-//        return sendMailToBackup;
-//    }
-//
-//    public void setSendMailToBackup(boolean sendMailToBackup) {
-//        this.sendMailToBackup = sendMailToBackup;
-//    }
-//
-//    public String getBackupMailbox() {
-//        return backupMailbox;
-//    }
-//
-//    public void setBackupMailbox(String backupMailbox) {
-//        this.backupMailbox = backupMailbox;
-//    }
-//
-//
-//    public String getSenderAddress() {
-//        return senderAddress;
-//    }
-//
-//    public void setSenderAddress(String senderAddress) {
-//        this.senderAddress = senderAddress;
-//    }
-//
-//    public boolean isInviaNotificaInizioTurno() {
-//        return inviaNotificaInizioTurno;
-//    }
-//
-//    public void setInviaNotificaInizioTurno(boolean inviaNotificaInizioTurno) {
-//        this.inviaNotificaInizioTurno = inviaNotificaInizioTurno;
-//    }
-//
-//    public int getQuanteOrePrimaNotificaInizioTurno() {
-//        return quanteOrePrimaNotificaInizioTurno;
-//    }
-//
-//    public void setQuanteOrePrimaNotificaInizioTurno(int quanteOrePrimaNotificaInizioTurno) {
-//        this.quanteOrePrimaNotificaInizioTurno = quanteOrePrimaNotificaInizioTurno;
-//    }
 
     /**
      * Elimina tutti i dati di questa azienda.

@@ -2,6 +2,7 @@ package it.algos.wam.settings;
 
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Image;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.domain.pref.PrefType;
 
@@ -56,11 +57,26 @@ public enum CompanyPrefs  {
     }
 
     /**
+     * Retrieves this preference's value as boolean
+     */
+    public boolean getBool(WamCompany company) {
+        return Pref.getBool(code, company, defaultValue);
+    }
+
+    /**
      * Retrieves this preference's value as byte[]
      */
     public byte[] getBytes() {
-        return Pref.getBytes(code,  defaultValue);
+        return Pref.getBytes(code, defaultValue);
     }
+
+    /**
+     * Retrieves this preference's value as byte[]
+     */
+    public byte[] getBytes(WamCompany company) {
+        return Pref.getBytes(code, company, defaultValue);
+    }
+
 
     /**
      * Retrieves this preference's value as Date
@@ -70,6 +86,14 @@ public enum CompanyPrefs  {
     }
 
     /**
+     * Retrieves this preference's value as Date
+     */
+    public Date getDate(WamCompany company) {
+        return Pref.getDate(code, company, defaultValue);
+    }
+
+
+    /**
      * Retrieves this preference's value as BigDecimal
      */
     public BigDecimal getDecimal() {
@@ -77,18 +101,42 @@ public enum CompanyPrefs  {
     }
 
     /**
+     * Retrieves this preference's value as BigDecimal
+     */
+    public BigDecimal getDecimal(WamCompany company) {
+        return Pref.getDecimal(code, company, defaultValue);
+    }
+
+
+    /**
      * Retrieves this preference's value as int
      */
     public int getInt() {
-        return Pref.getInt(code,  defaultValue);
+        return Pref.getInt(code, defaultValue);
     }
+
+    /**
+     * Retrieves this preference's value as int
+     */
+    public int getInt(WamCompany company) {
+        return Pref.getInt(code,  company, defaultValue);
+    }
+
 
     /**
      * Retrieves this preference's value as String
      */
     public String getString() {
-        return Pref.getString(code,  defaultValue);
+        return Pref.getString(code, defaultValue);
     }
+
+    /**
+     * Retrieves this preference's value as String
+     */
+    public String getString(WamCompany company) {
+        return Pref.getString(code,  company, defaultValue);
+    }
+
 
     /**
      * Retrieves this preference's value as Image
@@ -98,11 +146,27 @@ public enum CompanyPrefs  {
     }
 
     /**
+     * Retrieves this preference's value as Image
+     */
+    public Image getImage(WamCompany company) {
+        return Pref.getImage(code, company, defaultValue);
+    }
+
+
+    /**
      * Retrieves this preference's value as Resource
      */
     public Resource getResource() {
-        return Pref.getResource(code,  defaultValue);
+        return Pref.getResource(code, defaultValue);
     }
+
+    /**
+     * Retrieves this preference's value as Resource
+     */
+    public Resource getResource(WamCompany company) {
+        return Pref.getResource(code, company, defaultValue);
+    }
+
 
     /**
      * Writes a value in the storage for this preference
@@ -116,6 +180,19 @@ public enum CompanyPrefs  {
     }
 
     /**
+     * Writes a value in the storage for this preference
+     * <p>
+     * If the preference does not exist it is created now.
+     *
+     * @param company the company
+     * @param value the value
+     */
+    public void put(WamCompany company, Object value) {
+        Pref.put(code, company, value, type);
+    }
+
+
+    /**
      * Removes this preference from the storage.
      * <p>
      */
@@ -123,5 +200,12 @@ public enum CompanyPrefs  {
         Pref.remove(code, null);
     }
 
+    /**
+     * Removes this preference from the storage.
+     * <p>
+     */
+    public void remove(WamCompany company) {
+        Pref.remove(code, company);
+    }
 
 }

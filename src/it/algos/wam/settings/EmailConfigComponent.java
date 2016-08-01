@@ -88,11 +88,10 @@ public class EmailConfigComponent extends BaseConfigPanel {
 		public DataSetItem() {
 			super();
 			
-			WamCompany company = WamCompany.getCurrent();
-			String sender = company.getSenderAddress();
+			String sender = CompanyPrefs.senderAddress.getString();
 			sender = (sender==null? "" : sender);
-			boolean doBackup=company.isSendMailToBackup();
-			String backAddr = company.getBackupMailbox();
+			boolean doBackup=CompanyPrefs.sendMailToBackup.getBool();
+			String backAddr = CompanyPrefs.backupMailbox.getString();
 			backAddr = (backAddr==null? "" : backAddr);
 
 			addItemProperty(KEY_SENDER, new ObjectProperty<String>(sender));
@@ -117,18 +116,12 @@ public class EmailConfigComponent extends BaseConfigPanel {
 			
 			if (cont) {
 
-				WamCompany company = WamCompany.getCurrent();
-
 				String sender = (String)getItemProperty(KEY_SENDER).getValue();
-				company.setSenderAddress(sender);
-
 				boolean doBackup = (Boolean)getItemProperty(KEY_BACKUP_EMAIL).getValue();
-				company.setSendMailToBackup(doBackup);
-
 				String backAddr = (String)getItemProperty(KEY_BACKUP_ADDRESS).getValue();
-				company.setBackupMailbox(backAddr);
-
-				company.save();
+				CompanyPrefs.senderAddress.put(sender);
+				CompanyPrefs.sendMailToBackup.put(doBackup);
+				CompanyPrefs.backupMailbox.put(backAddr);
 
 			}
 

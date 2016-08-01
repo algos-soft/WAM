@@ -14,6 +14,7 @@ import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.turno.Turno_;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.EM;
@@ -91,7 +92,8 @@ public class CompanyTasks implements Runnable {
         logger.log(Level.INFO, "start tasks " + company);
 
         // invia le notifiche per i turni che iniziano prossimamente
-        if(company.isInviaNotificaInizioTurno()){
+
+        if(CompanyPrefs.inviaNotificaInizioTurno.getBool(company)){
             try {
                 notificaInizioTurno(company);
             }catch (Exception e){
@@ -109,11 +111,15 @@ public class CompanyTasks implements Runnable {
      */
     private void notificaInizioTurno(WamCompany company) throws Exception {
 
+        int ore = CompanyPrefs.quanteOrePrimaNotificaInizioTurno.getInt(company);
+
         // controlla che la funzione sia correttamente configurata
-        if(company.getQuanteOrePrimaNotificaInizioTurno()<=0){
+        if(ore<=0){
             throw new Exception("ore prima notifica inizio turno non configurate");
         }
-        if(company.getSenderAddress().equals("")){
+
+        String addr=CompanyPrefs.senderAddress.getString(company);
+        if(addr.equals("")){
             throw new Exception("indirizzo mittente non configurato");
         }
 
@@ -181,7 +187,7 @@ public class CompanyTasks implements Runnable {
      */
     private Iscrizione[] getIscrizioniDaNotificare(WamCompany company) {
 
-        int oreInAvanti=company.getQuanteOrePrimaNotificaInizioTurno();
+        int oreInAvanti=CompanyPrefs.quanteOrePrimaNotificaInizioTurno.getInt(company);
 
         CriteriaBuilder cb = manager.getCriteriaBuilder();
         CriteriaQuery<Iscrizione> cq = cb.createQuery(Iscrizione.class);

@@ -26,6 +26,7 @@ import it.algos.wam.lib.WamRuoli;
 import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.wam.login.WamLogin;
 import it.algos.wam.menu.WamMenuCommand;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.wam.settings.ConfigScreen;
 import it.algos.wam.settings.MgrConfigScreen;
 import it.algos.wam.tabellone.Tabellone;
@@ -166,7 +167,8 @@ public class WamUI extends UI {
 
         // Se la company prevede tabellone pubblico, mostra il tabellone prima del login
         // (se non viene dal goHome() del tabellone stesso)
-        if (company.isTabellonePubblico()) {
+        boolean tabPubblico=CompanyPrefs.tabellonePubblico.getBool(company);
+        if (tabPubblico) {
             if (!LibSession.isAttribute(KEY_GOHOME)) {
                 UI.getCurrent().setContent(getTabellone());
                 return;

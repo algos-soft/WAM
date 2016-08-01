@@ -88,9 +88,8 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 		public DataSetItem() {
 			super();
 
-			WamCompany company = WamCompany.getCurrent();
-			boolean doInviaNotifInizioTurno=company.isInviaNotificaInizioTurno();
-			int orePrima = company.getQuanteOrePrimaNotificaInizioTurno();
+			boolean doInviaNotifInizioTurno=CompanyPrefs.inviaNotificaInizioTurno.getBool();
+			int orePrima = CompanyPrefs.quanteOrePrimaNotificaInizioTurno.getInt();
 
 			addItemProperty(KEY_INVIA_NOTIFICA, new ObjectProperty<Boolean>(doInviaNotifInizioTurno));
 			addItemProperty(KEY_ORE_PRIMA, new ObjectProperty<Integer>(orePrima));
@@ -114,15 +113,10 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 			
 			if (cont) {
 
-				WamCompany company = WamCompany.getCurrent();
-
 				boolean doInviaNotifInizioTurno = (Boolean)getItemProperty(KEY_INVIA_NOTIFICA).getValue();
-				company.setInviaNotificaInizioTurno(doInviaNotifInizioTurno);
-
 				int orePrima = (int)getItemProperty(KEY_ORE_PRIMA).getValue();
-				company.setQuanteOrePrimaNotificaInizioTurno(orePrima);
-
-				company.save();
+				CompanyPrefs.inviaNotificaInizioTurno.put(doInviaNotifInizioTurno);
+				CompanyPrefs.quanteOrePrimaNotificaInizioTurno.put(orePrima);
 
 			}
 

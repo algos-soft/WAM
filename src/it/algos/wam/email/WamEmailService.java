@@ -3,6 +3,7 @@ package it.algos.wam.email;
 import it.algos.wam.base_email.Attachment;
 import it.algos.wam.base_email.EmailService;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.wam.settings.ManagerPrefs;
 import org.apache.commons.mail.EmailException;
 
@@ -36,11 +37,13 @@ public class WamEmailService {
         boolean useAuth = ManagerPrefs.smtpUseAuth.getBool();
         String username = ManagerPrefs.smtpUserName.getString();
         String password = ManagerPrefs.smtpPassword.getString();
-        String from = company.getSenderAddress();
+
+        String from = CompanyPrefs.senderAddress.getString(company);
 
         // se per la company è previsto backup di tutte le email, aggiunge la mailbox di backup al bcc
-        if(company.isSendMailToBackup()){
-            String bkMailbox=company.getBackupMailbox();
+        boolean backup=CompanyPrefs.sendMailToBackup.getBool(company);
+        if(backup){
+            String bkMailbox=CompanyPrefs.backupMailbox.getString(company);
             if(!bkMailbox.equals("")){
                 if(bcc==null){
                     bcc="";
@@ -48,7 +51,7 @@ public class WamEmailService {
                 if(!bcc.equals("")){
                     bcc+=", ";
                 }
-                bcc+=company.getBackupMailbox();
+                bcc+=bkMailbox;
             }
         }
 

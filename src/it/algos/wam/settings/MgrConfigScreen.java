@@ -20,7 +20,7 @@ public class MgrConfigScreen extends Accordion implements View {
 
         configComponents = new ArrayList<>();
         configComponents.add(new SMTPServerConfigComponent());
-//        configComponents.add(new MgrNotificheConfigComponent());
+        configComponents.add(new GeneralDaemonConfigComponent());
 
         for (ConfigComponent comp : configComponents) {
             addTab(comp.getUIComponent(), comp.getTitle());

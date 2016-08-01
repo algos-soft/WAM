@@ -111,7 +111,6 @@ public abstract class BootService {
             company.setAddress1("Via Turati, 12");
             company.setAddress1("20199 Garbagnate Milanese");
             company.setContact("Mario Bianchi");
-            company.setTabellonePubblico(true);
             company.save();
         }// end of if cycle
         return company;
@@ -129,7 +128,6 @@ public abstract class BootService {
             company.setAddress1("Piazza Napoli, 51");
             company.setAddress1("20100 Milano");
             company.setContact("Giovanni Rossi");
-            company.setTabellonePubblico(true);
             company.save();
         }// end of if cycle
         return company;
