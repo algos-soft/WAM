@@ -10,7 +10,9 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.settings.ManagerPrefs;
+import it.algos.wam.settings.CompanyPrefs;
+import it.algos.webbase.domain.pref.Pref;
+import it.algos.webbase.domain.pref.PrefType;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibDate;
 
@@ -83,6 +85,7 @@ public abstract class BootService {
         EntityManager manager = EM.createEntityManager();
         manager.getTransaction().begin();
 
+        creaPreferenze(company);
         listaFunzioni = creaFunzioni(company, manager);
         listaServizi = creaServizi(company, manager, listaFunzioni);
         listaVolontari = creaVolontari(company, manager, listaFunzioni);
@@ -98,6 +101,21 @@ public abstract class BootService {
         manager.getTransaction().commit();
         manager.close();
     }// end of static method
+
+
+    /**
+     * Creazione iniziale delle preferenze per ogni croce
+     * Le crea SOLO se non esistono già
+     */
+    private static void creaPreferenze(WamCompany company) {
+        Pref.crea(CompanyPrefs.tabellonePubblico.toString(), PrefType.bool, company, "tabellone è liberamente accessibile in visione senza login", true);
+        Pref.crea(CompanyPrefs.senderAddress.toString(), PrefType.string, company, "indirizzo email del mittente", "");
+        Pref.crea(CompanyPrefs.sendMailToBackup.toString(), PrefType.bool, company, "invia ogni mail anche a una casella di backup", false);
+        Pref.crea(CompanyPrefs.backupMailbox.toString(), PrefType.string, company, "casella di backup delle email", "");
+        Pref.crea(CompanyPrefs.inviaNotificaInizioTurno.toString(), PrefType.bool, company, "invia le notifiche di inizio turno", true);
+        Pref.crea(CompanyPrefs.quanteOrePrimaNotificaInizioTurno.toString(), PrefType.integer, company, "quante ore prima invia le notifiche di inizio turno", 24);
+    }// end of static method
+
 
     /**
      * Creazione iniziale dei dati generali per la croce demo
@@ -139,7 +157,6 @@ public abstract class BootService {
      *
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
-     *
      * @return lista delle funzioni create
      */
     @SuppressWarnings("unchecked")
@@ -180,7 +197,6 @@ public abstract class BootService {
      * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
-     *
      * @return istanza di Funzione
      */
     private static Funzione creaFunzBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -199,7 +215,6 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param funz    lista delle funzioni di questa croce
-     *
      * @return lista dei servizi creati
      */
     @SuppressWarnings("unchecked")
@@ -242,7 +257,6 @@ public abstract class BootService {
      * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
-     *
      * @return istanza di Servizio
      */
     private static Servizio creaServBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -299,7 +313,6 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param funz    lista delle funzioni di questa croce
-     *
      * @return lista dei volontari creati
      */
     @SuppressWarnings("unchecked")
@@ -313,22 +326,22 @@ public abstract class BootService {
 
         if (company.getCompanyCode().equals(WAMApp.DEMO_COMPANY_CODE)) {
             lista.add(Arrays.asList("Stefano", "Brambilla", "stefano.brambilla@wamdemo.it", "bra", false, funz.get(1)));
-            lista.add(Arrays.asList("Giovanna", "Durante", "giovanna.durante@wamdemo.it","dur", false, funz));
-            lista.add(Arrays.asList("Roberto", "Marchetti", "roberto.marchetti@wamdemo.it","mar", false, funz.get(7), funz.get(9)));
-            lista.add(Arrays.asList("Edoardo", "Politi", "edoardo.politi@wamdemo.it","pol", false, funz.get(5)));
-            lista.add(Arrays.asList("Lucia", "Casaroli", "lucia.casaroli@wamdemo.it","cas", true, funz.get(0)));
-            lista.add(Arrays.asList("Flavia", "Robusti", "flavia.robusti@wamdemo.it","rob", false, funz.get(8), funz.get(9)));
-            lista.add(Arrays.asList("Marco", "Terzani","marco.terzani@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
+            lista.add(Arrays.asList("Giovanna", "Durante", "giovanna.durante@wamdemo.it", "dur", false, funz));
+            lista.add(Arrays.asList("Roberto", "Marchetti", "roberto.marchetti@wamdemo.it", "mar", false, funz.get(7), funz.get(9)));
+            lista.add(Arrays.asList("Edoardo", "Politi", "edoardo.politi@wamdemo.it", "pol", false, funz.get(5)));
+            lista.add(Arrays.asList("Lucia", "Casaroli", "lucia.casaroli@wamdemo.it", "cas", true, funz.get(0)));
+            lista.add(Arrays.asList("Flavia", "Robusti", "flavia.robusti@wamdemo.it", "rob", false, funz.get(8), funz.get(9)));
+            lista.add(Arrays.asList("Marco", "Terzani", "marco.terzani@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
         }// end of if cycle
 
         if (company.getCompanyCode().equals(WAMApp.TEST_COMPANY_CODE)) {
-            lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it","abb", false, funz.get(2)));
-            lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it","ber", true, funz.get(3)));
-            lista.add(Arrays.asList("Mirella", "Pace", "mirella.pace@wamdemo.it","pac", false, funz.get(4)));
-            lista.add(Arrays.asList("Sabina", "Roncelli", "sabina.roncelli@wamdemo.it","ron", false, funz.get(6)));
-            lista.add(Arrays.asList("Antonio", "Zambetti", "antonio.zambetti@wamdemo.it","zam", false, funz.get(8)));
-            lista.add(Arrays.asList("Aldo", "Terzino", "aldo.terzino@wamdemo.it","ter", false, funz.get(8), funz.get(9)));
-            lista.add(Arrays.asList("Alice", "Mantovani", "alice.mantovani@wamdemo.it","man", false, funz.get(8), funz.get(9)));
+            lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it", "abb", false, funz.get(2)));
+            lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it", "ber", true, funz.get(3)));
+            lista.add(Arrays.asList("Mirella", "Pace", "mirella.pace@wamdemo.it", "pac", false, funz.get(4)));
+            lista.add(Arrays.asList("Sabina", "Roncelli", "sabina.roncelli@wamdemo.it", "ron", false, funz.get(6)));
+            lista.add(Arrays.asList("Antonio", "Zambetti", "antonio.zambetti@wamdemo.it", "zam", false, funz.get(8)));
+            lista.add(Arrays.asList("Aldo", "Terzino", "aldo.terzino@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
+            lista.add(Arrays.asList("Alice", "Mantovani", "alice.mantovani@wamdemo.it", "man", false, funz.get(8), funz.get(9)));
         }// end of if cycle
 
         for (int k = 0; k < lista.size(); k++) {
@@ -345,15 +358,14 @@ public abstract class BootService {
      * @param company  croce di appartenenza
      * @param manager  the EntityManager to use
      * @param listaTmp di alcune property
-     *
      * @return istanza di Volontario
      */
     private static Volontario creaVolBase(WamCompany company, EntityManager manager, List listaTmp) {
         String nome = "";
         String cognome = "";
         String password = "";
-        String email="";
-        boolean admin=false;
+        String email = "";
+        boolean admin = false;
         Funzione[] funzioni = null;
         ArrayList lista = null;
 
@@ -402,7 +414,6 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param servizi lista dei servizi di questa croce
-     *
      * @return lista dei turni creati
      */
     private static ArrayList<Turno> creaTurniVuoti(WamCompany company, EntityManager manager, ArrayList<Servizio> servizi) {
