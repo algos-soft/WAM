@@ -20,6 +20,8 @@
         <setting name="provider-name" value="" />
         <datasource-mapping>
           <factory-entry name="MigrationUnit" />
+          <factory-entry name="MySqlUnit" />
+          <factory-entry name="Webambulanze" />
         </datasource-mapping>
         <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/META-INF/persistence.xml" />
       </configuration>

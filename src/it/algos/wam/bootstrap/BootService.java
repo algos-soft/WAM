@@ -109,7 +109,7 @@ public abstract class BootService {
      */
     private static void creaPreferenze(WamCompany company) {
         Pref.crea(CompanyPrefs.tabellonePubblico.toString(), PrefType.bool, company, "tabellone è liberamente accessibile in visione senza login", true);
-        Pref.crea(CompanyPrefs.senderAddress.toString(), PrefType.string, company, "indirizzo email del mittente", "");
+        Pref.crea(CompanyPrefs.senderAddress.toString(), PrefType.string, company, "indirizzo email del mittente", company.getCompanyCode() + "@algos.it");
         Pref.crea(CompanyPrefs.sendMailToBackup.toString(), PrefType.bool, company, "invia ogni mail anche a una casella di backup", false);
         Pref.crea(CompanyPrefs.backupMailbox.toString(), PrefType.string, company, "casella di backup delle email", "");
         Pref.crea(CompanyPrefs.inviaNotificaInizioTurno.toString(), PrefType.bool, company, "invia le notifiche di inizio turno", true);
