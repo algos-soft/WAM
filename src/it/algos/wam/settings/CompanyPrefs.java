@@ -48,6 +48,22 @@ public enum CompanyPrefs {
         this.descrizione = descrizione;
     }// end of internal constructor
 
+
+    /**
+     * Retrieves this preference's value as String
+     */
+    public String getString() {
+        return Pref.getString(code, defaultValue);
+    }// end of method
+
+    /**
+     * Retrieves this preference's value as String
+     */
+    public String getString(WamCompany company) {
+        return Pref.getString(code, company, defaultValue);
+    }// end of method
+
+
     /**
      * Retrieves this preference's value as boolean
      */
@@ -60,49 +76,6 @@ public enum CompanyPrefs {
      */
     public boolean getBool(WamCompany company) {
         return Pref.getBool(code, company, defaultValue);
-    }// end of method
-
-    /**
-     * Retrieves this preference's value as byte[]
-     */
-    public byte[] getBytes() {
-        return Pref.getBytes(code, defaultValue);
-    }// end of method
-
-    /**
-     * Retrieves this preference's value as byte[]
-     */
-    public byte[] getBytes(WamCompany company) {
-        return Pref.getBytes(code, company, defaultValue);
-    }// end of method
-
-    /**
-     * Retrieves this preference's value as Date
-     */
-    public Date getDate() {
-        return Pref.getDate(code, defaultValue);
-    }// end of method
-
-    /**
-     * Retrieves this preference's value as Date
-     */
-    public Date getDate(WamCompany company) {
-        return Pref.getDate(code, company, defaultValue);
-    }// end of method
-
-
-    /**
-     * Retrieves this preference's value as BigDecimal
-     */
-    public BigDecimal getDecimal() {
-        return Pref.getDecimal(code, defaultValue);
-    }// end of method
-
-    /**
-     * Retrieves this preference's value as BigDecimal
-     */
-    public BigDecimal getDecimal(WamCompany company) {
-        return Pref.getDecimal(code, company, defaultValue);
     }// end of method
 
 
@@ -122,17 +95,32 @@ public enum CompanyPrefs {
 
 
     /**
-     * Retrieves this preference's value as String
+     * Retrieves this preference's value as BigDecimal
      */
-    public String getString() {
-        return Pref.getString(code, defaultValue);
+    public BigDecimal getDecimal() {
+        return Pref.getDecimal(code, defaultValue);
     }// end of method
 
     /**
-     * Retrieves this preference's value as String
+     * Retrieves this preference's value as BigDecimal
      */
-    public String getString(WamCompany company) {
-        return Pref.getString(code, company, defaultValue);
+    public BigDecimal getDecimal(WamCompany company) {
+        return Pref.getDecimal(code, company, defaultValue);
+    }// end of method
+
+
+    /**
+     * Retrieves this preference's value as Date
+     */
+    public Date getDate() {
+        return Pref.getDate(code, defaultValue);
+    }// end of method
+
+    /**
+     * Retrieves this preference's value as Date
+     */
+    public Date getDate(WamCompany company) {
+        return Pref.getDate(code, company, defaultValue);
     }// end of method
 
 
@@ -163,6 +151,21 @@ public enum CompanyPrefs {
      */
     public Resource getResource(WamCompany company) {
         return Pref.getResource(code, company, defaultValue);
+    }// end of method
+
+
+    /**
+     * Retrieves this preference's value as byte[]
+     */
+    public byte[] getBytes() {
+        return Pref.getBytes(code, defaultValue);
+    }// end of method
+
+    /**
+     * Retrieves this preference's value as byte[]
+     */
+    public byte[] getBytes(WamCompany company) {
+        return Pref.getBytes(code, company, defaultValue);
     }// end of method
 
 
