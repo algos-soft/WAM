@@ -12,7 +12,7 @@ import it.algos.webbase.web.field.TextField;
 
 @SuppressWarnings("serial")
 /**
- * Componente di configurazione email
+ * Componente di configurazione email ad uso dell'Admin
  */
 public class EmailConfigComponent extends BaseConfigPanel {
 

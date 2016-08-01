@@ -3,7 +3,7 @@ package it.algos.wam.settings;
 import com.vaadin.ui.Component;
 
 /**
- * A Configuration Component
+ * Componente di base per le pagine di configurazione
  */
 public interface ConfigComponent {
 	

@@ -12,9 +12,9 @@ import it.algos.webbase.web.field.IntegerField;
 @SuppressWarnings("serial")
 
 /**
- * Componente di configurazione delle notifiche ad uso dell'Admin
+ * Componente di configurazione delle notifiche ad uso del Manager
  */
-public class NotificheConfigComponent extends BaseConfigPanel {
+public class MgrNotificheConfigComponent extends BaseConfigPanel {
 
 	private static final String KEY_INVIA_NOTIFICA = "invianotifica";
 	private static final String KEY_ORE_PRIMA = "oreprima";
@@ -22,7 +22,7 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 	private CheckBoxField fldInviaNotificaInizioTurno;
 	private IntegerField fldNotificaQuanteOrePrima;
 
-	public NotificheConfigComponent() {
+	public MgrNotificheConfigComponent() {
 		super();
 
 		// crea i fields

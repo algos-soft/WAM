@@ -10,6 +10,10 @@ import it.algos.webbase.web.field.EmailField;
 import it.algos.webbase.web.field.TextField;
 
 @SuppressWarnings("serial")
+
+/**
+ * Componente di configurazione dei permessi utente ad uso dell'Admin
+ */
 public class PermessiConfigComponent extends BaseConfigPanel {
 
 	private static final String KEY_SENDER = "sender";

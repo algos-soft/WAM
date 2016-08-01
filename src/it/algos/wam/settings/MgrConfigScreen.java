@@ -6,24 +6,21 @@ import com.vaadin.ui.Accordion;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("serial")
-
 /**
- * Schermata generale delle preferenze ad uso dell'Admin
+ * Schermata generale delle preferenze per il manager
  * Created by alex on 1-08-2016.
  */
-public class ConfigScreen extends Accordion implements View {
+public class MgrConfigScreen extends Accordion implements View {
 
     private ArrayList<ConfigComponent> configComponents;
 
-    public ConfigScreen() {
+    public MgrConfigScreen() {
         super();
         setSizeFull();
 
         configComponents = new ArrayList<>();
-        configComponents.add(new NotificheConfigComponent());
-        configComponents.add(new EmailConfigComponent());
-        configComponents.add(new PermessiConfigComponent());
+        configComponents.add(new SMTPServerConfigComponent());
+//        configComponents.add(new MgrNotificheConfigComponent());
 
         for (ConfigComponent comp : configComponents) {
             addTab(comp.getUIComponent(), comp.getTitle());

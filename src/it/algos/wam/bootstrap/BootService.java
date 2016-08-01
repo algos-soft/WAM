@@ -10,6 +10,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.settings.ManagerPrefs;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibDate;
 
@@ -32,7 +33,6 @@ public abstract class BootService {
      * La crea SOLO se non esiste già
      */
     public static void creaCompanyDemo() {
-
         WamCompany company = creaCroceDemo();
         initCompany(company, true, true);
     }// end of static method

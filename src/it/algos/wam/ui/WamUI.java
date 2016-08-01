@@ -27,6 +27,7 @@ import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.wam.login.WamLogin;
 import it.algos.wam.menu.WamMenuCommand;
 import it.algos.wam.settings.ConfigScreen;
+import it.algos.wam.settings.MgrConfigScreen;
 import it.algos.wam.tabellone.Tabellone;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.log.LogMod;
@@ -311,8 +312,12 @@ public class WamUI extends UI {
 
         // aggiunge alla menubar le funzioni di Admin
         if (LibSession.isAdmin()) {
-            navComp.addView(LogMod.class, "Log", FontAwesome.CLOCK_O);
-            navComp.addView(ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
+            if(LibSession.isDeveloper()){
+                navComp.addView(MgrConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
+            }else{
+                navComp.addView(LogMod.class, "Log", FontAwesome.CLOCK_O);
+                navComp.addView(ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
+            }
         }
 
         // todo -- aggiunge le funzioni di developer (da sistemare)
@@ -541,7 +546,7 @@ public class WamUI extends UI {
 
 
     /**
-     * Ritorna la unica istanza per sessione del Tabellone
+     * Ritorna un nuovo Tabellone
      */
     private Tabellone getTabellone() {
 //        Tabellone tab;
@@ -559,7 +564,7 @@ public class WamUI extends UI {
 
 
     /**
-     * Ritorna la unica istanza per sessione del componente main
+     * Ritorna un nuovo componente main
      */
     private Component getMainComponent() {
 //        Component comp;

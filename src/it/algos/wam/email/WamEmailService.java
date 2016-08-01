@@ -3,6 +3,7 @@ package it.algos.wam.email;
 import it.algos.wam.base_email.Attachment;
 import it.algos.wam.base_email.EmailService;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.settings.ManagerPrefs;
 import org.apache.commons.mail.EmailException;
 
 /**
@@ -30,12 +31,11 @@ public class WamEmailService {
                                    String text, boolean html, Attachment[] attachments) throws EmailException {
 
         // qui recuperare i parametri di configurazione email WAM (e toglierli dai parametri richiesti da questo metodo)
-        //...
-        String hostName = "smtp.algos.it";
-        int smtpPort = 25;
-        boolean useAuth = true;
-        String username = "alex@algos.it";
-        String password = "barbapapa";
+        String hostName = ManagerPrefs.smtpServer.getString();
+        int smtpPort = ManagerPrefs.smtpPort.getInt();
+        boolean useAuth = ManagerPrefs.smtpUseAuth.getBool();
+        String username = ManagerPrefs.smtpUserName.getString();
+        String password = ManagerPrefs.smtpPassword.getString();
         String from = company.getSenderAddress();
 
         // se per la company è previsto backup di tutte le email, aggiunge la mailbox di backup al bcc
