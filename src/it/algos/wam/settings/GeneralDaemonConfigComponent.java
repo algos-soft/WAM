@@ -13,6 +13,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import it.algos.wam.WAMApp;
 import it.algos.wam.daemons.WamScheduler;
+import it.algos.webbase.web.component.Spacer;
 import it.algos.webbase.web.field.CheckBoxField;
 
 import javax.servlet.ServletContext;
@@ -62,22 +63,19 @@ public class GeneralDaemonConfigComponent extends BaseConfigPanel implements Vie
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
-		String title = "<b>Servizio di controllo delle posizioni scadute</b><p>";
-		title += "Ogni ora esegue i check per tutte le aziende abilitate per quell'ora.<br>"
-				+ "(Vedi abilitazione specifiche nelle preferenze delle singole aziende).";
+		String title = "<b>Servizio di controllo iscrizioni</b><p>";
+		title += "All'inizio di ogni ora esegue i controlli previsti per <br>"
+				+ "ogni azienda ed invia le eventuali notifiche.";
 		Label infoLabel = new Label(title, ContentMode.HTML);
 		layout.addComponent(infoLabel);
 		layout.addComponent(serviceStatus);
 		layout.addComponent(bStartDaemon);
 		layout.addComponent(bStopDaemon);
 		layout.addComponent(checkbox);
-
+		layout.addComponent(new Spacer());
 		layout.addComponent(createSaveButton());
 
 		setCompositionRoot(layout);
-
-//		addComponent(layout);
-//		addComponent(createButtonPanel());
 
 		refreshStatus();
 
@@ -152,15 +150,11 @@ public class GeneralDaemonConfigComponent extends BaseConfigPanel implements Vie
 
 			boolean startup=ManagerPrefs.startDaemonAtStartup.getBool();
 			addItemProperty(KEY_SERVICE_START, new ObjectProperty<Boolean>(startup));
-			
 		}
 		
-		
-
 		public void persist() {
 			Object obj = getItemProperty(KEY_SERVICE_START).getValue();
 			ManagerPrefs.startDaemonAtStartup.put(obj);
-
 		}
 
 	}

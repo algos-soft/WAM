@@ -115,12 +115,12 @@ public class CompanyTasks implements Runnable {
 
         // controlla che la funzione sia correttamente configurata
         if(ore<=0){
-            throw new Exception("ore prima notifica inizio turno non configurate");
+            throw new Exception(company+": ore prima notifica inizio turno non configurate");
         }
 
         String addr=CompanyPrefs.senderAddress.getString(company);
         if(addr.equals("")){
-            throw new Exception("indirizzo mittente non configurato");
+            throw new Exception(company+": indirizzo mittente non configurato");
         }
 
         // recupera l'elenco delle iscrizioni che iniziano prossimamente e non sono ancora state notificate
@@ -166,7 +166,12 @@ public class CompanyTasks implements Runnable {
                 }
 
                 try {
-                    WamEmailService.sendMail(company, email, subject, text);
+                    boolean riuscito=WamEmailService.sendMail(company, email, subject, text);
+                    if(riuscito){
+                        iscrizione.setNotificaInviata(true);
+                        iscrizione.save(manager);
+                    }
+
                 } catch (EmailException e) {
                     e.printStackTrace();
                 }

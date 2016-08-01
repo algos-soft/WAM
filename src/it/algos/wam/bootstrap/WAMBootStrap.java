@@ -2,6 +2,7 @@ package it.algos.wam.bootstrap;
 
 import it.algos.wam.WAMApp;
 import it.algos.wam.daemons.WamScheduler;
+import it.algos.wam.settings.ManagerPrefs;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.web.AlgosApp;
 import it.algos.webbase.web.bootstrap.ABootStrap;
@@ -54,7 +55,7 @@ public class WAMBootStrap extends ABootStrap {
         }
 
         // Avvia lo schedulatore che esegue i task periodici sul server
-        if (false) {
+        if (ManagerPrefs.startDaemonAtStartup.getBool()) {
             WamScheduler.getInstance().start();
         }
 
@@ -90,7 +91,7 @@ public class WAMBootStrap extends ABootStrap {
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
 
         // arresta lo scheduler
-//        WamScheduler.getInstance().stop();
+        WamScheduler.getInstance().stop();
 
         super.contextDestroyed(servletContextEvent);
     }// end of method

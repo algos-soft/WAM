@@ -57,5 +57,35 @@
         </properties>
     </persistence-unit>
 
+
+
+    <persistence-unit name="Webambulanze">
+
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+        <!--Le entity astratte (@MappedSuperclass) vanno obbligatoriamente listate-->
+        <class>it.algos.webbase.web.entity.BaseEntity</class>
+        <class>it.algos.wam.migration.Croce</class>
+
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="javax.persistence.jdbc.platform"
+                      value="org.eclipse.persistence.platform.database.MySQLPlatform"/>
+            <property name="javax.persistence.target-database" value="MySQL"/>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/amb?useUnicode=yes&amp;characterEncoding=UTF-8"/>
+
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="eclipselink.ddl-generation" value="none"/>
+
+            <!--per vedere l'SQL di tutte le query-->
+            <property name="eclipselink.logging.level" value="FINE"/>
+
+        </properties>
+    </persistence-unit>
+
+
 </persistence>
 
