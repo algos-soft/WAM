@@ -11,8 +11,6 @@ import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.settings.CompanyPrefs;
-import it.algos.webbase.domain.pref.Pref;
-import it.algos.webbase.domain.pref.PrefType;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibDate;
 
@@ -108,12 +106,18 @@ public abstract class BootService {
      * Le crea SOLO se non esistono già
      */
     private static void creaPreferenze(WamCompany company) {
-        Pref.crea(CompanyPrefs.tabellonePubblico.toString(), PrefType.bool, company, "tabellone è liberamente accessibile in visione senza login", true);
-        Pref.crea(CompanyPrefs.senderAddress.toString(), PrefType.string, company, "indirizzo email del mittente", company.getCompanyCode() + "@algos.it");
-        Pref.crea(CompanyPrefs.sendMailToBackup.toString(), PrefType.bool, company, "invia ogni mail anche a una casella di backup", false);
-        Pref.crea(CompanyPrefs.backupMailbox.toString(), PrefType.string, company, "casella di backup delle email", "");
-        Pref.crea(CompanyPrefs.inviaNotificaInizioTurno.toString(), PrefType.bool, company, "invia le notifiche di inizio turno", true);
-        Pref.crea(CompanyPrefs.quanteOrePrimaNotificaInizioTurno.toString(), PrefType.integer, company, "quante ore prima invia le notifiche di inizio turno", 24);
+        CompanyPrefs.tabellonePubblico.put(company, true);
+        CompanyPrefs.senderAddress.put(company, company.getCompanyCode() + "@algos.it");
+        CompanyPrefs.sendMailToBackup.put(company, false);
+        CompanyPrefs.backupMailbox.put(company, "");
+        CompanyPrefs.inviaNotificaInizioTurno.put(company, true);
+        CompanyPrefs.quanteOrePrimaNotificaInizioTurno.put(company, 24);
+//        Pref.crea(CompanyPrefs.tabellonePubblico.toString(), PrefType.bool, company, "tabellone è liberamente accessibile in visione senza login", true);
+//        Pref.crea(CompanyPrefs.senderAddress.toString(), PrefType.string, company, "indirizzo email del mittente", company.getCompanyCode() + "@algos.it");
+//        Pref.crea(CompanyPrefs.sendMailToBackup.toString(), PrefType.bool, company, "invia ogni mail anche a una casella di backup", false);
+//        Pref.crea(CompanyPrefs.backupMailbox.toString(), PrefType.string, company, "casella di backup delle email", "");
+//        Pref.crea(CompanyPrefs.inviaNotificaInizioTurno.toString(), PrefType.bool, company, "invia le notifiche di inizio turno", true);
+//        Pref.crea(CompanyPrefs.quanteOrePrimaNotificaInizioTurno.toString(), PrefType.integer, company, "quante ore prima invia le notifiche di inizio turno", 24);
     }// end of static method
 
 

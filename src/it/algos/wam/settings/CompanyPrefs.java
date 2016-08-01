@@ -15,8 +15,7 @@ import java.util.Date;
  * Defines the preferences and the methods to access them.<br>
  * Each preference has a key, a type and a default value.
  */
-
-public enum CompanyPrefs  {
+public enum CompanyPrefs {
 
     // se il tabellone è liberamente accessibile in visione senza login
     tabellonePubblico("tabellonePubblico", PrefType.bool, true),
@@ -34,61 +33,66 @@ public enum CompanyPrefs  {
     inviaNotificaInizioTurno("inviaNotificaInizioTurno", PrefType.bool, true),
 
     // quante ore prima invia le notifiche di inizio turno
-    quanteOrePrimaNotificaInizioTurno("quanteOrePrimaNotificaInizioTurno", PrefType.integer, 24)
-    ;
+    quanteOrePrimaNotificaInizioTurno("quanteOrePrimaNotificaInizioTurno", PrefType.integer, 24),;
 
     private String code;
     private PrefType type;
     private Object defaultValue;
+    private String descrizione;
 
-    private CompanyPrefs(String key, PrefType type, Object defaultValue) {
+
+    CompanyPrefs(String key, PrefType type, Object defaultValue) {
+        this(key, type, defaultValue, "");
+    }// end of internal constructor
+
+    CompanyPrefs(String key, PrefType type, Object defaultValue, String descrizione) {
         this.code = key;
         this.type = type;
         this.defaultValue = defaultValue;
-    }
+        this.descrizione = descrizione;
+    }// end of internal constructor
 
     /**
      * Retrieves this preference's value as boolean
      */
     public boolean getBool() {
         return Pref.getBool(code, defaultValue);
-    }
+    }// end of method
 
     /**
      * Retrieves this preference's value as boolean
      */
     public boolean getBool(WamCompany company) {
         return Pref.getBool(code, company, defaultValue);
-    }
+    }// end of method
 
     /**
      * Retrieves this preference's value as byte[]
      */
     public byte[] getBytes() {
         return Pref.getBytes(code, defaultValue);
-    }
+    }// end of method
 
     /**
      * Retrieves this preference's value as byte[]
      */
     public byte[] getBytes(WamCompany company) {
         return Pref.getBytes(code, company, defaultValue);
-    }
-
+    }// end of method
 
     /**
      * Retrieves this preference's value as Date
      */
     public Date getDate() {
         return Pref.getDate(code, defaultValue);
-    }
+    }// end of method
 
     /**
      * Retrieves this preference's value as Date
      */
     public Date getDate(WamCompany company) {
         return Pref.getDate(code, company, defaultValue);
-    }
+    }// end of method
 
 
     /**
@@ -96,14 +100,14 @@ public enum CompanyPrefs  {
      */
     public BigDecimal getDecimal() {
         return Pref.getDecimal(code, defaultValue);
-    }
+    }// end of method
 
     /**
      * Retrieves this preference's value as BigDecimal
      */
     public BigDecimal getDecimal(WamCompany company) {
         return Pref.getDecimal(code, company, defaultValue);
-    }
+    }// end of method
 
 
     /**
@@ -111,14 +115,14 @@ public enum CompanyPrefs  {
      */
     public int getInt() {
         return Pref.getInt(code, defaultValue);
-    }
+    }// end of method
 
     /**
      * Retrieves this preference's value as int
      */
     public int getInt(WamCompany company) {
-        return Pref.getInt(code,  company, defaultValue);
-    }
+        return Pref.getInt(code, company, defaultValue);
+    }// end of method
 
 
     /**
@@ -126,14 +130,14 @@ public enum CompanyPrefs  {
      */
     public String getString() {
         return Pref.getString(code, defaultValue);
-    }
+    }// end of method
 
     /**
      * Retrieves this preference's value as String
      */
     public String getString(WamCompany company) {
-        return Pref.getString(code,  company, defaultValue);
-    }
+        return Pref.getString(code, company, defaultValue);
+    }// end of method
 
 
     /**
@@ -141,14 +145,14 @@ public enum CompanyPrefs  {
      */
     public Image getImage() {
         return Pref.getImage(code, defaultValue);
-    }
+    }// end of method
 
     /**
      * Retrieves this preference's value as Image
      */
     public Image getImage(WamCompany company) {
         return Pref.getImage(code, company, defaultValue);
-    }
+    }// end of method
 
 
     /**
@@ -156,14 +160,14 @@ public enum CompanyPrefs  {
      */
     public Resource getResource() {
         return Pref.getResource(code, defaultValue);
-    }
+    }// end of method
 
     /**
      * Retrieves this preference's value as Resource
      */
     public Resource getResource(WamCompany company) {
         return Pref.getResource(code, company, defaultValue);
-    }
+    }// end of method
 
 
     /**
@@ -174,8 +178,8 @@ public enum CompanyPrefs  {
      * @param value the value
      */
     public void put(Object value) {
-        Pref.put(code, value, type);
-    }
+        Pref.put(code, type, value);
+    }// end of method
 
     /**
      * Writes a value in the storage for this preference
@@ -183,11 +187,11 @@ public enum CompanyPrefs  {
      * If the preference does not exist it is created now.
      *
      * @param company the company
-     * @param value the value
+     * @param value   the value
      */
     public void put(WamCompany company, Object value) {
-        Pref.put(code, company, value, type);
-    }
+        Pref.put(code, company, type, value);
+    }// end of method
 
 
     /**
@@ -196,7 +200,7 @@ public enum CompanyPrefs  {
      */
     public void remove() {
         Pref.remove(code, null);
-    }
+    }// end of method
 
     /**
      * Removes this preference from the storage.
@@ -204,6 +208,6 @@ public enum CompanyPrefs  {
      */
     public void remove(WamCompany company) {
         Pref.remove(code, company);
-    }
+    }// end of method
 
-}
+}// end of enumeration class
