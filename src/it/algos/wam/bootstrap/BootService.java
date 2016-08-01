@@ -106,12 +106,12 @@ public abstract class BootService {
      * Le crea SOLO se non esistono già
      */
     private static void creaPreferenze(WamCompany company) {
-        CompanyPrefs.tabellonePubblico.put(company, true, "Se il tabellone è liberamente accessibile in visione senza login");
-        CompanyPrefs.senderAddress.put(company, company.getCompanyCode() + "@algos.it", "Indirizzo email del mittente");
-        CompanyPrefs.sendMailToBackup.put(company, false, "Se invia ogni mail anche a una casella di backup");
-        CompanyPrefs.backupMailbox.put(company, "", "La casella di backup delle email");
-        CompanyPrefs.inviaNotificaInizioTurno.put(company, true, "Se invia le notifiche di inizio turno");
-        CompanyPrefs.quanteOrePrimaNotificaInizioTurno.put(company, 24, "Quante ore prima invia le notifiche di inizio turno");
+        CompanyPrefs.tabellonePubblico.put(company, true);
+        CompanyPrefs.senderAddress.put(company, company.getCompanyCode() + "@algos.it");
+        CompanyPrefs.sendMailToBackup.put(company, false);
+        CompanyPrefs.backupMailbox.put(company, "");
+        CompanyPrefs.inviaNotificaInizioTurno.put(company, true);
+        CompanyPrefs.quanteOrePrimaNotificaInizioTurno.put(company, 24);
     }// end of static method
 
 

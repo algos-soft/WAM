@@ -17,23 +17,18 @@ import java.util.Date;
  */
 public enum CompanyPrefs {
 
-    // se il tabellone è liberamente accessibile in visione senza login
-    tabellonePubblico("tabellonePubblico", PrefType.bool, true),
+    tabellonePubblico("tabellonePubblico", PrefType.bool, true, "Se il tabellone è liberamente accessibile in visione senza login"),
 
-    // indirizzo email del mittente
-    senderAddress("senderAddress", PrefType.string, ""),
+    senderAddress("senderAddress", PrefType.string, "", "Indirizzo email del mittente"),
 
-    // se invia ogni mail anche a una casella di backup
-    sendMailToBackup("sendMailToBackup", PrefType.bool, false),
+    sendMailToBackup("sendMailToBackup", PrefType.bool, false, "Se invia ogni mail anche a una casella di backup"),
 
-    // la casella di backup delle email
-    backupMailbox("backupMailbox", PrefType.string, ""),
+    backupMailbox("backupMailbox", PrefType.string, "", "La casella di backup delle email"),
 
-    // se invia le notifiche di inizio turno
-    inviaNotificaInizioTurno("inviaNotificaInizioTurno", PrefType.bool, true),
+    inviaNotificaInizioTurno("inviaNotificaInizioTurno", PrefType.bool, true, "Se invia le notifiche di inizio turno"),
 
-    // quante ore prima invia le notifiche di inizio turno
-    quanteOrePrimaNotificaInizioTurno("quanteOrePrimaNotificaInizioTurno", PrefType.integer, 24),;
+    quanteOrePrimaNotificaInizioTurno("quanteOrePrimaNotificaInizioTurno", PrefType.integer, 24, "Quante ore prima invia le notifiche di inizio turno"),;
+
 
     private String code;
     private PrefType type;
@@ -44,6 +39,7 @@ public enum CompanyPrefs {
     CompanyPrefs(String key, PrefType type, Object defaultValue) {
         this(key, type, defaultValue, "");
     }// end of internal constructor
+
 
     CompanyPrefs(String key, PrefType type, Object defaultValue, String descrizione) {
         this.code = key;
@@ -190,18 +186,6 @@ public enum CompanyPrefs {
      * @param value   the value
      */
     public void put(WamCompany company, Object value) {
-        Pref.put(code, company, type, value);
-    }// end of method
-
-    /**
-     * Writes a value in the storage for this preference
-     * <p>
-     * If the preference does not exist it is created now.
-     *
-     * @param company the company
-     * @param value   the value
-     */
-    public void put(WamCompany company, Object value, String descrizione) {
         Pref.put(code, company, type, value, descrizione);
     }// end of method
 
