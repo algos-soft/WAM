@@ -61,15 +61,13 @@ public class FunzioneTable extends ETable {
                     WamCompanyEntity_.company,
                     Funzione_.ordine,
                     COL_ICON,
-                    Funzione_.siglaInterna,
-                    Funzione_.siglaVisibile,
+                    Funzione_.sigla,
                     Funzione_.descrizione,
             };// end of array
         } else {
             return new Object[]{
                     COL_ICON,
-                    Funzione_.siglaInterna,
-                    Funzione_.siglaVisibile,
+                    Funzione_.sigla,
                     Funzione_.descrizione,
             };// end of array
         }// end of if/else cycle
@@ -103,19 +101,16 @@ public class FunzioneTable extends ETable {
 
     private void fixColumn() {
         setColumnHeader(Funzione_.ordine, "##"); // visibile solo per il developer
-        setColumnHeader(Funzione_.siglaInterna, "Interna");
-        setColumnHeader(Funzione_.siglaVisibile, "Visibile");
+        setColumnHeader(Funzione_.sigla, "Sigla");
 
         setColumnAlignment(COL_ICON, Align.CENTER);
 
-        setColumnExpandRatio(Funzione_.siglaInterna, 1);
-        setColumnExpandRatio(Funzione_.siglaVisibile, 1);
+        setColumnExpandRatio(Funzione_.sigla, 1);
         setColumnExpandRatio(Funzione_.descrizione, 3);
 
         setColumnWidth(Funzione_.ordine, 50);
         setColumnWidth(COL_ICON, 80);
-        setColumnWidth(Funzione_.siglaInterna, 110);
-        setColumnWidth(Funzione_.siglaVisibile, 110);
+        setColumnWidth(Funzione_.sigla, 110);
     }// end of method
 
 

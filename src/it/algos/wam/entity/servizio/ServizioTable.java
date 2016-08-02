@@ -195,7 +195,7 @@ public class ServizioTable extends ETable {
                     testo += "<span style=\"color:blue;\">";
                 }// end of if/else cycle
 
-                testo += servFunz.getFunzione().getSiglaInterna();
+                testo += servFunz.getFunzione().getSigla();
 
                 if (k < lista.size() - 1) {
                     testo += ",&nbsp;";

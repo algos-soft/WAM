@@ -1,7 +1,6 @@
 package it.algos.wam.entity.volontario;
 
 import com.vaadin.data.Container;
-import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
@@ -11,7 +10,6 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibSession;
@@ -49,7 +47,7 @@ public class VolontarioTable extends ETable {
     protected void createAdditionalColumns() {
         ArrayList<Funzione> listaFunzioni = Funzione.findAll((WamCompany)CompanySessionLib.getCompany());
         for (Funzione funz : listaFunzioni) {
-            addGeneratedColumn(funz.getSiglaInterna(), new FunzioniColumnGenerator(funz));
+            addGeneratedColumn(funz.getSigla(), new FunzioniColumnGenerator(funz));
         }// end of for cycle
     }// end of method
 
@@ -79,7 +77,7 @@ public class VolontarioTable extends ETable {
 //        }// end of if cycle
 //
         for (Funzione funz : listaFunzioni) {
-            lista.add(funz.getSiglaInterna());
+            lista.add(funz.getSigla());
         }// end of for cycle
 
         return lista.toArray();
@@ -118,7 +116,7 @@ public class VolontarioTable extends ETable {
         setColumnHeader(Volontario_.cognome, "Cognome");
 
         for (Funzione funz : listaFunzioni) {
-            setColumnWidth(funz.getSiglaInterna(), LAR);
+            setColumnWidth(funz.getSigla(), LAR);
         }// end of for cycle
     }// end of method
 

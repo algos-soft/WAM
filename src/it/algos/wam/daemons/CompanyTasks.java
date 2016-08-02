@@ -3,8 +3,6 @@ package it.algos.wam.daemons;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerFactory;
-import com.vaadin.data.Validator;
-import com.vaadin.data.validator.EmailValidator;
 import it.algos.wam.email.WamEmailService;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
@@ -16,11 +14,9 @@ import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.multiazienda.CompanyEntity_;
-import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import org.apache.commons.mail.EmailException;
-import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -160,7 +156,7 @@ public class CompanyTasks implements Runnable {
                         text += "\n- ";
                         text += i.getVolontario().getNickname();
                         text += " (";
-                        text += funz.getSiglaVisibile();
+                        text += funz.getSigla();
                         text += ")";
                     }
                 }

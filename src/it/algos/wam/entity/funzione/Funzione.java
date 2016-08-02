@@ -41,18 +41,17 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     private static final long serialVersionUID = 1L;
 
 
-    //--sigla di riferimento interna NON visibile nel tabellone (obbligatoria)
     @NotEmpty
     @Column(length = 20)
     @Index
-    private String siglaInterna = "";
+    private String sigla = "";
 
 
-    //--descrizione visibile nel tabellone (obbligatoria)
-    @NotEmpty
-    @Column(length = 100)
-    @Index
-    private String siglaVisibile = "";
+//    //--descrizione visibile nel tabellone (obbligatoria)
+//    @NotEmpty
+//    @Column(length = 100)
+//    @Index
+//    private String siglaVisibile = "";
 
 
     //--ordine di presentazione nelle liste
@@ -64,7 +63,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     private int iconCodepoint;
 
 
-    //--note di spiegazione (facoltative)
     @Column(columnDefinition = "text")
     private String descrizione = "";
 
@@ -92,11 +90,10 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Costruttore minimo con tutte le properties obbligatorie
      *
      * @param company       croce di appartenenza (property della superclasse)
-     * @param siglaInterna  sigla di riferimento interna (obbligatoria)
-     * @param siglaVisibile per il tabellone (obbligatoria)
+     * @param sigla  sigla di riferimento interna (obbligatoria)
      */
-    public Funzione(BaseCompany company, String siglaInterna, String siglaVisibile) {
-        this(company, siglaInterna, siglaVisibile, 0, null, "");
+    public Funzione(BaseCompany company, String sigla) {
+        this(company, sigla, 0, null, "");
     }// end of constructor
 
 
@@ -104,17 +101,16 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Costruttore completo
      *
      * @param company       croce di appartenenza
-     * @param siglaInterna  sigla di riferimento interna (obbligatoria)
-     * @param siglaVisibile per il tabellone (obbligatoria)
+     * @param sigla  sigla di riferimento interna (obbligatoria)
      * @param ordine        di presentazione nelle liste
      * @param glyph         icona di FontAwesome (facoltative)
      * @param note          di spiegazione (facoltative)
      */
-    public Funzione(BaseCompany company, String siglaInterna, String siglaVisibile, int ordine, FontAwesome glyph, String note) {
+    public Funzione(BaseCompany company, String sigla, int ordine, FontAwesome glyph, String note) {
         super();
         this.setCompany(company);
-        this.setSiglaInterna(siglaInterna);
-        this.setSiglaVisibile(siglaVisibile);
+        this.setSigla(sigla);
+//        this.setSiglaVisibile(siglaVisibile);
         this.setOrdine(ordine);
         this.setIcon(glyph);
         this.setDescrizione(note);
@@ -233,7 +229,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     public static Funzione findBySigla(String siglaInterna) {
         Funzione instance = null;
-        BaseEntity bean = CompanyQuery.queryOne(Funzione.class, Funzione_.siglaInterna, siglaInterna);
+        BaseEntity bean = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, siglaInterna);
 
         if (bean != null && bean instanceof Funzione) {
             instance = (Funzione) bean;
@@ -256,7 +252,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         BaseEntity bean;
 
         EntityManager manager = EM.createEntityManager();
-        bean = CompanyQuery.queryOne(Funzione.class, Funzione_.siglaInterna, siglaInterna, manager, company);
+        bean = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, siglaInterna, manager, company);
         manager.close();
 
         if (bean != null && bean instanceof Funzione) {
@@ -276,7 +272,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return istanza di Funzione
      */
     public static Funzione crea(WamCompany company, String siglaInterna) {
-        return crea(company, null, siglaInterna, "", 0, "");
+        return crea(company, null, siglaInterna, 0, "");
     }// end of static method
 
     /**
@@ -289,7 +285,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return istanza di Funzione
      */
     public static Funzione crea(WamCompany company, EntityManager manager, String siglaInterna) {
-        return crea(company, manager, siglaInterna, "", 0, "");
+        return crea(company, manager, siglaInterna, 0, "");
     }// end of static method
 
     /**
@@ -299,13 +295,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company       croce di appartenenza
      * @param manager       the EntityManager to use
      * @param siglaInterna  sigla di riferimento interna (obbligatoria)
-     * @param siglaVisibile per il tabellone (obbligatoria)
      * @param ordine        di presentazione nelle liste
      * @param note          di spiegazione (facoltative)
      * @return istanza di Funzione
      */
-    public static Funzione crea(WamCompany company, EntityManager manager, String siglaInterna, String siglaVisibile, int ordine, String note) {
-        return crea(company, manager, siglaInterna, siglaVisibile, ordine, note, null);
+    public static Funzione crea(WamCompany company, EntityManager manager, String siglaInterna, int ordine, String note) {
+        return crea(company, manager, siglaInterna, ordine, note, null);
     }// end of static method
 
     /**
@@ -315,7 +310,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company       croce di appartenenza
      * @param manager       the EntityManager to use
      * @param siglaInterna  sigla di riferimento interna (obbligatoria)
-     * @param siglaVisibile per il tabellone (obbligatoria)
      * @param ordine        di presentazione nelle liste
      * @param note          di spiegazione (facoltative)
      * @param glyph         dell'icona (facoltativo)
@@ -325,7 +319,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             WamCompany company,
             EntityManager manager,
             String siglaInterna,
-            String siglaVisibile,
             int ordine,
             String note,
             FontAwesome glyph) {
@@ -334,8 +327,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         if (funzione == null) {
             funzione = new Funzione();
             funzione.setCompany(company);
-            funzione.setSiglaInterna(siglaInterna);
-            funzione.setSiglaVisibile(siglaVisibile);
+            funzione.setSigla(siglaInterna);
             funzione.setOrdine(ordine);
             funzione.setDescrizione(note);
             funzione.setIcon(glyph);
@@ -369,17 +361,23 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         this.volontarioFunzioni = volontarioFunzioni;
     }
 
-    @Override
+//    @Override
+//    public String toString() {
+//        return siglaVisibile;
+//    }// end of method
+
+        @Override
     public String toString() {
-        return siglaVisibile;
+        return sigla;
     }// end of method
 
-    public String getSiglaInterna() {
-        return siglaInterna;
+
+    public String getSigla() {
+        return sigla;
     }// end of getter method
 
-    public void setSiglaInterna(String sigla) {
-        this.siglaInterna = sigla;
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
     }//end of setter method
 
     public int getOrdine() {
@@ -390,13 +388,13 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         this.ordine = ordine;
     }//end of setter method
 
-    public String getSiglaVisibile() {
-        return siglaVisibile;
-    }// end of getter method
+//    public String getSiglaVisibile() {
+//        return siglaVisibile;
+//    }// end of getter method
 
-    public void setSiglaVisibile(String descrizione) {
-        this.siglaVisibile = descrizione;
-    }//end of setter method
+//    public void setSiglaVisibile(String descrizione) {
+//        this.siglaVisibile = descrizione;
+//    }//end of setter method
 
     public String getDescrizione() {
         return descrizione;

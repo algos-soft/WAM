@@ -10,7 +10,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
-import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
@@ -458,7 +457,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                 if (glyph != null) {
                     caption = glyph.getHtml() + " " + caption;
                 }
-                caption += " Iscriviti come <strong>" + funz.getSiglaVisibile() + "</strong>";
+                caption += " Iscriviti come <strong>" + funz.getSigla() + "</strong>";
                 Volontario volontario = WamLogin.getLoggedVolontario();
                 if(volontario!=null){
                     if (!volontario.haFunzione(funz)) {
@@ -492,7 +491,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                     // controllo che l'utente corrente abbia la funzione richiesta
                     if (cont) {
                         if (!volontario.haFunzione(funz)) {
-                            Notification notif = new Notification("Nel tuo profilo non c'è la funzione " + funz.getSiglaVisibile() + "<br>" + "Rivolgiti all'amministratore", Notification.Type.WARNING_MESSAGE);
+                            Notification notif = new Notification("Nel tuo profilo non c'è la funzione " + funz.getSigla() + "<br>" + "Rivolgiti all'amministratore", Notification.Type.WARNING_MESSAGE);
                             notif.setHtmlContentAllowed(true);
                             notif.show(Page.getCurrent());
                             cont = false;
@@ -635,7 +634,7 @@ public class CTurnoEditor extends CTabelloneEditor {
          */
         private String creaTestoComponente() {
             Funzione funz = iscrizione.getServizioFunzione().getFunzione();
-            String lbltext = funz.getSiglaVisibile();
+            String lbltext = funz.getSigla();
             FontAwesome glyph = funz.getIcon();
             if (glyph != null) {
                 lbltext = glyph.getHtml() + " " + lbltext;

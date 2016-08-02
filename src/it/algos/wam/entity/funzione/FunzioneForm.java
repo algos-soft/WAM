@@ -3,16 +3,12 @@ package it.algos.wam.entity.funzione;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
-import it.algos.wam.ui.WamUI;
 import it.algos.webbase.web.field.TextArea;
-import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
 import javax.persistence.metamodel.Attribute;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Created by alex on 18-04-2016.
@@ -61,7 +57,7 @@ public class FunzioneForm extends ModuleForm {
 //        //vl.addComponent(creaCompDetail3());
 //
 ////        VerticalLayout v2 = new VerticalLayout();
-////        Field fsigla = getField(Funzione_.siglaInterna);
+////        Field fsigla = getField(Funzione_.sigla);
 ////        Field fdesc = getField(Funzione_.siglaVisibile);
 ////        Field fnote = getField(Funzione_.note);
 ////
@@ -116,9 +112,8 @@ public class FunzioneForm extends ModuleForm {
 
         FormLayout layout = new FormLayout();
 
-        Field fsigla = getField(Funzione_.siglaInterna);
+        Field fsigla = getField(Funzione_.sigla);
         fsigla.focus();
-        Field fdesc = getField(Funzione_.siglaVisibile);
         Field fnote = getField(Funzione_.descrizione);
 
         Button b = new Button();
@@ -128,7 +123,6 @@ public class FunzioneForm extends ModuleForm {
 
         layout.addComponent(b);
         layout.addComponent(fsigla);
-        layout.addComponent(fdesc);
         layout.addComponent(fnote);
 
         return layout;
@@ -168,10 +162,9 @@ public class FunzioneForm extends ModuleForm {
      * @return il componente dettagli
      */
     protected Component creaCompDetailTest(FormLayout layout) {
-        Field fsigla = getField(Funzione_.siglaInterna);
+        Field fsigla = getField(Funzione_.sigla);
 //        fsigla.focus();
 
-        Field fdesc = getField(Funzione_.siglaVisibile);
         Field fnote = getField(Funzione_.descrizione);
 
 //        iconButton = new Button();
@@ -180,7 +173,6 @@ public class FunzioneForm extends ModuleForm {
 
 //        layout.addComponent(iconButton);
         layout.addComponent(fsigla);
-        layout.addComponent(fdesc);
         layout.addComponent(fnote);
 
         layout.addComponent(getField(Funzione_.iconCodepoint));
@@ -198,10 +190,9 @@ public class FunzioneForm extends ModuleForm {
      * @return il componente dettagli
      */
     protected Component creaCompDetail(FormLayout layout) {
-        Field fsigla = getField(Funzione_.siglaInterna);
+        Field fsigla = getField(Funzione_.sigla);
         fsigla.focus();
 
-        Field fdesc = getField(Funzione_.siglaVisibile);
         Field fnote = getField(Funzione_.descrizione);
 
         iconButton = new Button();
@@ -238,7 +229,6 @@ public class FunzioneForm extends ModuleForm {
 
         layout.addComponent(iconButton);
         layout.addComponent(fsigla);
-        layout.addComponent(fdesc);
         layout.addComponent(fnote);
 
 

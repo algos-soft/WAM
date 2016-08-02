@@ -166,19 +166,19 @@ public abstract class BootService {
             return null;
         }// end of if cycle
 
-        lista.add(Arrays.asList("aut-msa", "Aut-msa", "Autista automedica abilitato 118", FontAwesome.AMBULANCE));
-        lista.add(Arrays.asList("aut-amb", "Aut-amb", "Autista ambulanza abilitato 118", FontAwesome.AMBULANCE));
-        lista.add(Arrays.asList("aut-ord", "Aut-ord", "Autista ordinario", FontAwesome.AMBULANCE));
+        lista.add(Arrays.asList("Aut-msa", "Autista automedica abilitato 118", FontAwesome.AMBULANCE));
+        lista.add(Arrays.asList("Aut-amb", "Autista ambulanza abilitato 118", FontAwesome.AMBULANCE));
+        lista.add(Arrays.asList("Aut-ord",  "Autista ordinario", FontAwesome.AMBULANCE));
 
-        lista.add(Arrays.asList("soc-dae", "DAE", "Soccorritore abilitato DAE", FontAwesome.HEART));
-        lista.add(Arrays.asList("soc-uno", "1° Soc", "Primo soccorritore", FontAwesome.STETHOSCOPE));
-        lista.add(Arrays.asList("soc-due", "2° Soc", "Secondo soccorritore", FontAwesome.STETHOSCOPE));
+        lista.add(Arrays.asList("DAE","Soccorritore abilitato DAE", FontAwesome.HEART));
+        lista.add(Arrays.asList("1° Soc", "Primo soccorritore", FontAwesome.STETHOSCOPE));
+        lista.add(Arrays.asList("2° Soc", "Secondo soccorritore", FontAwesome.STETHOSCOPE));
 
-        lista.add(Arrays.asList("bar", "Bar", "Barelliere", FontAwesome.USER));
-        lista.add(Arrays.asList("bar-aff", "Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
+        lista.add(Arrays.asList("Bar", "Barelliere", FontAwesome.USER));
+        lista.add(Arrays.asList("Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
 
-        lista.add(Arrays.asList("avis", "Avis", "Operatore trasporto AVIS", FontAwesome.MEDKIT));
-        lista.add(Arrays.asList("cent", "Cen", "Centralinista", FontAwesome.PHONE));
+        lista.add(Arrays.asList("Avis","Operatore trasporto AVIS", FontAwesome.MEDKIT));
+        lista.add(Arrays.asList("Cen", "Centralinista", FontAwesome.PHONE));
 
         for (int k = 0; k < lista.size(); k++) {
             listaFunzioni.add(creaFunzBase(company, manager, k + 1, (List) lista.get(k)));
@@ -199,11 +199,11 @@ public abstract class BootService {
      */
     private static Funzione creaFunzBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
         String sigla = (String) listaTmp.get(0);
-        String descrizione = (String) listaTmp.get(1);
-        String note = (String) listaTmp.get(2);
-        FontAwesome glyph = (FontAwesome) listaTmp.get(3);
+        String note = (String) listaTmp.get(1);
+        FontAwesome glyph = (FontAwesome) listaTmp.get(2);
 
-        return Funzione.crea(company, manager, sigla, descrizione, ordine, note, glyph);
+        return Funzione.crea(company, manager, sigla, ordine, note, glyph);
+
     }// end of static method
 
     /**

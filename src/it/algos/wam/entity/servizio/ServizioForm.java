@@ -407,7 +407,7 @@ public class ServizioForm extends ModuleForm {
 
                         if (iscrizioni.size() == 0) {
 
-                            String messaggio = "Vuoi eliminare la funzione " + serFun.getFunzione().getSiglaVisibile() + "?";
+                            String messaggio = "Vuoi eliminare la funzione " + serFun.getFunzione().getSigla() + "?";
                             new ConfirmDialog(null, messaggio, new ConfirmDialog.Listener() {
                                 @Override
                                 public void onClose(ConfirmDialog dialog, boolean confirmed) {

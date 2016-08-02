@@ -1,7 +1,6 @@
 package it.algos.wam.entity.volontario;
 
 import com.vaadin.data.Item;
-import com.vaadin.data.Validator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
@@ -14,9 +13,6 @@ import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.module.ModulePop;
 
-import javax.persistence.metamodel.Attribute;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -188,7 +184,7 @@ public class VolontarioForm extends ModuleForm {
             }
 
             // checkBox con nome funzione
-            CheckBox box = new CheckBox(f.getSiglaVisibile());
+            CheckBox box = new CheckBox(f.getSigla());
             box.addValueChangeListener(valueChangeEvent -> {
                 if (box.getValue()) {
                     if (!getVolontario().haFunzione(f)) {
