@@ -10,6 +10,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
+import it.algos.wam.LogType;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
@@ -17,18 +18,25 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.login.WamLogin;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.component.HHMMComponent;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.lib.DateConvertUtils;
+import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibSession;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import it.algos.webbase.domain.log.Log;
 
 /**
  * Componente per presentare e modificare un turno nel Tabellone.
@@ -122,6 +130,7 @@ public class CTurnoEditor extends CTabelloneEditor {
         bElimina.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+
                 ConfirmDialog dialog = new ConfirmDialog("Elimina turno", "Sei sicuro?", new ConfirmDialog.Listener() {
                     @Override
                     public void onClose(ConfirmDialog dialog, boolean confirmed) {
@@ -158,7 +167,7 @@ public class CTurnoEditor extends CTabelloneEditor {
         });
 
         // funzione elimina solo se admin e solo se è un turno persisted
-        if(LibSession.isAdmin()){
+        if (LibSession.isAdmin()) {
             // controllo se il turno è persisted
             if (turno.getId() != null) {
                 layout.addComponent(bElimina);
@@ -248,7 +257,7 @@ public class CTurnoEditor extends CTabelloneEditor {
 
 
     /**
-     * Editor delle iscrizioni
+     * Editor di un gruppo di iscrizioni
      */
     private class IscrizioneGroupEditor extends VerticalLayout {
 
@@ -459,7 +468,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                 }
                 caption += " Iscriviti come <strong>" + funz.getSigla() + "</strong>";
                 Volontario volontario = WamLogin.getLoggedVolontario();
-                if(volontario!=null){
+                if (volontario != null) {
                     if (!volontario.haFunzione(funz)) {
                         bMain.addStyleName("lightGrayBg");
                     }
@@ -471,7 +480,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
                     boolean cont = true;
-                    Volontario volontario=null;
+                    Volontario volontario = null;
 
                     // controllo che non ci sia già un iscritto
                     if (cont) {
@@ -481,9 +490,9 @@ public class CTurnoEditor extends CTabelloneEditor {
                     }
 
                     // recupero il volontario loggato
-                    if(cont){
+                    if (cont) {
                         volontario = WamLogin.getLoggedVolontario();
-                        if(volontario==null){
+                        if (volontario == null) {
                             cont = false;
                         }
                     }
@@ -530,12 +539,31 @@ public class CTurnoEditor extends CTabelloneEditor {
             bRemove.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {
-                    entityManager.getTransaction().begin();
-                    turno.getIscrizioni().remove(iscrizione);
-                    entityManager.merge(turno);
-                    entityManager.getTransaction().commit();
-                    fireDismissListeners(new DismissEvent(bRemove, true, false));
+
+                    String err = checkIscrizioneCancellabile();
+
+                    if (err.equals("")) {
+                        entityManager.getTransaction().begin();
+                        turno.getIscrizioni().remove(iscrizione);
+                        entityManager.merge(turno);
+                        entityManager.getTransaction().commit();
+                        fireDismissListeners(new DismissEvent(bRemove, true, false));
+
+                        // log cancellazione
+                        String desc = iscrizione.getVolontario().getNomeCognome();
+                        desc+=" si è cancellato dal turno ";
+                        desc+=turno.getServizio().getSigla();
+                        desc+=" del ";
+                        desc+= LibDate.toStringDDMMYYYY(turno.getInizio());
+                        Log.info(LogType.cancellazione.getTag(), desc);
+
+                    } else {
+                        Notification.show(err + "\nRivolgiti a un amministratore.", Notification.Type.ERROR_MESSAGE);
+                    }
+
                 }
+
+
             });
 
             // bottone registra
@@ -557,10 +585,10 @@ public class CTurnoEditor extends CTabelloneEditor {
 
             // disponibilità bottone remove:
             // visibile solo se c'è un iscritto e se quello sono io.
-            boolean visible=false;
+            boolean visible = false;
             if (volIscritto != null) {
                 Volontario volLogged = WamLogin.getLoggedVolontario();
-                if(volLogged!=null){
+                if (volLogged != null) {
                     if (volIscritto.equals(volLogged)) {
                         visible = true;
                     }
@@ -575,7 +603,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             Component rightComp = new Label("&nbsp;", ContentMode.HTML);
             if (volIscritto != null) {
                 Volontario volLogged = WamLogin.getLoggedVolontario();
-                if(volLogged!=null){
+                if (volLogged != null) {
                     if (volIscritto.equals(volLogged)) {
                         rightComp = bSave;
                     }
@@ -586,26 +614,25 @@ public class CTurnoEditor extends CTabelloneEditor {
             // abilitazione note e tempo:
             // questi campi sono sempre visibili.
             // se c'è già un iscritto diverso da me, oppure se non sono abilitato per questa funzione, sono disabilitati
-            boolean enabled=true;
+            boolean enabled = true;
             if (volIscritto != null) {
                 Volontario volLogged = WamLogin.getLoggedVolontario();
-                if(volLogged!=null) {
+                if (volLogged != null) {
                     if (!volIscritto.equals(volLogged)) {
-                        enabled=false;
+                        enabled = false;
                     }
                 }
             }
-            if(enabled){
+            if (enabled) {
                 Volontario volLogged = WamLogin.getLoggedVolontario();
-                if(volLogged!=null) {
-                    if(!volLogged.haFunzione(funz)){
-                        enabled=false;
+                if (volLogged != null) {
+                    if (!volLogged.haFunzione(funz)) {
+                        enabled = false;
                     }
                 }
             }
             fNote.setEnabled(enabled);
             cTime.setEnabled(enabled);
-
 
 
             // layout finale
@@ -626,6 +653,54 @@ public class CTurnoEditor extends CTabelloneEditor {
             layout.setComponentAlignment(rightComp, Alignment.BOTTOM_CENTER);
 
             return layout;
+        }
+
+
+        /**
+         * Controlla se una iscrizione è cancellabile.
+         *
+         * @return stringa vuota se cancellabile, il motivo se non lo è
+         */
+        private String checkIscrizioneCancellabile() {
+            String err = "";
+
+            int mode = CompanyPrefs.modoCancellazione.getInt();
+
+            // nessun controllo
+            if (mode == Iscrizione.MODE_CANC_NONE) {
+                return "";
+            }
+
+            // controllo ore mancanti a inizio del turno
+            if (mode == Iscrizione.MODE_CANC_PRE) {
+                Turno turno = iscrizione.getTurno();
+                LocalDateTime startTurno = turno.getStartTime();
+                LocalDateTime now = LocalDateTime.now();
+                long minutesBetween = now.until(startTurno, ChronoUnit.MINUTES);
+                int hoursMax = CompanyPrefs.cancOrePrimaInizioTurno.getInt();
+                int minutesMax = hoursMax * 60;
+                // confronta con precisione minuto, avvisa con precisione ora
+                if (minutesBetween < minutesMax) {
+                    err = "Mancano meno di " + hoursMax + " ore all'inizio del turno.";
+                }
+                return err;
+            }
+
+            // controllo minuti passati dal momento dell'iscrizione
+            if (mode == Iscrizione.MODE_CANC_POST) {
+                long time1 = iscrizione.getTsCreazione().getTime();
+                long time2 = System.currentTimeMillis();
+                long msElapsed = time2 - time1;
+                int minutesElapsed = (int) (msElapsed / 1000 / 60);
+                int maxMinutes = CompanyPrefs.cancMinutiDopoIscrizione.getInt();
+                if (minutesElapsed > maxMinutes) {
+                    err = "Sono trascorsi più di " + maxMinutes + " minuti dall'iscrizione.";
+                }
+                return err;
+            }
+
+            return "";
+
         }
 
         /**
@@ -722,8 +797,6 @@ public class CTurnoEditor extends CTabelloneEditor {
     private boolean isMultiIscrizione() {
         return LibSession.isAdmin();
     }
-
-
 
 
 }

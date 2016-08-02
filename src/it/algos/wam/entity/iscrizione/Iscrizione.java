@@ -7,15 +7,13 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.query.WamQuery;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.EM;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
@@ -26,6 +24,11 @@ import java.sql.Timestamp;
 @Entity
 public class Iscrizione extends WamCompanyEntity {
 
+    // codici modalità di controllo cancellazione turno
+    public static final int MODE_CANC_NONE=0;   // nessun controllo
+    public static final int MODE_CANC_POST=1;   // controllo minuti dopo iscrizione
+    public static final int MODE_CANC_PRE=2;    // controllo ore prima di inizio turno
+
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
@@ -33,17 +36,17 @@ public class Iscrizione extends WamCompanyEntity {
     @ManyToOne
     private Turno turno;
 
-    // volontario che si iscrive
+    // volontario di riferimento
     @OneToOne
     private Volontario volontario = null;
 
-    // a quale funzione del servizio il volontario si iscrive
+    // per quale funzione il volontario si iscrive
     @OneToOne
     private ServizioFunzione servizioFunzione = null;
 
-    //--ultima modifica a questa iscrizione, effettuata dal milite/volontario che si è iscritto
-    //--serve per bloccare le modifiche dopo un determinato intervallo di tempo
-    private Timestamp lastModifica = null;
+    // timestamp di creazione.
+    // (usato per bloccare la cancellazione dopo un determinato intervallo di tempo)
+    private Timestamp tsCreazione = null;
 
     //--durata effettiva del turno del milite/volontario di questa iscrizione
     private int minutiEffettivi = 0;
@@ -96,6 +99,15 @@ public class Iscrizione extends WamCompanyEntity {
         }
     }// end of constructor
 
+
+    @PrePersist
+    protected void prePersist() {
+        tsCreazione=new Timestamp(System.currentTimeMillis());
+    }
+
+
+
+
     /**
      * Recupera una istanza di Iscrizione usando la query di una property specifica
      * Filtrato sulla azienda passata come parametro.
@@ -144,6 +156,8 @@ public class Iscrizione extends WamCompanyEntity {
         return isc;
     }// end of static method
 
+
+
     public Volontario getVolontario() {
         return volontario;
     }// end of getter method
@@ -160,13 +174,13 @@ public class Iscrizione extends WamCompanyEntity {
         this.servizioFunzione = servizioFunzione;
     }
 
-    public Timestamp getLastModifica() {
-        return lastModifica;
-    }// end of getter method
+    public Timestamp getTsCreazione() {
+        return tsCreazione;
+    }
 
-    public void setLastModifica(Timestamp lastModifica) {
-        this.lastModifica = lastModifica;
-    }//end of setter method
+    public void setTsCreazione(Timestamp ts) {
+        this.tsCreazione = ts;
+    }
 
     public int getMinutiEffettivi() {
         return minutiEffettivi;

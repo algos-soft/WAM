@@ -2,6 +2,7 @@ package it.algos.wam.settings;
 
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Image;
+import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.domain.pref.PrefType;
@@ -27,7 +28,14 @@ public enum CompanyPrefs {
 
     inviaNotificaInizioTurno("inviaNotificaInizioTurno", PrefType.bool, true, "Se invia le notifiche di inizio turno"),
 
-    quanteOrePrimaNotificaInizioTurno("quanteOrePrimaNotificaInizioTurno", PrefType.integer, 24, "Quante ore prima invia le notifiche di inizio turno"),;
+    quanteOrePrimaNotificaInizioTurno("quanteOrePrimaNotificaInizioTurno", PrefType.integer, 24, "Quante ore prima invia le notifiche di inizio turno"),
+
+    modoCancellazione("modoCancellazione", PrefType.integer, Iscrizione.MODE_CANC_PRE, "Modalità di controllo della cancellazione iscrizione (0=nessuno, 1=post, 2=pre)"),
+    cancMinutiDopoIscrizione("cancMinutiDopoIscrizione", PrefType.integer, 15, "Per quanti minuti dopo l'iscrizione il volontario si può cancellare"),
+    cancOrePrimaInizioTurno("cancOrePrimaInizioTurno", PrefType.integer, 24, "Fino a quante ore prima dell'inizio turno il volontario si può cancellare"),
+
+    ;
+
 
 
     private String code;

@@ -18,7 +18,9 @@ import org.eclipse.persistence.annotations.Index;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -404,7 +406,23 @@ public class Turno extends WamCompanyEntity {
             d = DateConvertUtils.asLocalDate(getInizio());
         }
         return d;
-    }// end of getter method
+    }
+
+
+    /**
+     * Ritorna il tempo di inizio del turno
+     * (data del turno + ora del servizio)
+     */
+    public LocalDateTime getStartTime() {
+        Timestamp timestamp = Timestamp.valueOf(getData1().atStartOfDay());
+        LocalDateTime ldt=timestamp.toLocalDateTime();
+        int hours = getServizio().getOraInizio();
+        ldt=ldt.plusHours(hours);
+        int mins = getServizio().getMinutiInizio();
+        ldt=ldt.plusMinutes(mins);
+        return ldt;
+    }
+
 
     public Date getFine() {
         return fine;

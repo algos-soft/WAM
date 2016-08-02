@@ -1,10 +1,10 @@
 package it.algos.wam.email;
 
-import it.algos.wam.base_email.Attachment;
-import it.algos.wam.base_email.EmailService;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.settings.CompanyPrefs;
 import it.algos.wam.settings.ManagerPrefs;
+import it.algos.webbase.web.email.Attachment;
+import it.algos.webbase.web.email.EmailService;
 import org.apache.commons.mail.EmailException;
 
 /**
