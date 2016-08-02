@@ -123,7 +123,7 @@ public abstract class BootService {
         WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
         if (company == null) {
-            company = new WamCompany(WAMApp.DEMO_COMPANY_CODE, "Demo", "info@crocedemo.it");
+            company = new WamCompany(WAMApp.DEMO_COMPANY_CODE, "Company dimostrativa", "info@crocedemo.it");
             company.setAddress1("Via Turati, 12");
             company.setAddress1("20199 Garbagnate Milanese");
             company.setContact("Mario Bianchi");
@@ -140,7 +140,7 @@ public abstract class BootService {
         WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
 
         if (company == null) {
-            company = new WamCompany(WAMApp.TEST_COMPANY_CODE, "Test", "info@crocetest.it");
+            company = new WamCompany(WAMApp.TEST_COMPANY_CODE, "Company di test", "info@crocetest.it");
             company.setAddress1("Piazza Napoli, 51");
             company.setAddress1("20100 Milano");
             company.setContact("Giovanni Rossi");
