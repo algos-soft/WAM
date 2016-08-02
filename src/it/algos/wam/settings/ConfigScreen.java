@@ -3,6 +3,7 @@ package it.algos.wam.settings;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Accordion;
+import com.vaadin.ui.TabSheet;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  * Schermata generale delle preferenze ad uso dell'Admin
  * Created by alex on 1-08-2016.
  */
-public class ConfigScreen extends Accordion implements View {
+public class ConfigScreen extends TabSheet implements View {
 
     private ArrayList<ConfigComponent> configComponents;
 

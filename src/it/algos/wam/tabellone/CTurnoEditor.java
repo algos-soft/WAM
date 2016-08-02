@@ -475,6 +475,8 @@ public class CTurnoEditor extends CTabelloneEditor {
                 }
             }
             bMain.setCaption(caption);
+
+
             // click listener solo se non c'è nessuno iscritto
             bMain.addClickListener(new Button.ClickListener() {
                 @Override
@@ -526,6 +528,15 @@ public class CTurnoEditor extends CTabelloneEditor {
                         entityManager.merge(turno);
                         entityManager.getTransaction().commit();
                         fireDismissListeners(new DismissEvent(bMain, true, false));
+
+                        // log iscrizione
+                        String desc = iscrizione.getVolontario().getNomeCognome();
+                        desc+=" si è iscritto al turno ";
+                        desc+=turno.getServizio().getSigla();
+                        desc+=" del ";
+                        desc+= LibDate.toStringDDMMYYYY(turno.getInizio());
+                        Log.info(LogType.iscrizione.getTag(), desc);
+
                     }
 
                 }
