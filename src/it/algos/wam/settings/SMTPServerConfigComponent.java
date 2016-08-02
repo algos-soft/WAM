@@ -1,15 +1,20 @@
 package it.algos.wam.settings;
 
+import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
+import it.algos.wam.base_email.EmailService;
 import it.algos.webbase.web.component.Spacer;
+import it.algos.webbase.web.dialog.AlertDialog;
+import it.algos.webbase.web.dialog.EditDialog;
 import it.algos.webbase.web.field.CheckBoxField;
 import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.field.PasswordField;
 import it.algos.webbase.web.field.TextField;
+import org.apache.commons.mail.EmailException;
 
 @SuppressWarnings("serial")
 public class SMTPServerConfigComponent extends BaseConfigPanel implements View {
@@ -48,13 +53,81 @@ public class SMTPServerConfigComponent extends BaseConfigPanel implements View {
 		fieldLayout.addComponent(smtpPasswordField);
 
 		layout.addComponent(fieldLayout);
-		layout.addComponent(createSaveButton());
+
+		HorizontalLayout hr = new HorizontalLayout();
+		hr.setSpacing(true);
+		hr.addComponent(createSaveButton());
+		hr.addComponent(new Button("Test", new Button.ClickListener() {
+			@Override
+			public void buttonClick(Button.ClickEvent clickEvent) {
+				try {
+					getGroup().commit();
+					doTest();
+				} catch (FieldGroup.CommitException e) {
+					e.printStackTrace();
+				}
+			}
+		}));
+		layout.addComponent(hr);
 
 		setCompositionRoot(layout);
 
 
 	}
-	
+
+	/**
+	 * Invia una email di test
+	 */
+	private void doTest() {
+		String host=getHost();
+		if(host==null || host.equals("")){
+			Notification.show("Manca l'indirizzo del server SMTP");
+			return;
+		}
+
+		int port=getPort();
+		if(port<=0){
+			Notification.show("Manca la porta SMTP");
+			return;
+		}
+
+		if(getUseAuth()){
+			String user=getUsername();
+			if(user.equals("")){
+				Notification.show("Manca lo username per l'autenticazione");
+				return;
+			}
+			String pass=getPassword();
+			if(pass.equals("")){
+				Notification.show("Manca la password per l'autenticazione");
+				return;
+			}
+		}
+
+
+		new EditDialog("Test email", "invia a:", new EditDialog.EditListener() {
+			@Override
+			public void onClose() {
+
+			}
+
+			@Override
+			public void onClose(String address) {
+				boolean useAuth=getUseAuth();
+				String username=getUsername();
+				String password=getPassword();
+				try {
+					EmailService.sendMail(host, port, useAuth, username, password, "noreply@wam.it", address, null, null, "WAM test e-mail", "questa è una email di test inviata da WAM", false, null);
+					Notification.show("e-mail inviata");
+				} catch (EmailException e) {
+					Notification.show(e.getMessage(), Notification.Type.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+			}
+		}).show();
+
+	}
+
 	// crea e registra i fields
 	private void createFields(){
 		// create and add fields and other components
@@ -104,26 +177,16 @@ public class SMTPServerConfigComponent extends BaseConfigPanel implements View {
 		}
 
 		public void persist() {
-			Object obj;
 			boolean cont = true;
 			
 			
 			if (cont) {
 
-				obj = getItemProperty(KEY_HOST).getValue();
-				ManagerPrefs.smtpServer.put(obj);
-
-				obj = getItemProperty(KEY_USER).getValue();
-				ManagerPrefs.smtpUserName.put(obj);
-
-				obj = getItemProperty(KEY_PASSWORD).getValue();
-				ManagerPrefs.smtpPassword.put(obj);
-				
-				obj = getItemProperty(KEY_PORT).getValue();
-				ManagerPrefs.smtpPort.put(obj);
-				
-				obj = getItemProperty(KEY_USE_AUTH).getValue();
-				ManagerPrefs.smtpUseAuth.put(obj);
+				ManagerPrefs.smtpServer.put(getHost());
+				ManagerPrefs.smtpUserName.put(getUsername());
+				ManagerPrefs.smtpPassword.put(getPassword());
+				ManagerPrefs.smtpPort.put(getPort());
+				ManagerPrefs.smtpUseAuth.put(getUseAuth());
 				
 			}
 
@@ -135,6 +198,29 @@ public class SMTPServerConfigComponent extends BaseConfigPanel implements View {
 	public String getTitle() {
 		return "Configurazione server SMTP";
 	}
+
+	private String getHost(){
+		return (String)getItem().getItemProperty(KEY_HOST).getValue();
+	}
+
+	private String getUsername(){
+		return (String)getItem().getItemProperty(KEY_USER).getValue();
+	}
+
+	private String getPassword(){
+		return (String)getItem().getItemProperty(KEY_PASSWORD).getValue();
+	}
+
+	private int getPort(){
+		return (int)getItem().getItemProperty(KEY_PORT).getValue();
+	}
+
+	private boolean getUseAuth(){
+		return (boolean)getItem().getItemProperty(KEY_USE_AUTH).getValue();
+	}
+
+
+
 
 
 }
