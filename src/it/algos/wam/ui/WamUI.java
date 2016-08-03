@@ -58,7 +58,7 @@ public class WamUI extends UI {
     public static final String KEY_TABVISIBLE = "tabvisible";
     public static final String KEY_GOHOME = "gohome";
     private MenuBar menubar;
-    // si registra chi è interessato alle modifiche delle company (aggiunta, cancellazione, modifica di quella corrente)
+    // si registra chi è interessato alle modifiche delle company (aggiunta, cancIscrizione, modifica di quella corrente)
     private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
 
     /**

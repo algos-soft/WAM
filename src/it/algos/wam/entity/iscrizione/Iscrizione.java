@@ -24,7 +24,7 @@ import java.sql.Timestamp;
 @Entity
 public class Iscrizione extends WamCompanyEntity {
 
-    // codici modalità di controllo cancellazione turno
+    // codici modalità di controllo cancIscrizione turno
     public static final int MODE_CANC_NONE=0;   // nessun controllo
     public static final int MODE_CANC_POST=1;   // controllo minuti dopo iscrizione
     public static final int MODE_CANC_PRE=2;    // controllo ore prima di inizio turno
@@ -45,7 +45,7 @@ public class Iscrizione extends WamCompanyEntity {
     private ServizioFunzione servizioFunzione = null;
 
     // timestamp di creazione.
-    // (usato per bloccare la cancellazione dopo un determinato intervallo di tempo)
+    // (usato per bloccare la cancIscrizione dopo un determinato intervallo di tempo)
     private Timestamp tsCreazione = null;
 
     //--durata effettiva del turno del milite/volontario di questa iscrizione

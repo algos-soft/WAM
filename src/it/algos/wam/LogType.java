@@ -5,8 +5,10 @@ package it.algos.wam;
  * Created by alex on 2-08-2016.
  */
 public enum LogType {
-    cancellazione("CANC"),
-    iscrizione("ISCR");
+    cancIscrizione("CANC-ISCR"),
+    iscrizione("ISCR-TUR"),
+    creaTurno("CREA-TUR"),
+    cancTurno("CANC-TUR");
 
     String tag;
 

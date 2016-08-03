@@ -31,7 +31,7 @@ public class WamCompany extends BaseCompany {
 
     // elenco delle relazioni OneToMany
     // servono per creare le foreign key sul db
-    // che consentono la cancellazione a cascata
+    // che consentono la cancIscrizione a cascata
 
     @OneToMany(mappedBy = "company")
     @CascadeOnDelete
@@ -183,7 +183,7 @@ public class WamCompany extends BaseCompany {
     /**
      * Elimina tutti i dati di questa azienda.
      * <p>
-     * L'ordine di cancellazione è critico per l'integrità referenziale
+     * L'ordine di cancIscrizione è critico per l'integrità referenziale
      */
     public void deleteAllData() {
 

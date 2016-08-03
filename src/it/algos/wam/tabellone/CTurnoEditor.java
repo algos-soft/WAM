@@ -24,7 +24,6 @@ import it.algos.webbase.web.component.HHMMComponent;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.lib.DateConvertUtils;
-import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibSession;
 
@@ -40,7 +39,6 @@ import java.util.List;
 
 import it.algos.webbase.domain.log.Log;
 import it.algos.webbase.web.login.Login;
-import it.algos.webbase.web.login.UserIF;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
@@ -144,8 +142,20 @@ public class CTurnoEditor extends CTabelloneEditor {
                     @Override
                     public void onClose(ConfirmDialog dialog, boolean confirmed) {
                         if (confirmed) {
+
+                            // prepara il testo del log
+                            Volontario volontario = WamLogin.getLoggedVolontario();
+                            String desc = volontario.getNomeCognome();
+                            desc+=" ha cancellato il turno ";
+                            desc+=getLogTurno(turno);
+
+                            // cancella il turno
                             deleteTurno();
                             fireDismissListeners(new DismissEvent(bElimina, false, true));
+
+                            // scrive il log
+                            Log.info(LogType.cancTurno.getTag(), desc);
+
                         }
                     }
                 });
@@ -255,11 +265,21 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         try {
 
-            // duplica la lista originale delle iscrizioni
-            // e pulisce la lista iscrizioni del turno
-//            List<Iscrizione> originali = new ArrayList<>(turno.getIscrizioni());
+            // pulisce la lista iscrizioni del turno
             turno.getIscrizioni().clear();
 
+            // se è nuovo turno, logga la creazione del turno
+            boolean nuovo=true;
+            Long id = turno.getId();
+            if(id==null || id==0){
+                Volontario volontario = WamLogin.getLoggedVolontario();
+                String desc = volontario.getNomeCognome();
+                desc+="  ha creato il turno ";
+                desc+=getLogTurno(turno);
+                Log.info(LogType.creaTurno.getTag(), desc);
+            }
+
+            // recupera la lista originale delle iscrizioni
             List<Iscrizione> originali = iscrizioneGroupEditor.getIscrizioniOriginali();
 
             // recupera la nuova lista di iscrizioni dall'editor
@@ -276,9 +296,9 @@ public class CTurnoEditor extends CTabelloneEditor {
                     String desc;
                     // se ha cancellato se stesso, usa il log standard
                     // se ha cancellato qualcun altro, usa un log specifico
-                    if (operatore.equals(volontario)) {   // cancellazione di se stesso
+                    if (operatore.equals(volontario)) {   // cancIscrizione di se stesso
                         desc = getLogCancellazione(volontario, funzione, turno);
-                    } else {  // cancellazione di qualcun altro
+                    } else {  // cancIscrizione di qualcun altro
                         desc = operatore.getNomeCognome();
                         desc += " ha cancellato ";
                         desc += volontario.getNomeCognome();
@@ -286,7 +306,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                         desc += " dal turno ";
                         desc += getLogTurno(turno);
                     }
-                    Log.info(LogType.cancellazione.getTag(), desc);
+                    Log.info(LogType.cancIscrizione.getTag(), desc);
                 }
             }
 
@@ -325,6 +345,7 @@ public class CTurnoEditor extends CTabelloneEditor {
 
             }
 
+
             // registra il turno
             // la @OneToMany turno -> iscrizione ha l'opzione orphanRemoval = true quindi
             // eventuali iscrizioni rimaste orfane vengono cancellate automaticamente
@@ -332,6 +353,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             entityManager.persist(turno);
             entityManager.getTransaction().commit();
             success = true;
+
 
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
@@ -382,7 +404,7 @@ public class CTurnoEditor extends CTabelloneEditor {
     }
 
     /**
-     * Restituisce il testo del log di cancellazione di un determinato volontario da una data funzione di un dato turno
+     * Restituisce il testo del log di cancIscrizione di un determinato volontario da una data funzione di un dato turno
      *
      * @param volontario il volontario
      * @param funzione   la funzione
@@ -416,7 +438,6 @@ public class CTurnoEditor extends CTabelloneEditor {
 
     /**
      * Elimina il turno corrente.
-     * Visualizza una notifica se non riuscito
      *
      * @return true se riuscito
      */
@@ -778,9 +799,9 @@ public class CTurnoEditor extends CTabelloneEditor {
                         entityManager.getTransaction().commit();
                         fireDismissListeners(new DismissEvent(bRemove, true, false));
 
-                        // log cancellazione
+                        // log cancIscrizione
                         String desc = getLogCancellazione(iscrizione.getVolontario(), funz, turno);
-                        Log.info(LogType.cancellazione.getTag(), desc);
+                        Log.info(LogType.cancIscrizione.getTag(), desc);
 
                     } else {
                         Notification.show(err + "\nRivolgiti a un amministratore.", Notification.Type.ERROR_MESSAGE);

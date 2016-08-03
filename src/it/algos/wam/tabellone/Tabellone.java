@@ -37,7 +37,7 @@ import java.util.Date;
  * Un componente per presentare i dati di un turno modificarli.
  * Un componente che presenta il dialogo per impostare le conizioni di
  * ricerca per visualizzare un tabellone custom.
- * Un componente per impostare ed eseguire la generazione e cancellazione di turni
+ * Un componente per impostare ed eseguire la generazione e cancIscrizione di turni
  */
 public class Tabellone extends VerticalLayout implements View {
 
@@ -252,7 +252,6 @@ public class Tabellone extends VerticalLayout implements View {
                     break;
                 case SERVIZIO:
                     Servizio servizio = (Servizio) cellObject;
-//                editCellServizio(servizio, col, row);
                     addRigaServizio(servizio, col, row);
                     break;
             }
