@@ -46,13 +46,13 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
     //--nome del volontario (obbligatorio)
     @NotEmpty
-    @Column(length = 20)
+    @Column(length = 40)
     @Index
     private String nome = "";
 
     //--cognome del volontario (obbligatorio)
     @NotEmpty
-    @Column(length = 30)
+    @Column(length = 40)
     @Index
     private String cognome = "";
 
