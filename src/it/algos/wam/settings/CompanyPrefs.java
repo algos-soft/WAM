@@ -33,6 +33,8 @@ public enum CompanyPrefs {
     modoCancellazione("modoCancellazione", PrefType.integer, Iscrizione.MODE_CANC_PRE, "Modalità di controllo della cancIscrizione iscrizione (0=nessuno, 1=post, 2=pre)"),
     cancMinutiDopoIscrizione("cancMinutiDopoIscrizione", PrefType.integer, 15, "Per quanti minuti dopo l'iscrizione il volontario si può cancellare"),
     cancOrePrimaInizioTurno("cancOrePrimaInizioTurno", PrefType.integer, 24, "Fino a quante ore prima dell'inizio turno il volontario si può cancellare"),
+    turnoAlertOrePrima("turnoAlertOrePrima", PrefType.integer, 24, "Quante ore prima dell'inizio un turno incompleto si colora di rosso"),
+    turnoWarningOrePrima("turnoWarningOrePrima", PrefType.integer, 96, "Quante ore prima dell'inizio un turno incompleto si colora di giallo"),
 
     ;
 

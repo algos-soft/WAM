@@ -4,16 +4,15 @@ import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
-import it.algos.wam.WAMApp;
-import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.iscrizione.Iscrizione;
-import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.web.lib.LibSession;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -29,8 +28,8 @@ import java.time.temporal.ChronoUnit;
  */
 public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
 
-    private static int GIORNI_WARNING = 4; // turno vicino (giallo)
-    private static int GIORNI_ALERT = 1;  // turno molto vicino (rosso)
+//    private static int ORE_WARNING = 96; // turno vicino (giallo)
+//    private static int ORE_ALERT = 24;  // turno molto vicino (rosso)
 
     private GridTabellone tabellone;
     private int x;
@@ -178,8 +177,11 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
             fgStyle = "ciscrizione-light";
         } else {
             if (LocalDate.now().isBefore(dataTurno)) {   // è nel futuro
-                long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
-                if (ggMancanti <= GIORNI_WARNING) {
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime inizioTurno = turno.getStartTime();
+                long oreMancanti = ChronoUnit.HOURS.between(now,inizioTurno);
+//                long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
+                if (oreMancanti < CompanyPrefs.turnoWarningOrePrima.getInt()) {
                     String[] styles = coloraTurnoUrgenza(turno);
                     bgStyle = styles[0];
                     fgStyle = styles[1];
@@ -247,8 +249,11 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
             fgStyle = "ciscrizione-dark";
 
             // se il turno è vicino e giallo, se è vicinissimo è rosso, se è lontano resta com'è
-            long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
-            if (ggMancanti <= GIORNI_ALERT) {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime inizioTurno = turno.getStartTime();
+            long hMancanti = ChronoUnit.HOURS.between(now, inizioTurno);
+//            long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
+            if (hMancanti < CompanyPrefs.turnoAlertOrePrima.getInt()) {
                 bgStyle = "cturno-alert";
                 fgStyle = "ciscrizione-light";
             }

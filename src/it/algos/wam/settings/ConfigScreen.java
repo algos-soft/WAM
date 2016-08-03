@@ -25,6 +25,7 @@ public class ConfigScreen extends TabSheet implements View {
         configComponents.add(new NotificheConfigComponent());
         configComponents.add(new EmailConfigComponent());
         configComponents.add(new IscrizioniConfigComponent());
+        configComponents.add(new TabelloneConfigComponent());
 
         for (ConfigComponent comp : configComponents) {
             addTab(comp.getUIComponent(), comp.getTitle());
