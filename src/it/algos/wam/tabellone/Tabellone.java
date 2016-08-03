@@ -451,16 +451,7 @@ public class Tabellone extends VerticalLayout implements View {
                 }
             });
 
-            addItem("test", null, new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    Runnable checker = new CompanyTasks();
-                    checker.run();
-                }
-            });
-
             menuAltro = addItem("altro", FontAwesome.BARS, null);
-
 
             menuAltro.addItem("vai al giorno precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
                 @Override

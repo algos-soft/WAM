@@ -4,6 +4,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -167,9 +168,9 @@ public class ServizioTable extends ETable {
         /**
          * Genera la cella delle funzioni.
          */
-        public Component generateCell(Table source, Object itemId, Object columnId) {
+        public Component generateCell(Table table, Object itemId, Object columnId) {
             HorizontalLayout comp = new HorizontalLayout();
-            Item item = source.getItem(itemId);
+            Item item = table.getItem(itemId);
             BeanItem bi = LibBean.fromItem(item);
             Servizio serv = (Servizio) bi.getBean();
             String testo;
@@ -211,6 +212,7 @@ public class ServizioTable extends ETable {
                 }// end of if/else cycle
 
                 comp.addComponent(label);
+
             }
 
             return comp;

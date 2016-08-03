@@ -24,27 +24,36 @@ import it.algos.webbase.web.component.HHMMComponent;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.lib.DateConvertUtils;
+import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibSession;
 
 import javax.persistence.EntityManager;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import it.algos.webbase.domain.log.Log;
+import it.algos.webbase.web.login.Login;
+import it.algos.webbase.web.login.UserIF;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
- * Componente per presentare e modificare un turno nel Tabellone.
+ * Componente per presentare e modificare un intero turno nel Tabellone.
  * Ha due modalità di funzionamento: iscrizione singola o multi-iscrizione (vedi isMultiIscrizione())
  * In modalità iscrizione singola, un volontario può iscrivere solo se stesso
- * e l'iscrizione viene fatta tramite bottoni.
+ * e l'iscrizione viene fatta solo premendo un bottone.
  * In modalità multi-iscrizione, un volontario può iscrivere anche gli altri e
  * l'iscrizione viene fatta selezionando i nomi dai dei popup.
+ * <p>
+ * Al momento, il volontario usa la modalità singola e l'admin la modalità multipla.
+ * In futuro si potrebbe abilitare la modalità multipla anche per alcuni volontari non admin.
+ * <p>
  * <p>
  * Created by alex on 05/03/16.
  */
@@ -189,8 +198,53 @@ public class CTurnoEditor extends CTabelloneEditor {
     }
 
 
+//    /**
+//     * Registra il turno corrente.
+//     * Usato solo in modalità multi-iscrizione
+//     * Visualizza una notifica se non riuscito
+//     *
+//     * @return true se riuscito
+//     */
+//    private boolean saveTurnoMultiOld() {
+//        boolean success = false;
+//        entityManager.getTransaction().begin();
+//
+//        try {
+//
+//            // Registra le note
+//            turno.setNote(getNote());
+//
+//            //cancella le iscrizioni correnti dal db
+//            for (Iscrizione i : turno.getIscrizioni()) {
+//                entityManager.remove(i);
+//            }
+//
+//            // pulisce la lista iscrizioni del turno
+//            turno.getIscrizioni().clear();
+//
+//            // recupera le nuove iscrizioni e le aggiunge
+//            ArrayList<Iscrizione> iscrizioni = iscrizioneGroupEditor.getIscrizioni();
+//            for (Iscrizione i : iscrizioni) {
+//                turno.add(i);
+//            }
+//
+//            // registra il turno
+//            entityManager.persist(turno);
+//            entityManager.getTransaction().commit();
+//            success = true;
+//
+//        } catch (Exception e) {
+//            entityManager.getTransaction().rollback();
+//            e.printStackTrace();
+//        }
+//
+//        return success;
+//    }
+
+
     /**
      * Registra il turno corrente.
+     * Usato solo in modalità multi-iscrizione
      * Visualizza una notifica se non riuscito
      *
      * @return true se riuscito
@@ -201,24 +255,80 @@ public class CTurnoEditor extends CTabelloneEditor {
 
         try {
 
-            // Registra le note
-            turno.setNote(getNote());
-
-            //cancella le iscrizioni correnti dal db
-            for (Iscrizione i : turno.getIscrizioni()) {
-                entityManager.remove(i);
-            }
-
-            // pulisce la lista iscrizioni del turno
+            // duplica la lista originale delle iscrizioni
+            // e pulisce la lista iscrizioni del turno
+//            List<Iscrizione> originali = new ArrayList<>(turno.getIscrizioni());
             turno.getIscrizioni().clear();
 
-            // recupera le nuove iscrizioni e le aggiunge
-            ArrayList<Iscrizione> iscrizioni = iscrizioneGroupEditor.getIscrizioni();
-            for (Iscrizione i : iscrizioni) {
-                turno.add(i);
+            List<Iscrizione> originali = iscrizioneGroupEditor.getIscrizioniOriginali();
+
+            // recupera la nuova lista di iscrizioni dall'editor
+            List<Iscrizione> nuoveIscrizioni = iscrizioneGroupEditor.getIscrizioni();
+
+            // crea le righe di log per le iscrizioni cancellate.
+            // (quelle che erano nella lista originali e non sono più nella lista delle nuove)
+            Volontario operatore = (Volontario)Login.getLogin().getUser();
+            for (Iscrizione iOriginale : originali) {
+                Volontario volontario = iOriginale.getVolontario();
+                Funzione funzione = iOriginale.getServizioFunzione().getFunzione();
+                Iscrizione iNuova = getIscrizioneVolontarioFunzione(volontario, funzione, nuoveIscrizioni);
+                if (iNuova == null) {
+                    String desc;
+                    // se ha cancellato se stesso, usa il log standard
+                    // se ha cancellato qualcun altro, usa un log specifico
+                    if (operatore.equals(volontario)) {   // cancellazione di se stesso
+                        desc = getLogCancellazione(volontario, funzione, turno);
+                    } else {  // cancellazione di qualcun altro
+                        desc = operatore.getNomeCognome();
+                        desc += " ha cancellato ";
+                        desc += volontario.getNomeCognome();
+                        desc += " come "+funzione.getSigla();
+                        desc += " dal turno ";
+                        desc += getLogTurno(turno);
+                    }
+                    Log.info(LogType.cancellazione.getTag(), desc);
+                }
+            }
+
+            // spazzola la nuova lista iscrizioni
+            for (Iscrizione iNuova : nuoveIscrizioni) {
+
+                // Recupera l'iscrizione precedente del volontario al servizio, se esisteva.
+                // In questo caso non ne crea una nuova ma rimette la precedente così non cambiano
+                // dati quali il timestamp ecc...
+                Volontario volontario = iNuova.getVolontario();
+                Funzione funzione = iNuova.getServizioFunzione().getFunzione();
+                Iscrizione iPrecedente = getIscrizioneVolontarioFunzione(volontario, funzione, originali);
+
+                if (iPrecedente == null) {
+                    turno.add(iNuova);
+
+                    // logga l'iscrizione
+                    // se ha iscritto se stesso, usa il log standard
+                    // se ha iscritto qualcun altro, usa un log specifico
+                    String desc;
+                    if (operatore.equals(volontario)) {   // iscrizione di se stesso
+                        desc = getLogIscrizione(volontario, funzione, turno);
+                    } else {  // iscrizione di qualcun altro
+                        desc = operatore.getNomeCognome();
+                        desc += " ha iscritto ";
+                        desc += volontario.getNomeCognome();
+                        desc += " come "+funzione.getSigla();
+                        desc += " al turno ";
+                        desc += getLogTurno(turno);
+                    }
+                    Log.info(LogType.iscrizione.getTag(), desc);
+
+                } else {
+                    turno.add(iPrecedente);
+                }
+
             }
 
             // registra il turno
+            // la @OneToMany turno -> iscrizione ha l'opzione orphanRemoval = true quindi
+            // eventuali iscrizioni rimaste orfane vengono cancellate automaticamente
+            turno.setNote(getNote());
             entityManager.persist(turno);
             entityManager.getTransaction().commit();
             success = true;
@@ -229,6 +339,78 @@ public class CTurnoEditor extends CTabelloneEditor {
         }
 
         return success;
+    }
+
+
+    /**
+     * Recupera l'iscrizione di un dato volontario per una data funzione da una lista di iscrizioni.
+     *
+     * @param volontario il volontario
+     * @param funzione   la funzione
+     * @param iscrizioni la lista delle iscrizioni
+     * @return l'iscrizione del volontario specificato, o null se non c'era
+     */
+    private Iscrizione getIscrizioneVolontarioFunzione(Volontario volontario, Funzione funzione, List<Iscrizione> iscrizioni) {
+        Iscrizione iscrizione = null;
+        for (Iscrizione i : iscrizioni) {
+            if (i.getVolontario().equals(volontario)) {
+                if (i.getServizioFunzione().getFunzione().equals(funzione)) {
+                    iscrizione = i;
+                    break;
+                }
+            }
+        }
+        return iscrizione;
+    }
+
+
+    /**
+     * Restituisce il testo del log di iscrizione di un determinato
+     * volontario per una data funzione a un dato turno
+     *
+     * @param volontario il volontario
+     * @param turno      il turno
+     * @return il testo per il log
+     */
+    private String getLogIscrizione(Volontario volontario, Funzione funzione, Turno turno) {
+        String desc = volontario.getNomeCognome();
+        desc += " si è iscritto/a come ";
+        desc += funzione.getSigla();
+        desc += " al turno ";
+        desc += getLogTurno(turno);
+        return desc;
+    }
+
+    /**
+     * Restituisce il testo del log di cancellazione di un determinato volontario da una data funzione di un dato turno
+     *
+     * @param volontario il volontario
+     * @param funzione   la funzione
+     * @param turno      il turno
+     * @return il testo per il log
+     */
+    private String getLogCancellazione(Volontario volontario, Funzione funzione, Turno turno) {
+        String desc;
+        desc = volontario.getNomeCognome();
+        desc += " si è cancellato/a come ";
+        desc += funzione.getSigla();
+        desc += " dal turno ";
+        desc += getLogTurno(turno);
+        return desc;
+    }
+
+    /**
+     * Restituisce la parte di log relativa al turno
+     *
+     * @param turno il turno
+     * @return il testo per il log
+     */
+    private String getLogTurno(Turno turno) {
+        String desc;
+        desc = turno.getServizio().getSigla();
+        desc += " del ";
+        desc += LibDate.toStringDDMMYYYY(turno.getInizio());
+        return desc;
     }
 
 
@@ -332,6 +514,27 @@ public class CTurnoEditor extends CTabelloneEditor {
             return iscrizioni;
         }
 
+
+        /**
+         * Ritorna l'elenco delle iscrizioni originali
+         * (solo quelle con volontario)
+         *
+         * @return l'elenco delle iscrizioni originali
+         */
+        public ArrayList<Iscrizione> getIscrizioniOriginali() {
+            ArrayList<Iscrizione> iscrizioni = new ArrayList();
+            for (IscrizioneEditor ie : iEditors) {
+                Iscrizione i = ie.getIscrizioneOriginale();
+                if (i != null) {
+                    if(i.getVolontario()!=null){
+                        iscrizioni.add(i);
+                    }
+                }
+            }
+            return iscrizioni;
+        }
+
+
     }
 
 
@@ -346,6 +549,7 @@ public class CTurnoEditor extends CTabelloneEditor {
         private HHMMComponent cTime;
         private Volontario currentSelectedVolontario;
         private Iscrizione iscrizione;
+        private Iscrizione iscrizioneOriginale; // l'iscrizione che appare quando viene costruito l'editor
 
         /**
          * @param iscrizione l'iscrizione da editare
@@ -354,6 +558,24 @@ public class CTurnoEditor extends CTabelloneEditor {
          */
         public IscrizioneEditor(Iscrizione iscrizione, IscrizioneGroupEditor parent) {
             this.iscrizione = iscrizione;
+
+            // clona l'iscrizione originale prima che venga cambiata
+            if(this.iscrizione!=null){
+                try {
+                    iscrizioneOriginale=(Iscrizione)BeanUtils.cloneBean(this.iscrizione);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+//                this.iscrizione.
+//                iscrizioneOriginale=this.iscrizione;
+            }
+
             this.parent = parent;
             setSpacing(true);
 
@@ -530,11 +752,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                         fireDismissListeners(new DismissEvent(bMain, true, false));
 
                         // log iscrizione
-                        String desc = iscrizione.getVolontario().getNomeCognome();
-                        desc+=" si è iscritto al turno ";
-                        desc+=turno.getServizio().getSigla();
-                        desc+=" del ";
-                        desc+= LibDate.toStringDDMMYYYY(turno.getInizio());
+                        String desc = getLogIscrizione(iscrizione.getVolontario(),funz, turno);
                         Log.info(LogType.iscrizione.getTag(), desc);
 
                     }
@@ -561,11 +779,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                         fireDismissListeners(new DismissEvent(bRemove, true, false));
 
                         // log cancellazione
-                        String desc = iscrizione.getVolontario().getNomeCognome();
-                        desc+=" si è cancellato dal turno ";
-                        desc+=turno.getServizio().getSigla();
-                        desc+=" del ";
-                        desc+= LibDate.toStringDDMMYYYY(turno.getInizio());
+                        String desc = getLogCancellazione(iscrizione.getVolontario(), funz, turno);
                         Log.info(LogType.cancellazione.getTag(), desc);
 
                     } else {
@@ -699,15 +913,18 @@ public class CTurnoEditor extends CTabelloneEditor {
 
             // controllo minuti passati dal momento dell'iscrizione
             if (mode == Iscrizione.MODE_CANC_POST) {
-                long time1 = iscrizione.getTsCreazione().getTime();
-                long time2 = System.currentTimeMillis();
-                long msElapsed = time2 - time1;
-                int minutesElapsed = (int) (msElapsed / 1000 / 60);
-                int maxMinutes = CompanyPrefs.cancMinutiDopoIscrizione.getInt();
-                if (minutesElapsed > maxMinutes) {
-                    err = "Sono trascorsi più di " + maxMinutes + " minuti dall'iscrizione.";
+                Timestamp tsCreazione = iscrizione.getTsCreazione();
+                if (tsCreazione != null) {
+                    long time1 = tsCreazione.getTime();
+                    long time2 = System.currentTimeMillis();
+                    long msElapsed = time2 - time1;
+                    int minutesElapsed = (int) (msElapsed / 1000 / 60);
+                    int maxMinutes = CompanyPrefs.cancMinutiDopoIscrizione.getInt();
+                    if (minutesElapsed > maxMinutes) {
+                        err = "Sono trascorsi più di " + maxMinutes + " minuti dall'iscrizione.";
+                    }
+                    return err;
                 }
-                return err;
             }
 
             return "";
@@ -749,6 +966,15 @@ public class CTurnoEditor extends CTabelloneEditor {
                 v = iscrizione.getVolontario();
             }
             return v;
+        }
+
+        /**
+         * Recupera l'iscrizione originariamente presente quando l'editor è stato presentato
+         *
+         * @return l'iscrizione originale
+         */
+        public Iscrizione getIscrizioneOriginale() {
+            return iscrizioneOriginale;
         }
 
         /**

@@ -7,6 +7,7 @@ import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.query.WamQuery;
@@ -365,7 +366,9 @@ public class ServizioForm extends ModuleForm {
             }// end of if cycle
 
 
+            // combo di selezione della funzione
             comboFunzioni = new ERelatedComboField(Funzione.class);
+            comboFunzioni.sort(Funzione_.sigla);
             comboFunzioni.setWidth("12em");
             if (serFun != null) {
                 Funzione f = serFun.getFunzione();
