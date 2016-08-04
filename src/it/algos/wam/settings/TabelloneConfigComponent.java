@@ -2,9 +2,8 @@ package it.algos.wam.settings;
 
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
-import com.vaadin.ui.ColorPicker;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.*;
 import it.algos.webbase.web.field.ArrayComboField;
 import it.algos.webbase.web.field.IntegerField;
 
@@ -32,8 +31,26 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         layout.setMargin(true);
         layout.setSpacing(true);
 
-        layout.addComponent(comboOreWarning);
-        layout.addComponent(comboOreAlert);
+        layout.addComponent(new Label("Un turno si considera <strong>incompleto</strong> quando " +
+                "non tutte <br>le funzioni obbligatorie sono coperte", ContentMode.HTML));
+
+        HorizontalLayout hl;
+
+        hl = new HorizontalLayout();
+        hl.setSpacing(true);
+        hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
+        hl.addComponent(new Label("Un turno incompleto diventa giallo"));
+        hl.addComponent(comboOreWarning);
+        hl.addComponent(new Label("ore prima dell'inizio (warning)"));
+        layout.addComponent(hl);
+
+        hl = new HorizontalLayout();
+        hl.setSpacing(true);
+        hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
+        hl.addComponent(new Label("Un turno incompleto diventa rosso"));
+        hl.addComponent(comboOreAlert);
+        hl.addComponent(new Label("ore prima dell'inizio (alert)"));
+        layout.addComponent(hl);
 
         layout.addComponent(createSaveButton());
 
@@ -46,12 +63,12 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
 
         // create and add fields and other components
         comboOreAlert = new ArrayComboField(new Integer[]{12, 24, 36, 48, 72, 96});
-        comboOreAlert.setCaption("Alert: quante ore prima dell'inizio un turno incompleto diventa rosso");
-        comboOreAlert.setWidth("8em");
+        comboOreAlert.setCaption(null);
+        comboOreAlert.setWidth("6em");
 
         comboOreWarning = new ArrayComboField(new Integer[]{24, 36, 48, 72, 96, 120, 144});
-        comboOreWarning.setCaption("Warning: quante ore prima dell'inizio un turno incompleto diventa giallo");
-        comboOreWarning.setWidth("8em");
+        comboOreWarning.setCaption(null);
+        comboOreWarning.setWidth("6em");
 
         // bind fields to properties
         getGroup().bind(comboOreAlert, KEY_ORE_ALERT);
@@ -92,6 +109,9 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
             if(warningOrePrima>alertOrePrima){
                 CompanyPrefs.turnoAlertOrePrima.put(alertOrePrima);
                 CompanyPrefs.turnoWarningOrePrima.put(warningOrePrima);
+
+                Notification.show("Dati salvati");
+
             }else{
                 Notification.show("Le ore di Warning devono essere superiori alle ore di Alert", Notification.Type.ERROR_MESSAGE);
             }

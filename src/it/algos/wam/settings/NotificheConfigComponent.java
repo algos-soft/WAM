@@ -118,6 +118,8 @@ public class NotificheConfigComponent extends BaseConfigPanel {
 				CompanyPrefs.inviaNotificaInizioTurno.put(doInviaNotifInizioTurno);
 				CompanyPrefs.quanteOrePrimaNotificaInizioTurno.put(orePrima);
 
+				Notification.show("Dati salvati");
+
 			}
 
 		}

@@ -202,6 +202,9 @@ public class IscrizioniConfigComponent extends BaseConfigPanel {
             int minutiPost = (int)getItemProperty(KEY_COMBO_MINUTI_DOPO).getValue();
             CompanyPrefs.cancMinutiDopoIscrizione.put(minutiPost);
 
+            Notification.show("Dati salvati");
+
+
         }
 
     }

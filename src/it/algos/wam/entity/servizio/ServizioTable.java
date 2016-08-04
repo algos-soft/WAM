@@ -165,58 +165,95 @@ public class ServizioTable extends ETable {
      */
     private class FunzioniColumnGenerator implements ColumnGenerator {
 
+//        /**
+//         * Genera la cella delle funzioni.
+//         */
+//        public Component generateCellOld(Table table, Object itemId, Object columnId) {
+//            HorizontalLayout comp = new HorizontalLayout();
+//            Item item = table.getItem(itemId);
+//            BeanItem bi = LibBean.fromItem(item);
+//            Servizio serv = (Servizio) bi.getBean();
+//            String testo;
+//            List<ServizioFunzione> lista = serv.getServizioFunzioni();
+//            Label label;
+//            ServizioFunzione servFunz;
+//            Funzione funz;
+//            FontAwesome font;
+//            int codePoint;
+//
+//            for (int k = 0; k < lista.size(); k++) {
+//                servFunz = lista.get(k);
+//                testo = "";
+//                funz = servFunz.getFunzione();
+//                codePoint = funz.getIconCodepoint();
+//                font = FontAwesome.fromCodepoint(codePoint);
+//                testo += font.getHtml() + "&nbsp;";
+//                testo += "<strong>";
+//
+//                if (servFunz.isObbligatoria()) {
+//                    testo += "<span style=\"color:red;\">";
+//                } else {
+//                    testo += "<span style=\"color:blue;\">";
+//                }// end of if/else cycle
+//
+//                testo += servFunz.getFunzione().getSigla();
+//
+//                if (k < lista.size() - 1) {
+//                    testo += ",&nbsp;";
+//                }// end of if cycle
+//
+//                testo += "</span>" + "</strong>";
+//                label = new Label(testo, ContentMode.HTML);
+//
+//                if (servFunz.isObbligatoria()) {
+//                    label.addStyleName("rosso");
+//                } else {
+//                    label.addStyleName("blue");
+//                }// end of if/else cycle
+//
+//                comp.addComponent(label);
+//
+//            }
+//
+//            return comp;
+//        }// end of method
+
+
         /**
          * Genera la cella delle funzioni.
+         * Usando una Label come componente, la selezione della
+         * riga funziona anche cliccando sulla colonna custom.
          */
         public Component generateCell(Table table, Object itemId, Object columnId) {
-            HorizontalLayout comp = new HorizontalLayout();
+
             Item item = table.getItem(itemId);
             BeanItem bi = LibBean.fromItem(item);
             Servizio serv = (Servizio) bi.getBean();
-            String testo;
+
             List<ServizioFunzione> lista = serv.getServizioFunzioni();
-            Label label = null;
-            ServizioFunzione servFunz;
-            Funzione funz;
-            FontAwesome font;
-            int codePoint;
-
+            String str = "";
             for (int k = 0; k < lista.size(); k++) {
-                servFunz = lista.get(k);
-                testo = "";
-                funz = servFunz.getFunzione();
-                codePoint = funz.getIconCodepoint();
-                font = FontAwesome.fromCodepoint(codePoint);
-                testo += font.getHtml() + "&nbsp;";
-                testo += "<strong>";
+                ServizioFunzione sf = serv.getServizioFunzioni().get(k);
+                int codePoint = sf.getFunzione().getIconCodepoint();
+                FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
+                str += glyph.getHtml() + " ";
 
-                if (servFunz.isObbligatoria()) {
-                    testo += "<span style=\"color:red;\">";
+                String sigla = sf.getFunzione().getSigla();
+                if (sf.isObbligatoria()) {
+                    str += "<strong>" + sigla + "</strong>";
                 } else {
-                    testo += "<span style=\"color:blue;\">";
-                }// end of if/else cycle
-
-                testo += servFunz.getFunzione().getSigla();
+                    str += sigla;
+                }
 
                 if (k < lista.size() - 1) {
-                    testo += ",&nbsp;";
-                }// end of if cycle
-
-                testo += "</span>" + "</strong>";
-                label = new Label(testo, ContentMode.HTML);
-
-                if (servFunz.isObbligatoria()) {
-                    label.addStyleName("rosso");
-                } else {
-                    label.addStyleName("blue");
-                }// end of if/else cycle
-
-                comp.addComponent(label);
+                    str += ", ";
+                }
 
             }
 
-            return comp;
-        }// end of method
+            return new Label(str, ContentMode.HTML);
+        }
+
     }// end of inner class
 
 

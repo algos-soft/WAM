@@ -123,6 +123,8 @@ public class EmailConfigComponent extends BaseConfigPanel {
 				CompanyPrefs.sendMailToBackup.put(doBackup);
 				CompanyPrefs.backupMailbox.put(backAddr);
 
+				Notification.show("Dati salvati");
+
 			}
 
 		}
