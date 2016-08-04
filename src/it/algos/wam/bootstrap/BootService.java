@@ -330,9 +330,6 @@ public abstract class BootService {
             lista.add(Arrays.asList("Lucia", "Casaroli", "lucia.casaroli@wamdemo.it", "cas", true, funz.get(0)));
             lista.add(Arrays.asList("Flavia", "Robusti", "flavia.robusti@wamdemo.it", "rob", false, funz.get(8), funz.get(9)));
             lista.add(Arrays.asList("Marco", "Terzani", "marco.terzani@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
-        }// end of if cycle
-
-        if (company.getCompanyCode().equals(WAMApp.TEST_COMPANY_CODE)) {
             lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it", "abb", false, funz.get(2)));
             lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it", "ber", true, funz.get(3)));
             lista.add(Arrays.asList("Mirella", "Pace", "mirella.pace@wamdemo.it", "pac", false, funz.get(4)));
@@ -340,6 +337,23 @@ public abstract class BootService {
             lista.add(Arrays.asList("Antonio", "Zambetti", "antonio.zambetti@wamdemo.it", "zam", false, funz.get(8)));
             lista.add(Arrays.asList("Aldo", "Terzino", "aldo.terzino@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
             lista.add(Arrays.asList("Alice", "Mantovani", "alice.mantovani@wamdemo.it", "man", false, funz.get(8), funz.get(9)));
+        }// end of if cycle
+
+        if (company.getCompanyCode().equals(WAMApp.TEST_COMPANY_CODE)) {
+            lista.add(Arrays.asList("Angela", "Ferrara", "angela.ferrara@wamdemo.it", "fer", false, funz.get(2)));
+            lista.add(Arrays.asList("Marco", "Castelli", "marco.castelli@wamdemo.it", "cas", true, funz.get(3)));
+            lista.add(Arrays.asList("Roberto", "Robusti", "roberto.robusti@wamdemo.it", "rob", false, funz.get(4)));
+            lista.add(Arrays.asList("Flavia", "Bianchi", "flavia.bianchi@wamdemo.it", "bia", false, funz.get(6)));
+            lista.add(Arrays.asList("Giovanna", "Esposito", "giovanna.esposito@wamdemo.it", "esp", false, funz.get(8)));
+            lista.add(Arrays.asList("Arturo", "Della Monica", "arturo.dellamonica@wamdemo.it", "del", false, funz.get(8), funz.get(9)));
+            lista.add(Arrays.asList("Stefano", "Bramieri", "stefano.bramieri@wamdemo.it", "bra", false, funz.get(8), funz.get(9)));
+            lista.add(Arrays.asList("Lucio", "Bertuzzi", "lucio.bertuzzi@wamdemo.it", "ber", false, funz.get(2)));
+            lista.add(Arrays.asList("Renato", "Sortino", "renato.sortino@wamdemo.it", "sor", true, funz.get(3)));
+            lista.add(Arrays.asList("Maria", "Tomba", "maria.tomba@wamdemo.it", "tom", false, funz.get(4)));
+            lista.add(Arrays.asList("Teresa", "Torriglia", "teresa.torriglia@wamdemo.it", "tor", false, funz.get(6)));
+            lista.add(Arrays.asList("Carlo", "Malaguti", "carlo.malaguti@wamdemo.it", "mal", false, funz.get(8)));
+            lista.add(Arrays.asList("Luigi", "Savarese", "luigi.savarese@wamdemo.it", "sav", false, funz.get(8), funz.get(9)));
+            lista.add(Arrays.asList("Tomaso", "Zanichetti", "tomaso.zanichetti@wamdemo.it", "zan", false, funz.get(8), funz.get(9)));
         }// end of if cycle
 
         for (int k = 0; k < lista.size(); k++) {
