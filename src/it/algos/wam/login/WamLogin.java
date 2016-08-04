@@ -16,15 +16,22 @@ import it.algos.webbase.web.login.*;
 public class WamLogin extends Login {
 
     private WamLoginForm loginForm;
+    private WamUserProfileForm profileForm;
 
     public WamLogin(BaseCompany company) {
         setCookiePrefix(company.getCompanyCode());
         loginForm = new WamLoginForm();
+        profileForm = new WamUserProfileForm();
     }
 
     @Override
     public AbsLoginForm getLoginForm() {
         return loginForm;
+    }
+
+    @Override
+    public AbsUserProfileForm getUserProfileForm() {
+        return profileForm;
     }
 
     @Override
