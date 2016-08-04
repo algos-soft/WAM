@@ -38,7 +38,11 @@ public class WamUserProfileForm extends AbsUserProfileForm{
         button.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                new ChangePasswordDialog().show();
+                changePassword();
+
+                String password=volontario.getPassword();
+
+                new ChangePasswordDialog(password).show();
             }
         });
 
@@ -58,6 +62,12 @@ public class WamUserProfileForm extends AbsUserProfileForm{
         nomeField.setValue(volontario.getNome());
         cognomeField.setValue(volontario.getCognome());
         emailField.setValue(volontario.getEmail());
+    }
+
+
+    @Override
+    public UserIF getUser() {
+        return volontario;
     }
 
     @Override
