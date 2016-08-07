@@ -221,6 +221,7 @@ public class WamTablePortal extends TablePortal {
     protected void spostaRecord(boolean sopra) {
     }// end of method
 
+
     /**
      * Effettua la transazione di swap
      */

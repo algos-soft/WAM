@@ -7,11 +7,11 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
+import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
-import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 
@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * Created by gac on 25 mag 2016.
  * .
  */
-public class VolontarioTable extends ETable {
+public class VolontarioTable extends WamTable {
 
     // larghezza delle colonne funzioni
     private static int LAR = 90;
@@ -45,7 +45,7 @@ public class VolontarioTable extends ETable {
      */
     @Override
     protected void createAdditionalColumns() {
-        ArrayList<Funzione> listaFunzioni = Funzione.findAll((WamCompany)CompanySessionLib.getCompany());
+        ArrayList<Funzione> listaFunzioni = Funzione.findAll((WamCompany) CompanySessionLib.getCompany());
         for (Funzione funz : listaFunzioni) {
             addGeneratedColumn(funz.getSigla(), new FunzioniColumnGenerator(funz));
         }// end of for cycle
@@ -62,7 +62,7 @@ public class VolontarioTable extends ETable {
     @Override
     protected Object[] getDisplayColumns() {
         ArrayList lista = new ArrayList<>();
-        ArrayList<Funzione> listaFunzioni = Funzione.findAll((WamCompany)CompanySessionLib.getCompany());
+        ArrayList<Funzione> listaFunzioni = Funzione.findAll((WamCompany) CompanySessionLib.getCompany());
 
         if (LibSession.isDeveloper()) {
             lista.add(WamCompanyEntity_.company);

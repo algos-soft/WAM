@@ -4,6 +4,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.event.Action;
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
@@ -12,6 +13,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
 import com.vaadin.ui.components.colorpicker.ColorChangeListener;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
+import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.multiazienda.ETable;
@@ -25,7 +27,7 @@ import java.util.List;
  * Created by alex on 7-04-2016.
  * .
  */
-public class ServizioTable extends ETable {
+public class ServizioTable extends WamTable {
 
     // id della colonna generata "durata"
     protected static final String COL_DURATA = "Durata";

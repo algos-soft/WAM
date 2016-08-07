@@ -12,6 +12,7 @@ import it.algos.webbase.web.login.*;
 
 /**
  * Created by alex on 15-03-2016.
+ * .
  */
 public class WamLogin extends Login {
 

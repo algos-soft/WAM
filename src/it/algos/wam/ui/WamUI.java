@@ -8,17 +8,17 @@ import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.communication.PushMode;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ui.Transport;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.*;
 import it.algos.wam.entity.companyentity.CompanyListener;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.servizio.ServizioMod;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzioneMod;
+import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.VolontarioMod;
+import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
@@ -35,6 +35,7 @@ import it.algos.webbase.domain.log.LogMod;
 import it.algos.webbase.domain.pref.PrefMod;
 import it.algos.webbase.domain.utente.UtenteModulo;
 import it.algos.webbase.domain.vers.VersMod;
+import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
@@ -48,6 +49,7 @@ import java.util.List;
 
 /**
  * UI principale e unica del programma.
+ * Questa classe DEVE estendere AlgosUI per evitare di duplicare tutti i metodi (utili) già esistenti nella superclasse gac/7-8-16
  */
 @Theme("wam")
 @Push(value = PushMode.AUTOMATIC, transport = Transport.WEBSOCKET_XHR)   // se non uso questo tipo di transport i cookies non funzionano
@@ -103,7 +105,7 @@ public class WamUI extends UI {
         // Se c'è una company nella sessione e la company dell'URL è diversa dalla company della sessione
         // eseguo un logout automatico (che elimina la company dalla sessione)
         BaseCompany sessionComp = CompanySessionLib.getCompany();
-        if(sessionComp!=null){
+        if (sessionComp != null) {
             if (!company.equals(sessionComp)) {
                 Login.getLogin().logout();
                 return;
@@ -151,6 +153,21 @@ public class WamUI extends UI {
             });
 
         }
+        boolean loggato = Login.getLogin().isLogged();
+
+        //--controllo se l'url contiene un login valido
+        String utente = request.getParameter("utente");
+        String password = request.getParameter("password");
+        if (utente != null && !utente.equals("")) {
+            List<Volontario> militiPerCognome = (List<Volontario>) CompanyQuery.queryList(Volontario.class, Volontario_.cognome, utente);
+            if (militiPerCognome != null && militiPerCognome.size() > 0) {
+                Volontario volontario = militiPerCognome.get(0);
+                if (volontario.getPassword().equals(password)) {
+                    Login.getLogin().setUser(volontario);
+                }// end of if cycle
+            }// end of if cycle
+        }// end of if cycle
+
 
         // Se è loggato, la company dell'url
         // deve essere uguale alla company loggata
@@ -167,7 +184,7 @@ public class WamUI extends UI {
 
         // Se la company prevede tabellone pubblico, mostra il tabellone prima del login
         // (se non viene dal goHome() del tabellone stesso)
-        boolean tabPubblico=CompanyPrefs.tabellonePubblico.getBool(company);
+        boolean tabPubblico = CompanyPrefs.tabellonePubblico.getBool(company);
         if (tabPubblico) {
             if (!LibSession.isAttribute(KEY_GOHOME)) {
                 UI.getCurrent().setContent(getTabellone());
@@ -314,9 +331,9 @@ public class WamUI extends UI {
 
         // aggiunge alla menubar le funzioni di Admin
         if (LibSession.isAdmin()) {
-            if(LibSession.isDeveloper()){
+            if (LibSession.isDeveloper()) {
                 navComp.addView(MgrConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
-            }else{
+            } else {
                 navComp.addView(LogMod.class, "Log", FontAwesome.CLOCK_O);
                 navComp.addView(ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
             }
@@ -360,6 +377,8 @@ public class WamUI extends UI {
             }
         }
 
+        //--footer
+        navComp.setFooter(creaFooter());
         return navComp;
     }
 
@@ -578,9 +597,32 @@ public class WamUI extends UI {
 //            comp = (Component) obj;
 //        }
 //        return comp;
-
         return creaComponente();    // per ora è sempre nuova istanza
     }
 
+
+    /**
+     * Crea l'interfaccia utente (User Interface) iniziale dell'applicazione
+     * Footer - un striscia per eventuali informazioni (Algo, copyright, ecc)
+     * Le applicazioni specifiche, possono sovrascrivere questo metodo nella sottoclasse
+     *
+     * @return layout - normalmente un HorizontalLayout
+     */
+    //@todo metodo già esistente in AlgosUI - Occorre che questa classe estenda AlgosUI gac/7-8-16
+    protected HorizontalLayout creaFooter() {
+        HorizontalLayout footer = new HorizontalLayout();
+        footer.setMargin(new MarginInfo(false, false, false, false));
+        footer.setSpacing(true);
+        footer.setHeight("30px");
+
+        footer.addComponent(new Label("Algos s.r.l."));
+        footer.addComponent(new Label(" - "));
+        footer.addComponent(new Label("webAmbulanze"));
+        if (CompanySessionLib.getCompany() != null) {
+            footer.addComponent(new Label("company " + CompanySessionLib.getCompany().getCompanyCode()));
+        }// end of if cycle
+
+        return footer;
+    }// end of method
 
 }// end of class
