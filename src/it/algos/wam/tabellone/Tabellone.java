@@ -7,14 +7,14 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-import it.algos.wam.daemons.CompanyTasks;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.wam.turnigenerator.CTurniGenerator;
 import it.algos.wam.ui.WamUI;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.field.DateField;
 import it.algos.webbase.web.field.IntegerField;
@@ -22,7 +22,7 @@ import it.algos.webbase.web.form.AForm;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.lib.LibSession;
-import it.algos.webbase.web.login.*;
+import it.algos.webbase.web.login.Login;
 import it.algos.webbase.web.screen.ErrorScreen;
 
 import javax.persistence.EntityManager;
@@ -128,6 +128,167 @@ public class Tabellone extends VerticalLayout implements View {
 
     }
 
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        LibSession.setAttribute(WamUI.KEY_TABVISIBLE, true);
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        LibSession.setAttribute(WamUI.KEY_TABVISIBLE, null);
+    }
+
+    /**
+     * Crea una GridTabellone a partire dalla data richiesta e per il numero di giorni richiesto
+     * e la mette nel componente visibile
+     *
+     * @param d1           la data iniziale
+     * @param quantiGiorni il numero di giorni da visualizzare
+     */
+    private void creaGrid(LocalDate d1, int quantiGiorni) {
+        WTabellone wrapper = EngineTab.creaRighe(d1, quantiGiorni, entityManager);
+        GridTabellone grid = EngineTab.creaTabellone(wrapper);
+        tabComponent.setGrid(grid);
+
+        // aggiunge al tabellone un listener per la cella cliccata
+        grid.addClickCellListener(new GridTabellone.ClickCellListener() {
+            @Override
+            public void cellClicked(GridTabellone.ClickCellEvent e) {
+                Tabellone.this.cellClicked(e.getTipo(), e.getCol(), e.getRow(), e.getCellObject());
+            }
+        });
+
+    }
+
+    /**
+     * Crea una GridTabellone a partire dalla data richiesta della durata di 7 giorni
+     * e la mette nel componente visibile
+     *
+     * @param d1 la data iniziale
+     */
+    private void creaGrid(LocalDate d1) {
+        creaGrid(d1, 7);
+    }
+
+    /**
+     * E' stata cliccata una cella del tabellone
+     *
+     * @param tipo       tipo di cella
+     * @param col        la colonna
+     * @param row        la riga
+     * @param cellObject l'oggetto specifico trasportato nella cella
+     */
+    private void cellClicked(CellType tipo, int col, int row, Object cellObject) {
+
+        if (Login.getLogin().isLogged()) {
+
+            Turno turno;
+            switch (tipo) {
+                case TURNO:
+                    turno = (Turno) cellObject;
+                    editCellTurno(turno, col, row);
+                    break;
+                case NO_TURNO:
+                    InfoNewTurnoWrap wrapper = (InfoNewTurnoWrap) cellObject;
+                    LocalDate dInizio = wrapper.getData();
+                    Servizio serv = wrapper.getServizio();
+                    turno = new Turno();
+                    turno.setInizio(DateConvertUtils.asUtilDate(dInizio));
+                    turno.setServizio(serv);
+                    editCellTurno(turno, col, row);
+                    break;
+                case SERVIZIO:
+                    Servizio servizio = (Servizio) cellObject;
+                    addRigaServizio(servizio, col, row);
+                    break;
+            }
+
+        } else {
+            Login.getLogin().showLoginForm();
+        }
+
+
+    }
+
+    /**
+     * Edita una cella di tipo Turno
+     */
+    private void editCellTurno(final Turno turno, int col, int row) {
+
+        // crea un editor per il turno
+        // quando si dismette l'editor, tornerà al tabellone
+        CTurnoEditor editor = new CTurnoEditor(turno, entityManager);
+        editor.addDismissListener(new CTabelloneEditor.DismissListener() {
+            @Override
+            public void editorDismissed(CTabelloneEditor.DismissEvent e) {
+
+                // se ha salvato o eliminato, aggiorna la cella della griglia
+                if (e.isSaved() | e.isDeleted()) {
+                    GridTabellone grid = tabComponent.getGridTabellone();
+                    grid.removeComponent(col, row);
+                    TabelloneCell cell = null;
+                    if (e.isSaved()) {
+                        cell = new CTurnoDisplay(grid, turno);
+                    }
+                    if (e.isDeleted()) {
+                        cell = new CTurnoDisplay(grid, turno.getServizio(), turno.getData1());
+                    }
+                    grid.addComponent(cell, col, row);
+                }
+                navigator.navigateTo(ADDR_TABELLONE);
+            }
+        });
+
+
+        // assegna l'editor e naviga alla editor view
+        getEditorPage().setEditor(editor);
+        navigator.navigateTo(ADDR_EDIT_TURNO);
+    }
+
+    /**
+     * Ritorna la EditorPage
+     * è sempre la stessa istanza
+     * se non c'è la crea ora
+     */
+    private EditorPage getEditorPage() {
+        if (editorPage == null) {
+            editorPage = new EditorPage();
+        }
+        return editorPage;
+    }
+
+    /**
+     * Aggiunge una ulteriore riga per un dato servizio.
+     * La riga viene aggiunta dopo quella specificata in row
+     */
+    private void addRigaServizio(final Servizio servizio, int col, int row) {
+        GridTabellone grid = tabComponent.getGridTabellone();
+        WRigaTab riga = new WRigaTab(servizio, new Turno[0]);
+        EngineTab.insertRiga(grid, riga, row + 1);
+    }
+
+    /**
+     * Manda il browser all'indirizzo definito nella homeURI (se esiste)
+     */
+    private void goHome() {
+        if (Login.getLogin().isLogged()) {
+            LibSession.setAttribute(WamUI.KEY_GOHOME, true);
+            this.getUI().getPage().open(homeURI.toString(), null);
+        } else {
+            Login.getLogin().showLoginForm();
+        }
+    }
+
+    public Navigator getNavigator() {
+        return navigator;
+    }
 
     /**
      * Provider di view per il Navigator interno al tabellone
@@ -170,178 +331,6 @@ public class Tabellone extends VerticalLayout implements View {
         }
     }
 
-
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-
-    }
-
-
-    @Override
-    public void attach() {
-        super.attach();
-        LibSession.setAttribute(WamUI.KEY_TABVISIBLE, true);
-    }
-
-    @Override
-    public void detach() {
-        super.detach();
-        LibSession.setAttribute(WamUI.KEY_TABVISIBLE, null);
-    }
-
-    /**
-     * Crea una GridTabellone a partire dalla data richiesta e per il numero di giorni richiesto
-     * e la mette nel componente visibile
-     *
-     * @param d1           la data iniziale
-     * @param quantiGiorni il numero di giorni da visualizzare
-     */
-    private void creaGrid(LocalDate d1, int quantiGiorni) {
-        WTabellone wrapper = EngineTab.creaRighe(d1, quantiGiorni, entityManager);
-        GridTabellone grid = EngineTab.creaTabellone(wrapper);
-        tabComponent.setGrid(grid);
-
-        // aggiunge al tabellone un listener per la cella cliccata
-        grid.addClickCellListener(new GridTabellone.ClickCellListener() {
-            @Override
-            public void cellClicked(GridTabellone.ClickCellEvent e) {
-                Tabellone.this.cellClicked(e.getTipo(), e.getCol(), e.getRow(), e.getCellObject());
-            }
-        });
-
-    }
-
-
-    /**
-     * Crea una GridTabellone a partire dalla data richiesta della durata di 7 giorni
-     * e la mette nel componente visibile
-     *
-     * @param d1 la data iniziale
-     */
-    private void creaGrid(LocalDate d1) {
-        creaGrid(d1, 7);
-    }
-
-
-    /**
-     * E' stata cliccata una cella del tabellone
-     *
-     * @param tipo       tipo di cella
-     * @param col        la colonna
-     * @param row        la riga
-     * @param cellObject l'oggetto specifico trasportato nella cella
-     */
-    private void cellClicked(CellType tipo, int col, int row, Object cellObject) {
-
-        if(Login.getLogin().isLogged()) {
-
-            Turno turno;
-            switch (tipo) {
-                case TURNO:
-                    turno = (Turno) cellObject;
-                    editCellTurno(turno, col, row);
-                    break;
-                case NO_TURNO:
-                    InfoNewTurnoWrap wrapper = (InfoNewTurnoWrap) cellObject;
-                    LocalDate dInizio = wrapper.getData();
-                    Servizio serv = wrapper.getServizio();
-                    turno = new Turno();
-                    turno.setInizio(DateConvertUtils.asUtilDate(dInizio));
-                    turno.setServizio(serv);
-                    editCellTurno(turno, col, row);
-                    break;
-                case SERVIZIO:
-                    Servizio servizio = (Servizio) cellObject;
-                    addRigaServizio(servizio, col, row);
-                    break;
-            }
-
-        }else{
-            Login.getLogin().showLoginForm();
-        }
-
-
-    }
-
-
-    /**
-     * Edita una cella di tipo Turno
-     */
-    private void editCellTurno(final Turno turno, int col, int row) {
-
-        // crea un editor per il turno
-        // quando si dismette l'editor, tornerà al tabellone
-        CTurnoEditor editor = new CTurnoEditor(turno, entityManager);
-        editor.addDismissListener(new CTabelloneEditor.DismissListener() {
-            @Override
-            public void editorDismissed(CTabelloneEditor.DismissEvent e) {
-
-                // se ha salvato o eliminato, aggiorna la cella della griglia
-                if (e.isSaved() | e.isDeleted()) {
-                    GridTabellone grid = tabComponent.getGridTabellone();
-                    grid.removeComponent(col, row);
-                    TabelloneCell cell = null;
-                    if (e.isSaved()) {
-                        cell = new CTurnoDisplay(grid, turno);
-                    }
-                    if (e.isDeleted()) {
-                        cell = new CTurnoDisplay(grid, turno.getServizio(), turno.getData1());
-                    }
-                    grid.addComponent(cell, col, row);
-                }
-                navigator.navigateTo(ADDR_TABELLONE);
-            }
-        });
-
-
-        // assegna l'editor e naviga alla editor view
-        getEditorPage().setEditor(editor);
-        navigator.navigateTo(ADDR_EDIT_TURNO);
-    }
-
-
-    /**
-     * Ritorna la EditorPage
-     * è sempre la stessa istanza
-     * se non c'è la crea ora
-     */
-    private EditorPage getEditorPage() {
-        if (editorPage == null) {
-            editorPage = new EditorPage();
-        }
-        return editorPage;
-    }
-
-
-    /**
-     * Aggiunge una ulteriore riga per un dato servizio.
-     * La riga viene aggiunta dopo quella specificata in row
-     */
-    private void addRigaServizio(final Servizio servizio, int col, int row) {
-        GridTabellone grid = tabComponent.getGridTabellone();
-        WRigaTab riga = new WRigaTab(servizio, new Turno[0]);
-        EngineTab.insertRiga(grid, riga, row + 1);
-    }
-
-
-    /**
-     * Manda il browser all'indirizzo definito nella homeURI (se esiste)
-     */
-    private void goHome() {
-        if(Login.getLogin().isLogged()){
-            LibSession.setAttribute(WamUI.KEY_GOHOME, true);
-            this.getUI().getPage().open(homeURI.toString(), null);
-        }else{
-            Login.getLogin().showLoginForm();
-        }
-    }
-
-
-    public Navigator getNavigator() {
-        return navigator;
-    }
-
-
     /**
      * Componente View con MenuBar comandi tabellone e griglia tabellone.
      * Invocare setGrid() per sostituire la griglia.
@@ -359,9 +348,50 @@ public class Tabellone extends VerticalLayout implements View {
 
             addComponent(menubar);
             addComponent(gridPlaceholder);
-
+            addComponent(creaFooter());
         }
 
+
+        /**
+         * Crea l'interfaccia utente (User Interface) iniziale dell'applicazione
+         * Footer - un striscia per eventuali informazioni (Algo, copyright, ecc)
+         * Le applicazioni specifiche, possono sovrascrivere questo metodo nella sottoclasse
+         *
+         * @return layout - normalmente un HorizontalLayout
+         */
+        //@todo metodo già esistente in AlgosUI e in WamUI - Occorre riutilizzarlo gac/8-8-16
+        protected HorizontalLayout creaFooter() {
+            HorizontalLayout footer = new HorizontalLayout();
+            footer.setMargin(new MarginInfo(false, false, false, false));
+            footer.setSpacing(true);
+            footer.setHeight("30px");
+
+            footer.addComponent(new Label("Algos s.r.l."));
+            footer.addComponent(new Label("-"));
+            footer.addComponent(new Label("webAmbulanze"));
+
+            if (LibSession.isDeveloper()) {
+                footer.addComponent(new Label("- programmatore"));
+            } else {
+                if (LibSession.isAdmin()) {
+                    footer.addComponent(new Label("- admin"));
+                }// end of if/else cycle
+            }// end of if/else cycle
+
+            if (CompanySessionLib.getCompany() != null) {
+                footer.addComponent(new Label("- " + CompanySessionLib.getCompany().getCompanyCode()));
+            }// end of if cycle
+
+            if (LibSession.isDeveloper()) {
+                footer.addStyleName("rosso");
+            } else {
+                if (LibSession.isAdmin()) {
+                    footer.addStyleName("salmone");
+                }// end of if/else cycle
+            }// end of if/else cycle
+
+            return footer;
+        }// end of method
 
         public void setGrid(GridTabellone grid) {
             this.gridTabellone = grid;
@@ -485,7 +515,6 @@ public class Tabellone extends VerticalLayout implements View {
             }
 
 
-
         }
 
         public MenuItem getMenuAltro() {
@@ -574,7 +603,7 @@ public class Tabellone extends VerticalLayout implements View {
                 @Override
                 public void editorDismissed(CTabelloneEditor.DismissEvent e) {
                     navigator.navigateTo(ADDR_TABELLONE);
-                    if(e.isSaved()){
+                    if (e.isSaved()) {
                         creaGrid(tabComponent.getDataStart(), tabComponent.getNumGiorni());
                     }
                 }

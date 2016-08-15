@@ -5,10 +5,12 @@ import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
-import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.company.BaseCompany_;
+import it.algos.webbase.domain.pref.Pref;
+import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.DefaultSort;
@@ -44,7 +46,6 @@ public class WamCompany extends BaseCompany {
     @OneToMany(mappedBy = "company")
     @CascadeOnDelete
     private List<Volontario> volontari;
-
 
 
     /**
@@ -148,10 +149,10 @@ public class WamCompany extends BaseCompany {
      * @return la Company corrente, null se non c'è
      */
     public static WamCompany getCurrent() {
-        WamCompany wamCompany=null;
+        WamCompany wamCompany = null;
         BaseCompany company = CompanySessionLib.getCompany();
-        if(company!=null){
-            wamCompany=(WamCompany)company;
+        if (company != null) {
+            wamCompany = (WamCompany) company;
         }
         return wamCompany;
     }
@@ -181,42 +182,30 @@ public class WamCompany extends BaseCompany {
 
 
     /**
+     * Elimina l'azienda.
+     */
+    @Override
+    public void delete() {
+        deleteAllWamData();
+        super.delete();
+    }// end of method
+
+    /**
      * Elimina tutti i dati di questa azienda.
      * <p>
-     * L'ordine di cancIscrizione è critico per l'integrità referenziale
+     * L'ordine di cancellazione è critico per l'integrità referenziale
      */
-    public void deleteAllData() {
+    private void deleteAllWamData() {
 
         // elimina le tabelle
-        AQuery.delete(Volontario.class, Volontario_.company, this);
+        AQuery.delete(Volontario.class, CompanyEntity_.company, this);
+        AQuery.delete(Funzione.class, CompanyEntity_.company, this);
+        AQuery.delete(Servizio.class, CompanyEntity_.company, this);
 
-//		AQuery.delete(Lettera.class, CompanyEntity_.wamcompany, this);
-//		AQuery.delete(EventoPren.class, CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Prenotazione.class, CompanyEntity_.wamcompany, this);
-//		AQuery.delete(TipoRicevuta.class, CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Rappresentazione.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Sala.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Evento.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Stagione.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Progetto.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(ModoPagamento.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Insegnante.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Scuola.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(OrdineScuola.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Comune.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Destinatario.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Mailing.class,  CompanyEntity_.wamcompany, this);
-//		AQuery.delete(PrefEventoEntity.class, CompanyEntity_.wamcompany, this);
-//
-//		// elimina gli utenti
-//		AQuery.delete(UtenteRuolo.class, CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Ruolo.class, CompanyEntity_.wamcompany, this);
-//		AQuery.delete(Utente.class, CompanyEntity_.wamcompany, this);
-//
-//		// elimina le preferenze
-//		AQuery.delete(PrefEventoEntity.class, CompanyEntity_.wamcompany, this);
+        // elimina i turni
+        AQuery.delete(Turno.class, CompanyEntity_.company, this);
 
-    }
+    }// end of method
 
 }// end of entity class
 

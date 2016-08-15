@@ -1,14 +1,11 @@
 package it.algos.wam.bootstrap;
 
-import com.vaadin.server.VaadinSession;
-import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibVers;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.ArrayList;
 
 /**
  * Log delle versioni, modifiche e patch installate
@@ -53,6 +50,12 @@ public class VersBootStrap implements ServletContextListener {
             BootService.creaCompanyTest();
             LibVers.nuova("Test", "Creazione di una croce test, visibile a tutti");
         }// fine del blocco if
+
+//        //--cancellazione della croce "test"
+//        if (LibVers.installa(++k)) {
+//            WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
+//            company.delete();
+//        }// fine del blocco if
 
     }// end of method
 

@@ -78,7 +78,7 @@ public class WamCompanyMod extends ModulePop {
 
     public void delete(Object id) {
         WamCompany company = WamCompany.find((Long) id);
-        super.delete(id);
+        company.delete();
         fireCompanyRemoved(company);
     }// end of method
 
