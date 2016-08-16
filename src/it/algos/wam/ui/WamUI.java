@@ -374,7 +374,7 @@ public class WamUI extends UI {
         MenuBarWithLogin menu = (MenuBarWithLogin) navComp.getComponent(0);
 
         // controlla se è un admin
-        if (LibSession.isDeveloper()) {
+        if (LibSession.isAdmin()) {
             MenuBar menuBarAdmin = new MenuBar();
             menuBarAdmin.setStyleName("verde");
             addMod(menuBarAdmin, new LogMod());
@@ -385,6 +385,7 @@ public class WamUI extends UI {
         // controlla se è un developer
         if (LibSession.isDeveloper()) {
             MenuBar menuBarDeveloper = new MenuBar();
+            menuBarDeveloper.setAutoOpen(true);
             menuBarDeveloper.addStyleName("rosso");
             addMod(menuBarDeveloper, new UtenteModulo("User"));
             addMod(menuBarDeveloper, new VersMod());
@@ -448,6 +449,10 @@ public class WamUI extends UI {
 
         WamMenuCommand cmd = new WamMenuCommand(null, modulo, this);
         menuItem = menu.addItem(label, icon, cmd);
+
+        if (menuItem != null) {
+            modulo.addSottoMenu(menuItem);
+        }// end of if cycle
 
         if (modulo instanceof WamMod) {
             addCompanyListeners((WamMod) modulo);
@@ -666,7 +671,7 @@ public class WamUI extends UI {
             footer.addStyleName("rosso");
         } else {
             if (LibSession.isAdmin()) {
-                footer.addStyleName("salmone");
+                footer.addStyleName("verde");
             }// end of if/else cycle
         }// end of if/else cycle
 

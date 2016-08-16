@@ -4,11 +4,13 @@ package it.algos.wam.entity.wamcompany;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.web.form.ModuleForm;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
@@ -20,15 +22,16 @@ import javax.persistence.metamodel.Attribute;
  */
 public class WamCompanyMod extends ModulePop {
 
+    public final static String ITEM_ALL_CROCI = "Tutte";
+
     // versione della classe per la serializzazione
-    private static final long serialVersionUID = 1L;
+    private final static long serialVersionUID = 1L;
 
     // indirizzo interno del modulo - etichetta del menu
-    public static String MENU_ADDRESS = "Croci";
+    public static String MENU_ADDRESS = "Croce";
 
     // icona (eventuale) del modulo
     public static Resource ICON = FontAwesome.AMBULANCE;
-
 
     /**
      * Costruttore senza parametri
@@ -42,6 +45,58 @@ public class WamCompanyMod extends ModulePop {
         super(WamCompany.class, MENU_ADDRESS, ICON);
         getTable().setRowHeaderMode(Table.RowHeaderMode.INDEX);
     }// end of constructor
+
+
+    /**
+     * Crea i sottomenu specifici del modulo
+     * <p>
+     * Invocato dal metodo AlgosUI.addModulo()
+     * Sovrascritto dalla sottoclasse
+     *
+     * @param menuItem principale del modulo
+     */
+    @Override
+    public void addSottoMenu(MenuBar.MenuItem menuItem) {
+        addCommandAllCroci(menuItem);
+
+        for (WamCompany company : WamCompany.findAll()) {
+            addCommandSingolaCroce(menuItem, company);
+        }// end of for cycle
+
+    }// end of method
+
+
+    /**
+     * Costruisce un menu per selezionare tutte le croci
+     *
+     * @param menuItem a cui agganciare il bottone/item
+     */
+    private void addCommandAllCroci(MenuBar.MenuItem menuItem) {
+
+        menuItem.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                fireCompanyChanged(null);
+            }// end of inner method
+        });// end of anonymous inner class
+
+    }// end of method
+
+
+    /**
+     * Costruisce un menu per selezionare la singola croce da filtrare
+     *
+     * @param menuItem a cui agganciare il bottone/item
+     * @param company  croce da filtrare
+     */
+    private void addCommandSingolaCroce(MenuBar.MenuItem menuItem, WamCompany company) {
+
+        menuItem.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                fireCompanyChanged(company);
+            }// end of inner method
+        });// end of anonymous inner class
+
+    }// end of method
 
 
     @Override
@@ -80,6 +135,19 @@ public class WamCompanyMod extends ModulePop {
         WamCompany company = WamCompany.find((Long) id);
         company.delete();
         fireCompanyRemoved(company);
+    }// end of method
+
+    /**
+     *
+     */
+    protected void fireCompanyChanged(WamCompany company) {
+        UI ui = getUI();
+        WamUI wamUI;
+
+        if (ui instanceof WamUI) {
+            wamUI = (WamUI) ui;
+            wamUI.fireCompanyChanged(company);
+        }// fine del blocco if
     }// end of method
 
 

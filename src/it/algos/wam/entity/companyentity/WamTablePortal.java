@@ -87,6 +87,8 @@ public class WamTablePortal extends TablePortal {
      * <p>
      * Costruisce un menu per selezionare la croce da filtrare
      * Costruisce i menuItem in funzione delle croci esistenti
+     *
+     * @deprecated
      */
     private void addMenuCroci() {
         MenuBar.MenuItem subItem;
@@ -108,6 +110,8 @@ public class WamTablePortal extends TablePortal {
 
     /**
      * Costruisce un menu per selezionare la croce da filtrare
+     *
+     * @deprecated
      */
     private MenuBar.MenuItem addCroce(WamCompany company) {
         MenuBar.MenuItem subItem;
@@ -336,7 +340,7 @@ public class WamTablePortal extends TablePortal {
     }// end of method
 
     protected void syncButtons(boolean singleSelected, boolean multiSelected) {
-        if(toolbar!=null){
+        if (toolbar != null) {
             toolbar.syncButtons(singleSelected, multiSelected);
         }
 
@@ -349,6 +353,9 @@ public class WamTablePortal extends TablePortal {
         }// end of if cycle
     }// end of method
 
+    /**
+     * @deprecated
+     */
     protected void fireCompanyChanged(WamCompany company) {
         UI ui = getUI();
         WamUI wamUI;

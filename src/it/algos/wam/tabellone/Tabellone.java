@@ -386,7 +386,7 @@ public class Tabellone extends VerticalLayout implements View {
                 footer.addStyleName("rosso");
             } else {
                 if (LibSession.isAdmin()) {
-                    footer.addStyleName("salmone");
+                    footer.addStyleName("verde");
                 }// end of if/else cycle
             }// end of if/else cycle
 
