@@ -6,18 +6,27 @@ import it.algos.webbase.web.toolbar.TableToolbar;
 
 /**
  * Created by gac on 07 mag 2016.
- * Sovrascrive la classe standard per aggiungere due bottone/menu di spostamento dei records
+ * Sovrascrive la classe standard per aggiungere due bottoni/menu di spostamento dei records
  */
-public class WamTablePortalSposta extends WamTablePortal implements ATable.SelectionChangedListener{
+public class WamTablePortalSposta extends WamTablePortal implements ATable.SelectionChangedListener {
+
 
     public WamTablePortalSposta(ModulePop modulo) {
         super(modulo);
     }// end of constructor
 
+
+    /**
+     * Creates the toolbar
+     * Barra standard con 5 bottoni (nuovo, modifica, elimina, cerca, selezione)
+     * Sovrascrivibile, per aggiungere/modificare bottoni
+     */
+    @Override
     public TableToolbar createToolbar() {
         super.setUsaBottoniSpostamento(true);
         return super.createToolbar();
     }// end of method
+
 
     /**
      * Cambiata la selezione delle righe.

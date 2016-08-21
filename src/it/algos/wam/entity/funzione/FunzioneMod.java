@@ -11,6 +11,8 @@ import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
+import javax.persistence.metamodel.Attribute;
+
 /**
  * Gestione (minimale) del modulo specifico
  */
@@ -60,51 +62,50 @@ public class FunzioneMod extends WamModSposta  {
     }// end of method
 
 
+    /**
+     * Crea i campi visibili nella lista (table)
+     * <p>
+     * Come default spazzola tutti i campi della Entity <br>
+     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+     * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
+     */
+    @Override
+    protected Attribute<?, ?>[] creaFieldsList() {
+        return super.addCompanyField(
+                Funzione_.ordine,
+                Funzione_.sigla,
+                Funzione_.descrizione);
+    }// end of method
 
-//    /**
-//     * Crea i campi visibili nella lista (table)
-//     * <p>
-//     * Come default spazzola tutti i campi della Entity <br>
-//     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-//     * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
-//     */
-//    @Override
-//    protected Attribute<?, ?>[] creaFieldsList() {
-//        return super.addCompanyField(
-//                Funzione_.ordine,
-//                Funzione_.sigla,
-//                Funzione_.descrizione,
-//                Funzione_.note);
-//    }// end of method
 
-//    /**
-//     * Crea i campi visibili nella scheda (form)
-//     * <p/>
-//     * Come default spazzola tutti i campi della Entity <br>
-//     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-//     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
-//     */
-//    @Override
-//    protected Attribute<?, ?>[] creaFieldsForm() {
-//        return super.addCompanyField(
-//                Funzione_.sigla,
-//                Funzione_.descrizione,
-//                Funzione_.note);
-//    }// end of method
+    /**
+     * Crea i campi visibili nella scheda (form)
+     * <p/>
+     * Come default spazzola tutti i campi della Entity <br>
+     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
+     */
+    @Override
+    protected Attribute<?, ?>[] creaFieldsForm() {
+        return super.addCompanyField(
+                Funzione_.sigla,
+                Funzione_.descrizione);
+    }// end of method
 
-//    /**
-//     * Crea i campi visibili nella scheda (search)
-//     * <p/>
-//     * Come default spazzola tutti i campi della Entity <br>
-//     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-//     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
-//     */
-//    @Override
-//    protected Attribute<?, ?>[] creaFieldsSearch() {
-//        return super.addCompanyField(
-//                Funzione_.sigla,
-//                Funzione_.descrizione);
-//    }// end of method
+
+    /**
+     * Crea i campi visibili nella scheda (search)
+     * <p/>
+     * Come default spazzola tutti i campi della Entity <br>
+     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
+     */
+    @Override
+    protected Attribute<?, ?>[] creaFieldsSearch() {
+        return super.addCompanyField(
+                Funzione_.sigla,
+                Funzione_.descrizione);
+    }// end of method
 
 
 }// end of class

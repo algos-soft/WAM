@@ -76,6 +76,7 @@ public class WamCompanyMod extends ModulePop {
         menuItem.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 fireCompanyChanged(null);
+                spuntaMenu(menuItem, null);
             }// end of inner method
         });// end of anonymous inner class
 
@@ -93,6 +94,7 @@ public class WamCompanyMod extends ModulePop {
         menuItem.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 fireCompanyChanged(company);
+                spuntaMenu(menuItem, company);
             }// end of inner method
         });// end of anonymous inner class
 
@@ -103,6 +105,7 @@ public class WamCompanyMod extends ModulePop {
     public ModuleForm createForm(Item item) {
         return new WamCompanyForm(item, this);
     }// end of method
+
 
     @Override
     public TablePortal createTablePortal() {
@@ -136,6 +139,35 @@ public class WamCompanyMod extends ModulePop {
         company.delete();
         fireCompanyRemoved(company);
     }// end of method
+
+
+    /**
+     * Spunta il menu selezionato
+     * Elimina la spunta in tutti gli altri
+     *
+     * @param menuItem a cui agganciare il bottone/item
+     * @param company  croce da filtrare
+     */
+    private void spuntaMenu(MenuBar.MenuItem menuItem, WamCompany company) {
+        String sigla = "";
+
+        for (MenuBar.MenuItem item : menuItem.getChildren()) {
+            item.setIcon(FontAwesome.MINUS);
+        }// end of for cycle
+
+        if (company == null) {
+            sigla = ITEM_ALL_CROCI;
+        } else {
+            sigla = LibText.primaMaiuscola(company.getCompanyCode());
+        }// end of if/else cycle
+        for (MenuBar.MenuItem item : menuItem.getChildren()) {
+            if (item.getText().equals(sigla)) {
+                item.setIcon(FontAwesome.CHECK);
+            }// end of if cycle
+        }// end of for cycle
+
+    }// end of method
+
 
     /**
      *

@@ -13,6 +13,7 @@ import it.algos.webbase.web.toolbar.TableToolbar;
  */
 public class FunzioneTablePortal extends WamTablePortalSposta {
 
+
     public FunzioneTablePortal(ModulePop modulo) {
         super(modulo);
     }// end of constructor
@@ -21,7 +22,7 @@ public class FunzioneTablePortal extends WamTablePortalSposta {
     public TableToolbar createToolbar() {
         TableToolbar toolbar = super.createToolbar();
         return toolbar;
-    }
+    }// end of method
 
         /**
          * Spostamento effettivo, in su o in giu del singolo record.

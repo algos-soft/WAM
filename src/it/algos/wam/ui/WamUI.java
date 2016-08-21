@@ -61,6 +61,8 @@ public class WamUI extends UI {
     public static final String KEY_MAIN_COMP = "maincomp";
     public static final String KEY_TABVISIBLE = "tabvisible";
     public static final String KEY_GOHOME = "gohome";
+    // componente standard di navigazione
+    NavComponent navComp;
     private MenuBar menubar;
     // si registra chi è interessato alle modifiche delle company (aggiunta, cancIscrizione, modifica di quella corrente)
     private ArrayList<CompanyListener> companyListeners = new ArrayList<>();
@@ -342,7 +344,7 @@ public class WamUI extends UI {
      */
     private Component creaComponente() {
         // creo un componente standard di navigazione
-        NavComponent navComp = new NavComponent(this);
+        navComp = new NavComponent(this);
         MenuBar menuBarUtente = navComp.getMenuBar();
 
         // aggiungo le view - la menubar viene riempita automaticamente
@@ -356,43 +358,51 @@ public class WamUI extends UI {
             }
         });
 
-        navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
-        navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
-        navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
+//        navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
+//        navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
+//        navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
+        addMod(menuBarUtente, new FunzioneMod());
+        addMod(menuBarUtente, new ServizioMod());
+        addMod(menuBarUtente, new VolontarioMod());
 
         // aggiunge alla menubar le funzioni di Admin
-        if (LibSession.isAdmin()) {
-            if (LibSession.isDeveloper()) {
-                navComp.addView(MgrConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
-            } else {
-                navComp.addView(LogMod.class, "Log", FontAwesome.CLOCK_O);
-                navComp.addView(ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
-            }
-        }
+//        if (LibSession.isAdmin()) {
+//            if (LibSession.isDeveloper()) {
+//                navComp.addView(MgrConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
+//            } else {
+//                navComp.addView(LogMod.class, "Log", FontAwesome.CLOCK_O);
+//                navComp.addView(ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
+//            }
+//        }
 
         // todo -- aggiunge le funzioni di developer (da sistemare)
         MenuBarWithLogin menu = (MenuBarWithLogin) navComp.getComponent(0);
 
         // controlla se è un admin
+        // aggiunge una menubar con le funzioni di admin
         if (LibSession.isAdmin()) {
             MenuBar menuBarAdmin = new MenuBar();
             menuBarAdmin.setStyleName("verde");
             addMod(menuBarAdmin, new LogMod());
-            addMod(menuBarAdmin, new PrefMod());
+            navComp.addView(menuBarAdmin, ConfigScreen.class, true, "Impostazioni", FontAwesome.WRENCH);
             menu.addMenu(menuBarAdmin);
             navComp.setup(menuBarAdmin);
-        }
+        }// end of if cycle
+
         // controlla se è un developer
+        // aggiunge una menubar con le funzioni di developer
         if (LibSession.isDeveloper()) {
             MenuBar menuBarDeveloper = new MenuBar();
             menuBarDeveloper.setAutoOpen(true);
             menuBarDeveloper.addStyleName("rosso");
             addMod(menuBarDeveloper, new UtenteModulo("User"));
             addMod(menuBarDeveloper, new VersMod());
+            navComp.addView(menuBarDeveloper, MgrConfigScreen.class, true, "Settings", FontAwesome.WRENCH);
+            addMod(menuBarDeveloper, new PrefMod());
             addMod(menuBarDeveloper, new WamCompanyMod());
             menu.addMenu(menuBarDeveloper);
             navComp.setup(menuBarDeveloper);
-        }
+        }// end of if cycle
         // todo -- end da sistemare
 
 
@@ -406,13 +416,13 @@ public class WamUI extends UI {
             if (item.getText().equals(FunzioneMod.MENU_ADDRESS)) {
                 item.getCommand().menuSelected(item);
                 break;
-            }
-        }
+            }// end of if cycle
+        }// end of for cycle
 
         //--footer
         navComp.setFooter(creaFooter());
         return navComp;
-    }
+    }// end of method
 
 
     private MenuBar.MenuItem createMenuItem(MenuBar.MenuItem menu, Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
@@ -421,7 +431,7 @@ public class WamUI extends UI {
         menuItem = menu.addItem(label, icon, null);
         menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);
         return menuItem;
-    }
+    }// end of method
 
     /**
      * Aggiunge un modulo alla UI
@@ -576,6 +586,7 @@ public class WamUI extends UI {
         for (CompanyListener listener : companyListeners) {
             listener.companyChanged(company);
         }// end of for cycle
+        navComp.setFooter(creaFooter());
     }// end of method
 
 

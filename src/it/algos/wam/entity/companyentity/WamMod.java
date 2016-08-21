@@ -86,12 +86,12 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
 
     @Override
     public void companyAdded(WamCompany company) {
-        ((WamTablePortal) getTablePortal()).addCompany(company);
+//        ((WamTablePortal) getTablePortal()).addCompany(company);
     }// end of method
 
     @Override
     public void companyRemoved(WamCompany company) {
-        ((WamTablePortal) getTablePortal()).deleteCompany(company);
+//        ((WamTablePortal) getTablePortal()).deleteCompany(company);
     }// end of method
 
     @Override
