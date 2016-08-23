@@ -345,38 +345,25 @@ public class WamUI extends UI {
     private Component creaComponente() {
         // creo un componente standard di navigazione
         navComp = new NavComponent(this);
-        MenuBar menuBarUtente = navComp.getMenuBar();
 
-        // aggiungo le view - la menubar viene riempita automaticamente
-
+        // il menu utente c'è sempre
+        // aggiunge una menubar con le funzioni di utente
+        MenuBar menuBarUtente = new MenuBar();
         // aggiungo un MenuItem con il tabellone.
-        // volendo posso anche aggiungerlo nella posizione desiderata
         menuBarUtente.addItem("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 UI.getCurrent().setContent(getTabellone());
             }
         });
-
 //        navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
 //        navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
 //        navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
         addMod(menuBarUtente, new FunzioneMod());
         addMod(menuBarUtente, new ServizioMod());
         addMod(menuBarUtente, new VolontarioMod());
+        navComp.addMenu(menuBarUtente);
 
-        // aggiunge alla menubar le funzioni di Admin
-//        if (LibSession.isAdmin()) {
-//            if (LibSession.isDeveloper()) {
-//                navComp.addView(MgrConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
-//            } else {
-//                navComp.addView(LogMod.class, "Log", FontAwesome.CLOCK_O);
-//                navComp.addView(ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
-//            }
-//        }
-
-        // todo -- aggiunge le funzioni di developer (da sistemare)
-        MenuBarWithLogin menu = (MenuBarWithLogin) navComp.getComponent(0);
 
         // controlla se è un admin
         // aggiunge una menubar con le funzioni di admin
@@ -385,8 +372,7 @@ public class WamUI extends UI {
             menuBarAdmin.setStyleName("verde");
             addMod(menuBarAdmin, new LogMod());
             navComp.addView(menuBarAdmin, ConfigScreen.class, true, "Impostazioni", FontAwesome.WRENCH);
-            menu.addMenu(menuBarAdmin);
-            navComp.setup(menuBarAdmin);
+            navComp.addMenu(menuBarAdmin);
         }// end of if cycle
 
         // controlla se è un developer
@@ -400,15 +386,9 @@ public class WamUI extends UI {
             navComp.addView(menuBarDeveloper, MgrConfigScreen.class, true, "Settings", FontAwesome.WRENCH);
             addMod(menuBarDeveloper, new PrefMod());
             addMod(menuBarDeveloper, new WamCompanyMod());
-            menu.addMenu(menuBarDeveloper);
-            navComp.setup(menuBarDeveloper);
+            navComp.addMenu(menuBarDeveloper);
         }// end of if cycle
-        // todo -- end da sistemare
 
-
-        // da chiamare dopo che ho aggiunto tutti i MenuItems,
-        // configura il Navigator in base alla MenuBar
-        navComp.setup();
 
         // seleziona inizialmente il menuItem Funzioni
         List<MenuBar.MenuItem> items = menuBarUtente.getItems();
@@ -499,42 +479,42 @@ public class WamUI extends UI {
     }// end of method
 
 
-    /**
-     * Crea il componente per l'utente
-     *
-     * @return il componente creato
-     */
-    private Component creaCompUtente() {
-
-        // creo un componente standard di navigazione
-        NavComponent nc = new NavComponent(this);
-
-        // aggiungo le view - la menubar viene riempita automaticamente
-        MenuBar.MenuItem itemFunzione = nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
-        nc.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
-        MenuBar.MenuItem itemVolontario = nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
-//        nc.setFooter(new Label("Footer text"));
-
-        // aggiungo un MenuItem con il tabellone.
-        // volendo posso anche aggiungerlo nella posizione desiderata
-        MenuBar mb = nc.getMenuBar();
-        menubar = mb;
-
-        mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                Tabellone tab = getTabellone();
-                UI.getCurrent().setContent(tab);
-            }
-        }, itemFunzione);
-
-        // da chiamare dopo che ho aggiunto tutti i MenuItems,
-        // configura il Navigator in base alla MenuBar
-        nc.setup();
-
-        return nc;
-
-    }
+//    /**
+//     * Crea il componente per l'utente
+//     *
+//     * @return il componente creato
+//     */
+//    private Component creaCompUtente() {
+//
+//        // creo un componente standard di navigazione
+//        NavComponent nc = new NavComponent(this);
+//
+//        // aggiungo le view - la menubar viene riempita automaticamente
+//        MenuBar.MenuItem itemFunzione = nc.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE_O);
+//        nc.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
+//        MenuBar.MenuItem itemVolontario = nc.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
+////        nc.setFooter(new Label("Footer text"));
+//
+//        // aggiungo un MenuItem con il tabellone.
+//        // volendo posso anche aggiungerlo nella posizione desiderata
+//        MenuBar mb = nc.getMenuBar();
+//        menubar = mb;
+//
+//        mb.addItemBefore("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+//            @Override
+//            public void menuSelected(MenuBar.MenuItem selectedItem) {
+//                Tabellone tab = getTabellone();
+//                UI.getCurrent().setContent(tab);
+//            }
+//        }, itemFunzione);
+//
+//        // da chiamare dopo che ho aggiunto tutti i MenuItems,
+//        // configura il Navigator in base alla MenuBar
+//        nc.setup();
+//
+//        return nc;
+//
+//    }
 
 
     /**

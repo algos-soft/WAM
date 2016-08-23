@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 /**
  * Componente con menubar sopra, parte centrale controllata da un Navigator che
  * può ospitare diverse View, e footer in basso.
+ * La menubar può contenere diversi menu
  * <p>
  * Uso:
  * 1) creare questo oggetto,
@@ -28,7 +29,7 @@ import java.util.LinkedHashMap;
 public class NavComponent extends VerticalLayout {
 
     private AlgosNavigator nav;
-    private MenuBar menuBar = new MenuBar();
+    private MenuBarWithLogin menuBar = new MenuBarWithLogin();
     private NavPlaceholder body = new NavPlaceholder(null);
     private VerticalLayout footer = new VerticalLayout();
     private LinkedHashMap<String, MenuBar.MenuItem> mappaItem = new LinkedHashMap<String, MenuBar.MenuItem>();
@@ -43,29 +44,15 @@ public class NavComponent extends VerticalLayout {
         setSpacing(true);
         setSizeFull();
 
-
         this.nav = new AlgosNavigator(ui, body);
 
-//        MenuBar loginBar = new MenuBar();
-//        loginBar.addItem("Login", FontAwesome.USER, null);
-//        HorizontalLayout layout = new HorizontalLayout();
-//        layout.setWidth("100%");
-//        layout.setSpacing(true);
-//        layout.addComponent(menuBar);
-//        layout.addComponent(loginBar);
-//
-//        menuBar.setWidth("100%");
-//        layout.setExpandRatio(menuBar, 1);
-//
-//        this.addComponent(layout);
-
-        this.addComponent(new MenuBarWithLogin(menuBar));
+        this.addComponent(menuBar);
         this.addComponent(body);
         this.addComponent(footer);
 
         setExpandRatio(body, 1);
 
-    }
+    }// end of constructor
 
     /**
      * Da invocare per configurare il Navigator dopo aver aggiunto i componenti
@@ -73,7 +60,7 @@ public class NavComponent extends VerticalLayout {
     public void setup() {
 
         // configura il navigator in base alla MenuBar
-        nav.configureFromMenubar(menuBar);
+        nav.configureFromMenubar(menuBar.getFirstMenu());
 
         // manda il navigatore alla prima view
         Collection<MenuBar.MenuItem> coll = mappaItem.values();
@@ -89,9 +76,9 @@ public class NavComponent extends VerticalLayout {
 
     /**
      * Da invocare per configurare il Navigator dopo aver aggiunto i componenti
+     * Configura il navigator in base alla MenuBar
      */
     public void setup(MenuBar menuBar) {
-        // configura il navigator in base alla MenuBar
         nav.configureFromMenubar(menuBar);
     }// end of method
 
@@ -128,7 +115,7 @@ public class NavComponent extends VerticalLayout {
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, String label, Resource icon) {
-        return addView(menuBar, viewClass, true, label, icon);
+        return addView(menuBar.getFirstMenu(), viewClass, true, label, icon);
     }// end of method
 
     /**
@@ -145,8 +132,8 @@ public class NavComponent extends VerticalLayout {
      * @param icon       the icon for the menu item
      * @return menuItem appena creato
      */
-    public MenuBar.MenuItem addView( Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
-        return addView(menuBar, viewClass, viewCached, label, icon);
+    public MenuBar.MenuItem addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
+        return addView(menuBar.getFirstMenu(), viewClass, viewCached, label, icon);
     }// end of method
 
     /**
@@ -258,8 +245,8 @@ public class NavComponent extends VerticalLayout {
      */
     private MenuBar.MenuItem createMenuItem(View vista, String menuAddress, Resource menuIcon) {
         MenuBar.MenuItem menuItem;
-        MenuCommand cmd = new MenuCommand(menuBar, vista);
-        menuItem = menuBar.addItem(menuAddress, menuIcon, cmd);
+        MenuCommand cmd = new MenuCommand((MenuBar) menuBar.getComponent(0), vista);
+        menuItem = ((MenuBar) menuBar.getComponent(0)).addItem(menuAddress, menuIcon, cmd);
         menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);
 
         return menuItem;
@@ -274,26 +261,38 @@ public class NavComponent extends VerticalLayout {
         return nav;
     }
 
-    public MenuBar getMenuBar() {
-        return menuBar;
-    }
+//    public MenuBar getMenuBar() {
+//        return (MenuBar) menuBar.getComponent(0);
+//    }
+
+//    /**
+//     * Naviga al modulo indicato
+//     */
+//    public void navigateTo(Class clazz) {
+//        AlgosNavigator navigator = getNavigator();
+//        String navigatorAddress = "";
+//
+//        if (clazz == null) {
+//            return;
+//        }// end of if cycle
+//
+//        if (navigator != null) {
+//            navigatorAddress = clazz.getName();
+//            navigator.navigateTo(navigatorAddress);
+//        }// end of if cycle
+//
+//    }// end of method
+
 
     /**
-     * Naviga al modulo indicato
+     * Aggiunge un menu (anche bottone) dopo quello esistente e prima del login
      */
-    public void navigateTo(Class clazz) {
-        AlgosNavigator navigator = getNavigator();
-        String navigatorAddress = "";
+    public void addMenu(Component altroMenu) {
+        menuBar.addMenu(altroMenu);
 
-        if (clazz == null) {
-            return;
+        if (altroMenu != null && altroMenu instanceof MenuBar) {
+            this.setup((MenuBar) altroMenu);
         }// end of if cycle
-
-        if (navigator != null) {
-            navigatorAddress = clazz.getName();
-            navigator.navigateTo(navigatorAddress);
-        }// end of if cycle
-
     }// end of method
 
-}
+}// end of class
