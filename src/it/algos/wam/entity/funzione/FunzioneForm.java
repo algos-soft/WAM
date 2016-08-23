@@ -27,7 +27,6 @@ public class FunzioneForm extends ModuleForm {
         super.init();
     }
 
-
 //    /**
 //     * Create the detail component (the upper part containing the fields).
 //     * <p>
@@ -75,7 +74,6 @@ public class FunzioneForm extends ModuleForm {
 //
 //    }// end of method
 
-
     /**
      * Crea il componente che visualizza il dettaglio
      * Retrieve the fields from the binder and place them in the UI.
@@ -97,10 +95,8 @@ public class FunzioneForm extends ModuleForm {
         layout.addComponent(f1);
         layout.addComponent(f2);
 
-
         return layout;
     }
-
 
     /**
      * Crea il componente che visualizza il dettaglio
@@ -119,7 +115,6 @@ public class FunzioneForm extends ModuleForm {
         Button b = new Button();
         b.setHtmlContentAllowed(true);
         b.addStyleName("bfunzione");
-
 
         layout.addComponent(b);
         layout.addComponent(fsigla);
@@ -153,8 +148,6 @@ public class FunzioneForm extends ModuleForm {
 //        return layout;
 //    }// end of method
 
-
-
     /**
      * Crea il componente che visualizza il dettaglio
      * Retrieve the fields from the binder and place them in the UI.
@@ -180,8 +173,6 @@ public class FunzioneForm extends ModuleForm {
 
         return layout;
     }
-
-
 
     /**
      * Crea il componente che visualizza il dettaglio
@@ -231,7 +222,6 @@ public class FunzioneForm extends ModuleForm {
         layout.addComponent(fsigla);
         layout.addComponent(fnote);
 
-
 //        // test remove menu item
 //        Button button=new Button("Remove menu");
 //        button.addClickListener(new Button.ClickListener() {
@@ -248,8 +238,6 @@ public class FunzioneForm extends ModuleForm {
 
         return layout;
     }
-
-
 
     @Override
     protected Field createField(Attribute attr) {
@@ -270,27 +258,37 @@ public class FunzioneForm extends ModuleForm {
      * Recupera il glifo dal field
      */
     private FontAwesome getGlyph() {
-        Field field = getBinder().getField(Funzione_.iconCodepoint.getName());
-        int codepoint = (int) field.getValue();
         FontAwesome fa = null;
+        Field field = getBinder().getField(Funzione_.iconCodepoint.getName());
+        int codepoint = 0;
+
+        if (field != null) {
+            codepoint = (int) field.getValue();
+        }// fine del blocco if
+
         try {
             fa = FontAwesome.fromCodepoint(codepoint);
         } catch (Exception e) {
         }
+
         return fa;
-    }
+    }// end of method
 
     /**
      * Registra un glifo nel field
      */
     private void setGlyph(FontAwesome glyph) {
         Field field = getBinder().getField(Funzione_.iconCodepoint.getName());
-        if (glyph != null) {
-            field.setValue(glyph.getCodepoint());
-        } else {
-            field.setValue(0);
-        }
-    }
+
+        if (field != null) {
+            if (glyph != null) {
+                field.setValue(glyph.getCodepoint());
+            } else {
+                field.setValue(0);
+            }
+        }// fine del blocco if
+
+    }// end of method
 
     /**
      * Sincronizza l'icona del bottone con il codepoint contenuto nel field
@@ -302,6 +300,5 @@ public class FunzioneForm extends ModuleForm {
             iconButton.setCaption(glyph.getHtml());
         }
     }
-
 
 }

@@ -33,7 +33,7 @@ public class MenuBarWithLogin extends HorizontalLayout {
         // primo menu a sinistra
         if (menubar != null) {
             this.addMenu(menubar);
-        }// end of if cycle
+        }// end of if cycl
 
         loginButton = new WamLoginButton();
         addComponent(loginButton);
@@ -50,8 +50,12 @@ public class MenuBarWithLogin extends HorizontalLayout {
         }// end of if cycle
 
         addComponent(altroMenu, pos);
-        altroMenu.setWidth("100%");
-        setExpandRatio(altroMenu, 1);
+
+        if (pos==0) {
+            altroMenu.setWidth("100%");
+            setExpandRatio(altroMenu, 1);
+        }// fine del blocco if
+
     }// end of method
 
 
