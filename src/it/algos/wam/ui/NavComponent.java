@@ -4,7 +4,6 @@ import com.vaadin.navigator.View;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.webbase.web.menu.AMenuBar;
@@ -39,7 +38,7 @@ public class NavComponent extends VerticalLayout {
      *
      * @param ui UI che il Navigator deve controllare
      */
-    public NavComponent(UI ui) {
+    public NavComponent(WamUI ui) {
         setMargin(true);
         setSpacing(true);
         setSizeFull();
@@ -72,7 +71,6 @@ public class NavComponent extends VerticalLayout {
             nav.navigateTo(addr);
         }
     }
-
 
     /**
      * Da invocare per configurare il Navigator dopo aver aggiunto i componenti
@@ -112,6 +110,7 @@ public class NavComponent extends VerticalLayout {
      * @param viewClass the view class to instantiate
      * @param label     the text for the menu item
      * @param icon      the icon for the menu item
+     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, String label, Resource icon) {
@@ -130,10 +129,30 @@ public class NavComponent extends VerticalLayout {
      * @param viewCached true to instantiated only once, false to instantiate each time
      * @param label      the text for the menu item
      * @param icon       the icon for the menu item
+     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
         return addView(menuBar.getFirstMenu(), viewClass, viewCached, label, icon);
+    }// end of method
+
+    /**
+     * Adds a View to the UI
+     * <p>
+     * Will create a lazy (class-based) view provider
+     * The view will be instantiated by the view provider from the provided class
+     * The viewCached parameter controls if the view will be instantiated only once
+     * or each time is requested by the Navigator.
+     *
+     * @param menuBar   di riferimento
+     * @param viewClass the view class to instantiate
+     * @param label     the text for the menu item
+     * @param icon      the icon for the menu item
+     *
+     * @return menuItem appena creato
+     */
+    public MenuBar.MenuItem addView(MenuBar menuBar, Class<? extends View> viewClass, String label, Resource icon) {
+        return addView(menuBar, viewClass, true, label, icon);
     }// end of method
 
     /**
@@ -149,6 +168,7 @@ public class NavComponent extends VerticalLayout {
      * @param viewCached true to instantiated only once, false to instantiate each time
      * @param label      the text for the menu item
      * @param icon       the icon for the menu item
+     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(MenuBar menuBar, Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
@@ -161,8 +181,7 @@ public class NavComponent extends VerticalLayout {
         }
 
         return menuItem;
-
-    }
+    }// end of method
 
     /**
      * Create the MenuBar Item for this view
@@ -172,6 +191,7 @@ public class NavComponent extends VerticalLayout {
      * @param viewClass da visualizzare nell'area controllata dal navigatore
      *                  alla pressione del bottone di menu
      * @param icon      icona per il menu
+     *
      * @return menuItem appena creato
      */
     private MenuBar.MenuItem createMenuItem(MenuBar menuBar, Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
@@ -189,6 +209,7 @@ public class NavComponent extends VerticalLayout {
      * Tipicamente un ModulePop
      *
      * @param modulo da visualizzare nel placeholder alla pressione del bottone di menu
+     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addMod(ModulePop modulo) {
@@ -241,6 +262,7 @@ public class NavComponent extends VerticalLayout {
      *
      * @param vista    da visualizzare nel placeholder alla pressione del bottone di menu
      * @param menuIcon del menu
+     *
      * @return menuItem appena creato
      */
     private MenuBar.MenuItem createMenuItem(View vista, String menuAddress, Resource menuIcon) {
@@ -283,11 +305,27 @@ public class NavComponent extends VerticalLayout {
 //
 //    }// end of method
 
+    /**
+     * Aggiunge un menu (anche bottone) dopo quello esistente e prima del login
+     *
+     * @param altroMenu da aggiungere
+     */
+    public void addMenu(Component altroMenu) {
+        addMenu(altroMenu,"");
+    }// end of method
 
     /**
      * Aggiunge un menu (anche bottone) dopo quello esistente e prima del login
+     *
+     * @param altroMenu da aggiungere
+     * @param styleName da assegnare
      */
-    public void addMenu(Component altroMenu) {
+    public void addMenu(Component altroMenu, String styleName) {
+
+        if (!styleName.equals("")) {
+            altroMenu.setStyleName(styleName);
+        }// fine del blocco if
+
         menuBar.addMenu(altroMenu);
 
         if (altroMenu != null && altroMenu instanceof MenuBar) {

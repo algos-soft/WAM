@@ -23,7 +23,6 @@ import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneMod;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.entity.wamcompany.WamCompanyMod;
 import it.algos.wam.lib.WamRuoli;
-import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.wam.login.WamLogin;
 import it.algos.wam.menu.WamMenuCommand;
 import it.algos.wam.settings.CompanyPrefs;
@@ -73,7 +72,6 @@ public class WamUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
 
-
         // controlla l'accesso come programmatore come parametro nell'url
         // attiva il flag developer nella sessione
         if (checkDeveloper(request)) {
@@ -88,7 +86,6 @@ public class WamUI extends UI {
 
 //            LibSession.setDeveloper(false);
         }// end of if/else cycle
-
 
         // da qui in poi non è programmatore
 
@@ -111,7 +108,6 @@ public class WamUI extends UI {
             return;
         }
 
-
         // Se c'è una company nella sessione e la company dell'URL è diversa dalla company della sessione
         // eseguo un logout automatico (che elimina la company dalla sessione)
         BaseCompany sessionComp = CompanySessionLib.getCompany();
@@ -124,7 +120,6 @@ public class WamUI extends UI {
 
         // registra la company nella sessione
         CompanySessionLib.setCompany(company);
-
 
         // Se non c'è ancora l'oggetto Login, lo crea ora e lo inietta nella sessione.
         // L'oggetto Login è unico nella sessione.
@@ -201,7 +196,6 @@ public class WamUI extends UI {
             }// end of if cycle
         }// end of if cycle
 
-
         // Se è loggato, la company dell'url
         // deve essere uguale alla company loggata
         if (Login.getLogin().isLogged()) {
@@ -239,7 +233,6 @@ public class WamUI extends UI {
 
     }
 
-
     /**
      * Init per il developer
      */
@@ -248,11 +241,11 @@ public class WamUI extends UI {
         UI.getCurrent().setContent(getMainComponent());
     }
 
-
     /**
      * Elabora l'URL della Request ed estrae (se esiste) il parametro programmatore
      *
      * @param request the Vaadin request that caused this UI to be created
+     *
      * @return true se l'url è di un developer
      */
     private boolean checkDeveloper(VaadinRequest request) {
@@ -309,7 +302,6 @@ public class WamUI extends UI {
 
     }// end of method
 
-
     /**
      * Estrae dall'url il nome della company
      *
@@ -333,7 +325,6 @@ public class WamUI extends UI {
         return siglaComp;
 
     }// end of method
-
 
     /**
      * Crea il componente per l'utente normale
@@ -359,20 +350,19 @@ public class WamUI extends UI {
 //        navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
 //        navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
 //        navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
-        addMod(menuBarUtente, new FunzioneMod());
-        addMod(menuBarUtente, new ServizioMod());
-        addMod(menuBarUtente, new VolontarioMod());
-        navComp.addMenu(menuBarUtente);
 
+        this.addMod(menuBarUtente, new FunzioneMod());
+        this.addMod(menuBarUtente, new ServizioMod());
+        this.addMod(menuBarUtente, new VolontarioMod());
+        navComp.addMenu(menuBarUtente);
 
         // controlla se è un admin
         // aggiunge una menubar con le funzioni di admin
         if (LibSession.isAdmin()) {
             MenuBar menuBarAdmin = new MenuBar();
-            menuBarAdmin.setStyleName("verde");
             addMod(menuBarAdmin, new LogMod());
-            navComp.addView(menuBarAdmin, ConfigScreen.class, true, "Impostazioni", FontAwesome.WRENCH);
-            navComp.addMenu(menuBarAdmin);
+            navComp.addView(menuBarAdmin, ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
+            navComp.addMenu(menuBarAdmin,"verde");
         }// end of if cycle
 
         // controlla se è un developer
@@ -380,15 +370,19 @@ public class WamUI extends UI {
         if (LibSession.isDeveloper()) {
             MenuBar menuBarDeveloper = new MenuBar();
             menuBarDeveloper.setAutoOpen(true);
-            menuBarDeveloper.addStyleName("rosso");
-            addMod(menuBarDeveloper, new UtenteModulo("User"));
-            addMod(menuBarDeveloper, new VersMod());
-            navComp.addView(menuBarDeveloper, MgrConfigScreen.class, true, "Settings", FontAwesome.WRENCH);
-            addMod(menuBarDeveloper, new PrefMod());
+            MenuBar.MenuItem menuUtilities = menuBarDeveloper.addItem("Utilities", null, null);
+            addMod(menuUtilities, new UtenteModulo("User"));
+            addMod(menuUtilities, new VersMod());
+            addMod(menuUtilities, new PrefMod());
+            navComp.addView(menuBarDeveloper, MgrConfigScreen.class, "Settings", FontAwesome.WRENCH);
             addMod(menuBarDeveloper, new WamCompanyMod());
-            navComp.addMenu(menuBarDeveloper);
-        }// end of if cycle
 
+            MenuBar.MenuItem menuTavole = menuBarDeveloper.addItem("Tavole", null, null);
+            addMod(menuTavole, new ServizioFunzioneMod());
+            addMod(menuTavole, new VolontarioFunzioneMod());
+
+            navComp.addMenu(menuBarDeveloper,"rosso");
+        }// end of if cycle
 
         // seleziona inizialmente il menuItem Funzioni
         List<MenuBar.MenuItem> items = menuBarUtente.getItems();
@@ -403,7 +397,6 @@ public class WamUI extends UI {
         navComp.setFooter(creaFooter());
         return navComp;
     }// end of method
-
 
     private MenuBar.MenuItem createMenuItem(MenuBar.MenuItem menu, Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
         MenuBar.MenuItem menuItem;
@@ -451,7 +444,6 @@ public class WamUI extends UI {
         return menuItem;
     }// end of method
 
-
     /**
      * Aggiunge un modulo alla UI
      * Il modulo implementa la gestione delle company
@@ -477,7 +469,6 @@ public class WamUI extends UI {
 
         return menuItem;
     }// end of method
-
 
 //    /**
 //     * Crea il componente per l'utente
@@ -516,7 +507,6 @@ public class WamUI extends UI {
 //
 //    }
 
-
     /**
      * Crea i sottomenu specifici per le tavole di incrocio (solo per developer, ovviamente)
      * <p>
@@ -533,7 +523,6 @@ public class WamUI extends UI {
 
     }// end of method
 
-
     private String getCurrentAddress() {
         URI uri = Page.getCurrent().getLocation();
         String str = uri.getScheme() + ":" + uri.getSchemeSpecificPart();
@@ -548,7 +537,6 @@ public class WamUI extends UI {
     public void addCompanyListeners(CompanyListener listener) {
         companyListeners.add(listener);
     }// end of method
-
 
     public void fireCompanyAdded(WamCompany company) {
         for (CompanyListener listener : companyListeners) {
@@ -569,7 +557,7 @@ public class WamUI extends UI {
         navComp.setFooter(creaFooter());
     }// end of method
 
-
+    @Deprecated
     public void removeMenuItem(String caption) {
         if (menubar == null) {
             return;
@@ -592,7 +580,6 @@ public class WamUI extends UI {
         int a = 87;
     }// end of method
 
-
     /**
      * Ritorna un nuovo Tabellone
      */
@@ -610,7 +597,6 @@ public class WamUI extends UI {
         return new Tabellone(getCurrentAddress());
     }
 
-
     /**
      * Ritorna un nuovo componente main
      */
@@ -626,7 +612,6 @@ public class WamUI extends UI {
 //        return comp;
         return creaComponente();    // per ora è sempre nuova istanza
     }
-
 
     /**
      * Crea l'interfaccia utente (User Interface) iniziale dell'applicazione

@@ -1,6 +1,5 @@
 package it.algos.wam.entity.wamcompany;
 
-
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
@@ -28,7 +27,7 @@ public class WamCompanyMod extends ModulePop {
     private final static long serialVersionUID = 1L;
 
     // indirizzo interno del modulo - etichetta del menu
-    public static String MENU_ADDRESS = "Croce";
+    public static String MENU_ADDRESS = "Croci";
 
     // icona (eventuale) del modulo
     public static Resource ICON = FontAwesome.AMBULANCE;
@@ -46,17 +45,18 @@ public class WamCompanyMod extends ModulePop {
         getTable().setRowHeaderMode(Table.RowHeaderMode.INDEX);
     }// end of constructor
 
-
     /**
      * Crea i sottomenu specifici del modulo
      * <p>
      * Invocato dal metodo AlgosUI.addModulo()
      * Sovrascritto dalla sottoclasse
      *
-     * @param menuItem principale del modulo
+     * @param menu principale del modulo
      */
     @Override
-    public void addSottoMenu(MenuBar.MenuItem menuItem) {
+    public void addSottoMenu(MenuBar.MenuItem menu) {
+        MenuBar.MenuItem menuItem = menu.addItem("Filtro", null, null);
+
         addCommandAllCroci(menuItem);
 
         for (WamCompany company : WamCompany.findAll()) {
@@ -65,13 +65,13 @@ public class WamCompanyMod extends ModulePop {
 
     }// end of method
 
-
     /**
      * Costruisce un menu per selezionare tutte le croci
      *
-     * @param menuItem a cui agganciare il bottone/item
+     * @param menuItem del modulo a cui aggiungere i sottomenu
      */
     private void addCommandAllCroci(MenuBar.MenuItem menuItem) {
+        MenuBar.MenuItem menu = null;
 
         menuItem.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -81,7 +81,6 @@ public class WamCompanyMod extends ModulePop {
         });// end of anonymous inner class
 
     }// end of method
-
 
     /**
      * Costruisce un menu per selezionare la singola croce da filtrare
@@ -100,12 +99,10 @@ public class WamCompanyMod extends ModulePop {
 
     }// end of method
 
-
     @Override
     public ModuleForm createForm(Item item) {
         return new WamCompanyForm(item, this);
     }// end of method
-
 
     @Override
     public TablePortal createTablePortal() {
@@ -133,13 +130,11 @@ public class WamCompanyMod extends ModulePop {
         };
     }// end of method
 
-
     public void delete(Object id) {
         WamCompany company = WamCompany.find((Long) id);
         company.delete();
         fireCompanyRemoved(company);
     }// end of method
-
 
     /**
      * Spunta il menu selezionato
@@ -168,7 +163,6 @@ public class WamCompanyMod extends ModulePop {
 
     }// end of method
 
-
     /**
      *
      */
@@ -181,7 +175,6 @@ public class WamCompanyMod extends ModulePop {
             wamUI.fireCompanyChanged(company);
         }// fine del blocco if
     }// end of method
-
 
     protected void fireCompanyRemoved(WamCompany company) {
         UI ui = getUI();
