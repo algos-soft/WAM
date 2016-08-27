@@ -59,7 +59,7 @@
 
 
 
-    <persistence-unit name="Webambulanze">
+    <persistence-unit name="Webambulanzelocal">
 
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 

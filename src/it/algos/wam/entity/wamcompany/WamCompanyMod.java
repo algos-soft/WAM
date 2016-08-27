@@ -6,6 +6,7 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
+import it.algos.wam.migration.Import;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.web.form.ModuleForm;
@@ -55,6 +56,16 @@ public class WamCompanyMod extends ModulePop {
      */
     @Override
     public void addSottoMenu(MenuBar.MenuItem menu) {
+        this.addMenuFiltro(menu);
+        this.addMenuImport(menu);
+    }// end of method
+
+    /**
+     * Filtro per selezionare una croce oppure tutte
+     *
+     * @param menu principale del modulo
+     */
+    private void addMenuFiltro(MenuBar.MenuItem menu) {
         MenuBar.MenuItem menuItem = menu.addItem("Filtro", null, null);
 
         addCommandAllCroci(menuItem);
@@ -63,6 +74,19 @@ public class WamCompanyMod extends ModulePop {
             addCommandSingolaCroce(menuItem, company);
         }// end of for cycle
 
+    }// end of method
+
+    /**
+     * Filtro per importare i dati da webambulanze
+     *
+     * @param menu principale del modulo
+     */
+    private void addMenuImport(MenuBar.MenuItem menu) {
+        menu.addItem("Importa", null, new MenuBar.Command() {
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                new Import("GAPS");
+            }// end of inner method
+        });// end of anonymous inner class
     }// end of method
 
     /**

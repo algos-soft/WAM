@@ -507,21 +507,21 @@ public class WamUI extends UI {
 //
 //    }
 
-    /**
-     * Crea i sottomenu specifici per le tavole di incrocio (solo per developer, ovviamente)
-     * <p>
-     *
-     * @param menuItem principale del modulo
-     */
-    public void addSottoMenuIncroci(MenuBar menuBar, MenuBar.MenuItem menuItem) {
-
-        MenuCommand cmd = new MenuCommand(menuBar, new ServizioFunzioneMod());
-        menuItem.addItem(ServizioFunzioneMod.MENU_ADDRESS, null, cmd);
-
-        MenuCommand cmd2 = new MenuCommand(menuBar, new VolontarioFunzioneMod());
-        menuItem.addItem(VolontarioFunzioneMod.MENU_ADDRESS, null, cmd2);
-
-    }// end of method
+//    /**
+//     * Crea i sottomenu specifici per le tavole di incrocio (solo per developer, ovviamente)
+//     * <p>
+//     *
+//     * @param menuItem principale del modulo
+//     */
+//    public void addSottoMenuIncroci(MenuBar menuBar, MenuBar.MenuItem menuItem) {
+//
+//        MenuCommand cmd = new MenuCommand(menuBar, new ServizioFunzioneMod());
+//        menuItem.addItem(ServizioFunzioneMod.MENU_ADDRESS, null, cmd);
+//
+//        MenuCommand cmd2 = new MenuCommand(menuBar, new VolontarioFunzioneMod());
+//        menuItem.addItem(VolontarioFunzioneMod.MENU_ADDRESS, null, cmd2);
+//
+//    }// end of method
 
     private String getCurrentAddress() {
         URI uri = Page.getCurrent().getLocation();

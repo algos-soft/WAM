@@ -33,7 +33,7 @@ public class WamCompany extends BaseCompany {
 
     // elenco delle relazioni OneToMany
     // servono per creare le foreign key sul db
-    // che consentono la cancIscrizione a cascata
+    // che consentono la cancellazione a cascata
 
     @OneToMany(mappedBy = "company")
     @CascadeOnDelete

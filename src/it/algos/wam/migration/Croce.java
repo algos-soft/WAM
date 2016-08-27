@@ -1,26 +1,14 @@
 package it.algos.wam.migration;
 
-import it.algos.wam.entity.companyentity.WamCompanyEntity;
-import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.volontario.Volontario_;
-import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.webbase.multiazienda.CompanyQuery;
-import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.lib.LibCrypto;
-import it.algos.webbase.web.login.UserIF;
 import it.algos.webbase.web.query.AQuery;
-import org.apache.commons.beanutils.BeanUtils;
-import org.eclipse.persistence.annotations.CascadeOnDelete;
-import org.eclipse.persistence.annotations.Index;
 import org.eclipse.persistence.annotations.ReadOnly;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 @Entity
 @ReadOnly
@@ -37,6 +25,30 @@ public class Croce extends BaseEntity {
      */
     public Croce() {
     }// end of constructor
+
+    /**
+     * Recupera una istanza della Entity usando la query per una property specifica
+     *
+     * @param sigla valore della property code
+     *
+     * @return istanza della Entity, null se non trovata
+     */
+    public static Croce findByCode(String sigla) {
+        Croce instance = null;
+
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("Webambulanzelocal");
+        EntityManager manager = factory.createEntityManager();
+        BaseEntity entity = AQuery.queryOne(Croce.class, Croce_.sigla, sigla, manager);
+        manager.close();
+
+        if (entity != null) {
+            if (entity instanceof Croce) {
+                instance = (Croce) entity;
+            }// end of if cycle
+        }// end of if cycle
+
+        return instance;
+    }// end of method
 
     public String getSigla() {
         return sigla;
