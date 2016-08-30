@@ -118,7 +118,12 @@ public class Migration {
     private void importFunzioni(Croce companyOld, WamCompany companyNew) {
         List<FunzioneAmb> lista = FunzioneAmb.findAll(companyOld);
 
-        if (lista != null) {
+        if (lista != null&&lista.size()>0) {
+            FunzioneAmb funzA = FunzioneAmb.findByCode(companyOld,"aut");
+        }// end of if cycle
+
+
+        if (lista != null&&lista.size()>0) {
             for (FunzioneAmb funz : lista) {
                 importSingolaFunzione(companyOld, companyNew, funz);
             }// end of for cycle

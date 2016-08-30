@@ -77,6 +77,7 @@ public class Croce  extends MigrationEntity{
         EntityManager manager = factory.createEntityManager();
 
         lista = (ArrayList<Croce>) AQuery.getLista(Croce.class, manager);
+//        List<Croce> lista2=AQuery.findAll(Croce.class, null,manager);
         manager.close();
 
         return lista;

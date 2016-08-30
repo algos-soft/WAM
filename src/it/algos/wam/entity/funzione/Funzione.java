@@ -198,11 +198,11 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return lista di tutte le istanze di Funzione
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Funzione> findAll(WamCompany company) {
-        ArrayList<Funzione> lista;
+    public static List<Funzione> findAll(WamCompany company) {
+        List<Funzione> lista;
 
-        Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
-        lista = (ArrayList<Funzione>) AQuery.findAll(Funzione.class, null, filter);
+//        Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
+        lista = (List<Funzione>) AQuery.findAll(Funzione.class, CompanyEntity_.company, company);
 
         return lista;
     }// end of method

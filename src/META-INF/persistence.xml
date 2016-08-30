@@ -67,6 +67,7 @@
         <class>it.algos.webbase.web.entity.BaseEntity</class>
         <class>it.algos.wam.migration.Croce</class>
         <class>it.algos.wam.migration.FunzioneAmb</class>
+        <class>it.algos.wam.migration.MigrationEntity</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

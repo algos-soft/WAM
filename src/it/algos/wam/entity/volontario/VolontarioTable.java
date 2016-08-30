@@ -16,6 +16,7 @@ import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by gac on 25 mag 2016.
@@ -45,7 +46,7 @@ public class VolontarioTable extends WamTable {
      */
     @Override
     protected void createAdditionalColumns() {
-        ArrayList<Funzione> listaFunzioni = Funzione.findAll((WamCompany) CompanySessionLib.getCompany());
+        List<Funzione> listaFunzioni = Funzione.findAll((WamCompany) CompanySessionLib.getCompany());
         for (Funzione funz : listaFunzioni) {
             addGeneratedColumn(funz.getSigla(), new FunzioniColumnGenerator(funz));
         }// end of for cycle
@@ -62,7 +63,7 @@ public class VolontarioTable extends WamTable {
     @Override
     protected Object[] getDisplayColumns() {
         ArrayList lista = new ArrayList<>();
-        ArrayList<Funzione> listaFunzioni = Funzione.findAll((WamCompany) CompanySessionLib.getCompany());
+        List<Funzione> listaFunzioni = Funzione.findAll((WamCompany) CompanySessionLib.getCompany());
 
         if (LibSession.isDeveloper()) {
             lista.add(WamCompanyEntity_.company);

@@ -4,16 +4,18 @@ import it.algos.webbase.web.entity.BaseEntity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Persistence;
 
 /**
  * Created by gac on 30 ago 2016.
  * Superclasse per costruire il manager specifico di questo database
  */
-public class MigrationEntity extends BaseEntity {
+@MappedSuperclass
+public abstract class MigrationEntity extends BaseEntity {
 
 
-    private final static String PERSISTENCE_UNIT_NAME = "Webambulanzelocal";
+    protected final static String PERSISTENCE_UNIT_NAME = "Webambulanzelocal";
 
 
     /**

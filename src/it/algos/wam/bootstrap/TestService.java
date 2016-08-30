@@ -11,6 +11,7 @@ import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by gac on 19 mag 2016.
@@ -64,7 +65,7 @@ public abstract class TestService {
 
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         int numFunzioniCorrenti = Funzione.count(companyCorrente);
-        ArrayList<Funzione> listaFunzioniCorrenti = Funzione.findAll(companyCorrente);
+        List<Funzione> listaFunzioniCorrenti = Funzione.findAll(companyCorrente);
         print("Numero di funzioni con company selezionata (count)", numFunzioniCorrenti);
         print("Numero di funzioni con company selezionata (lista)", listaFunzioniCorrenti.size());
 

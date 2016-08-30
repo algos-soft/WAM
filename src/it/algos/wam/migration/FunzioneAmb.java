@@ -1,5 +1,7 @@
 package it.algos.wam.migration;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.eclipse.persistence.annotations.ReadOnly;
@@ -21,12 +23,14 @@ import java.util.List;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
+@Access(AccessType.PROPERTY)
 @Table(name = "Funzione")
 @ReadOnly
 public class FunzioneAmb extends MigrationEntity {
 
     @ManyToOne
     private Croce croce;
+
 
     private String sigla;
     private String descrizione;
@@ -45,26 +49,34 @@ public class FunzioneAmb extends MigrationEntity {
 
     /**
      * Recupera una istanza della Entity usando la query per una property specifica
+     * Filtrato sulla company passata come parametro.
      *
-     * @param sigla valore della property code
+     * @param company di appartenenza
+     * @param sigla   valore della property code
      * @return istanza della Entity, null se non trovata
      */
-    public static FunzioneAmb findByCode(String sigla) {
+    @SuppressWarnings("unchecked")
+    public static FunzioneAmb findByCode(Croce company, String sigla) {
         FunzioneAmb instance = null;
+        BaseEntity entity = null;
         EntityManager manager = getManager();
+        List<FunzioneAmb> entities;
 
-        BaseEntity entity = AQuery.findOne(FunzioneAmb.class, FunzioneAmb_.sigla, sigla, manager);
+        Container.Filter filterA = new Compare.Equal(FunzioneAmb_.croce.getName(), company);
+        Container.Filter filterB = new Compare.Equal(FunzioneAmb_.sigla.getName(), sigla);
+        entities = (List<FunzioneAmb>) AQuery.findAll(FunzioneAmb.class, null, manager, filterA, filterB);
         manager.close();
 
+        if (entities != null && entities.size() == 1) {
+            entity = entities.get(0);
+        }// end of if cycle
+
         if (entity != null) {
-            if (entity instanceof FunzioneAmb) {
-                instance = (FunzioneAmb) entity;
-            }// end of if cycle
+            instance = (FunzioneAmb) entity;
         }// end of if cycle
 
         return instance;
     }// end of method
-
 
 
     /**
