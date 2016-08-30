@@ -41,7 +41,7 @@ public enum WamRuoli {
         } // fine del ciclo for-each
 
         return wam;
-    }
+    }// fine del metodo statico
 
     public String getNome() {
         return nome;

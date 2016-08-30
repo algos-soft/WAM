@@ -9,7 +9,6 @@ import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.company.BaseCompany_;
-import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -47,6 +46,10 @@ public class WamCompany extends BaseCompany {
     @CascadeOnDelete
     private List<Volontario> volontari;
 
+    // parametri aggiuntivi, specifici delle Company del settore
+    private String presidente;
+
+    private Organizzazione organizzazione;
 
     /**
      * Costruttore senza argomenti
@@ -180,6 +183,21 @@ public class WamCompany extends BaseCompany {
         return getCompanyCode();
     }// end of method
 
+    public String getPresidente() {
+        return presidente;
+    }// end of getter method
+
+    public void setPresidente(String presidente) {
+        this.presidente = presidente;
+    }//end of setter method
+
+    public Organizzazione getOrganizzazione() {
+        return organizzazione;
+    }// end of getter method
+
+    public void setOrganizzazione(Organizzazione organizzazione) {
+        this.organizzazione = organizzazione;
+    }//end of setter method
 
     /**
      * Elimina l'azienda.

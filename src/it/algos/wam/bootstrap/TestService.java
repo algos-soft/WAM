@@ -1,11 +1,14 @@
 package it.algos.wam.bootstrap;
 
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.query.AQuery;
 
 import java.util.ArrayList;
 
@@ -76,6 +79,15 @@ public abstract class TestService {
         print("Numero di funzioni con company nulla (count)", numFunzioniCorrenti3);
         print("Numero di funzioni con company nulla (lista)", listaFunzioniCorrenti3.size());
         CompanySessionLib.setCompany(companyCorrente);
+
+        Funzione funz1= Funzione.findBySigla("Cen");
+        Funzione funz2= Funzione.findBySigla("Bar");
+
+        BaseEntity funz4= AQuery.findOne(Funzione.class, Funzione_.sigla, "Bar");
+        BaseEntity funz3= AQuery.findOne(Funzione.class, Funzione_.sigla, "Cen");
+
+        BaseEntity funz5= AQuery.findFirst(Funzione.class, Funzione_.sigla, "Bar");
+        BaseEntity funz6= AQuery.findFirst(Funzione.class, Funzione_.sigla, "Cen");
 
         riTestCompany();
     }// end of method

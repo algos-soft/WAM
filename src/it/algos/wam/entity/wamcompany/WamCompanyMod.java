@@ -84,7 +84,8 @@ public class WamCompanyMod extends ModulePop {
     private void addMenuImport(MenuBar.MenuItem menu) {
         menu.addItem("Importa", null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                new Import("GAPS");
+                new Import();
+                getTable().refresh();
             }// end of inner method
         });// end of anonymous inner class
     }// end of method
@@ -135,6 +136,28 @@ public class WamCompanyMod extends ModulePop {
 
         return portaleCroce;
     }// end of method
+
+
+    /**
+     * Crea i campi visibili nella lista (table)
+     * <p>
+     * Come default spazzola tutti i campi della Entity <br>
+     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+     * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
+     */
+    @Override
+    protected Attribute<?, ?>[] creaFieldsList() {
+        return new Attribute[]{
+                BaseCompany_.companyCode,
+                WamCompany_.organizzazione,
+                BaseCompany_.name,
+                WamCompany_.presidente,
+                BaseCompany_.address1,
+                BaseCompany_.contact,
+                BaseCompany_.email
+        };
+    }// end of method
+
 
     /**
      * Crea i campi visibili nella scheda (form)

@@ -46,7 +46,7 @@
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
 
             <!--per vedere l'SQL di tutte le query-->
-            <property name="eclipselink.logging.level" value="FINE"/>
+            <!--<property name="eclipselink.logging.level" value="FINE"/>-->
 
             <!--per generare il DDL su file-->
             <!--<property name="eclipselink.ddl-generation.output-mode" value="sql-script" />-->
@@ -66,6 +66,7 @@
         <!--Le entity astratte (@MappedSuperclass) vanno obbligatoriamente listate-->
         <class>it.algos.webbase.web.entity.BaseEntity</class>
         <class>it.algos.wam.migration.Croce</class>
+        <class>it.algos.wam.migration.FunzioneAmb</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
@@ -81,7 +82,7 @@
             <property name="eclipselink.ddl-generation" value="none"/>
 
             <!--per vedere l'SQL di tutte le query-->
-            <property name="eclipselink.logging.level" value="FINE"/>
+            <!--<property name="eclipselink.logging.level" value="FINE"/>-->
 
         </properties>
     </persistence-unit>

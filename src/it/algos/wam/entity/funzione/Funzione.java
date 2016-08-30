@@ -89,8 +89,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Costruttore minimo con tutte le properties obbligatorie
      *
-     * @param company       croce di appartenenza (property della superclasse)
-     * @param sigla  sigla di riferimento interna (obbligatoria)
+     * @param company croce di appartenenza (property della superclasse)
+     * @param sigla   sigla di riferimento interna (obbligatoria)
      */
     public Funzione(BaseCompany company, String sigla) {
         this(company, sigla, 0, null, "");
@@ -100,20 +100,20 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Costruttore completo
      *
-     * @param company       croce di appartenenza
-     * @param sigla  sigla di riferimento interna (obbligatoria)
-     * @param ordine        di presentazione nelle liste
-     * @param glyph         icona di FontAwesome (facoltative)
-     * @param note          di spiegazione (facoltative)
+     * @param company     croce di appartenenza
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param ordine      di presentazione nelle liste
+     * @param glyph       icona di FontAwesome (facoltative)
+     * @param descrizione note (facoltative)
      */
-    public Funzione(BaseCompany company, String sigla, int ordine, FontAwesome glyph, String note) {
+    public Funzione(BaseCompany company, String sigla, int ordine, FontAwesome glyph, String descrizione) {
         super();
         this.setCompany(company);
         this.setSigla(sigla);
 //        this.setSiglaVisibile(siglaVisibile);
         this.setOrdine(ordine);
         this.setIcon(glyph);
-        this.setDescrizione(note);
+        this.setDescrizione(descrizione);
     }// end of constructor
 
     /**
@@ -159,7 +159,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una istanza di Funzione usando la query standard della Primary Key
-     * Nessun filtro sulla azienda, perché la primary key è unica
+     * Nessun filtro sulla company, perché la primary key è unica
      *
      * @param id valore (unico) della Primary Key
      * @return istanza di Funzione, null se non trovata
@@ -180,7 +180,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla azienda corrente.
+     * Filtrato sulla company corrente.
      *
      * @return lista di tutte le istanze di Funzione
      */
@@ -192,7 +192,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company croce di appartenenza
      * @return lista di tutte le istanze di Funzione
@@ -202,7 +202,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         ArrayList<Funzione> lista;
 
         Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
-        lista = (ArrayList<Funzione>) AQuery.getLista(Funzione.class, filter);
+        lista = (ArrayList<Funzione>) AQuery.findAll(Funzione.class, null, filter);
 
         return lista;
     }// end of method
@@ -216,7 +216,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<Funzione> findAllAll() {
-        return (ArrayList<Funzione>) AQuery.getLista(Funzione.class);
+        return (ArrayList<Funzione>) AQuery.findAll(Funzione.class, null);
     }// end of method
 
 
@@ -292,11 +292,11 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
      *
-     * @param company       croce di appartenenza
-     * @param manager       the EntityManager to use
-     * @param siglaInterna  sigla di riferimento interna (obbligatoria)
-     * @param ordine        di presentazione nelle liste
-     * @param note          di spiegazione (facoltative)
+     * @param company      croce di appartenenza
+     * @param manager      the EntityManager to use
+     * @param siglaInterna sigla di riferimento interna (obbligatoria)
+     * @param ordine       di presentazione nelle liste
+     * @param note         di spiegazione (facoltative)
      * @return istanza di Funzione
      */
     public static Funzione crea(WamCompany company, EntityManager manager, String siglaInterna, int ordine, String note) {
@@ -307,12 +307,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
      *
-     * @param company       croce di appartenenza
-     * @param manager       the EntityManager to use
-     * @param siglaInterna  sigla di riferimento interna (obbligatoria)
-     * @param ordine        di presentazione nelle liste
-     * @param note          di spiegazione (facoltative)
-     * @param glyph         dell'icona (facoltativo)
+     * @param company      croce di appartenenza
+     * @param manager      the EntityManager to use
+     * @param siglaInterna sigla di riferimento interna (obbligatoria)
+     * @param ordine       di presentazione nelle liste
+     * @param note         di spiegazione (facoltative)
+     * @param glyph        dell'icona (facoltativo)
      * @return istanza di Funzione
      */
     public static Funzione crea(
@@ -366,7 +366,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 //        return siglaVisibile;
 //    }// end of method
 
-        @Override
+    @Override
     public String toString() {
         return sigla;
     }// end of method

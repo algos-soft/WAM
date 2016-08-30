@@ -221,6 +221,11 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
 //        Container.Filter filter = new Compare.Equal(CompanyEntity_.company, company);
         listaTmp = (ArrayList<Volontario>) AQuery.getLista(Volontario.class);
+
+        if (company==null) {
+            return listaTmp;
+        }// end of if cycle
+
         if (listaTmp != null && listaTmp.size() > 0) {
             lista = new ArrayList<>();
             for (Volontario vol : listaTmp) {

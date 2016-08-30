@@ -1,6 +1,5 @@
 package it.algos.wam.servlet;
 
-import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.ServiceException;
 import com.vaadin.server.SessionInitEvent;
@@ -14,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = { "/wam/*" , "/VAADIN/*" }, asyncSupported = true, displayName = "Wam")
+@WebServlet(urlPatterns = {"/wam/*", "/VAADIN/*"}, asyncSupported = true, displayName = "Wam")
 @VaadinServletConfiguration(productionMode = false, ui = WamUI.class)
 public class WamServlet extends AlgosServlet {
 
@@ -32,7 +31,6 @@ public class WamServlet extends AlgosServlet {
      * prima (PRIMA) di eseguire le regolazioni specifiche <br>
      *
      * @param event the initialization event
-     *
      * @throws ServiceException a problem occurs when processing the event
      */
     @Override
@@ -40,7 +38,6 @@ public class WamServlet extends AlgosServlet {
         super.sessionInit(event);
 
         // Do session start stuff here
-
 
     }// end of method
 

@@ -11,6 +11,7 @@ import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.*;
+import it.algos.wam.bootstrap.TestService;
 import it.algos.wam.entity.companyentity.CompanyListener;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
@@ -209,6 +210,8 @@ public class WamUI extends UI {
             }
         }
 
+//        TestService.runTest();
+
         // Se la company prevede tabellone pubblico, mostra il tabellone prima del login
         // (se non viene dal goHome() del tabellone stesso)
         boolean tabPubblico = CompanyPrefs.tabellonePubblico.getBool(company);
@@ -227,9 +230,11 @@ public class WamUI extends UI {
             return;
         }
 
+
         // se arrivo qui sono già loggato
         // presento la home
         UI.getCurrent().setContent(getMainComponent());
+
 
     }
 

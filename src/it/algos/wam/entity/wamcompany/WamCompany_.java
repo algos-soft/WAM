@@ -11,4 +11,6 @@ public class WamCompany_ extends BaseCompany_ {
 	public static volatile SingularAttribute<WamCompany, Boolean> tabellonePubblico;
 	public static volatile SingularAttribute<WamCompany, Boolean> sendMailToBackup;
 	public static volatile SingularAttribute<WamCompany, String> backupMailbox;
-}
+	public static volatile SingularAttribute<WamCompany, String> presidente;
+	public static volatile SingularAttribute<WamCompany, Organizzazione> organizzazione;
+}// end of entity class
