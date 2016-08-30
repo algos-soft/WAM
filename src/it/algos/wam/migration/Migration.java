@@ -2,11 +2,11 @@ package it.algos.wam.migration;
 
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.wamcompany.Organizzazione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,7 +29,7 @@ public class Migration {
      * Costruttore
      */
     public Migration() {
-        ArrayList<Croce> listaVecchieCrociEsistenti = Croce.findAll();
+        List<Croce> listaVecchieCrociEsistenti = Croce.findAll();
 
         if (listaVecchieCrociEsistenti != null) {
             for (Croce company : listaVecchieCrociEsistenti) {
@@ -57,7 +57,7 @@ public class Migration {
      * @param siglaCompanyNew nome della company usata in wam
      */
     public Migration(String siglaCompanyOld, String siglaCompanyNew) {
-        Croce companyOld = Croce.findByCode(siglaCompanyOld);
+        Croce companyOld = Croce.findBySigla(siglaCompanyOld);
         inizia(companyOld, siglaCompanyNew);
     }// end of constructor
 
@@ -79,6 +79,7 @@ public class Migration {
 
         companyNew = importSingolaCroce(companyOld, siglaCompanyNew);
         importFunzioni(companyOld, companyNew);
+        importServizi(companyOld, companyNew);
     }// end of method
 
     /**
@@ -118,14 +119,13 @@ public class Migration {
     private void importFunzioni(Croce companyOld, WamCompany companyNew) {
         List<FunzioneAmb> lista = FunzioneAmb.findAll(companyOld);
 
-        if (lista != null&&lista.size()>0) {
-            FunzioneAmb funzA = FunzioneAmb.findByCode(companyOld,"aut");
+        if (lista != null && lista.size() > 0) {
+            FunzioneAmb funzA = FunzioneAmb.findByCompanyAndSigla(companyOld, "aut");
         }// end of if cycle
 
-
-        if (lista != null&&lista.size()>0) {
+        if (lista != null && lista.size() > 0) {
             for (FunzioneAmb funz : lista) {
-                importSingolaFunzione(companyOld, companyNew, funz);
+                creaSingolaFunzione(companyNew, funz);
             }// end of for cycle
         }// end of if cycle
 
@@ -133,22 +133,21 @@ public class Migration {
 
 
     /**
-     * Importa la singola funzione
+     * Crea la singola funzione
      *
-     * @param companyOld  company usata in webambulanze
      * @param companyNew  company usata in wam
      * @param funzioneOld della companyOld
      * @return la nuova funzione
      */
-    private Funzione importSingolaFunzione(Croce companyOld, WamCompany companyNew, FunzioneAmb funzioneOld) {
-        EntityManager manager = null;
+    private Funzione creaSingolaFunzione(WamCompany companyNew, FunzioneAmb funzioneOld) {
         String sigla = funzioneOld.getSigla_visibile();
         int ordine = funzioneOld.getOrdine();
         String descrizione = funzioneOld.getDescrizione();
         FontAwesome glyph = selezionaIcona(descrizione);
 
-        return Funzione.crea(companyNew, manager, sigla, ordine, descrizione, glyph);
+        return Funzione.crea(companyNew, (EntityManager) null, sigla, ordine, descrizione, glyph);
     }// end of method
+
 
     /**
      * Elabora la vecchia descrizione per selezionare una icona adeguata
@@ -180,6 +179,46 @@ public class Migration {
         }// end of if/else cycle
 
         return glyph;
+    }// end of method
+
+
+    /**
+     * Importa i servizi della croce
+     *
+     * @param companyOld company usata in webambulanze
+     * @param companyNew company usata in wam
+     */
+    private void importServizi(Croce companyOld, WamCompany companyNew) {
+        List<ServizioAmb> lista = ServizioAmb.findAll(companyOld);
+
+        if (lista != null && lista.size() > 0) {
+            ServizioAmb funzA = ServizioAmb.findByCompanyAndSigla(companyOld, "aut");
+        }// end of if cycle
+
+        if (lista != null && lista.size() > 0) {
+            for (ServizioAmb serv : lista) {
+                creaSingoloServizio(companyNew, serv);
+            }// end of for cycle
+        }// end of if cycle
+
+    }// end of method
+
+
+    /**
+     * Crea il singola servizio
+     *
+     * @param companyNew  company usata in wam
+     * @param servizioOld della companyOld
+     * @return il nuovo servizio
+     */
+    private Servizio creaSingoloServizio(WamCompany companyNew, ServizioAmb servizioOld) {
+//        String sigla = funzioneOld.getSigla_visibile();
+//        int ordine = funzioneOld.getOrdine();
+//        String descrizione = funzioneOld.getDescrizione();
+//        FontAwesome glyph = selezionaIcona(descrizione);
+
+//        return Servizio.crea(companyNew, (EntityManager)null, sigla, ordine, descrizione, glyph);
+        return null;
     }// end of method
 
 }// end of class

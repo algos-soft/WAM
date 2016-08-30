@@ -9,9 +9,8 @@ import org.eclipse.persistence.annotations.ReadOnly;
 import javax.persistence.*;
 import java.util.List;
 
-
 /**
- * Created by gac on 27 ago 2016.
+ * Created by gac on 30 ago 2016.
  * <p>
  * Entity per una funzione
  * Entity della vecchia versione di webambulanze da cui migrare i dati. Solo lettura
@@ -23,10 +22,10 @@ import java.util.List;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
-@Table(name = "Funzione")
+@Table(name = "Tipo_turno")
 @Access(AccessType.PROPERTY)
 @ReadOnly
-public class FunzioneAmb extends MigrationEntity {
+public class ServizioAmb extends MigrationEntity {
 
     @ManyToOne
     private Croce croce;
@@ -34,15 +33,19 @@ public class FunzioneAmb extends MigrationEntity {
     private String sigla;
     private String descrizione;
     private int ordine;
-    private String sigla_visibile;
-    private String funzioni_dipendenti;
+    private int ora_inizio;
+    private int minuti_inizio;
+    private int ora_fine;
+    private int minuti_fine;
+    private boolean orario;
+    private boolean primo;
 
 
     /**
      * Costruttore senza argomenti
      * Necessario per le specifiche JavaBean
      */
-    public FunzioneAmb() {
+    public ServizioAmb() {
     }// end of constructor
 
 
@@ -55,15 +58,15 @@ public class FunzioneAmb extends MigrationEntity {
      * @return istanza della Entity, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static FunzioneAmb findByCompanyAndSigla(Croce company, String sigla) {
-        FunzioneAmb instance = null;
+    public static ServizioAmb findByCompanyAndSigla(Croce company, String sigla) {
+        ServizioAmb instance = null;
         BaseEntity entity = null;
         EntityManager manager = getManager();
-        List<FunzioneAmb> entities;
+        List<ServizioAmb> entities;
 
-        Container.Filter filterA = new Compare.Equal(FunzioneAmb_.croce.getName(), company);
-        Container.Filter filterB = new Compare.Equal(FunzioneAmb_.sigla.getName(), sigla);
-        entities = (List<FunzioneAmb>) AQuery.findAll(FunzioneAmb.class, null, manager, filterA, filterB);
+        Container.Filter filterA = new Compare.Equal(ServizioAmb_.croce.getName(), company);
+        Container.Filter filterB = new Compare.Equal(ServizioAmb_.sigla.getName(), sigla);
+        entities = (List<ServizioAmb>) AQuery.findAll(ServizioAmb.class, null, manager, filterA, filterB);
         manager.close();
 
         if (entities != null && entities.size() == 1) {
@@ -71,7 +74,7 @@ public class FunzioneAmb extends MigrationEntity {
         }// end of if cycle
 
         if (entity != null) {
-            instance = (FunzioneAmb) entity;
+            instance = (ServizioAmb) entity;
         }// end of if cycle
 
         return instance;
@@ -85,11 +88,11 @@ public class FunzioneAmb extends MigrationEntity {
      * @return lista di tutte le istanze della Entity
      */
     @SuppressWarnings("unchecked")
-    public static List<FunzioneAmb> findAll() {
-        List<FunzioneAmb> lista;
+    public static List<ServizioAmb> findAll() {
+        List<ServizioAmb> lista;
         EntityManager manager = getManager();
 
-        lista = (List<FunzioneAmb>) AQuery.findAll(FunzioneAmb.class, manager);
+        lista = (List<ServizioAmb>) AQuery.findAll(ServizioAmb.class, manager);
         manager.close();
 
         return lista;
@@ -104,11 +107,11 @@ public class FunzioneAmb extends MigrationEntity {
      * @return lista delle istanze filtrate della Entity
      */
     @SuppressWarnings("unchecked")
-    public static List<FunzioneAmb> findAll(Croce company) {
-        List<FunzioneAmb> lista;
+    public static List<ServizioAmb> findAll(Croce company) {
+        List<ServizioAmb> lista;
         EntityManager manager = getManager();
 
-        lista = (List<FunzioneAmb>) AQuery.findAll(FunzioneAmb.class, FunzioneAmb_.croce, company, manager);
+        lista = (List<ServizioAmb>) AQuery.findAll(ServizioAmb.class, ServizioAmb_.croce, company, manager);
         manager.close();
 
         return lista;
@@ -147,20 +150,52 @@ public class FunzioneAmb extends MigrationEntity {
         this.ordine = ordine;
     }//end of setter method
 
-    public String getSigla_visibile() {
-        return sigla_visibile;
+    public int getOra_inizio() {
+        return ora_inizio;
     }// end of getter method
 
-    public void setSigla_visibile(String sigla_visibile) {
-        this.sigla_visibile = sigla_visibile;
+    public void setOra_inizio(int ora_inizio) {
+        this.ora_inizio = ora_inizio;
     }//end of setter method
 
-    public String getFunzioni_dipendenti() {
-        return funzioni_dipendenti;
+    public int getMinuti_inizio() {
+        return minuti_inizio;
     }// end of getter method
 
-    public void setFunzioni_dipendenti(String funzioni_dipendenti) {
-        this.funzioni_dipendenti = funzioni_dipendenti;
+    public void setMinuti_inizio(int minuti_inizio) {
+        this.minuti_inizio = minuti_inizio;
+    }//end of setter method
+
+    public int getOra_fine() {
+        return ora_fine;
+    }// end of getter method
+
+    public void setOra_fine(int ora_fine) {
+        this.ora_fine = ora_fine;
+    }//end of setter method
+
+    public int getMinuti_fine() {
+        return minuti_fine;
+    }// end of getter method
+
+    public void setMinuti_fine(int minuti_fine) {
+        this.minuti_fine = minuti_fine;
+    }//end of setter method
+
+    public boolean isOrario() {
+        return orario;
+    }// end of getter method
+
+    public void setOrario(boolean orario) {
+        this.orario = orario;
+    }//end of setter method
+
+    public boolean isPrimo() {
+        return primo;
+    }// end of getter method
+
+    public void setPrimo(boolean primo) {
+        this.primo = primo;
     }//end of setter method
 
 }// end of entity class

@@ -9,7 +9,7 @@ import javax.persistence.Persistence;
 
 /**
  * Created by gac on 30 ago 2016.
- * Superclasse per costruire il manager specifico di questo database
+ * Superclasse per costruire il manager specifico del vecchio database database
  */
 @MappedSuperclass
 public abstract class MigrationEntity extends BaseEntity {
