@@ -14,7 +14,7 @@ import java.util.List;
  * Importa i dati -on line- della vecchia versione del programma (webambulanze)
  * Il nome della croce (company) può essere diverso
  */
-public class Import {
+public class Migration {
 
     private final static String DB_OLD_LOCAL = "";
     private final static String DB_OLD_SERVER = "";
@@ -28,7 +28,7 @@ public class Import {
     /**
      * Costruttore
      */
-    public Import() {
+    public Migration() {
         ArrayList<Croce> listaVecchieCrociEsistenti = Croce.findAll();
 
         if (listaVecchieCrociEsistenti != null) {
@@ -45,7 +45,7 @@ public class Import {
      *
      * @param siglaCompanyOld nome della company usata in webambulanze
      */
-    public Import(String siglaCompanyOld) {
+    public Migration(String siglaCompanyOld) {
         this(siglaCompanyOld, siglaCompanyOld);
     }// end of constructor
 
@@ -56,7 +56,7 @@ public class Import {
      * @param siglaCompanyOld nome della company usata in webambulanze
      * @param siglaCompanyNew nome della company usata in wam
      */
-    public Import(String siglaCompanyOld, String siglaCompanyNew) {
+    public Migration(String siglaCompanyOld, String siglaCompanyNew) {
         Croce companyOld = Croce.findByCode(siglaCompanyOld);
         inizia(companyOld, siglaCompanyNew);
     }// end of constructor

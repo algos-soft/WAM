@@ -6,7 +6,7 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
-import it.algos.wam.migration.Import;
+import it.algos.wam.migration.Migration;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.web.form.ModuleForm;
@@ -84,7 +84,7 @@ public class WamCompanyMod extends ModulePop {
     private void addMenuImport(MenuBar.MenuItem menu) {
         menu.addItem("Importa", null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                new Import();
+                new Migration();
                 getTable().refresh();
             }// end of inner method
         });// end of anonymous inner class
