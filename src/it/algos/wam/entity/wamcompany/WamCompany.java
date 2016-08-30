@@ -39,7 +39,7 @@ public class WamCompany extends BaseCompany {
     private List<Servizio> servizi;
 
     @OneToMany(mappedBy = "company")
-    @CascadeOnDelete
+    @CascadeOnDelete()
     private List<Funzione> funzioni;
 
     @OneToMany(mappedBy = "company")
@@ -199,31 +199,31 @@ public class WamCompany extends BaseCompany {
         this.organizzazione = organizzazione;
     }//end of setter method
 
-    /**
-     * Elimina l'azienda.
-     */
-    @Override
-    public void delete() {
-        deleteAllWamData();
-        super.delete();
-    }// end of method
+//    /**
+//     * Elimina l'azienda.
+//     */
+//    @Override
+//    public void delete() {
+//        deleteAllWamData();
+//        super.delete();
+//    }// end of method
 
-    /**
-     * Elimina tutti i dati di questa azienda.
-     * <p>
-     * L'ordine di cancellazione è critico per l'integrità referenziale
-     */
-    private void deleteAllWamData() {
-
-        // elimina le tabelle
-        AQuery.delete(Volontario.class, CompanyEntity_.company, this);
-        AQuery.delete(Funzione.class, CompanyEntity_.company, this);
-        AQuery.delete(Servizio.class, CompanyEntity_.company, this);
-
-        // elimina i turni
-        AQuery.delete(Turno.class, CompanyEntity_.company, this);
-
-    }// end of method
+//    /**
+//     * Elimina tutti i dati di questa azienda.
+//     * <p>
+//     * L'ordine di cancellazione è critico per l'integrità referenziale
+//     */
+//    private void deleteAllWamData() {
+//
+//        // elimina le tabelle
+//        AQuery.delete(Volontario.class, CompanyEntity_.company, this);
+//        AQuery.delete(Funzione.class, CompanyEntity_.company, this);
+//        AQuery.delete(Servizio.class, CompanyEntity_.company, this);
+//
+//        // elimina i turni
+//        AQuery.delete(Turno.class, CompanyEntity_.company, this);
+//
+//    }// end of method
 
 }// end of entity class
 
