@@ -9,6 +9,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -41,7 +42,6 @@ public class Servizio extends WamCompanyEntity {
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
-
     @OneToMany(mappedBy = "servizio", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<Turno> turni = new ArrayList();
@@ -54,13 +54,11 @@ public class Servizio extends WamCompanyEntity {
     @CascadeOnDelete
     private List<ServizioFunzione> servizioFunzioni = new ArrayList<>();
 
-
     //--sigla di riferimento interna (obbligatoria)
     @NotEmpty
     @Column(length = 20)
     @Index
     private String sigla;
-
 
     //--descrizione per il tabellone (obbligatoria)
     @NotEmpty
@@ -98,34 +96,34 @@ public class Servizio extends WamCompanyEntity {
      * Necessario per le specifiche JavaBean
      */
     public Servizio() {
-        this("", "");
     }// end of constructor
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
      *
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       di riferimento interna (obbligatoria)
+     * @param descrizione (obbligatoria)
      */
-    public Servizio(String sigla, String descrizione) {
-        this(0, sigla, descrizione, 0, 0);
+    public Servizio(BaseCompany company, String sigla, String descrizione) {
+        this(company, sigla, descrizione, 0, 0, 0);
     }// end of constructor
-
 
     /**
      * Costruttore completo
      *
-     * @param ordine      di presentazione nel tabellone
+     * @param company     di appartenenza (property della superclasse)
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
+     * @param ordine      di presentazione nel tabellone
      * @param oraInizio   del servizio (facoltativo)
      * @param oraFine     del servizio (facoltativo)
      */
-    public Servizio(int ordine, String sigla, String descrizione, int oraInizio, int oraFine) {
+    public Servizio(BaseCompany company, String sigla, String descrizione, int ordine, int oraInizio, int oraFine) {
         super();
-        setOrdine(ordine);
         setSigla(sigla);
         setDescrizione(descrizione);
+        setOrdine(ordine);
         setOraInizio(oraInizio);
         setOraFine(oraFine);
     }// end of constructor
@@ -156,12 +154,12 @@ public class Servizio extends WamCompanyEntity {
         return count((WamCompany) CompanySessionLib.getCompany());
     }// end of method
 
-
     /**
      * Recupera il totale dei records della Entity
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company croce di appartenenza
+     *
      * @return numero totale di records della tavola
      */
     public static int count(WamCompany company) {
@@ -175,7 +173,6 @@ public class Servizio extends WamCompanyEntity {
         return totRec;
     }// end of method
 
-
     /**
      * Recupera il totale dei records della Entity
      * Senza filtri.
@@ -186,11 +183,11 @@ public class Servizio extends WamCompanyEntity {
         return count((WamCompany) null);
     }// end of method
 
-
     /**
      * Recupera una istanza di Servizio usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
+     *
      * @return istanza di Servizio, null se non trovata
      */
     public static Servizio find(long id) {
@@ -206,7 +203,6 @@ public class Servizio extends WamCompanyEntity {
         return instance;
     }// end of method
 
-
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Filtrato sulla azienda corrente.
@@ -218,12 +214,12 @@ public class Servizio extends WamCompanyEntity {
         return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class);
     }// end of method
 
-
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company croce di appartenenza
+     *
      * @return lista di tutte le istanze di Funzione
      */
     @SuppressWarnings("unchecked")
@@ -236,7 +232,6 @@ public class Servizio extends WamCompanyEntity {
         return lista;
     }// end of method
 
-
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Senza filtri.
@@ -248,12 +243,13 @@ public class Servizio extends WamCompanyEntity {
         return (ArrayList<Servizio>) AQuery.getLista(Servizio.class);
     }// end of method
 
-
     /**
      * Recupera una istanza di Servizio usando la query di una property specifica
      *
      * @param sigla valore della property Sigla
+     *
      * @return istanza di Servizio, null se non trovata
+     *
      * @deprecated perché manca la wamcompany e potrebbero esserci records multipli con la stessa sigla
      */
     public static Servizio findBySigla(String sigla) {
@@ -274,6 +270,7 @@ public class Servizio extends WamCompanyEntity {
      *
      * @param company selezionata
      * @param sigla   valore della property Sigla
+     *
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -292,7 +289,6 @@ public class Servizio extends WamCompanyEntity {
         return instance;
     }// end of method
 
-
     /**
      * Creazione iniziale di un servizio
      * Lo crea SOLO se non esiste già
@@ -300,6 +296,7 @@ public class Servizio extends WamCompanyEntity {
      * @param company     selezionata
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
+     *
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, String sigla, String descrizione) {
@@ -314,19 +311,19 @@ public class Servizio extends WamCompanyEntity {
      * @param manager     the EntityManager to use
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
+     *
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, EntityManager manager, String sigla, String descrizione) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
-            servizio = new Servizio(sigla, descrizione);
+            servizio = new Servizio(company, sigla, descrizione);
             servizio.save(manager);
         }// end of if cycle
 
         return servizio;
     }// end of static method
-
 
     /**
      * Creazione iniziale di un servizio
@@ -341,12 +338,12 @@ public class Servizio extends WamCompanyEntity {
      * @param oraFine     del servizio (facoltativo)
      * @param orario      servizio ad orario prefissato e fisso ogni giorno
      * @param colore      del gruppo (facoltativo)
+     *
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, ArrayList<Funzione> listaFunz) {
         return crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, 0, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
-
 
     /**
      * Creazione iniziale di un servizio
@@ -363,14 +360,14 @@ public class Servizio extends WamCompanyEntity {
      * @param colore      del gruppo (facoltativo)
      * @param obbligatori numero delle funzioni obbligatorie (facoltativa)
      * @param funzioni    lista delle funzioni (facoltativa)
+     *
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, int obbligatori, Funzione... funzioni) {
         Servizio servizio = Servizio.find(company, sigla);
 
         if (servizio == null) {
-            servizio = new Servizio(ordine, sigla, descrizione, oraInizio, oraFine);
-            servizio.setCompany(company);
+            servizio = new Servizio(company, sigla, descrizione, ordine, oraInizio, oraFine);
             servizio.setOrario(orario);
             servizio.setColore(colore);
 
@@ -385,7 +382,6 @@ public class Servizio extends WamCompanyEntity {
 
         return servizio;
     }// end of static method
-
 
     @PrePersist
     protected void prePersist() {
@@ -438,6 +434,7 @@ public class Servizio extends WamCompanyEntity {
      * Restituisce la posizione di una data funzione tra le funzioni previste per il turno.
      *
      * @param f la funzione
+     *
      * @return la posizione, -1 se non trovata
      */
     public int getPosFunzione(Funzione f) {
@@ -453,11 +450,11 @@ public class Servizio extends WamCompanyEntity {
         return pos;
     }
 
-
     /**
      * Recupera il ServizioFunzione relativo a una data funzione
      *
      * @param f la funzione
+     *
      * @return il ServizioFunzione con la funzione, null se non trovato
      */
     public ServizioFunzione getServizioFunzione(Funzione f) {
@@ -473,7 +470,6 @@ public class Servizio extends WamCompanyEntity {
 
     }
 
-
     /**
      * Aggiunge un ServizioFunzione a questo servizio.
      * Regola automaticamente il link al Servizio.
@@ -483,12 +479,10 @@ public class Servizio extends WamCompanyEntity {
         getServizioFunzioni().add(sf);
     }
 
-
     @Override
     public String toString() {
         return sigla;
     }// end of method
-
 
     /**
      * @return the nome
@@ -560,7 +554,6 @@ public class Servizio extends WamCompanyEntity {
         this.minutiFine = minutiFine;
     }//end of setter method
 
-
     /**
      * Ritorna il tempo totale del servizio in minuti
      */
@@ -576,7 +569,6 @@ public class Servizio extends WamCompanyEntity {
         }
         return minutiTot;
     }
-
 
     public boolean isOrario() {
         return orario;
@@ -629,7 +621,6 @@ public class Servizio extends WamCompanyEntity {
             servizioFunzioni.add(serFun);
         }// end of if cycle
     }// end of method
-
 
     public List<Turno> getTurni() {
         return turni;

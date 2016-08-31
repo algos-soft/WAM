@@ -154,16 +154,16 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return istanza di Funzione, null se non trovata
      */
     public static Funzione find(long id) {
-        Funzione instance = null;
+//        Funzione instance = null;
         BaseEntity entity = AQuery.queryById(Funzione.class, id);
 
-        if (entity != null) {
-            if (entity instanceof Funzione) {
-                instance = (Funzione) entity;
-            }// end of if cycle
-        }// end of if cycle
+//        if (entity != null) {
+//            if (entity instanceof Funzione) {
+//                instance = (Funzione) entity;
+//            }// end of if cycle
+//        }// end of if cycle
 
-        return instance;
+        return check(entity);
     }// end of method
 
     /**
@@ -215,14 +215,14 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return istanza di Funzione, null se non trovata
      */
     public static Funzione findBySigla(String sigla) {
-        Funzione instance = null;
+//        Funzione instance = null;
         BaseEntity entity = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla);
 
-        if (entity != null && entity instanceof Funzione) {
-            instance = (Funzione) entity;
-        }// end of if cycle
+//        if (entity != null && entity instanceof Funzione) {
+//            instance = (Funzione) entity;
+//        }// end of if cycle
 
-        return instance;
+        return check(entity);
     }// end of method
 
     /**
@@ -236,14 +236,14 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     @SuppressWarnings("unchecked")
     public static Funzione findByCompanyAndBySigla(WamCompany company, String sigla) {
-        Funzione instance = null;
+//        Funzione instance = null;
         BaseEntity entity = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla, company);
 
-        if (entity != null && entity instanceof Funzione) {
-            instance = (Funzione) entity;
-        }// end of if cycle
+//        if (entity != null && entity instanceof Funzione) {
+//            instance = (Funzione) entity;
+//        }// end of if cycle
 
-        return instance;
+        return check(entity);
     }// end of method
 
     /**
@@ -315,18 +315,41 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
         if (funzione == null) {
             funzione = new Funzione(company, sigla, descrizione, ordine, glyph);
+            if (company==null) {
+                int a=87;
+            }// fine del blocco if
+
             funzione.save(manager);
         }// end of if cycle
 
         return funzione;
     }// end of static method
 
+
+    /**
+     * Controlla se la entity esiste ed è della classe corretta
+     *
+     * @param entity restituita dalla query generica
+     *
+     * @return istanza di Funzione, null se non trovata
+     */
+    private static Funzione check(BaseEntity entity) {
+        Funzione instance = null;
+
+        if (entity != null && entity instanceof Funzione) {
+            instance = (Funzione) entity;
+        }// end of if cycle
+
+        return instance;
+    }// end of method
+
+
     @PrePersist
     protected void prePersist() {
         if (getOrdine() == 0) {
             int max = WamQuery.queryMaxOrdineFunzione(null);
             setOrdine(max + 1);
-        }
+        }// end of if cycle
     }// end of method
 
     public List<ServizioFunzione> getServizioFunzioni() {
@@ -344,11 +367,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     public void setVolontarioFunzioni(List<VolontarioFunzione> volontarioFunzioni) {
         this.volontarioFunzioni = volontarioFunzioni;
     }
-
-//    @Override
-//    public String toString() {
-//        return siglaVisibile;
-//    }// end of method
 
     @Override
     public String toString() {
@@ -370,14 +388,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     public void setOrdine(int ordine) {
         this.ordine = ordine;
     }//end of setter method
-
-//    public String getSiglaVisibile() {
-//        return siglaVisibile;
-//    }// end of getter method
-
-//    public void setSiglaVisibile(String descrizione) {
-//        this.siglaVisibile = descrizione;
-//    }//end of setter method
 
     public String getDescrizione() {
         return descrizione;

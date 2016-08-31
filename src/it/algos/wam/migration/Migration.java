@@ -212,7 +212,7 @@ public class Migration {
         String sigla = servizioOld.getSigla();
         String descrizione = servizioOld.getDescrizione();
 
-        return Servizio.crea(companyNew, (EntityManager) null, sigla, descrizione);
+        return Servizio.crea(companyNew, sigla, descrizione);
     }// end of method
 
 }// end of class
