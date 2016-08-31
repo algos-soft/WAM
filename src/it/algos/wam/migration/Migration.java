@@ -24,7 +24,6 @@ public class Migration {
     private String dbOld = DB_OLD_LOCAL; // cambiare alla fine dei test
     private String dbNew = DB_OLD_LOCAL; // cambiare alla fine dei test
 
-
     /**
      * Costruttore
      */
@@ -39,7 +38,6 @@ public class Migration {
 
     }// end of constructor
 
-
     /**
      * Costruttore
      *
@@ -48,7 +46,6 @@ public class Migration {
     public Migration(String siglaCompanyOld) {
         this(siglaCompanyOld, siglaCompanyOld);
     }// end of constructor
-
 
     /**
      * Costruttore
@@ -87,6 +84,7 @@ public class Migration {
      *
      * @param companyOld      company usata in webambulanze
      * @param siglaCompanyNew nome della company da usare in wam
+     *
      * @return la nuova company
      */
     private WamCompany importSingolaCroce(Croce companyOld, String siglaCompanyNew) {
@@ -109,7 +107,6 @@ public class Migration {
         return companyNew;
     }// end of method
 
-
     /**
      * Importa le funzioni della croce
      *
@@ -131,12 +128,12 @@ public class Migration {
 
     }// end of method
 
-
     /**
      * Crea la singola funzione
      *
      * @param companyNew  company usata in wam
      * @param funzioneOld della companyOld
+     *
      * @return la nuova funzione
      */
     private Funzione creaSingolaFunzione(WamCompany companyNew, FunzioneAmb funzioneOld) {
@@ -145,14 +142,14 @@ public class Migration {
         String descrizione = funzioneOld.getDescrizione();
         FontAwesome glyph = selezionaIcona(descrizione);
 
-        return Funzione.crea(companyNew, (EntityManager) null, sigla, ordine, descrizione, glyph);
+        return Funzione.crea(companyNew, sigla, descrizione, ordine, glyph);
     }// end of method
-
 
     /**
      * Elabora la vecchia descrizione per selezionare una icona adeguata
      *
      * @param descrizione usata in webambulanze
+     *
      * @return la FontAwesome selezionata
      */
     private FontAwesome selezionaIcona(String descrizione) {
@@ -181,7 +178,6 @@ public class Migration {
         return glyph;
     }// end of method
 
-
     /**
      * Importa i servizi della croce
      *
@@ -203,22 +199,20 @@ public class Migration {
 
     }// end of method
 
-
     /**
      * Crea il singola servizio
      *
      * @param companyNew  company usata in wam
      * @param servizioOld della companyOld
+     *
      * @return il nuovo servizio
      */
     private Servizio creaSingoloServizio(WamCompany companyNew, ServizioAmb servizioOld) {
-//        String sigla = funzioneOld.getSigla_visibile();
-//        int ordine = funzioneOld.getOrdine();
-//        String descrizione = funzioneOld.getDescrizione();
-//        FontAwesome glyph = selezionaIcona(descrizione);
+        int ordine = servizioOld.getOrdine();
+        String sigla = servizioOld.getSigla();
+        String descrizione = servizioOld.getDescrizione();
 
-//        return Servizio.crea(companyNew, (EntityManager)null, sigla, ordine, descrizione, glyph);
-        return null;
+        return Servizio.crea(companyNew, (EntityManager) null, sigla, descrizione);
     }// end of method
 
 }// end of class

@@ -1,7 +1,5 @@
 package it.algos.wam.entity.funzione;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -13,7 +11,6 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -40,12 +37,10 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
-
     @NotEmpty
     @Column(length = 20)
     @Index
     private String sigla = "";
-
 
 //    //--descrizione visibile nel tabellone (obbligatoria)
 //    @NotEmpty
@@ -53,31 +48,27 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 //    @Index
 //    private String siglaVisibile = "";
 
-
     //--ordine di presentazione nelle liste
     @Index
     private int ordine = 0;
 
-
     //--codepoint dell'icona di FontAwesome (facoltative)
     private int iconCodepoint;
 
-
+    //--descrizione (obbligatoria)
+    @NotEmpty
     @Column(columnDefinition = "text")
     private String descrizione = "";
 
+    //--tavola di incrocio
+    @OneToMany(mappedBy = "funzione", cascade = CascadeType.ALL, orphanRemoval = true)
+    @CascadeOnDelete
+    private List<ServizioFunzione> servizioFunzioni = new ArrayList<ServizioFunzione>();
 
     //--tavola di incrocio
     @OneToMany(mappedBy = "funzione", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
-    private List<ServizioFunzione> servizioFunzioni = new ArrayList();
-
-
-    //--tavola di incrocio
-    @OneToMany(mappedBy = "funzione", cascade = CascadeType.ALL, orphanRemoval = true)
-    @CascadeOnDelete
-    private List<VolontarioFunzione> volontarioFunzioni = new ArrayList();
-
+    private List<VolontarioFunzione> volontarioFunzioni = new ArrayList<VolontarioFunzione>();
 
     /**
      * Costruttore senza argomenti
@@ -89,31 +80,30 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Costruttore minimo con tutte le properties obbligatorie
      *
-     * @param company croce di appartenenza (property della superclasse)
-     * @param sigla   sigla di riferimento interna (obbligatoria)
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       di riferimento interna (obbligatoria)
+     * @param descrizione (obbligatoria)
      */
-    public Funzione(BaseCompany company, String sigla) {
-        this(company, sigla, 0, null, "");
+    public Funzione(BaseCompany company, String sigla, String descrizione) {
+        this(company, sigla, descrizione, 0, null);
     }// end of constructor
-
 
     /**
      * Costruttore completo
      *
-     * @param company     croce di appartenenza
-     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       di riferimento interna (obbligatoria)
+     * @param descrizione (obbligatoria)
      * @param ordine      di presentazione nelle liste
      * @param glyph       icona di FontAwesome (facoltative)
-     * @param descrizione note (facoltative)
      */
-    public Funzione(BaseCompany company, String sigla, int ordine, FontAwesome glyph, String descrizione) {
+    public Funzione(BaseCompany company, String sigla, String descrizione, int ordine, FontAwesome glyph) {
         super();
         this.setCompany(company);
         this.setSigla(sigla);
-//        this.setSiglaVisibile(siglaVisibile);
+        this.setDescrizione(descrizione);
         this.setOrdine(ordine);
         this.setIcon(glyph);
-        this.setDescrizione(descrizione);
     }// end of constructor
 
     /**
@@ -126,12 +116,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return count((WamCompany) CompanySessionLib.getCompany());
     }// end of method
 
-
     /**
      * Recupera il totale dei records della Entity
      * Filtrato sulla azienda passata come parametro.
      *
-     * @param company croce di appartenenza
+     * @param company di appartenenza (property della superclasse)
+     *
      * @return numero totale di records della tavola
      */
     public static int count(WamCompany company) {
@@ -145,7 +135,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return totRec;
     }// end of method
 
-
     /**
      * Recupera il totale dei records della Entity
      * Senza filtri.
@@ -156,12 +145,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return count((WamCompany) null);
     }// end of method
 
-
     /**
      * Recupera una istanza di Funzione usando la query standard della Primary Key
      * Nessun filtro sulla company, perché la primary key è unica
      *
      * @param id valore (unico) della Primary Key
+     *
      * @return istanza di Funzione, null se non trovata
      */
     public static Funzione find(long id) {
@@ -177,7 +166,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return instance;
     }// end of method
 
-
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Filtrato sulla company corrente.
@@ -189,12 +177,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return (ArrayList<Funzione>) CompanyQuery.getList(Funzione.class);
     }// end of method
 
-
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Filtrato sulla company passata come parametro.
      *
-     * @param company croce di appartenenza
+     * @param company di appartenenza (property della superclasse)
+     *
      * @return lista di tutte le istanze di Funzione
      */
     @SuppressWarnings("unchecked")
@@ -207,7 +195,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return lista;
     }// end of method
 
-
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Senza filtri.
@@ -219,20 +206,20 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return (ArrayList<Funzione>) AQuery.findAll(Funzione.class, null);
     }// end of method
 
-
     /**
      * Recupera una istanza di Funzione usando la query di una property specifica
      * Filtrato sulla azienda corrente.
      *
-     * @param siglaInterna sigla di riferimento interna (obbligatoria)
+     * @param sigla di riferimento interna (obbligatoria)
+     *
      * @return istanza di Funzione, null se non trovata
      */
-    public static Funzione findBySigla(String siglaInterna) {
+    public static Funzione findBySigla(String sigla) {
         Funzione instance = null;
-        BaseEntity bean = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, siglaInterna);
+        BaseEntity entity = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla);
 
-        if (bean != null && bean instanceof Funzione) {
-            instance = (Funzione) bean;
+        if (entity != null && entity instanceof Funzione) {
+            instance = (Funzione) entity;
         }// end of if cycle
 
         return instance;
@@ -242,95 +229,92 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Recupera una istanza di Funzione usando la query di una property specifica
      * Filtrato sulla azienda passata come parametro.
      *
-     * @param company      croce di appartenenza
-     * @param siglaInterna sigla di riferimento interna (obbligatoria)
+     * @param company di appartenenza (property della superclasse)
+     * @param sigla   di riferimento interna (obbligatoria)
+     *
      * @return istanza di Funzione, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static Funzione findBySigla(WamCompany company, String siglaInterna) {
+    public static Funzione findByCompanyAndBySigla(WamCompany company, String sigla) {
         Funzione instance = null;
-        BaseEntity bean;
+        BaseEntity entity = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla, company);
 
-        EntityManager manager = EM.createEntityManager();
-        bean = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, siglaInterna, manager, company);
-        manager.close();
-
-        if (bean != null && bean instanceof Funzione) {
-            instance = (Funzione) bean;
+        if (entity != null && entity instanceof Funzione) {
+            instance = (Funzione) entity;
         }// end of if cycle
 
         return instance;
     }// end of method
 
-
     /**
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
      *
-     * @param company      croce di appartenenza
-     * @param siglaInterna sigla di riferimento interna (obbligatoria)
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       di riferimento interna (obbligatoria)
+     * @param descrizione (obbligatoria)
+     *
      * @return istanza di Funzione
      */
-    public static Funzione crea(WamCompany company, String siglaInterna) {
-        return crea(company, null, siglaInterna, 0, "");
+    public static Funzione crea(WamCompany company, String sigla, String descrizione) {
+        return crea(company, sigla, descrizione, (EntityManager) null);
     }// end of static method
 
     /**
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
      *
-     * @param company      croce di appartenenza
-     * @param manager      the EntityManager to use
-     * @param siglaInterna sigla di riferimento interna (obbligatoria)
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       di riferimento interna (obbligatoria)
+     * @param descrizione (obbligatoria)
+     * @param manager     the EntityManager to use
+     *
      * @return istanza di Funzione
      */
-    public static Funzione crea(WamCompany company, EntityManager manager, String siglaInterna) {
-        return crea(company, manager, siglaInterna, 0, "");
+    public static Funzione crea(WamCompany company, String sigla, String descrizione, EntityManager manager) {
+        return crea(company, sigla, descrizione, 0, (FontAwesome) null, manager);
     }// end of static method
 
     /**
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
      *
-     * @param company      croce di appartenenza
-     * @param manager      the EntityManager to use
-     * @param siglaInterna sigla di riferimento interna (obbligatoria)
-     * @param ordine       di presentazione nelle liste
-     * @param note         di spiegazione (facoltative)
+     * @param company     croce di appartenenza
+     * @param sigla       di riferimento interna (obbligatoria)
+     * @param descrizione (obbligatoria)
+     * @param ordine      di presentazione nelle liste
+     * @param glyph       dell'icona (facoltativo)
+     *
      * @return istanza di Funzione
      */
-    public static Funzione crea(WamCompany company, EntityManager manager, String siglaInterna, int ordine, String note) {
-        return crea(company, manager, siglaInterna, ordine, note, null);
+    public static Funzione crea(WamCompany company, String sigla, String descrizione, int ordine, FontAwesome glyph) {
+        return crea(company, sigla, descrizione, ordine, glyph, (EntityManager) null);
     }// end of static method
 
     /**
      * Creazione iniziale di una funzione
      * La crea SOLO se non esiste già
      *
-     * @param company      croce di appartenenza
-     * @param manager      the EntityManager to use
-     * @param siglaInterna sigla di riferimento interna (obbligatoria)
-     * @param ordine       di presentazione nelle liste
-     * @param note         di spiegazione (facoltative)
-     * @param glyph        dell'icona (facoltativo)
+     * @param company     croce di appartenenza
+     * @param sigla       di riferimento interna (obbligatoria)
+     * @param descrizione (obbligatoria)
+     * @param ordine      di presentazione nelle liste
+     * @param glyph       dell'icona (facoltativo)
+     * @param manager     the EntityManager to use
+     *
      * @return istanza di Funzione
      */
     public static Funzione crea(
             WamCompany company,
-            EntityManager manager,
-            String siglaInterna,
+            String sigla,
+            String descrizione,
             int ordine,
-            String note,
-            FontAwesome glyph) {
-        Funzione funzione = Funzione.findBySigla(company, siglaInterna);
+            FontAwesome glyph,
+            EntityManager manager) {
+        Funzione funzione = Funzione.findByCompanyAndBySigla(company, sigla);
 
         if (funzione == null) {
-            funzione = new Funzione();
-            funzione.setCompany(company);
-            funzione.setSigla(siglaInterna);
-            funzione.setOrdine(ordine);
-            funzione.setDescrizione(note);
-            funzione.setIcon(glyph);
+            funzione = new Funzione(company, sigla, descrizione, ordine, glyph);
             funzione.save(manager);
         }// end of if cycle
 
@@ -343,7 +327,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             int max = WamQuery.queryMaxOrdineFunzione(null);
             setOrdine(max + 1);
         }
-    }
+    }// end of method
 
     public List<ServizioFunzione> getServizioFunzioni() {
         return servizioFunzioni;
@@ -370,7 +354,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     public String toString() {
         return sigla;
     }// end of method
-
 
     public String getSigla() {
         return sigla;
@@ -403,7 +386,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }//end of setter method
-
 
     // codepoint della icona FontAwesome
     public int getIconCodepoint() {
@@ -460,7 +442,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         }// fine del blocco try-catch
     }// end of method
 
-
     /**
      * Compara per ordine della funzione
      */
@@ -470,7 +451,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         Integer ordAltro = other.getOrdine();
         return ordQuesto.compareTo(ordAltro);
     }
-
 
     /**
      * Recupera l'icona in formato htlm
