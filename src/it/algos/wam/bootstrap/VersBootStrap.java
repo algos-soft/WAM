@@ -42,14 +42,14 @@ public class VersBootStrap implements ServletContextListener {
         //--creazione di una croce "demo"
         if (LibVers.installa(++k)) {
             BootService.creaCompanyDemo();
-            LibVers.nuova("Demo", "Creazione di una croce demo, visibile a tutti");
+            LibVers.nuova("DemoWam", "Creazione di una croce demo, visibile a tutti");
         }// fine del blocco if
 
-//        //--creazione di una croce "test"
-//        if (LibVers.installa(++k)) {
-//            BootService.creaCompanyTest();
-//            LibVers.nuova("Test", "Creazione di una croce test, visibile a tutti");
-//        }// fine del blocco if
+        //--creazione di una croce "test"
+        if (LibVers.installa(++k)) {
+            BootService.creaCompanyTest();
+            LibVers.nuova("Test", "Creazione di una croce test, visibile a tutti");
+        }// fine del blocco if
 
 //        //--cancellazione della croce "test"
 //        if (LibVers.installa(++k)) {

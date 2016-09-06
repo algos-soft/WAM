@@ -90,5 +90,59 @@
     </persistence-unit>
 
 
+    <persistence-unit name="WAMTEST">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+        <!--Le entity astratte (@MappedSuperclass) vanno obbligatoriamente listate-->
+        <class>it.algos.webbase.web.entity.BaseEntity</class>
+        <class>it.algos.webbase.domain.company.BaseCompany</class>
+
+        <class>it.algos.webbase.domain.ruolo.Ruolo</class>
+        <class>it.algos.webbase.domain.utente.Utente</class>
+        <class>it.algos.webbase.domain.utenteruolo.UtenteRuolo</class>
+        <class>it.algos.webbase.domain.log.Log</class>
+        <class>it.algos.webbase.domain.vers.Versione</class>
+        <class>it.algos.webbase.domain.pref.Pref</class>
+
+        <class>it.algos.wam.entity.wamcompany.WamCompany</class>
+        <class>it.algos.wam.entity.servizio.Servizio</class>
+        <class>it.algos.wam.entity.turno.Turno</class>
+        <class>it.algos.wam.entity.funzione.Funzione</class>
+        <class>it.algos.wam.entity.serviziofunzione.ServizioFunzione</class>
+        <class>it.algos.wam.entity.volontario.Volontario</class>
+        <class>it.algos.wam.entity.volontariofunzione.VolontarioFunzione</class>
+        <class>it.algos.wam.entity.iscrizione.Iscrizione</class>
+
+        <!--<class>it.algos.wam.entity.test.TestTurno</class>-->
+        <!--<class>it.algos.wam.entity.test.TestIscrizione</class>-->
+
+
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="javax.persistence.jdbc.platform"
+                      value="org.eclipse.persistence.platform.database.MySQLPlatform"/>
+            <property name="javax.persistence.target-database" value="MySQL"/>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/WAMTEST?useUnicode=yes&amp;characterEncoding=UTF-8"/>
+
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
+            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+
+            <!--per vedere l'SQL di tutte le query-->
+            <!--<property name="eclipselink.logging.level" value="FINE"/>-->
+
+            <!--per generare il DDL su file-->
+            <!--<property name="eclipselink.ddl-generation.output-mode" value="sql-script" />-->
+            <!--<property name="eclipselink.create-ddl-jdbc-file-name" value="ddl.sql" />-->
+            <!--<property name="eclipselink.application-location" value="/Users/Gac" />-->
+
+
+        </properties>
+    </persistence-unit>
+
+
 </persistence>
 

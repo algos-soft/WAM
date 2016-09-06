@@ -61,6 +61,7 @@ public class FunzioneTable extends WamTable {
         if (LibSession.isDeveloper()) {
             return new Object[]{
                     WamCompanyEntity_.company,
+                    Funzione_.codeCompanyUnico,
                     Funzione_.ordine,
                     COL_ICON,
                     Funzione_.sigla,

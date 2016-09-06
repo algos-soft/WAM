@@ -1,0 +1,300 @@
+import com.vaadin.server.FontAwesome;
+import it.algos.wam.entity.funzione.Funzione;
+import org.junit.*;
+
+import java.util.List;
+
+import static org.junit.Assert.*;
+
+/**
+ * Created by gac on 01 set 2016.
+ * .
+ */
+public class FunzioneTest extends WamBaseTest {
+
+
+    private final static String SIGLA_FUNZIONE_UNO = "Prima";
+    private final static String SIGLA_FUNZIONE_DUE = "Seconda";
+    private final static String DESCRIZIONE_FUNZIONE_UNO = "Prima descrizione";
+    private final static String DESCRIZIONE_FUNZIONE_DUE = "Seconda descrizione";
+
+    Funzione funzioneUno;
+    Funzione funzioneDue;
+    Funzione funzioneTre;
+    Funzione funzioneQuattro;
+    Funzione funzioneCinque;
+
+    List<Funzione> listaUno;
+    List<Funzione> listaDue;
+    List<Funzione> listaTre;
+
+    @BeforeClass
+    public static void setUpInizialeStaticoEseguitoSoloUnaVoltaAllaCreazioneDellaClasse() {
+        // Prima di inizare a creare e modificare le funzioni, cancello tutte le (eventuali) precedenti
+        cancellaFunzioni();
+    } // end of setup iniziale
+
+    @AfterClass
+    public static void cleanUp() {
+        // Alla fine, cancello tutte le funzioni create
+        cancellaFunzioni();
+
+        cleanUpFinaleAllaChiusuraDelTest();
+    } // end of cleaup finale
+
+    /**
+     * Prima di inizare a creare e modificare le funzioni, cancello tutte le (eventuali) precedenti
+     * Alla fine, cancello tutte le funzioni create
+     */
+    private static void cancellaFunzioni() {
+        Funzione.deleteAll(MANAGER);
+    } // end of cleaup finale
+
+    @Before
+    public void setUpFunzioni() {
+        resetFunzioni();
+    } // end of setup iniziale
+
+    @After
+    public void reset() {
+    } // end of cleaup finale
+
+    @Test
+    // Constructors
+    // Count records
+    /**
+     * Crea una funzione
+     * Controlla che ci siano i parametri obbligatori
+     * Non riesco a controllare l'inserimento automatico dell'ordine di presentazione
+     */
+    public void nuovaFunzione() {
+        resetFunzioni();
+        int numRecTotaliOld = Funzione.countByAllCompanies(MANAGER);
+        int numRetTotaliNew;
+        int numRecUnoOld = Funzione.countBySingleCompany(companyUno, MANAGER);
+        int numRecUnoNew;
+        int numRecDueOld = Funzione.countBySingleCompany(companyDue, MANAGER);
+        int numRecDueNew;
+        int ordine;
+
+        // senza nessun parametro
+        funzioneUno = new Funzione();
+        funzioneUno.save(MANAGER);
+        assertNotNull(funzioneUno);
+        assertNull(funzioneUno.getId());
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld);
+
+        // senza un parametro obbligatorio
+        funzioneUno = new Funzione(null, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO);
+        funzioneUno.save(MANAGER);
+        assertNotNull(funzioneUno);
+        assertNull(funzioneUno.getId());
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld);
+
+        // parametri obbligatori
+        funzioneUno = new Funzione(companyUno, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO);
+        funzioneUno.save(companyUno, MANAGER);
+        assertNotNull(funzioneUno);
+        assertNotNull(funzioneUno.getId());
+        ordine = funzioneUno.getOrdine();
+        assertEquals(ordine, 1);
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld + 1);
+
+        // parametri obbligatori
+        funzioneDue = new Funzione(companyUno, SIGLA_FUNZIONE_DUE, DESCRIZIONE_FUNZIONE_DUE);
+        funzioneDue.save(companyUno, MANAGER);
+        assertNotNull(funzioneDue);
+        assertNotNull(funzioneDue.getId());
+        ordine = funzioneDue.getOrdine();
+        assertEquals(ordine, 2);
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld + 2);
+
+        // tutti i parametri previsti
+        funzioneTre = new Funzione(companyDue, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO, 6, FontAwesome.USER);
+        funzioneTre.save(companyDue, MANAGER);
+        assertNotNull(funzioneTre);
+        assertNotNull(funzioneTre.getId());
+        ordine = funzioneTre.getOrdine();
+        assertEquals(ordine, 6);
+        numRecUnoNew = Funzione.countBySingleCompany(companyDue, MANAGER);
+        assertEquals(numRecUnoNew, numRecDueOld + 1);
+
+        // parametri obbligatori
+        funzioneQuattro = new Funzione(companyDue, SIGLA_FUNZIONE_DUE, DESCRIZIONE_FUNZIONE_DUE);
+        funzioneQuattro.save(companyDue, MANAGER);
+        assertNotNull(funzioneQuattro);
+        assertNotNull(funzioneQuattro.getId());
+        ordine = funzioneQuattro.getOrdine();
+        assertEquals(ordine, 7);
+        numRecDueNew = Funzione.countBySingleCompany(companyDue, MANAGER);
+        assertEquals(numRecDueNew, numRecDueOld + 2);
+
+        // campo unico, doppio
+        funzioneCinque = new Funzione(companyUno, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO);
+        try { // prova ad eseguire il codice
+            funzioneCinque.save(companyUno,MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+            System.out.println(unErrore);
+        }// fine del blocco try-catch
+        assertNotNull(funzioneCinque);
+        assertNull(funzioneCinque.getId());
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecDueNew, numRecDueOld + 2);
+
+        assertEquals(Funzione.countBySingleCompany(companyUno, MANAGER), numRecUnoOld + 2);
+        assertEquals(Funzione.countBySingleCompany(companyDue, MANAGER), numRecDueOld + 2);
+        numRetTotaliNew = Funzione.countByAllCompanies(MANAGER);
+        assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
+    }// end of single test
+
+    @Test
+    // Find entity
+    /**
+     * Ricerca una funzione
+     */
+    public void cercaFunzione() {
+        resetFunzioni();
+        long key;
+        int numRecords = Funzione.countByAllCompanies(MANAGER);
+        if (numRecords < 1) {
+            return;
+        }// end of if cycle
+
+        funzioneUno = Funzione.findByCompanyAndBySigla(companyUno, SIGLA_FUNZIONE_UNO, MANAGER);
+        assertNotNull(funzioneUno);
+
+        funzioneDue = Funzione.findByCompanyAndBySigla(companyDue, SIGLA_FUNZIONE_DUE, MANAGER);
+        assertNotNull(funzioneDue);
+        assertNotSame(funzioneDue, funzioneUno);
+        key = funzioneDue.getId();
+
+        funzioneTre = Funzione.findByCompanyAndBySigla(companyUno, SIGLA_FUNZIONE_DUE, MANAGER);
+        assertNotNull(funzioneTre);
+        assertNotSame(funzioneTre, funzioneDue);
+
+        funzioneQuattro = Funzione.find(key, MANAGER);
+        assertNotNull(funzioneQuattro);
+        assertNotSame(funzioneQuattro, funzioneTre);
+        assertEquals(funzioneQuattro, funzioneDue);
+    }// end of single test
+
+    @Test
+    // Find list
+    /**
+     * Ricerca una lista
+     */
+    public void cercaLista() {
+        resetFunzioni();
+        int numRecords = Funzione.countByAllCompanies(MANAGER);
+        if (numRecords < 1) {
+            return;
+        }// end of if cycle
+
+        listaUno = Funzione.findByAllCompanies(MANAGER);
+        assertNotNull(listaUno);
+        assertEquals(listaUno.size(), numRecords);
+
+        listaDue = Funzione.findBySingleCompany(companyUno, MANAGER);
+        assertNotNull(listaDue);
+
+        listaTre = Funzione.findBySingleCompany(companyDue, MANAGER);
+        assertNotNull(listaTre);
+    }// end of single test
+
+
+    @Test
+    // New and save
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       di riferimento interna (obbligatoria)
+     * @param descrizione (obbligatoria)
+     * @param ordine      di presentazione nelle liste
+     * @param glyph       dell'icona (facoltativo)
+     * @param manager     the EntityManager to use
+     * @return istanza della Entity
+     */
+    public void creaFunzione() {
+        resetFunzioni();
+        cancellaFunzioni();
+        int numRecTotaliOld = Funzione.countByAllCompanies(MANAGER);
+        int numRetTotaliNew;
+        int numRecUnoOld = Funzione.countBySingleCompany(companyUno, MANAGER);
+        int numRecUnoNew;
+        int numRecDueOld = Funzione.countBySingleCompany(companyDue, MANAGER);
+        int numRecDueNew;
+        int ordine;
+
+        // senza un parametro obbligatorio
+        funzioneUno = Funzione.crea(null, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO, MANAGER);
+        funzioneUno.save(MANAGER);
+        assertNotNull(funzioneUno);
+        assertNull(funzioneUno.getId());
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld);
+
+        // parametri obbligatori
+        funzioneUno = Funzione.crea(companyUno, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO, MANAGER);
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld + 1);
+        ordine = funzioneUno.getOrdine();
+        assertEquals(ordine, 1);
+
+        // parametri obbligatori
+        funzioneDue = Funzione.crea(companyUno, SIGLA_FUNZIONE_DUE, DESCRIZIONE_FUNZIONE_DUE, MANAGER);
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld + 2);
+        ordine = funzioneDue.getOrdine();
+        assertEquals(ordine, 2);
+
+        // tutti i parametri previsti
+        funzioneTre = Funzione.crea(companyDue, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO, 6, FontAwesome.USER, MANAGER);
+        numRecUnoNew = Funzione.countBySingleCompany(companyDue, MANAGER);
+        assertEquals(numRecUnoNew, numRecDueOld + 1);
+        ordine = funzioneTre.getOrdine();
+        assertEquals(ordine, 6);
+
+        // parametri obbligatori
+        funzioneQuattro = Funzione.crea(companyDue, SIGLA_FUNZIONE_DUE, DESCRIZIONE_FUNZIONE_DUE, MANAGER);
+        numRecDueNew = Funzione.countBySingleCompany(companyDue, MANAGER);
+        assertEquals(numRecDueNew, numRecDueOld + 2);
+        ordine = funzioneQuattro.getOrdine();
+        assertEquals(ordine, 7);
+
+        // campo unico, doppio
+        funzioneCinque = Funzione.crea(companyUno, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO, MANAGER);
+        try { // prova ad eseguire il codice
+            funzioneCinque.save(companyUno,MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+            System.out.println(unErrore);
+        }// fine del blocco try-catch
+        assertNotNull(funzioneCinque);
+        assertNotNull(funzioneCinque.getId());
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+
+        assertEquals(Funzione.countBySingleCompany(companyUno, MANAGER), numRecUnoOld + 2);
+        assertEquals(Funzione.countBySingleCompany(companyDue, MANAGER), numRecDueOld + 2);
+        numRetTotaliNew = Funzione.countByAllCompanies(MANAGER);
+        assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
+    }// end of single test
+
+
+    /**
+     * Annulla le variabili d'istanza
+     */
+    private void resetFunzioni() {
+        funzioneUno = null;
+        funzioneDue = null;
+        funzioneTre = null;
+        funzioneQuattro = null;
+        funzioneCinque = null;
+    } // end of cleaup finale
+
+
+}// end of test class

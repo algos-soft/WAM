@@ -58,25 +58,25 @@ public abstract class TestService {
      * Funzione
      */
     private static void testFunzione() {
-        int numFunzioniTotali = Funzione.countAll();
-        ArrayList<Funzione> listaFunzioniTotali = Funzione.findAllAll();
+        int numFunzioniTotali = Funzione.countByAllCompanies();
+        List<Funzione> listaFunzioniTotali = Funzione.findByAllCompanies();
         print("Numero di funzioni totali (count)", numFunzioniTotali);
         print("Numero di funzioni totali (lista)", listaFunzioniTotali.size());
 
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        int numFunzioniCorrenti = Funzione.count(companyCorrente);
-        List<Funzione> listaFunzioniCorrenti = Funzione.findAll(companyCorrente);
+        int numFunzioniCorrenti = Funzione.countByCurrentCompany();
+        List<Funzione> listaFunzioniCorrenti = Funzione.findByCurrentCompany();
         print("Numero di funzioni con company selezionata (count)", numFunzioniCorrenti);
         print("Numero di funzioni con company selezionata (lista)", listaFunzioniCorrenti.size());
 
-        int numFunzioniCorrenti2 = Funzione.count();
-        ArrayList<Funzione> listaFunzioniCorrenti2 = Funzione.findAll();
+        int numFunzioniCorrenti2 = Funzione.countByCurrentCompany();
+        List<Funzione> listaFunzioniCorrenti2 = Funzione.findByCurrentCompany();
         print("Numero di funzioni con company corrente (count)-2", numFunzioniCorrenti2);
         print("Numero di funzioni con company corrente (lista)-2", listaFunzioniCorrenti2.size());
 
         CompanySessionLib.setCompany(null);
-        int numFunzioniCorrenti3 = Funzione.count();
-        ArrayList<Funzione> listaFunzioniCorrenti3 = Funzione.findAll();
+        int numFunzioniCorrenti3 = Funzione.countByCurrentCompany();
+        List<Funzione> listaFunzioniCorrenti3 = Funzione.findByCurrentCompany();
         print("Numero di funzioni con company nulla (count)", numFunzioniCorrenti3);
         print("Numero di funzioni con company nulla (lista)", listaFunzioniCorrenti3.size());
         CompanySessionLib.setCompany(companyCorrente);

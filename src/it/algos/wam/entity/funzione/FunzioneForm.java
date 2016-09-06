@@ -2,9 +2,19 @@ package it.algos.wam.entity.funzione;
 
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Field;
+import com.vaadin.ui.FormLayout;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanyEntity_;
+import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.field.IntegerField;
+import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.field.TextArea;
+import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.form.ModuleForm;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
@@ -18,175 +28,29 @@ public class FunzioneForm extends ModuleForm {
 
     private Button iconButton;
 
+
     public FunzioneForm(Item item, ModulePop module) {
         super(item, module);
-    }
+    }// end of constructor
 
+
+    /**
+     * Crea il componente che visualizza il dettaglio
+     * Retrieve the fields from the binder and place them in the UI.
+     *
+     * @return il componente dettagli
+     */
     @Override
-    protected void init() {
-        super.init();
-    }
-
-//    /**
-//     * Create the detail component (the upper part containing the fields).
-//     * <p>
-//     * Usa il FormLayout che ha le label a sinsitra dei campi (standard)
-//     * Se si vogliono le label sopra i campi, sovrascivere questo metodo e usare un VerticalLayout
-//     *
-//     * @return the detail component containing the fields
-//     */
-//    protected Component createComponent() {
-//
-////        VerticalLayout vl = new VerticalLayout();
-////        vl.setSizeUndefined();
-////        vl.setMargin(true);
-////        vl.addStyleName("yellowBg");
-////        vl.setHeight("500px");
-//
-//
-//        //vl.addComponent(fl);
-//        Component fl = creaCompDetail3();
-//        //fl.setHeight("100px");
-//        fl.setWidthUndefined();
-////        vl.addComponent(fl);
-//
-////        Label label = new Label("ciao");
-////        vl.addComponent(label);
-//
-//        //vl.addComponent(creaCompDetail3());
-//
-////        VerticalLayout v2 = new VerticalLayout();
-////        Field fsigla = getField(Funzione_.sigla);
-////        Field fdesc = getField(Funzione_.siglaVisibile);
-////        Field fnote = getField(Funzione_.note);
-////
-////        ///v2.addComponent(fsigla);
-////        //v2.addComponent(fdesc);
-////        v2.addComponent(fnote);
-//
-//       // vl.addComponent(v2);
-//
-////        vl.addComponent(creaCompDetail3());
-//
-//
-//        return fl;
-//
-//
-//    }// end of method
-
-    /**
-     * Crea il componente che visualizza il dettaglio
-     * Retrieve the fields from the binder and place them in the UI.
-     *
-     * @return il componente dettagli
-     */
-    private Component creaCompDetail2() {
-
-        FormLayout layout = new FormLayout();
-        layout.setMargin(true);
-        layout.setWidthUndefined();
-
-        TextField f1 = new TextField();
-        f1.setCaption("campo1");
-
-        TextField f2 = new TextField();
-        f2.setCaption("campo2");
-
-        layout.addComponent(f1);
-        layout.addComponent(f2);
-
-        return layout;
-    }
-
-    /**
-     * Crea il componente che visualizza il dettaglio
-     * Retrieve the fields from the binder and place them in the UI.
-     *
-     * @return il componente dettagli
-     */
-    private Component creaCompDetail3() {
-
-        FormLayout layout = new FormLayout();
-
-        Field fsigla = getField(Funzione_.sigla);
-        fsigla.focus();
-        Field fnote = getField(Funzione_.descrizione);
-
-        Button b = new Button();
-        b.setHtmlContentAllowed(true);
-        b.addStyleName("bfunzione");
-
-        layout.addComponent(b);
-        layout.addComponent(fsigla);
-        layout.addComponent(fnote);
-
-        return layout;
-    }
-
-//    /**
-//     * Crea il componente che visualizza il dettaglio
-//     * Retrieve the fields from the binder and place them in the UI.
-//     *
-//     * @return il componente dettagli
-//     */
-//    protected Component creaCompDetail(FormLayout layout) {
-//        Collection<Field<?>> fields = getBinder().getFields();
-//
-//        boolean focused=false;
-//        for (Field<?> field : fields) {
-//
-//            layout.addComponent(field);
-//
-//            // focus to first field
-//            if(!focused){
-//                field.focus();
-//                focused=true;
-//            }
-//
-//        }// end of for cycle
-//
-//        return layout;
-//    }// end of method
-
-    /**
-     * Crea il componente che visualizza il dettaglio
-     * Retrieve the fields from the binder and place them in the UI.
-     *
-     * @return il componente dettagli
-     */
-    protected Component creaCompDetailTest(FormLayout layout) {
-        Field fsigla = getField(Funzione_.sigla);
-//        fsigla.focus();
-
-        Field fnote = getField(Funzione_.descrizione);
-
-//        iconButton = new Button();
-//        iconButton.setHtmlContentAllowed(true);
-//        iconButton.addStyleName("bfunzione");
-
-//        layout.addComponent(iconButton);
-        layout.addComponent(fsigla);
-        layout.addComponent(fnote);
-
-        layout.addComponent(getField(Funzione_.iconCodepoint));
-        layout.addComponent(getField(Funzione_.ordine));
-
-        return layout;
-    }
-
-    /**
-     * Crea il componente che visualizza il dettaglio
-     * Retrieve the fields from the binder and place them in the UI.
-     *
-     * @return il componente dettagli
-     */
     protected Component creaCompDetail(FormLayout layout) {
-        Field fsigla = getField(Funzione_.sigla);
-        fsigla.focus();
+        TextField fSigla = (TextField) getField(Funzione_.sigla);
+        TextField fCodeCompanyUnico = (TextField) getField(Funzione_.codeCompanyUnico);
+        fCodeCompanyUnico.setEnabled(false);
+        TextArea fDescrizione = (TextArea) getField(Funzione_.descrizione);
+        IntegerField fOrdine = (IntegerField) getField(Funzione_.ordine);
+        fOrdine.setEnabled(false);
+        fSigla.focus();
 
-        Field fnote = getField(Funzione_.descrizione);
-
-        iconButton = new Button();
+        iconButton = new Button("Icona");
         iconButton.setHtmlContentAllowed(true);
         iconButton.addStyleName("verde");
         iconButton.addClickListener(new Button.ClickListener() {
@@ -209,54 +73,66 @@ public class FunzioneForm extends ModuleForm {
                                 setGlyph(null);
                                 syncButton();
                                 break;
-                        }
-
-                    }
-                });
+                        } // fine del blocco switch
+                    }// end of inner method
+                });// end of anonymous inner class
                 dialog.show();
-            }
-        });
+            }// end of inner method
+        });// end of anonymous inner class
+
         syncButton();
 
-        layout.addComponent(iconButton);
-        layout.addComponent(fsigla);
-        layout.addComponent(fnote);
+        // selezione della company (solo per developer)
+        if (LibSession.isDeveloper()) {
+            // popup di selezione (solo per nuovo record)
+            if (isNewRecord()) {
+                RelatedComboField fCompany = (RelatedComboField) getField(CompanyEntity_.company);
+                layout.addComponent(fCompany);
+            } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
+                BaseEntity entity = getEntity();
+                WamCompany company = null;
+                Funzione funz = null;
+                if (entity != null && entity instanceof Funzione) {
+                    funz = (Funzione) entity;
+                    company = (WamCompany) funz.getCompany();
+                    TextField fCompany = new TextField("Company", company.getCompanyCode());
+                    fCompany.setEnabled(false);
+                    layout.addComponent(fCompany);
+                    layout.addComponent(fCodeCompanyUnico);
+                }// end of if cycle
+            }// end of if/else cycle
+        }// end of if cycle
 
-//        // test remove menu item
-//        Button button=new Button("Remove menu");
-//        button.addClickListener(new Button.ClickListener() {
-//            @Override
-//            public void buttonClick(Button.ClickEvent clickEvent) {
-//                UI ui = getUI();
-//                if (ui instanceof WamUI) {
-//                    WamUI wamUI = (WamUI)ui;
-//                    wamUI.removeMenuItem(FunzioneMod.MENU_ADDRESS);
-//                }
-//            }
-//        });
-//        layout.addComponent(button);
+        layout.addComponent(iconButton);
+        layout.addComponent(fSigla);
+        layout.addComponent(fDescrizione);
+        layout.addComponent(fOrdine);
 
         return layout;
-    }
+    }// end of method
+
 
     @Override
     protected Field createField(Attribute attr) {
         Field field;
+
         if (attr.equals(Funzione_.descrizione)) {
             TextArea area = new TextArea();
-            area.setColumns(20);
-            area.setRows(2);
+            area.setColumns(30);
+            area.setRows(1);
             area.setCaption(LibText.primaMaiuscola(Funzione_.descrizione.getName()));
             field = area;
         } else {
             field = super.createField(attr);
-        }
+        }// end of if/else cycle
+
         return field;
-    }
+    }// end of method
 
     /**
      * Recupera il glifo dal field
      */
+    @SuppressWarnings("all")
     private FontAwesome getGlyph() {
         FontAwesome fa = null;
         Field field = getBinder().getField(Funzione_.iconCodepoint.getName());
@@ -266,10 +142,10 @@ public class FunzioneForm extends ModuleForm {
             codepoint = (int) field.getValue();
         }// fine del blocco if
 
-        try {
+        try { // prova ad eseguire il codice
             fa = FontAwesome.fromCodepoint(codepoint);
-        } catch (Exception e) {
-        }
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
 
         return fa;
     }// end of method
@@ -277,6 +153,7 @@ public class FunzioneForm extends ModuleForm {
     /**
      * Registra un glifo nel field
      */
+    @SuppressWarnings("unchecked")
     private void setGlyph(FontAwesome glyph) {
         Field field = getBinder().getField(Funzione_.iconCodepoint.getName());
 
@@ -285,7 +162,7 @@ public class FunzioneForm extends ModuleForm {
                 field.setValue(glyph.getCodepoint());
             } else {
                 field.setValue(0);
-            }
+            }// end of if/else cycle
         }// fine del blocco if
 
     }// end of method
@@ -298,7 +175,7 @@ public class FunzioneForm extends ModuleForm {
         FontAwesome glyph = getGlyph();
         if (glyph != null) {
             iconButton.setCaption(glyph.getHtml());
-        }
-    }
+        }// end of if cycle
+    }// end of method
 
-}
+}// end of class

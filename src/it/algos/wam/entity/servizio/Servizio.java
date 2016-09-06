@@ -55,17 +55,20 @@ public class Servizio extends WamCompanyEntity {
     private List<ServizioFunzione> servizioFunzioni = new ArrayList<>();
 
     //--sigla di riferimento interna (obbligatoria)
+    //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
     @Column(length = 20)
     @Index
-    private String sigla;
+    private String sigla = "";
 
     //--descrizione per il tabellone (obbligatoria)
+    //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
-    private String descrizione;
+    private String descrizione = "";
 
-    //--ordine di presentazione nel tabellone
+    //--ordine di presentazione nelle liste e nel tabellone
     @NotNull
+    @Index
     private int ordine = 0;
 
     // colore del servizio
@@ -159,7 +162,6 @@ public class Servizio extends WamCompanyEntity {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company croce di appartenenza
-     *
      * @return numero totale di records della tavola
      */
     public static int count(WamCompany company) {
@@ -187,7 +189,6 @@ public class Servizio extends WamCompanyEntity {
      * Recupera una istanza di Servizio usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
-     *
      * @return istanza di Servizio, null se non trovata
      */
     public static Servizio find(long id) {
@@ -219,7 +220,6 @@ public class Servizio extends WamCompanyEntity {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company croce di appartenenza
-     *
      * @return lista di tutte le istanze di Funzione
      */
     @SuppressWarnings("unchecked")
@@ -247,9 +247,7 @@ public class Servizio extends WamCompanyEntity {
      * Recupera una istanza di Servizio usando la query di una property specifica
      *
      * @param sigla valore della property Sigla
-     *
      * @return istanza di Servizio, null se non trovata
-     *
      * @deprecated perché manca la wamcompany e potrebbero esserci records multipli con la stessa sigla
      */
     public static Servizio findBySigla(String sigla) {
@@ -270,7 +268,6 @@ public class Servizio extends WamCompanyEntity {
      *
      * @param company selezionata
      * @param sigla   valore della property Sigla
-     *
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -280,9 +277,9 @@ public class Servizio extends WamCompanyEntity {
         List<Servizio> serviziPerSigla = (List<Servizio>) AQuery.queryList(Servizio.class, Servizio_.sigla, sigla);
         if (serviziPerSigla != null && serviziPerSigla.size() > 0) {
             for (Servizio servizio : serviziPerSigla) {
-                if (servizio.getCompany().equals(company)) {
+                if (servizio.getCompany() != null && servizio.getCompany().equals(company)) {
                     instance = servizio;
-                }
+                }// end of if cycle
             }// end of for cycle
         }// end of if cycle
 
@@ -296,7 +293,6 @@ public class Servizio extends WamCompanyEntity {
      * @param company     selezionata
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
-     *
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, String sigla, String descrizione) {
@@ -311,7 +307,6 @@ public class Servizio extends WamCompanyEntity {
      * @param manager     the EntityManager to use
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
-     *
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, EntityManager manager, String sigla, String descrizione) {
@@ -338,7 +333,6 @@ public class Servizio extends WamCompanyEntity {
      * @param oraFine     del servizio (facoltativo)
      * @param orario      servizio ad orario prefissato e fisso ogni giorno
      * @param colore      del gruppo (facoltativo)
-     *
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, ArrayList<Funzione> listaFunz) {
@@ -360,7 +354,6 @@ public class Servizio extends WamCompanyEntity {
      * @param colore      del gruppo (facoltativo)
      * @param obbligatori numero delle funzioni obbligatorie (facoltativa)
      * @param funzioni    lista delle funzioni (facoltativa)
-     *
      * @return istanza di Servizio
      */
     public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, int obbligatori, Funzione... funzioni) {
@@ -434,7 +427,6 @@ public class Servizio extends WamCompanyEntity {
      * Restituisce la posizione di una data funzione tra le funzioni previste per il turno.
      *
      * @param f la funzione
-     *
      * @return la posizione, -1 se non trovata
      */
     public int getPosFunzione(Funzione f) {
@@ -454,7 +446,6 @@ public class Servizio extends WamCompanyEntity {
      * Recupera il ServizioFunzione relativo a una data funzione
      *
      * @param f la funzione
-     *
      * @return il ServizioFunzione con la funzione, null se non trovato
      */
     public ServizioFunzione getServizioFunzione(Funzione f) {

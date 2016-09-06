@@ -1,5 +1,7 @@
 package it.algos.wam.query;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.iscrizione.Iscrizione;
@@ -9,11 +11,14 @@ import it.algos.wam.entity.servizio.Servizio_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.turno.Turno_;
-import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.Lib;
+import it.algos.webbase.web.query.AQuery;
+import it.algos.webbase.web.query.SortProperty;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -212,7 +217,7 @@ public class WamQuery {
     /**
      * Tutte le iscrizioni relative a un dato Turno.
      *
-     * @param em l'EntityManager da utilizzare (se nullo lo crea qui)
+     * @param em    l'EntityManager da utilizzare (se nullo lo crea qui)
      * @param turno il turno
      * @return la lista delle iscrizioni
      */
@@ -245,7 +250,6 @@ public class WamQuery {
         return lista;
 
     }
-
 
 
     /**
@@ -397,20 +401,20 @@ public class WamQuery {
     /**
      * Recupera il massimo numero d'ordine di funzione fino ad ora attribuito.
      *
-     * @param em l'EntityManager da utilizzare
+     * @param manager the EntityManager to use
      * @return il massimo numero d'ordine, 0 se non ce ne sono
      */
-    public static int queryMaxOrdineFunzione(EntityManager em) {
+    public static int queryMaxOrdineFunzione(EntityManager manager) {
         int maxOrdine = 0;
 
         // se non specificato EM, ne crea uno locale
-        boolean localEM = false;
-        if (em == null) {
-            em = EM.createEntityManager();
-            localEM = true;
-        }
+        boolean usaManagerLocale = false;
+        if (manager == null) {
+            usaManagerLocale = true;
+            manager = EM.createEntityManager();
+        }// end of if cycle
 
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = manager.getCriteriaBuilder();
 
         CriteriaQuery cq = cb.createQuery(Integer.class);
         Root root = cq.from(Funzione.class);
@@ -420,18 +424,78 @@ public class WamQuery {
         predicates.add(CompanyQuery.creaFiltroCompany(root, cb));
         cq.where(predicates.toArray(new Predicate[]{}));
 
-        Object result = em.createQuery(cq).getSingleResult();
+        Object result = manager.createQuery(cq).getSingleResult();
         if (result != null && result instanceof Number) {
             maxOrdine = Lib.getInt(result);
         }
 
         // eventualmente chiude l'EM locale
-        if (localEM) {
-            em.close();
-        }
+        if (usaManagerLocale) {
+            manager.close();
+        }// end of if cycle
 
         return maxOrdine;
-    }
+    }// end of method
 
 
-}
+    /**
+     * Recupera il massimo numero d'ordine di funzione fino ad ora attribuito.
+     *
+     * @return il massimo numero d'ordine, 0 se non ce ne sono
+     */
+    public static int maxOrdineFunzione() {
+        return maxOrdineFunzione(null, null);
+    }// end of method
+
+
+    /**
+     * Recupera il massimo numero d'ordine di funzione fino ad ora attribuito.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @return il massimo numero d'ordine, 0 se non ce ne sono
+     */
+    public static int maxOrdineFunzione(WamCompany company) {
+        return maxOrdineFunzione(company, null);
+    }// end of method
+
+    /**
+     * Recupera il massimo numero d'ordine di funzione fino ad ora attribuito.
+     *
+     * @param manager the EntityManager to use
+     * @return il massimo numero d'ordine, 0 se non ce ne sono
+     */
+    public static int maxOrdineFunzione(EntityManager manager) {
+        return maxOrdineFunzione(null, manager);
+    }// end of method
+
+    /**
+     * Recupera il massimo numero d'ordine di funzione fino ad ora attribuito.
+     * Lista ordinata discendente
+     * Recupera il primo valore
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     * @return il massimo numero d'ordine, 0 se non ce ne sono
+     */
+    @SuppressWarnings("unchecked")
+    public static int maxOrdineFunzione(WamCompany company, EntityManager manager) {
+        int maxOrdine = 0;
+        List<Funzione> lista;
+        SortProperty sort = new SortProperty(Funzione_.ordine, false);
+        Object a;
+        if (company != null) {
+            Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
+            lista = (List<Funzione>) AQuery.findAll(Funzione.class, sort, manager, filter);
+        } else {
+            lista = (List<Funzione>) AQuery.findAll(Funzione.class, sort, manager);
+        }// end of if/else cycle
+
+        if (lista != null && lista.size() > 0) {
+            maxOrdine = lista.get(0).getOrdine();
+        }// end of if cycle
+
+        return maxOrdine;
+    }// end of method
+
+
+}// end of  class

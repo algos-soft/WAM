@@ -5,18 +5,18 @@ import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.company.BaseCompany_;
-import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.DefaultSort;
+import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.query.AQuery;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,8 +124,25 @@ public class WamCompany extends BaseCompany {
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany findByCode(String code) {
+        WamCompany company = null;
+
+        EntityManager manager = EM.createEntityManager();
+        company = findByCode(code, manager);
+        manager.close();
+
+        return company;
+    }// end of method
+
+    /**
+     * Recupera una istanza della Entity usando la query per una property specifica
+     *
+     * @param code    valore della property code
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    public static WamCompany findByCode(String code, EntityManager manager) {
         WamCompany instance = null;
-        BaseEntity entity = AQuery.queryOne(WamCompany.class, BaseCompany_.companyCode, code);
+        BaseEntity entity = AQuery.findOne(WamCompany.class, BaseCompany_.companyCode, code, manager);
 
         if (entity != null) {
             if (entity instanceof WamCompany) {
@@ -145,6 +162,7 @@ public class WamCompany extends BaseCompany {
         return findByCode(WAMApp.DEMO_COMPANY_CODE);
     }// end of method
 
+
     /**
      * Ritorna la Company corrente
      * (correntemente in sessione)
@@ -154,11 +172,13 @@ public class WamCompany extends BaseCompany {
     public static WamCompany getCurrent() {
         WamCompany wamCompany = null;
         BaseCompany company = CompanySessionLib.getCompany();
+
         if (company != null) {
             wamCompany = (WamCompany) company;
-        }
+        }// end of if cycle
+
         return wamCompany;
-    }
+    }// end of method
 
 
     /**

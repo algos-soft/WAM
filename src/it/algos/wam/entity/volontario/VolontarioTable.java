@@ -46,7 +46,7 @@ public class VolontarioTable extends WamTable {
      */
     @Override
     protected void createAdditionalColumns() {
-        List<Funzione> listaFunzioni = Funzione.findAll((WamCompany) CompanySessionLib.getCompany());
+        List<Funzione> listaFunzioni = Funzione.findByCurrentCompany();
         for (Funzione funz : listaFunzioni) {
             addGeneratedColumn(funz.getSigla(), new FunzioniColumnGenerator(funz));
         }// end of for cycle
@@ -63,7 +63,7 @@ public class VolontarioTable extends WamTable {
     @Override
     protected Object[] getDisplayColumns() {
         ArrayList lista = new ArrayList<>();
-        List<Funzione> listaFunzioni = Funzione.findAll((WamCompany) CompanySessionLib.getCompany());
+        List<Funzione> listaFunzioni = Funzione.findByCurrentCompany();
 
         if (LibSession.isDeveloper()) {
             lista.add(WamCompanyEntity_.company);
@@ -111,7 +111,7 @@ public class VolontarioTable extends WamTable {
 
 
     private void fixColumn() {
-        ArrayList<Funzione> listaFunzioni = Funzione.findAll();
+        List<Funzione> listaFunzioni = Funzione.findByCurrentCompany();
 
         setColumnHeader(Volontario_.nome, "Nome");
         setColumnHeader(Volontario_.cognome, "Cognome");

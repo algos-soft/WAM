@@ -10,7 +10,7 @@ import it.algos.webbase.web.login.UserIF;
  */
 public abstract class WAMApp extends AlgosApp {
 
-    public static final String DEMO_COMPANY_CODE = "demo";
+    public static final String DEMO_COMPANY_CODE = "demowam";
     public static final String TEST_COMPANY_CODE = "test";
 
     /**
