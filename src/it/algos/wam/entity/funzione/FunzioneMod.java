@@ -41,12 +41,24 @@ public class FunzioneMod extends WamModSposta  {
     }// end of constructor
 
 
+    /**
+     * Returns the form used to edit an item. <br>
+     * The concrete subclass must override for a specific Form.
+     *
+     * @param item singola istanza della classe
+     * @return the Form
+     */
     @Override
     public ModuleForm createForm(Item item) {
         return new FunzioneForm(item, this);
     }// end of method
 
 
+    /**
+     * Crea una Table già filtrata sulla company corrente
+     * The concrete subclass must override for a specific Table.
+     * @return the Table
+     */
     @Override
     public ATable createTable() {
         return new FunzioneTable(this);

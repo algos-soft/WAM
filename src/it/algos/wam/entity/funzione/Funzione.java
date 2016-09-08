@@ -1,6 +1,7 @@
 package it.algos.wam.entity.funzione;
 
 import com.vaadin.server.FontAwesome;
+import com.vaadin.ui.Notification;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
@@ -236,6 +237,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //------------------------------------------------------------------------------------------------------------------------
     // Find entity by SingularAttribute
     //------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
      * Filtrato sulla azienda corrente.
@@ -586,6 +588,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //------------------------------------------------------------------------------------------------------------------------
     // Utilities
     //------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Implementa come business logic, la obbligatorietà della company
      * <p>
@@ -593,7 +596,48 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return true se esiste, false se non esiste
      */
     private boolean checkCompany() {
-        return getCompany() != null;
+        String caption = "La funzione non può essere accettata, perché manca la company che è obbligatoria";
+
+        if (getCompany() != null) {
+            return true;
+        } else {
+            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
+    } // end of method
+
+    /**
+     * Implementa come business logic, la obbligatorietà della sigla
+     * <p>
+     *
+     * @return true se esiste, false se non esiste
+     */
+    private boolean checkSigla() {
+        String caption = "La funzione non può essere accettata, perché manca la sigla che è obbligatoria";
+
+        if (getSigla() != null && !getSigla().equals("")) {
+            return true;
+        } else {
+            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
+    } // end of method
+
+    /**
+     * Implementa come business logic, la obbligatorietà della descrizione
+     * <p>
+     *
+     * @return true se esiste, false se non esiste
+     */
+    private boolean checkDescrizione() {
+        String caption = "La funzione non può essere accettata, perché manca la descrizione che è obbligatoria";
+
+        if (getDescrizione() != null && !getDescrizione().equals("")) {
+            return true;
+        } else {
+            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
     } // end of method
 
 
@@ -643,7 +687,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     @Override
     public BaseEntity save() {
-        return this.save( null);
+        return this.save(null);
     }// end of method
 
     /**
@@ -655,14 +699,13 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     @Override
     public BaseEntity save(EntityManager manager) {
-        return this.save((WamCompany)getCompany(), manager);
+        return this.save((WamCompany) getCompany(), manager);
     }// end of method
 
     /**
      * Saves this entity to the database.
      * <p>
-     * If the provided EntityManager has an active transaction, the operation is performed
-     * inside the transaction.<br>
+     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
      * Otherwise, a new transaction is used to save this single entity.
      *
      * @param company azienda da filtrare
@@ -673,6 +716,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         boolean valido = false;
 
         valido = this.checkCompany();
+        if (valido) {
+            valido = this.checkSigla();
+        }// end of if cycle
+        if (valido) {
+            valido = this.checkDescrizione();
+        }// end of if cycle
         if (valido) {
             valido = this.checkChiave(company);
         }// end of if cycle

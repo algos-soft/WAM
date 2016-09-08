@@ -65,20 +65,15 @@ class SelectIconDialog extends BaseDialog {
         private void populate() {
             int[] codepoints = {FontAwesome.AMBULANCE.getCodepoint(),
                     FontAwesome.WHEELCHAIR.getCodepoint(),
-//                    FontAwesome.CAB.getCodepoint(),   // non va
-//                    FontAwesome.MOTORCYCLE.getCodepoint(),   // non va
                     FontAwesome.MEDKIT.getCodepoint(),
                     FontAwesome.HEART.getCodepoint(),
                     FontAwesome.STETHOSCOPE.getCodepoint(),
-//                    FontAwesome.BED.getCodepoint(),   // non va
-//                    FontAwesome.BICYCLE.getCodepoint(),   // non va
                     FontAwesome.USER.getCodepoint(),
                     FontAwesome.USER_MD.getCodepoint(),
                     FontAwesome.MALE.getCodepoint(),
                     FontAwesome.FEMALE.getCodepoint(),
                     FontAwesome.PHONE.getCodepoint(),
                     FontAwesome.BRIEFCASE.getCodepoint(),
-//                    FontAwesome.RECYCLE.getCodepoint(),  // non va
                     FontAwesome.STAR.getCodepoint(),
                     FontAwesome.TINT.getCodepoint(),
             };

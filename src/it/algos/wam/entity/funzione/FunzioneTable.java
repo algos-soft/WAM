@@ -4,14 +4,12 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.event.Action;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
-import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
@@ -131,39 +129,41 @@ public class FunzioneTable extends WamTable {
             bIcon.setCaption("...");
             bIcon.addStyleName("verde");
 
-            bIcon.addClickListener(new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent clickEvent) {
-                    SelectIconDialog dialog = new SelectIconDialog();
-                    dialog.addCloseListener(new SelectIconDialog.CloseListener() {
-                        @Override
-                        public void dialogClosed(SelectIconDialog.DialogEvent event) {
-                            int exitcode = event.getExitcode();
-                            BeanItem bi = LibBean.fromItem(item);
-                            Funzione funz = (Funzione) bi.getBean();
+            if (LibSession.isAdmin()) {
+                bIcon.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent clickEvent) {
+                        SelectIconDialog dialog = new SelectIconDialog();
+                        dialog.addCloseListener(new SelectIconDialog.CloseListener() {
+                            @Override
+                            public void dialogClosed(SelectIconDialog.DialogEvent event) {
+                                int exitcode = event.getExitcode();
+                                BeanItem bi = LibBean.fromItem(item);
+                                Funzione funz = (Funzione) bi.getBean();
 
-                            switch (exitcode) {
-                                case 0:   // close, no action
-                                    break;
-                                case 1:   // icon selected
-                                    int codepoint = event.getCodepoint();
-                                    funz.setIconCodepoint(codepoint);
-                                    funz.save();
-                                    refresh();
-                                    break;
-                                case 2:   // rebove icon
-                                    funz.setIconCodepoint(0);
-                                    funz.save();
-                                    refresh();
-                                    break;
-                            }
+                                switch (exitcode) {
+                                    case 0:   // close, no action
+                                        break;
+                                    case 1:   // icon selected
+                                        int codepoint = event.getCodepoint();
+                                        funz.setIconCodepoint(codepoint);
+                                        funz.save();
+                                        refresh();
+                                        break;
+                                    case 2:   // rebove icon
+                                        funz.setIconCodepoint(0);
+                                        funz.save();
+                                        refresh();
+                                        break;
+                                } // fine del blocco switch
 
-                        }
-                    });
-                    dialog.show();
+                            }// end of inner method
+                        });// end of anonymous inner class
+                        dialog.show();
 
-                }
-            });
+                    }// end of inner method
+                });// end of anonymous inner class
+            }// end of if cycle
 
             Property prop = item.getItemProperty(Funzione_.iconCodepoint.getName());
             if (prop != null) {
@@ -173,8 +173,9 @@ public class FunzioneTable extends WamTable {
                     glyph = FontAwesome.fromCodepoint(codepoint);
                     bIcon.setCaption(glyph.getHtml());
                 } catch (Exception e) {
-                }
-            }
+                }// fine del blocco try-catch
+            }// end of if cycle
+
             return bIcon;
         }// end of method
     }// end of inner class

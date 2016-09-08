@@ -106,7 +106,9 @@ public class FunzioneForm extends ModuleForm {
         layout.addComponent(iconButton);
         layout.addComponent(fSigla);
         layout.addComponent(fDescrizione);
-        layout.addComponent(fOrdine);
+        if (!isNewRecord()) {
+            layout.addComponent(fOrdine);
+        }// end of if cycle
 
         return layout;
     }// end of method
