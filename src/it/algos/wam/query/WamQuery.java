@@ -497,5 +497,34 @@ public class WamQuery {
         return maxOrdine;
     }// end of method
 
+    /**
+     * Recupera il massimo numero d'ordine di servizio fino ad ora attribuito.
+     * Lista ordinata discendente
+     * Recupera il primo valore
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     * @return il massimo numero d'ordine, 0 se non ce ne sono
+     */
+    @SuppressWarnings("unchecked")
+    public static int maxOrdineServizio(WamCompany company, EntityManager manager) {
+        int maxOrdine = 0;
+        List<Servizio> lista;
+        SortProperty sort = new SortProperty(Servizio_.ordine, false);
+        Object a;
+        if (company != null) {
+            Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
+            lista = (List<Servizio>) AQuery.findAll(Servizio.class, sort, manager, filter);
+        } else {
+            lista = (List<Servizio>) AQuery.findAll(Servizio.class, sort, manager);
+        }// end of if/else cycle
+
+        if (lista != null && lista.size() > 0) {
+            maxOrdine = lista.get(0).getOrdine();
+        }// end of if cycle
+
+        return maxOrdine;
+    }// end of method
+
 
 }// end of  class

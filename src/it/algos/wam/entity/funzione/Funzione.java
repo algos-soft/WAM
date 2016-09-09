@@ -68,7 +68,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @Column(columnDefinition = "text")
     private String descrizione;
 
-    //--ordine di presentazione nelle liste
+    //--ordine di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
     @NotNull
     @Index
     private int ordine = 0;
@@ -100,12 +100,13 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
+     * Se manca l'ordine di presentazione o è uguale a zero, viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
      * @param sigla       di riferimento interna (obbligatoria)
      * @param descrizione (obbligatoria)
      */
-    public Funzione(BaseCompany company, String sigla, String descrizione) {
+    public Funzione(WamCompany company, String sigla, String descrizione) {
         this(company, sigla, descrizione, 0, null);
     }// end of constructor
 
@@ -115,10 +116,10 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company     di appartenenza (property della superclasse)
      * @param sigla       di riferimento interna (obbligatoria)
      * @param descrizione (obbligatoria)
-     * @param ordine      di presentazione nelle liste
+     * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param glyph       icona di FontAwesome (facoltative)
      */
-    public Funzione(BaseCompany company, String sigla, String descrizione, int ordine, FontAwesome glyph) {
+    public Funzione(WamCompany company, String sigla, String descrizione, int ordine, FontAwesome glyph) {
         super();
         this.setCompany(company);
         this.setSigla(sigla);
@@ -231,6 +232,22 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     public static Funzione find(long id, EntityManager manager) {
         BaseEntity entity = AQuery.find(Funzione.class, id, manager);
         return check(entity);
+    }// end of static method
+
+    /**
+     * Controlla se l'istanza della Entity esiste ed è della classe corretta
+     *
+     * @param entity (BaseEntity) restituita dalla query generica
+     * @return istanza della Entity specifica, null se non trovata
+     */
+    private static Funzione check(BaseEntity entity) {
+        Funzione instance = null;
+
+        if (entity != null && entity instanceof Funzione) {
+            instance = (Funzione) entity;
+        }// end of if cycle
+
+        return instance;
     }// end of static method
 
 
@@ -419,7 +436,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company     di appartenenza (property della superclasse)
      * @param sigla       di riferimento interna (obbligatoria)
      * @param descrizione (obbligatoria)
-     * @param ordine      di presentazione nelle liste
+     * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param glyph       dell'icona (facoltativo)
      * @return istanza della Entity
      */
@@ -435,7 +452,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company     di appartenenza (property della superclasse)
      * @param sigla       di riferimento interna (obbligatoria)
      * @param descrizione (obbligatoria)
-     * @param ordine      di presentazione nelle liste
+     * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param glyph       dell'icona (facoltativo)
      * @param manager     the EntityManager to use
      * @return istanza della Entity
@@ -472,7 +489,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         manager.close();
     }// end of static method
 
-
     /**
      * Delete all the records for the domain class
      * Bulk delete records with CriteriaDelete
@@ -483,42 +499,72 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         AQuery.deleteAll(Funzione.class, manager);
     }// end of static method
 
-
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }// end of getter method
 
-    /**
-     * Controlla se l'istanza della Entity esiste ed è della classe corretta
-     *
-     * @param entity (BaseEntity) restituita dalla query generica
-     * @return istanza della Entity specifica, null se non trovata
-     */
-    private static Funzione check(BaseEntity entity) {
-        Funzione instance = null;
 
-        if (entity != null && entity instanceof Funzione) {
-            instance = (Funzione) entity;
+    //------------------------------------------------------------------------------------------------------------------------
+    // Save
+    //------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Saves this entity to the database using a local EntityManager
+     * <p>
+     *
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    @Override
+    public BaseEntity save() {
+        return this.save(null);
+    }// end of method
+
+    /**
+     * Saves this entity to the database using a local EntityManager
+     * <p>
+     *
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    @Override
+    public BaseEntity save(EntityManager manager) {
+        return this.save(getWamCompany(), manager);
+    }// end of method
+
+    /**
+     * Saves this entity to the database.
+     * <p>
+     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
+     * Otherwise, a new transaction is used to save this single entity.
+     *
+     * @param company azienda da filtrare
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    public Funzione save(WamCompany company, EntityManager manager) {
+        boolean valido = false;
+
+        valido = this.checkCompany();
+        if (valido) {
+            valido = this.checkSigla();
+        }// end of if cycle
+        if (valido) {
+            valido = this.checkDescrizione();
+        }// end of if cycle
+        if (valido) {
+            valido = this.checkChiave(company);
+        }// end of if cycle
+        if (valido) {
+            this.checkOrdine(company, manager);
         }// end of if cycle
 
-        return instance;
-    }// end of static method
+        if (valido) {
+            return (Funzione)super.save(manager);
+        } else {
+            return null;
+        }// end of if/else cycle
 
-    /**
-     * Controlla se il valore della query è della classe corretta
-     *
-     * @param valore (long) restituita dalla query generica
-     * @return totale dei records, zero se la query non ha funzionato
-     */
-    private static int check(long valore) {
-        int totRec = 0;
-
-        if (valore > 0) {
-            totRec = (int) valore;
-        }// fine del blocco if
-
-        return totRec;
-    }// end of static method
+    }// end of method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Getter and setter
@@ -581,13 +627,14 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return codeCompanyUnico;
     }// end of getter method
 
-    public void setCodeCompanyUnico(String codeCompanyUnico) {
-        this.codeCompanyUnico = codeCompanyUnico;
-    }//end of setter method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Utilities
     //------------------------------------------------------------------------------------------------------------------------
+
+    public void setCodeCompanyUnico(String codeCompanyUnico) {
+        this.codeCompanyUnico = codeCompanyUnico;
+    }//end of setter method
 
     /**
      * Implementa come business logic, la obbligatorietà della company
@@ -679,63 +726,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         }// end of if cycle
     }// end of method
 
-    /**
-     * Saves this entity to the database using a local EntityManager
-     * <p>
-     *
-     * @return the merged Entity (new entity, unmanaged, has the id)
-     */
-    @Override
-    public BaseEntity save() {
-        return this.save(null);
-    }// end of method
-
-    /**
-     * Saves this entity to the database using a local EntityManager
-     * <p>
-     *
-     * @param manager the entity manager to use (if null, a new one is created on the fly)
-     * @return the merged Entity (new entity, unmanaged, has the id)
-     */
-    @Override
-    public BaseEntity save(EntityManager manager) {
-        return this.save((WamCompany) getCompany(), manager);
-    }// end of method
-
-    /**
-     * Saves this entity to the database.
-     * <p>
-     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
-     * Otherwise, a new transaction is used to save this single entity.
-     *
-     * @param company azienda da filtrare
-     * @param manager the entity manager to use (if null, a new one is created on the fly)
-     * @return the merged Entity (new entity, unmanaged, has the id)
-     */
-    public BaseEntity save(WamCompany company, EntityManager manager) {
-        boolean valido = false;
-
-        valido = this.checkCompany();
-        if (valido) {
-            valido = this.checkSigla();
-        }// end of if cycle
-        if (valido) {
-            valido = this.checkDescrizione();
-        }// end of if cycle
-        if (valido) {
-            valido = this.checkChiave(company);
-        }// end of if cycle
-        if (valido) {
-            this.checkOrdine(company, manager);
-        }// end of if cycle
-
-        if (valido) {
-            return super.save(manager);
-        } else {
-            return null;
-        }// end of if/else cycle
-
-    }// end of method
 
     /**
      * Recupera l'icona
@@ -816,5 +806,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
         return iconHtml;
     }// end of method
+
 
 }// end of entity class

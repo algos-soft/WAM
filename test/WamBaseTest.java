@@ -10,80 +10,78 @@ import javax.persistence.Persistence;
  */
 public abstract class WamBaseTest {
 
-    // alcuni parametri utilizzati
+    protected final static String SIGLA_UNO = "Prima";
+    protected final static String SIGLA_DUE = "Seconda";
+    protected final static String DESCRIZIONE_UNO = "Prima descrizione";
+    protected final static String DESCRIZIONE_DUE = "Seconda descrizione";
     protected final static String COMPANY_UNO = "Alfa";
     protected final static String COMPANY_DUE = "Beta";
+    protected static EntityManager MANAGER;
 
-    protected final static EntityManager MANAGER = getManager();
-    protected final static WamCompany companyUno = creaCompanyUno();
-    ;
-    protected final static WamCompany companyDue = creaCompanyDue();
-    ;
+    // alcuni parametri utilizzati
+    protected static WamCompany companyUno;
+    protected static WamCompany companyDue;
 
     protected String previsto = "";
     protected String ottenuto = "";
 
+
+    protected static void setUp() {
+        creaManager();
+
+        creaCompanyUno();
+        creaCompanyDue();
+    } // end of setup iniziale
+
     /**
-     * Creazione di un manager specifico
+     * Creazione di un MANAGER specifico
      * DEVE essere chiuso (must be close by caller method)
      */
-    private static EntityManager getManager() {
-        EntityManager manager = null;
+    protected static void creaManager() {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("WAMTEST");
 
         if (factory != null) {
-            manager = factory.createEntityManager();
+            MANAGER = factory.createEntityManager();
         }// end of if cycle
-
-        return manager;
     }// end of static method
 
-//    protected static void setUp() {
-//        creaCompanyUno();
-//        creaCompanyDue();
-//    } // end of setup iniziale
 
     /**
      * Crea una prima company di prova per i test
      */
-    private static WamCompany creaCompanyUno() {
-        WamCompany company = null;
+    private static void creaCompanyUno() {
 
-        company = new WamCompany(COMPANY_UNO, "Company dimostrativa", "info@crocedemo.it");
-        company.setAddress1("Via Turati, 12");
-        company.setAddress1("20199 Garbagnate Milanese");
-        company.setContact("Mario Bianchi");
+        companyUno = new WamCompany(COMPANY_UNO, "Company dimostrativa", "info@crocedemo.it");
+        companyUno.setAddress1("Via Turati, 12");
+        companyUno.setAddress1("20199 Garbagnate Milanese");
+        companyUno.setContact("Mario Bianchi");
 
         try { // prova ad eseguire il codice
-            company.save(MANAGER);
+            companyUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
             System.out.println("Esisteva già companyUno");
         }// fine del blocco try-catch
-
-        return company;
     }// end of single test
 
     /**
      * Crea una seconda company di prova per i test
      */
-    private static WamCompany creaCompanyDue() {
-        WamCompany company = null;
+    private static void creaCompanyDue() {
 
-        company = new WamCompany(COMPANY_DUE, "Company di test", "info@crocetest.it");
-        company.setAddress1("Piazza Napoli, 51");
-        company.setAddress1("20100 Milano");
-        company.setContact("Giovanni Rossi");
+        companyDue = new WamCompany(COMPANY_DUE, "Company di test", "info@crocetest.it");
+        companyDue.setAddress1("Piazza Napoli, 51");
+        companyDue.setAddress1("20100 Milano");
+        companyDue.setContact("Giovanni Rossi");
 
         try { // prova ad eseguire il codice
-            company.save(MANAGER);
+            companyDue.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
             System.out.println("Esisteva già companyDue");
         }// fine del blocco try-catch
-
-        return company;
     }// end of single test
 
-    protected static void cleanUpFinaleAllaChiusuraDelTest() {
+
+    protected static void cleanUp() {
         cancellaCompanyUno();
         cancellaCompanyDue();
 
@@ -114,10 +112,12 @@ public abstract class WamBaseTest {
     }// end of single test
 
     /**
-     * Chiusura finale del manager
+     * Chiusura finale del MANAGER
      */
     private static void closeManager() {
         MANAGER.close();
+        MANAGER = null;
     }// end of static method
+
 
 }// end of abstract class

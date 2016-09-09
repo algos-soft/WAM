@@ -12,12 +12,6 @@ import static org.junit.Assert.*;
  */
 public class FunzioneTest extends WamBaseTest {
 
-
-    private final static String SIGLA_FUNZIONE_UNO = "Prima";
-    private final static String SIGLA_FUNZIONE_DUE = "Seconda";
-    private final static String DESCRIZIONE_FUNZIONE_UNO = "Prima descrizione";
-    private final static String DESCRIZIONE_FUNZIONE_DUE = "Seconda descrizione";
-
     Funzione funzioneUno;
     Funzione funzioneDue;
     Funzione funzioneTre;
@@ -28,18 +22,30 @@ public class FunzioneTest extends WamBaseTest {
     List<Funzione> listaDue;
     List<Funzione> listaTre;
 
+
+    /**
+     * SetUp iniziale eseguito solo una volta alla creazione della classe
+     */
     @BeforeClass
     public static void setUpInizialeStaticoEseguitoSoloUnaVoltaAllaCreazioneDellaClasse() {
+        // creazione del MANAGER statico per questa singola classe di test
+        // creazione di alcune company
+        setUp();
+
         // Prima di inizare a creare e modificare le funzioni, cancello tutte le (eventuali) precedenti
         cancellaFunzioni();
     } // end of setup iniziale
 
+
+    /**
+     * CleanUp finale eseguito solo una volta alla chiusura della classe
+     */
     @AfterClass
-    public static void cleanUp() {
+    public static void cleanUpFinaleStaticoEseguitoAllaChiusuraDellaClasse() {
         // Alla fine, cancello tutte le funzioni create
         cancellaFunzioni();
 
-        cleanUpFinaleAllaChiusuraDelTest();
+        cleanUp();
     } // end of cleaup finale
 
     /**
@@ -79,22 +85,28 @@ public class FunzioneTest extends WamBaseTest {
 
         // senza nessun parametro
         funzioneUno = new Funzione();
-        funzioneUno.save(MANAGER);
+        try { // prova ad eseguire il codice
+            funzioneUno.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
         assertNotNull(funzioneUno);
         assertNull(funzioneUno.getId());
         numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // senza un parametro obbligatorio
-        funzioneUno = new Funzione(null, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO);
-        funzioneUno.save(MANAGER);
+        funzioneUno = new Funzione(null, SIGLA_UNO, DESCRIZIONE_UNO);
+        try { // prova ad eseguire il codice
+            funzioneUno.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
         assertNotNull(funzioneUno);
         assertNull(funzioneUno.getId());
         numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametri obbligatori
-        funzioneUno = new Funzione(companyUno, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO);
+        funzioneUno = new Funzione(companyUno, SIGLA_UNO, DESCRIZIONE_UNO);
         funzioneUno.save(companyUno, MANAGER);
         assertNotNull(funzioneUno);
         assertNotNull(funzioneUno.getId());
@@ -104,7 +116,7 @@ public class FunzioneTest extends WamBaseTest {
         assertEquals(numRecUnoNew, numRecUnoOld + 1);
 
         // parametri obbligatori
-        funzioneDue = new Funzione(companyUno, SIGLA_FUNZIONE_DUE, DESCRIZIONE_FUNZIONE_DUE);
+        funzioneDue = new Funzione(companyUno, SIGLA_DUE, DESCRIZIONE_DUE);
         funzioneDue.save(companyUno, MANAGER);
         assertNotNull(funzioneDue);
         assertNotNull(funzioneDue.getId());
@@ -114,7 +126,7 @@ public class FunzioneTest extends WamBaseTest {
         assertEquals(numRecUnoNew, numRecUnoOld + 2);
 
         // tutti i parametri previsti
-        funzioneTre = new Funzione(companyDue, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO, 6, FontAwesome.USER);
+        funzioneTre = new Funzione(companyDue, SIGLA_UNO, DESCRIZIONE_UNO, 6, FontAwesome.USER);
         funzioneTre.save(companyDue, MANAGER);
         assertNotNull(funzioneTre);
         assertNotNull(funzioneTre.getId());
@@ -124,7 +136,7 @@ public class FunzioneTest extends WamBaseTest {
         assertEquals(numRecUnoNew, numRecDueOld + 1);
 
         // parametri obbligatori
-        funzioneQuattro = new Funzione(companyDue, SIGLA_FUNZIONE_DUE, DESCRIZIONE_FUNZIONE_DUE);
+        funzioneQuattro = new Funzione(companyDue, SIGLA_DUE, DESCRIZIONE_DUE);
         funzioneQuattro.save(companyDue, MANAGER);
         assertNotNull(funzioneQuattro);
         assertNotNull(funzioneQuattro.getId());
@@ -134,11 +146,11 @@ public class FunzioneTest extends WamBaseTest {
         assertEquals(numRecDueNew, numRecDueOld + 2);
 
         // campo unico, doppio
-        funzioneCinque = new Funzione(companyUno, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO);
+        funzioneCinque = new Funzione(companyUno, SIGLA_UNO, DESCRIZIONE_UNO);
         try { // prova ad eseguire il codice
-            funzioneCinque.save(companyUno,MANAGER);
+            funzioneCinque.save(companyUno, MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
-            System.out.println(unErrore);
+            System.out.println(unErrore.toString());
         }// fine del blocco try-catch
         assertNotNull(funzioneCinque);
         assertNull(funzioneCinque.getId());
@@ -164,15 +176,15 @@ public class FunzioneTest extends WamBaseTest {
             return;
         }// end of if cycle
 
-        funzioneUno = Funzione.findByCompanyAndBySigla(companyUno, SIGLA_FUNZIONE_UNO, MANAGER);
+        funzioneUno = Funzione.findByCompanyAndBySigla(companyUno, SIGLA_UNO, MANAGER);
         assertNotNull(funzioneUno);
 
-        funzioneDue = Funzione.findByCompanyAndBySigla(companyDue, SIGLA_FUNZIONE_DUE, MANAGER);
+        funzioneDue = Funzione.findByCompanyAndBySigla(companyDue, SIGLA_DUE, MANAGER);
         assertNotNull(funzioneDue);
         assertNotSame(funzioneDue, funzioneUno);
         key = funzioneDue.getId();
 
-        funzioneTre = Funzione.findByCompanyAndBySigla(companyUno, SIGLA_FUNZIONE_DUE, MANAGER);
+        funzioneTre = Funzione.findByCompanyAndBySigla(companyUno, SIGLA_DUE, MANAGER);
         assertNotNull(funzioneTre);
         assertNotSame(funzioneTre, funzioneDue);
 
@@ -217,7 +229,7 @@ public class FunzioneTest extends WamBaseTest {
      * @param descrizione (obbligatoria)
      * @param ordine      di presentazione nelle liste
      * @param glyph       dell'icona (facoltativo)
-     * @param manager     the EntityManager to use
+     * @param MANAGER     the EntityManager to use
      * @return istanza della Entity
      */
     public void creaFunzione() {
@@ -232,45 +244,47 @@ public class FunzioneTest extends WamBaseTest {
         int ordine;
 
         // senza un parametro obbligatorio
-        funzioneUno = Funzione.crea(null, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO, MANAGER);
-        funzioneUno.save(MANAGER);
-        assertNotNull(funzioneUno);
-        assertNull(funzioneUno.getId());
+        try { // prova ad eseguire il codice
+            funzioneUno = Funzione.crea(null, SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
+            funzioneUno.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNull(funzioneUno);
         numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametri obbligatori
-        funzioneUno = Funzione.crea(companyUno, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO, MANAGER);
+        funzioneUno = Funzione.crea(companyUno, SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
         numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 1);
         ordine = funzioneUno.getOrdine();
         assertEquals(ordine, 1);
 
         // parametri obbligatori
-        funzioneDue = Funzione.crea(companyUno, SIGLA_FUNZIONE_DUE, DESCRIZIONE_FUNZIONE_DUE, MANAGER);
+        funzioneDue = Funzione.crea(companyUno, SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
         numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 2);
         ordine = funzioneDue.getOrdine();
         assertEquals(ordine, 2);
 
         // tutti i parametri previsti
-        funzioneTre = Funzione.crea(companyDue, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO, 6, FontAwesome.USER, MANAGER);
+        funzioneTre = Funzione.crea(companyDue, SIGLA_UNO, DESCRIZIONE_UNO, 6, FontAwesome.USER, MANAGER);
         numRecUnoNew = Funzione.countBySingleCompany(companyDue, MANAGER);
         assertEquals(numRecUnoNew, numRecDueOld + 1);
         ordine = funzioneTre.getOrdine();
         assertEquals(ordine, 6);
 
         // parametri obbligatori
-        funzioneQuattro = Funzione.crea(companyDue, SIGLA_FUNZIONE_DUE, DESCRIZIONE_FUNZIONE_DUE, MANAGER);
+        funzioneQuattro = Funzione.crea(companyDue, SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
         numRecDueNew = Funzione.countBySingleCompany(companyDue, MANAGER);
         assertEquals(numRecDueNew, numRecDueOld + 2);
         ordine = funzioneQuattro.getOrdine();
         assertEquals(ordine, 7);
 
         // campo unico, doppio
-        funzioneCinque = Funzione.crea(companyUno, SIGLA_FUNZIONE_UNO, DESCRIZIONE_FUNZIONE_UNO, MANAGER);
+        funzioneCinque = Funzione.crea(companyUno, SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
         try { // prova ad eseguire il codice
-            funzioneCinque.save(companyUno,MANAGER);
+            funzioneCinque.save(companyUno, MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
             System.out.println(unErrore);
         }// fine del blocco try-catch

@@ -84,16 +84,16 @@ public abstract class BootService {
 
         creaPreferenze(company);
         listaFunzioni = creaFunzioni(company, manager);
-//        listaServizi = creaServizi(company, manager, listaFunzioni);
-        listaVolontari = creaVolontari(company, manager, listaFunzioni);
-
-        if (creaTurni) {
+        listaServizi = creaServizi(company, manager, listaFunzioni);
+//        listaVolontari = creaVolontari(company, manager, listaFunzioni);
+//
+//        if (creaTurni) {
 //            listaTurni = creaTurniVuoti(company, manager, listaServizi);
-        }// end of if cycle
-
-        if (creaIscrizioni) {
+//        }// end of if cycle
+//
+//        if (creaIscrizioni) {
 //            riempieTurni(company, manager, listaTurni, listaVolontari);
-        }// end of if cycle
+//        }// end of if cycle
 
         manager.getTransaction().commit();
         manager.close();
@@ -152,7 +152,6 @@ public abstract class BootService {
      *
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
-     *
      * @return lista delle funzioni create
      */
     @SuppressWarnings("unchecked")
@@ -193,7 +192,6 @@ public abstract class BootService {
      * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
-     *
      * @return istanza di Funzione
      */
     private static Funzione creaFunzBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -211,7 +209,6 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param funz    lista delle funzioni di questa croce
-     *
      * @return lista dei servizi creati
      */
     @SuppressWarnings("unchecked")
@@ -254,7 +251,6 @@ public abstract class BootService {
      * @param manager  the EntityManager to use
      * @param ordine   di presentazione nelle liste
      * @param listaTmp di alcune property
-     *
      * @return istanza di Servizio
      */
     private static Servizio creaServBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
@@ -301,7 +297,7 @@ public abstract class BootService {
             obbligatori = (Integer) listaTmp.get(7);
         }// end of if cycle
 
-        return Servizio.crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, obbligatori, funzioni);
+        return Servizio.crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, manager, funzioni);
     }// end of static method
 
     /**
@@ -311,7 +307,6 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param funz    lista delle funzioni di questa croce
-     *
      * @return lista dei volontari creati
      */
     @SuppressWarnings("unchecked")
@@ -371,7 +366,6 @@ public abstract class BootService {
      * @param company  croce di appartenenza
      * @param manager  the EntityManager to use
      * @param listaTmp di alcune property
-     *
      * @return istanza di Volontario
      */
     private static Volontario creaVolBase(WamCompany company, EntityManager manager, List listaTmp) {
@@ -428,7 +422,6 @@ public abstract class BootService {
      * @param company croce di appartenenza
      * @param manager the EntityManager to use
      * @param servizi lista dei servizi di questa croce
-     *
      * @return lista dei turni creati
      */
     private static ArrayList<Turno> creaTurniVuoti(WamCompany company, EntityManager manager, ArrayList<Servizio> servizi) {

@@ -96,7 +96,7 @@ public class WamCompany extends BaseCompany {
      */
     public static WamCompany find(long id) {
         WamCompany instance = null;
-        BaseEntity entity = AQuery.queryById(WamCompany.class, id);
+        BaseEntity entity = AQuery.find(WamCompany.class, id);
 
         if (entity != null) {
             if (entity instanceof WamCompany) {
@@ -113,8 +113,8 @@ public class WamCompany extends BaseCompany {
      * @return lista di tutte le istanze della Entity
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<WamCompany> findAll() {
-        return (ArrayList<WamCompany>) AQuery.getLista(WamCompany.class);
+    public static List<WamCompany> findAll() {
+        return (List<WamCompany>) AQuery.findAll(WamCompany.class);
     }// end of method
 
     /**

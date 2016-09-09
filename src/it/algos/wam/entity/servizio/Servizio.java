@@ -1,19 +1,17 @@
 package it.algos.wam.entity.servizio;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.util.filter.Compare;
 import com.vaadin.shared.ui.colorpicker.Color;
+import com.vaadin.ui.Notification;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
-import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
-import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibArray;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -39,8 +37,57 @@ import java.util.List;
 @Entity
 public class Servizio extends WamCompanyEntity {
 
+    //------------------------------------------------------------------------------------------------------------------------
+    // Property
+    //------------------------------------------------------------------------------------------------------------------------
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
+
+    //--sigla di codifica visibile (obbligatoria, non unica)
+    //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
+    @NotEmpty
+    @Column(length = 20)
+    @Index
+    private String sigla = "";
+
+    //--sigla di codifica interna specifica per company (obbligatoria, unica)
+    //--calcolata -> codeCompanyUnico = company.companyCode + funzione.sigla;
+    @NotEmpty
+    @NotNull
+    @Column(length = 80, unique = true)
+    @Index
+    private String codeCompanyUnico;
+
+    //--descrizione per il tabellone (obbligatoria)
+    //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
+    @NotEmpty
+    private String descrizione = "";
+
+    //--ordine di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
+    @NotNull
+    @Index
+    private int ordine = 0;
+
+    // colore del servizio (facoltativo)
+    private int colore = new Color(128, 128, 128).getRGB();
+
+    //--orario predefinito (avis, centralino ed extra non ce l'hanno)
+    private boolean orario = true;
+
+    //--ora prevista di inizio turno (obbligatoria, se orario è true)
+    private int oraInizio;
+
+    //--minuti previsti di inizio turno (facoltativo, standard è zero)
+    //--nella GUI la scelta viene bloccata ai quarti d'ora
+    private int minutiInizio = 0;
+
+    //--ora prevista di fine turno (obbligatoria, se orario è true)
+    private int oraFine;
+
+    //--minuti previsti di fine turno (facoltativo, standard è zero)
+    //--nella GUI la scelta viene bloccata ai quarti d'ora
+    private int minutiFine = 0;
+
 
     @OneToMany(mappedBy = "servizio", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
@@ -54,63 +101,45 @@ public class Servizio extends WamCompanyEntity {
     @CascadeOnDelete
     private List<ServizioFunzione> servizioFunzioni = new ArrayList<>();
 
-    //--sigla di riferimento interna (obbligatoria)
-    //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
-    @NotEmpty
-    @Column(length = 20)
-    @Index
-    private String sigla = "";
 
-    //--descrizione per il tabellone (obbligatoria)
-    //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
-    @NotEmpty
-    private String descrizione = "";
-
-    //--ordine di presentazione nelle liste e nel tabellone
-    @NotNull
-    @Index
-    private int ordine = 0;
-
-    // colore del servizio
-    private int colore = new Color(128, 128, 128).getRGB();
-
-//    //--durata del turno (in ore)
-//    private int durata = 0;
-
-    //--ora prevista (normale) di inizio turno
-    private int oraInizio;
-
-    //--minuti previsti (normali) di inizio turno
-    //--nella GUI la scelta viene bloccata ai quarti d'ora
-    private int minutiInizio = 0;
-
-    //--ora prevista (normale) di fine turno
-    private int oraFine;
-
-    //--minuti previsti (normali) di fine turno
-    //--nella GUI la scelta viene bloccata ai quarti d'ora
-    private int minutiFine = 0;
-
-    //--orario predefinito (avis, centralino ed extra non ce l'hanno)
-    private boolean orario = true;
+    //------------------------------------------------------------------------------------------------------------------------
+    // Constructors
+    //------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Costruttore senza argomenti
-     * Necessario per le specifiche JavaBean
+     * Obbligatorio per le specifiche JavaBean
      */
     public Servizio() {
     }// end of constructor
 
+
     /**
      * Costruttore minimo con tutte le properties obbligatorie
+     * L'ordine di presentazione nel tabellone viene inserito in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
      * @param sigla       di riferimento interna (obbligatoria)
-     * @param descrizione (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
      */
-    public Servizio(BaseCompany company, String sigla, String descrizione) {
-        this(company, sigla, descrizione, 0, 0, 0);
+    public Servizio(WamCompany company, String sigla, String descrizione) {
+        this(company, sigla, descrizione, 0, 0);
     }// end of constructor
+
+
+    /**
+     * Costruttore ridotto
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
+     * @param colore      del gruppo (facoltativo)
+     */
+    public Servizio(WamCompany company, String sigla, String descrizione, int ordine, int colore) {
+        this(company, sigla, descrizione, ordine, colore, false, 0, 0);
+    }// end of constructor
+
 
     /**
      * Costruttore completo
@@ -118,150 +147,459 @@ public class Servizio extends WamCompanyEntity {
      * @param company     di appartenenza (property della superclasse)
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)
-     * @param ordine      di presentazione nel tabellone
-     * @param oraInizio   del servizio (facoltativo)
-     * @param oraFine     del servizio (facoltativo)
+     * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
+     * @param colore      del gruppo (facoltativo)
+     * @param orario      servizio ad orario prefissato e fisso ogni giorno (facoltativo)
+     * @param oraInizio   del servizio (facoltativo, obbligatorio se orario è true)
+     * @param oraFine     del servizio (facoltativo, obbligatorio se orario è true)
      */
-    public Servizio(BaseCompany company, String sigla, String descrizione, int ordine, int oraInizio, int oraFine) {
+    public Servizio(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine) {
         super();
-        setSigla(sigla);
-        setDescrizione(descrizione);
-        setOrdine(ordine);
-        setOraInizio(oraInizio);
-        setOraFine(oraFine);
+        this.setCompany(company);
+        this.setSigla(sigla);
+        this.setDescrizione(descrizione);
+        this.setOrdine(ordine);
+        this.setColore(colore);
+        this.setOrario(orario);
+        this.setOraInizio(oraInizio);
+        this.setOraFine(oraFine);
     }// end of constructor
 
-//    /**
-//     * Recupera il valore del numero totale di records della della Entity
-//     *
-//     * @return numero totale di records della tavola
-//     */
-//    public static int count() {
-//        int totRec = 0;
-//        long totTmp = AQuery.getCount(Servizio.class);
-//
-//        if (totTmp > 0) {
-//            totRec = (int) totTmp;
-//        }// fine del blocco if
-//
-//        return totRec;
-//    }// end of method
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Count records
+    //------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Recupera il totale dei records della Entity
-     * Filtrato sulla azienda corrente.
-     *
-     * @return numero totale di records nella Entity
-     */
-    public static int count() {
-        return count((WamCompany) CompanySessionLib.getCompany());
-    }// end of method
-
-    /**
-     * Recupera il totale dei records della Entity
-     * Filtrato sulla azienda passata come parametro.
-     *
-     * @param company croce di appartenenza
-     * @return numero totale di records della tavola
-     */
-    public static int count(WamCompany company) {
-        int totRec = 0;
-        long totTmp = CompanyQuery.getCount(Servizio.class, company);
-
-        if (totTmp > 0) {
-            totRec = (int) totTmp;
-        }// fine del blocco if
-
-        return totRec;
-    }// end of method
-
-    /**
-     * Recupera il totale dei records della Entity
+     * Recupera il numero totale dei records della Entity
      * Senza filtri.
      *
-     * @return numero totale di records nella Entity
+     * @return il numero totale di record nella Entity
      */
-    public static int countAll() {
-        return count((WamCompany) null);
-    }// end of method
+    public static int countByAllCompanies() {
+        return countByAllCompanies(null);
+    }// end of static method
 
     /**
-     * Recupera una istanza di Servizio usando la query standard della Primary Key
+     * Recupera il numero totale dei records della Entity
+     * Senza filtri.
+     * Use a specific manager (must be close by caller method)
      *
-     * @param id valore della Primary Key
-     * @return istanza di Servizio, null se non trovata
+     * @param manager the EntityManager to use
+     * @return il numero totale di record nella Entity
+     */
+    public static int countByAllCompanies(EntityManager manager) {
+        long totRec = AQuery.getCount(Servizio.class, manager);
+        return check(totRec);
+    }// end of static method
+
+
+    /**
+     * Recupera il numero totale dei records della Entity
+     * Filtrato sulla azienda corrente.
+     *
+     * @return il numero totale di record nella Entity
+     */
+    public static int countByCurrentCompany() {
+        return countByCurrentCompany(null);
+    }// end of static method
+
+    /**
+     * Recupera il numero totale dei records della Entity
+     * Filtrato sulla azienda corrente.
+     * Use a specific manager (must be close by caller method)
+     *
+     * @param manager the EntityManager to use
+     * @return il numero totale di record nella Entity
+     */
+    public static int countByCurrentCompany(EntityManager manager) {
+        return countBySingleCompany(WamCompany.getCurrent(), manager);
+    }// end of static method
+
+    /**
+     * Recupera il numero totale dei records della Entity
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @return il numero totale di record nella Entity
+     */
+    public static int countBySingleCompany(WamCompany company) {
+        return countBySingleCompany(company, null);
+    }// end of static method
+
+    /**
+     * Recupera il numero totale dei records della Entity
+     * Filtrato sulla azienda passata come parametro.
+     * Use a specific manager (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     * @return il numero totale di record nella Entity
+     */
+    public static int countBySingleCompany(WamCompany company, EntityManager manager) {
+        long totRec = CompanyQuery.getCount(Servizio.class, company, manager);
+        return check(totRec);
+    }// end of static method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Find entity by primary key
+    //------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Recupera una istanza della Entity usando la query standard della Primary Key
+     * Nessun filtro sulla company, perché la primary key è unica
+     *
+     * @param id valore (unico) della Primary Key
+     * @return istanza della Entity, null se non trovata
      */
     public static Servizio find(long id) {
-        Servizio instance = null;
-        BaseEntity entity = AQuery.queryById(Servizio.class, id);
+        return find(id, null);
+    }// end of static method
 
-        if (entity != null) {
-            if (entity instanceof Servizio) {
-                instance = (Servizio) entity;
-            }// end of if cycle
+
+    /**
+     * Recupera una istanza della Entity usando la query standard della Primary Key
+     * Nessun filtro sulla company, perché la primary key è unica
+     *
+     * @param id      valore (unico) della Primary Key
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    public static Servizio find(long id, EntityManager manager) {
+        BaseEntity entity = AQuery.find(Servizio.class, id, manager);
+        return check(entity);
+    }// end of static method
+
+    /**
+     * Controlla se l'istanza della Entity esiste ed è della classe corretta
+     *
+     * @param entity (BaseEntity) restituita dalla query generica
+     * @return istanza della Entity specifica, null se non trovata
+     */
+    private static Servizio check(BaseEntity entity) {
+        Servizio instance = null;
+
+        if (entity != null && entity instanceof Servizio) {
+            instance = (Servizio) entity;
         }// end of if cycle
 
         return instance;
-    }// end of method
+    }// end of static method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Find entity by SingularAttribute
+    //------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Recupera una lista (array) di tutti i records della Entity
+     * Recupera una istanza della Entity usando la query di una property specifica
      * Filtrato sulla azienda corrente.
      *
-     * @return lista di tutte le istanze di Funzione
+     * @param sigla di riferimento interna (obbligatoria)
+     * @return istanza della Entity, null se non trovata
      */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Servizio> findAll() {
-        return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class);
-    }// end of method
+    public static Servizio findBySigla(String sigla) {
+        return findBySigla(sigla, null);
+    }// end of static method
+
 
     /**
-     * Recupera una lista (array) di tutti i records della Entity
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla azienda corrente.
+     *
+     * @param sigla   di riferimento interna (obbligatoria)
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    public static Servizio findBySigla(String sigla, EntityManager manager) {
+        BaseEntity entity = CompanyQuery.queryOne(Funzione.class, Servizio_.sigla, sigla, manager);
+        return check(entity);
+    }// end of static method
+
+
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
      * Filtrato sulla azienda passata come parametro.
      *
-     * @param company croce di appartenenza
-     * @return lista di tutte le istanze di Funzione
+     * @param company di appartenenza (property della superclasse)
+     * @param sigla   di riferimento interna (obbligatoria)
+     * @return istanza della Entity, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Servizio> findAll(WamCompany company) {
-        ArrayList<Servizio> lista = null;
+    public static Servizio findByCompanyAndBySigla(WamCompany company, String sigla) {
+        return findByCompanyAndBySigla(company, sigla, null);
+    }// end of static method
 
-        Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
-        lista = (ArrayList<Servizio>) AQuery.getLista(Servizio.class, filter);
 
-        return lista;
-    }// end of method
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param sigla   di riferimento interna (obbligatoria)
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    @SuppressWarnings("unchecked")
+    public static Servizio findByCompanyAndBySigla(WamCompany company, String sigla, EntityManager manager) {
+        BaseEntity entity = CompanyQuery.queryOne(Servizio.class, Servizio_.sigla, sigla, manager, company);
+        return check(entity);
+    }// end of static method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Find entities (list)
+    //------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Senza filtri.
      *
-     * @return lista di tutte le istanze di Funzione
+     * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Servizio> findAllAll() {
-        return (ArrayList<Servizio>) AQuery.getLista(Servizio.class);
-    }// end of method
+    public static List<Servizio> findByAllCompanies() {
+        return findByAllCompanies(null);
+    }// end of static method
+
 
     /**
-     * Recupera una istanza di Servizio usando la query di una property specifica
+     * Recupera una lista (array) di tutti i records della Entity
+     * Senza filtri.
      *
-     * @param sigla valore della property Sigla
-     * @return istanza di Servizio, null se non trovata
-     * @deprecated perché manca la wamcompany e potrebbero esserci records multipli con la stessa sigla
+     * @param manager the EntityManager to use
+     * @return lista di tutte le entities
      */
-    public static Servizio findBySigla(String sigla) {
-        Servizio instance = null;
-        BaseEntity entity = AQuery.queryOne(Servizio.class, Servizio_.sigla, sigla);
+    @SuppressWarnings("unchecked")
+    public static List<Servizio> findByAllCompanies(EntityManager manager) {
+        return (List<Servizio>) AQuery.findAll(Servizio.class, manager);
+    }// end of static method
 
-        if (entity != null) {
-            if (entity instanceof Servizio) {
-                instance = (Servizio) entity;
-            }// end of if cycle
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla company corrente.
+     *
+     * @return lista di tutte le entities
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Servizio> findByCurrentCompany() {
+        return findByCurrentCompany(null);
+    }// end of static method
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla company corrente.
+     *
+     * @param manager the EntityManager to use
+     * @return lista di tutte le entities
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Servizio> findByCurrentCompany(EntityManager manager) {
+        return findBySingleCompany(WamCompany.getCurrent(), manager);
+    }// end of static method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla company passata come parametro.
+     * Se si arriva qui con una company null, vuol dire che non esiste la company corrente
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @return lista di tutte le entities
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Servizio> findBySingleCompany(WamCompany company) {
+        return findBySingleCompany(company, null);
+    }// end of static method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla company passata come parametro.
+     * Se si arriva qui con una company null, vuol dire che non esiste la company corrente
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     * @return lista di tutte le entities
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Servizio> findBySingleCompany(WamCompany company, EntityManager manager) {
+        if (company != null) {
+            return (List<Servizio>) AQuery.findAll(Servizio.class, CompanyEntity_.company, company, manager);
+        } else {
+            return new ArrayList<Servizio>();
+        }// end of if/else cycle
+    }// end of static method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // New and save
+    //------------------------------------------------------------------------------------------------------------------------
+
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @return istanza della Entity
+     */
+    public static Servizio crea(WamCompany company, String sigla, String descrizione) {
+        return crea(company, sigla, descrizione, (EntityManager) null);
+    }// end of static method
+
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param manager     the EntityManager to use
+     * @return istanza della Entity
+     */
+    public static Servizio crea(WamCompany company, String sigla, String descrizione, EntityManager manager) {
+        return crea(company, sigla, descrizione, 0, 0, false, 0, 0, manager);
+    }// end of static method
+
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
+     * @param colore      del gruppo (facoltativo)
+     * @param orario      servizio ad orario prefissato e fisso ogni giorno (facoltativo)
+     * @param oraInizio   del servizio (facoltativo, obbligatorio se orario è true)
+     * @param oraFine     del servizio (facoltativo, obbligatorio se orario è true)
+     * @return istanza della Entity
+     */
+    public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine) {
+        return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, (EntityManager) null);
+    }// end of static method
+
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
+     * @param colore      del gruppo (facoltativo)
+     * @param orario      servizio ad orario prefissato e fisso ogni giorno (facoltativo)
+     * @param oraInizio   del servizio (facoltativo, obbligatorio se orario è true)
+     * @param oraFine     del servizio (facoltativo, obbligatorio se orario è true)
+     * @param manager     the EntityManager to use
+     * @return istanza della Entity
+     */
+    public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine, EntityManager manager) {
+        return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, manager, (List<Funzione>) null);
+    }// end of static method
+
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
+     * @param colore      del gruppo (facoltativo)
+     * @param orario      servizio ad orario prefissato e fisso ogni giorno (facoltativo)
+     * @param oraInizio   del servizio (facoltativo, obbligatorio se orario è true)
+     * @param oraFine     del servizio (facoltativo, obbligatorio se orario è true)
+     * @param manager     the EntityManager to use
+     * @param funzioni    lista delle funzioni (facoltativa)
+     * @return istanza della Entity
+     */
+    public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine, EntityManager manager, List<Funzione> funzioni) {
+        if (funzioni!=null) {
+            return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, manager, funzioni.toArray(new Funzione[funzioni.size()]));
+        } else {
+            return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, manager, (Funzione)null);
+        }// end of if/else cycle
+    }// end of static method
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param descrizione per il tabellone (obbligatoria)
+     * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
+     * @param colore      del gruppo (facoltativo)
+     * @param orario      servizio ad orario prefissato e fisso ogni giorno (facoltativo)
+     * @param oraInizio   del servizio (facoltativo, obbligatorio se orario è true)
+     * @param oraFine     del servizio (facoltativo, obbligatorio se orario è true)
+     * @param manager     the EntityManager to use
+     * @param funzioni    lista delle funzioni (facoltativa)
+     * @return istanza della Entity
+     */
+    public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine, EntityManager manager, Funzione... funzioni) {
+        Servizio servizio = Servizio.findByCompanyAndBySigla(company, sigla, manager);
+
+        if (servizio == null) {
+            servizio = new Servizio(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine);
+
+            if (funzioni != null) {
+                for (int k = 0; k < funzioni.length; k++) {
+//                    servizio.servizioFunzioni.add(new ServizioFunzione(company, servizio, funzioni[k], k < obbligatori));
+                }// end of for cycle
+            }// fine del blocco if
+
+            servizio.save(company, manager);
         }// end of if cycle
 
-        return instance;
-    }// end of method
+        return servizio;
+    }// end of static method
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Delete
+    //------------------------------------------------------------------------------------------------------------------------
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Save
+    //------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Delete all the records for the domain class
+     * Bulk delete records with CriteriaDelete
+     */
+    public static void deleteAll() {
+        EntityManager manager = EM.createEntityManager();
+        deleteAll(manager);
+        manager.close();
+    }// end of static method
+
+    /**
+     * Delete all the records for the domain class
+     * Bulk delete records with CriteriaDelete
+     *
+     * @param manager the EntityManager to use
+     */
+    public static void deleteAll(EntityManager manager) {
+        AQuery.deleteAll(Servizio.class, manager);
+    }// end of static method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Getter and setter
+    //------------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------------
+    // Utilities
+    //------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Recupera una istanza di Servizio usando la query di tutte e sole le property obbligatorie
@@ -287,94 +625,151 @@ public class Servizio extends WamCompanyEntity {
     }// end of method
 
     /**
-     * Creazione iniziale di un servizio
-     * Lo crea SOLO se non esiste già
+     * Implementa come business logic, la obbligatorietà della company
+     * <p>
      *
-     * @param company     selezionata
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @return istanza di Servizio
+     * @return true se esiste, false se non esiste
      */
-    public static Servizio crea(WamCompany company, String sigla, String descrizione) {
-        return crea(company, null, sigla, descrizione);
-    }// end of static method
+    private boolean checkCompany() {
+        String caption = "La funzione non può essere accettata, perché manca la company che è obbligatoria";
+
+        if (getCompany() != null) {
+            return true;
+        } else {
+            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
+    } // end of method
 
     /**
-     * Creazione iniziale di un servizio
-     * Lo crea SOLO se non esiste già
+     * Implementa come business logic, la obbligatorietà della sigla
+     * <p>
      *
-     * @param company     selezionata
-     * @param manager     the EntityManager to use
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @return istanza di Servizio
+     * @return true se esiste, false se non esiste
      */
-    public static Servizio crea(WamCompany company, EntityManager manager, String sigla, String descrizione) {
-        Servizio servizio = Servizio.find(company, sigla);
+    private boolean checkSigla() {
+        String caption = "La funzione non può essere accettata, perché manca la sigla che è obbligatoria";
 
-        if (servizio == null) {
-            servizio = new Servizio(company, sigla, descrizione);
-            servizio.save(manager);
+        if (getSigla() != null && !getSigla().equals("")) {
+            return true;
+        } else {
+            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
+    } // end of method
+
+    /**
+     * Implementa come business logic, la obbligatorietà della descrizione
+     * <p>
+     *
+     * @return true se esiste, false se non esiste
+     */
+    private boolean checkDescrizione() {
+        String caption = "La funzione non può essere accettata, perché manca la descrizione che è obbligatoria";
+
+        if (getDescrizione() != null && !getDescrizione().equals("")) {
+            return true;
+        } else {
+            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
+    } // end of method
+
+    /**
+     * Controlla l'esistenza della chiave univoca, PRIMA di salvare il valore nel DB
+     * La crea se non esiste già
+     *
+     * @param company azienda da filtrare
+     */
+    private boolean checkChiave(WamCompany company) {
+        boolean valido = false;
+
+        if (getSigla() == null || getSigla().equals("")) {
+            codeCompanyUnico = null;
+        } else {
+            if (company != null) {
+                codeCompanyUnico = company.getCompanyCode();
+            }// end of if cycle
+            codeCompanyUnico += getSigla();
+            valido = true;
+        }// end of if/else cycle
+
+        return valido;
+    } // end of method
+
+    /**
+     * Appena prima di persistere sul DB
+     * Elimino l'annotazione ed uso una chiamata dal metodo save(),
+     * perché altrimenti non riuscirei a passare il parametro manager
+     *
+     * @param company azienda da filtrare
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     *                //@PrePersist
+     */
+    private void checkOrdine(WamCompany company, EntityManager manager) {
+        if (getOrdine() == 0) {
+            int max = WamQuery.maxOrdineServizio(company, manager);
+            setOrdine(max + 1);
+        }// end of if cycle
+    }// end of method
+
+    /**
+     * Saves this entity to the database using a local EntityManager
+     * <p>
+     *
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    @Override
+    public BaseEntity save() {
+        return this.save(null);
+    }// end of method
+
+    /**
+     * Saves this entity to the database using a local EntityManager
+     * <p>
+     *
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    @Override
+    public BaseEntity save(EntityManager manager) {
+        return this.save(getWamCompany(), manager);
+    }// end of method
+
+    /**
+     * Saves this entity to the database.
+     * <p>
+     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
+     * Otherwise, a new transaction is used to save this single entity.
+     *
+     * @param company azienda da filtrare
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    public Servizio save(WamCompany company, EntityManager manager) {
+        boolean valido = true;
+
+        valido = this.checkCompany();
+        if (valido) {
+            valido = this.checkSigla();
+        }// end of if cycle
+        if (valido) {
+            valido = this.checkDescrizione();
+        }// end of if cycle
+        if (valido) {
+            valido = this.checkChiave(company);
+        }// end of if cycle
+        if (valido) {
+            this.checkOrdine(company, manager);
         }// end of if cycle
 
-        return servizio;
-    }// end of static method
+        if (valido) {
+            return (Servizio) super.save(manager);
+        } else {
+            return null;
+        }// end of if/else cycle
 
-    /**
-     * Creazione iniziale di un servizio
-     * Lo crea SOLO se non esiste già
-     *
-     * @param company     selezionata
-     * @param manager     the EntityManager to use
-     * @param ordine      di presentazione nel tabellone
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @param oraInizio   del servizio (facoltativo)
-     * @param oraFine     del servizio (facoltativo)
-     * @param orario      servizio ad orario prefissato e fisso ogni giorno
-     * @param colore      del gruppo (facoltativo)
-     * @return istanza di Servizio
-     */
-    public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, ArrayList<Funzione> listaFunz) {
-        return crea(company, manager, ordine, sigla, descrizione, oraInizio, oraFine, orario, colore, 0, listaFunz.toArray(new Funzione[listaFunz.size()]));
-    }// end of static method
-
-    /**
-     * Creazione iniziale di un servizio
-     * Lo crea SOLO se non esiste già
-     *
-     * @param company     selezionata
-     * @param manager     the EntityManager to use
-     * @param ordine      di presentazione nel tabellone
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @param oraInizio   del servizio (facoltativo)
-     * @param oraFine     del servizio (facoltativo)
-     * @param orario      servizio ad orario prefissato e fisso ogni giorno
-     * @param colore      del gruppo (facoltativo)
-     * @param obbligatori numero delle funzioni obbligatorie (facoltativa)
-     * @param funzioni    lista delle funzioni (facoltativa)
-     * @return istanza di Servizio
-     */
-    public static Servizio crea(WamCompany company, EntityManager manager, int ordine, String sigla, String descrizione, int oraInizio, int oraFine, boolean orario, int colore, int obbligatori, Funzione... funzioni) {
-        Servizio servizio = Servizio.find(company, sigla);
-
-        if (servizio == null) {
-            servizio = new Servizio(company, sigla, descrizione, ordine, oraInizio, oraFine);
-            servizio.setOrario(orario);
-            servizio.setColore(colore);
-
-            if (funzioni != null) {
-                for (int k = 0; k < funzioni.length; k++) {
-                    servizio.servizioFunzioni.add(new ServizioFunzione(company, servizio, funzioni[k], k < obbligatori));
-                }// end of for cycle
-            }// fine del blocco if
-
-            servizio = (Servizio) servizio.save(manager);
-        }// end of if cycle
-
-        return servizio;
-    }// end of static method
+    }// end of method
 
     @PrePersist
     protected void prePersist() {
