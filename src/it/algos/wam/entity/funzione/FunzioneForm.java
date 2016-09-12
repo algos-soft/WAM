@@ -11,14 +11,10 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.field.RelatedComboField;
-import it.algos.webbase.web.field.TextArea;
 import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibSession;
-import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
-
-import javax.persistence.metamodel.Attribute;
 
 /**
  * Created by alex on 18-04-2016.
@@ -29,6 +25,14 @@ public class FunzioneForm extends ModuleForm {
     private Button iconButton;
 
 
+    /**
+     * The form used to edit an item.
+     * <p>
+     * Invoca la superclasse passando i parametri:
+     *
+     * @param item   singola istanza della classe (obbligatorio in modifica e nullo per newRecord)
+     * @param module di riferimento (obbligatorio)
+     */
     public FunzioneForm(Item item, ModulePop module) {
         super(item, module);
     }// end of constructor
@@ -117,24 +121,6 @@ public class FunzioneForm extends ModuleForm {
 
         return layout;
     }// end of method
-
-
-//    @Override
-//    protected Field createField(Attribute attr) {
-//        Field field;
-//
-//        if (attr.equals(Funzione_.descrizione)) {
-//            TextArea area = new TextArea();
-//            area.setColumns(30);
-//            area.setRows(1);
-//            area.setCaption(LibText.primaMaiuscola(Funzione_.descrizione.getName()));
-//            field = area;
-//        } else {
-//            field = super.createField(attr);
-//        }// end of if/else cycle
-//
-//        return field;
-//    }// end of method
 
     /**
      * Recupera il glifo dal field

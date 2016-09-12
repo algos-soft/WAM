@@ -25,8 +25,8 @@ public class VolontarioForm extends ModuleForm {
      * <p>
      * Invoca la superclasse passando i parametri:
      *
-     * @param item   (facoltativo) singola istanza della classe
-     * @param module (obbligatorio) di riferimento
+     * @param item   singola istanza della classe (obbligatorio in modifica e nullo per newRecord)
+     * @param module di riferimento (obbligatorio)
      */
     public VolontarioForm(Item item, ModulePop module) {
         super(item, module);
@@ -89,20 +89,32 @@ public class VolontarioForm extends ModuleForm {
 
     }// end of method
 
+    /**
+     * Create the detail component (the upper part containing the fields).
+     * <p>
+     * Usa il FormLayout che ha le label a sinsitra dei campi (standard)
+     * Se si vogliono le label sopra i campi, sovrascivere questo metodo e usare un VerticalLayout
+     *
+     * @return the detail component containing the fields
+     */
     @Override
     protected Component createComponent() {
         VerticalLayout layout = new VerticalLayout();
-
-        layout.addComponent(creaCompDetail());
         layout.setMargin(true);
+        layout.setSpacing(true);
 
-        return layout;
+        return creaCompDetail(layout);
     }// end of method
 
-    private Component creaCompDetail() {
-        VerticalLayout layout = new VerticalLayout();
+    /**
+     * Crea il componente che visualizza il dettaglio
+     * Retrieve the fields from the binder and place them in the UI.
+     *
+     * @param layout per visualizzare i componenti
+     * @return il componente dettagli
+     */
+    private Component creaCompDetail(VerticalLayout layout) {
         HorizontalLayout layoutBoxFunz;
-        layout.setSpacing(true);
         Field field;
         Volontario volontario;
         List<VolontarioFunzione> listaFunzioni = null;
@@ -111,6 +123,8 @@ public class VolontarioForm extends ModuleForm {
 
         field = getField(Volontario_.nome.getName());
         layout.addComponent(field);
+
+        TextField fNome = (TextField) getField(Volontario_.nome);
 
         field = getField(Volontario_.cognome.getName());
         layout.addComponent(field);

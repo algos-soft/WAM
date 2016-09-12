@@ -2,6 +2,7 @@ package it.algos.wam.entity.volontario;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
+import com.vaadin.ui.Notification;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
@@ -919,18 +920,15 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         boolean valido;
 
         valido = super.checkCompany();
-//        if (valido) {
-//            valido = this.checkSigla();
-//        }// end of if cycle
-//        if (valido) {
-//            valido = this.checkDescrizione();
-//        }// end of if cycle
+        if (valido) {
+            valido = this.checkNome();
+        }// end of if cycle
+        if (valido) {
+            valido = this.checkCognome();
+        }// end of if cycle
         if (valido) {
             valido = this.checkChiave(company);
         }// end of if cycle
-//        if (valido) {
-//            this.checkOrdine(company, manager);
-//        }// end of if cycle
 
         if (valido) {
             return (Volontario) super.save(manager);
@@ -943,6 +941,40 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     //------------------------------------------------------------------------------------------------------------------------
     // Utilities
     //------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Implementa come business logic, la obbligatorietà del nome
+     * <p>
+     *
+     * @return true se esiste, false se non esiste
+     */
+    private boolean checkNome() {
+        String caption = "La funzione non può essere accettata, perché manca il nome che è obbligatorio";
+
+        if (getNome() != null && !getNome().equals("")) {
+            return true;
+        } else {
+            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
+    } // end of method
+
+    /**
+     * Implementa come business logic, la obbligatorietà del cognome
+     * <p>
+     *
+     * @return true se esiste, false se non esiste
+     */
+    private boolean checkCognome() {
+        String caption = "La funzione non può essere accettata, perché manca il cognome che è obbligatorio";
+
+        if (getCognome() != null && !getCognome().equals("")) {
+            return true;
+        } else {
+            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
+    } // end of method
 
     /**
      * Controlla l'esistenza della chiave univoca, PRIMA di salvare il valore nel DB

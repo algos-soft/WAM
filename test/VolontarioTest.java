@@ -107,7 +107,7 @@ public class VolontarioTest extends WamBaseTest {
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
-        volontarioUno = new Volontario(null, "", COGNOME_UNO);
+        volontarioUno = new Volontario(companyUno, "", COGNOME_UNO);
         try { // prova ad eseguire il codice
             volontarioUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
@@ -118,7 +118,7 @@ public class VolontarioTest extends WamBaseTest {
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
-        volontarioUno = new Volontario(null, NOME_UNO, "");
+        volontarioUno = new Volontario(companyUno, NOME_UNO, "");
         try { // prova ad eseguire il codice
             volontarioUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
@@ -129,7 +129,7 @@ public class VolontarioTest extends WamBaseTest {
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
-        volontarioUno = new Volontario(null, "", "");
+        volontarioUno = new Volontario(companyUno, "", "");
         try { // prova ad eseguire il codice
             volontarioUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
@@ -138,7 +138,6 @@ public class VolontarioTest extends WamBaseTest {
         assertNull(volontarioUno.getId());
         numRecUnoNew = Volontario.countBySingleCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
-
 
         // parametri obbligatori
         volontarioUno = new Volontario(companyUno, NOME_UNO, COGNOME_UNO);

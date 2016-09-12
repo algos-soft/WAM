@@ -105,7 +105,7 @@ public class ServizioTest extends WamBaseTest {
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
-        servizioUno = new Servizio(null, "", DESCRIZIONE_UNO);
+        servizioUno = new Servizio(companyUno, "", DESCRIZIONE_UNO);
         try { // prova ad eseguire il codice
             servizioUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
@@ -116,7 +116,7 @@ public class ServizioTest extends WamBaseTest {
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
-        servizioUno = new Servizio(null, SIGLA_UNO, "");
+        servizioUno = new Servizio(companyUno, SIGLA_UNO, "");
         try { // prova ad eseguire il codice
             servizioUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
@@ -127,7 +127,7 @@ public class ServizioTest extends WamBaseTest {
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
-        servizioUno = new Servizio(null, "", "");
+        servizioUno = new Servizio(companyUno, "", "");
         try { // prova ad eseguire il codice
             servizioUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore

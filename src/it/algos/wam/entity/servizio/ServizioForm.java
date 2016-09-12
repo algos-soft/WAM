@@ -43,9 +43,17 @@ public class ServizioForm extends ModuleForm {
     private ColorPicker picker;
 
 
+    /**
+     * The form used to edit an item.
+     * <p>
+     * Invoca la superclasse passando i parametri:
+     *
+     * @param item   singola istanza della classe (obbligatorio in modifica e nullo per newRecord)
+     * @param module di riferimento (obbligatorio)
+     */
     public ServizioForm(Item item, ModulePop module) {
         super(item, module);
-    }
+    }// end of constructor
 
     @Override
     protected void init() {
@@ -67,13 +75,13 @@ public class ServizioForm extends ModuleForm {
      *
      * @return the detail component containing the fields
      */
+    @Override
     protected Component createComponent() {
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
         layout.setSpacing(true);
 
-
-        sfEditors = new ArrayList();
+        sfEditors = new ArrayList<>();
 
         return creaCompDetail(layout);
     }// end of method
@@ -81,7 +89,9 @@ public class ServizioForm extends ModuleForm {
 
     /**
      * Crea il componente che visualizza il dettaglio
+     * Retrieve the fields from the binder and place them in the UI.
      *
+     * @param layout per visualizzare i componenti
      * @return il componente dettagli
      */
     private Component creaCompDetail(VerticalLayout layout) {
@@ -173,7 +183,7 @@ public class ServizioForm extends ModuleForm {
         layout.addComponent(bNuova);
 
         return layout;
-    }
+    }// end of method
 
 
     private Servizio getServizio() {
