@@ -189,6 +189,7 @@ public class WamUI extends UI {
         String password = request.getParameter("password");
         if (utente != null && !utente.equals("")) {
             List<Volontario> militiPerCognome = (List<Volontario>) CompanyQuery.queryList(Volontario.class, Volontario_.cognome, utente);
+//           Object alfa= CompanyQuery.queryOne(Volontario.class,Volontario_.cognome,utente);
             if (militiPerCognome != null && militiPerCognome.size() > 0) {
                 Volontario volontario = militiPerCognome.get(0);
                 if (volontario.getPassword().equals(password)) {

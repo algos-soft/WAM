@@ -10,12 +10,17 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
+import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.Lib;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.util.ArrayList;
@@ -80,20 +85,53 @@ public class ServizioForm extends ModuleForm {
      * @return il componente dettagli
      */
     private Component creaCompDetail(VerticalLayout layout) {
-        Field fsigla = getField(Servizio_.sigla);
-        fsigla.setWidth("8em");
-        fsigla.focus();
-
-        Field fdesc = getField(Servizio_.descrizione);
-        fdesc.setWidth("16em");
+        TextField fSigla = (TextField) getField(Funzione_.sigla);
+        fSigla.setWidth("8em");
+        fSigla.focus();
+        TextField fCodeCompanyUnico = (TextField) getField(Funzione_.codeCompanyUnico);
+        fCodeCompanyUnico.setWidth("14em");
+        fCodeCompanyUnico.setEnabled(false);
+        TextField fDescrizione = (TextField) getField(Funzione_.descrizione);
+        fDescrizione.setWidth("22.5em");
+        IntegerField fOrdine = (IntegerField) getField(Funzione_.ordine);
+        fOrdine.setEnabled(false);
 
         picker = new ServizioColorPicker();
+        picker.setWidth("8em");
 
-        HorizontalLayout hl = new HorizontalLayout(fsigla, fdesc, picker);
+        // selezione della company (solo per developer)
+        if (LibSession.isDeveloper()) {
+            // popup di selezione (solo per nuovo record)
+            if (isNewRecord()) {
+                RelatedComboField fCompany = (RelatedComboField) getField(CompanyEntity_.company);
+                fCompany.setWidth("8em");
+                layout.addComponent(fCompany);
+            } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
+                BaseEntity entity = getEntity();
+                WamCompany company = null;
+                Servizio serv = null;
+                if (entity != null && entity instanceof Servizio) {
+                    serv = (Servizio) entity;
+                    company = (WamCompany) serv.getCompany();
+                    TextField fCompany = new TextField("Company", company.getCompanyCode());
+                    fCompany.setWidth("8em");
+                    fCompany.setEnabled(false);
+                    HorizontalLayout h = new HorizontalLayout(fCompany, fCodeCompanyUnico);
+                    h.setSpacing(true);
+                    layout.addComponent(h);
+                }// end of if cycle
+            }// end of if/else cycle
+        }// end of if cycle
+
+        HorizontalLayout hl = new HorizontalLayout(fSigla, picker);
+        if (!isNewRecord()) {
+            hl.addComponent(fOrdine);
+        }// end of if cycle
         hl.setComponentAlignment(picker, Alignment.BOTTOM_CENTER);
 
         hl.setSpacing(true);
         layout.addComponent(hl);
+        layout.addComponent(fDescrizione);
 
         fOrarioPredefinito = getField(Servizio_.orario);
         fOrarioPredefinito.setCaption("Orario predefinito");

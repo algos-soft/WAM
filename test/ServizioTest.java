@@ -104,6 +104,39 @@ public class ServizioTest extends WamBaseTest {
         numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
+        // parametro obbligatorio vuoto
+        servizioUno = new Servizio(null, "", DESCRIZIONE_UNO);
+        try { // prova ad eseguire il codice
+            servizioUno.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(servizioUno);
+        assertNull(servizioUno.getId());
+        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld);
+
+        // parametro obbligatorio vuoto
+        servizioUno = new Servizio(null, SIGLA_UNO, "");
+        try { // prova ad eseguire il codice
+            servizioUno.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(servizioUno);
+        assertNull(servizioUno.getId());
+        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld);
+
+        // parametro obbligatorio vuoto
+        servizioUno = new Servizio(null, "", "");
+        try { // prova ad eseguire il codice
+            servizioUno.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(servizioUno);
+        assertNull(servizioUno.getId());
+        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld);
+
         // parametri obbligatori
         servizioUno = new Servizio(companyUno, SIGLA_UNO, DESCRIZIONE_UNO);
         servizioUno.save(companyUno, MANAGER);

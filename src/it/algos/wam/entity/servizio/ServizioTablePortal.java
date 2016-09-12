@@ -9,7 +9,7 @@ import it.algos.webbase.web.module.ModulePop;
  * Created by alex on 7-04-2016.
  * .
  */
-public class ServizioTablePortal extends WamTablePortalSposta  {
+public class ServizioTablePortal extends WamTablePortalSposta {
 
 
     public ServizioTablePortal(ModulePop modulo) {

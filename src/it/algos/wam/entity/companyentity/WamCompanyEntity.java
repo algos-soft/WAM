@@ -1,5 +1,6 @@
 package it.algos.wam.entity.companyentity;
 
+import com.vaadin.ui.Notification;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity;
@@ -55,5 +56,27 @@ public abstract class WamCompanyEntity extends CompanyEntity {
 
         return company;
     }// end of method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Utilities
+    //------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Implementa come business logic, la obbligatorietà della company
+     * <p>
+     *
+     * @return true se esiste, false se non esiste
+     */
+    protected boolean checkCompany() {
+        String caption = "La funzione non può essere accettata, perché manca la company che è obbligatoria";
+
+        if (getCompany() != null) {
+            return true;
+        } else {
+            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
+    } // end of method
 
 }// end of abstract domain class

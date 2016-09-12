@@ -5,7 +5,6 @@ import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamModSposta;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.iscrizione.Iscrizione_;

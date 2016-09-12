@@ -43,12 +43,15 @@ public class FunzioneForm extends ModuleForm {
     @Override
     protected Component creaCompDetail(FormLayout layout) {
         TextField fSigla = (TextField) getField(Funzione_.sigla);
+        fSigla.setWidth("8em");
+        fSigla.focus();
         TextField fCodeCompanyUnico = (TextField) getField(Funzione_.codeCompanyUnico);
+        fCodeCompanyUnico.setWidth("16em");
         fCodeCompanyUnico.setEnabled(false);
-        TextArea fDescrizione = (TextArea) getField(Funzione_.descrizione);
+        TextField fDescrizione = (TextField) getField(Funzione_.descrizione);
+        fDescrizione.setWidth("24em");
         IntegerField fOrdine = (IntegerField) getField(Funzione_.ordine);
         fOrdine.setEnabled(false);
-        fSigla.focus();
 
         iconButton = new Button("Icona");
         iconButton.setHtmlContentAllowed(true);
@@ -87,6 +90,7 @@ public class FunzioneForm extends ModuleForm {
             // popup di selezione (solo per nuovo record)
             if (isNewRecord()) {
                 RelatedComboField fCompany = (RelatedComboField) getField(CompanyEntity_.company);
+                fCompany.setWidth("8em");
                 layout.addComponent(fCompany);
             } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
                 BaseEntity entity = getEntity();
@@ -96,6 +100,7 @@ public class FunzioneForm extends ModuleForm {
                     funz = (Funzione) entity;
                     company = (WamCompany) funz.getCompany();
                     TextField fCompany = new TextField("Company", company.getCompanyCode());
+                    fCompany.setWidth("8em");
                     fCompany.setEnabled(false);
                     layout.addComponent(fCompany);
                     layout.addComponent(fCodeCompanyUnico);
@@ -114,22 +119,22 @@ public class FunzioneForm extends ModuleForm {
     }// end of method
 
 
-    @Override
-    protected Field createField(Attribute attr) {
-        Field field;
-
-        if (attr.equals(Funzione_.descrizione)) {
-            TextArea area = new TextArea();
-            area.setColumns(30);
-            area.setRows(1);
-            area.setCaption(LibText.primaMaiuscola(Funzione_.descrizione.getName()));
-            field = area;
-        } else {
-            field = super.createField(attr);
-        }// end of if/else cycle
-
-        return field;
-    }// end of method
+//    @Override
+//    protected Field createField(Attribute attr) {
+//        Field field;
+//
+//        if (attr.equals(Funzione_.descrizione)) {
+//            TextArea area = new TextArea();
+//            area.setColumns(30);
+//            area.setRows(1);
+//            area.setCaption(LibText.primaMaiuscola(Funzione_.descrizione.getName()));
+//            field = area;
+//        } else {
+//            field = super.createField(attr);
+//        }// end of if/else cycle
+//
+//        return field;
+//    }// end of method
 
     /**
      * Recupera il glifo dal field

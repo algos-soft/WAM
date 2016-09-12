@@ -71,6 +71,7 @@ public class ServizioTable extends WamTable {
         if (LibSession.isDeveloper()) {
             return new Object[]{
                     WamCompanyEntity_.company,
+                    Servizio_.codeCompanyUnico,
                     Servizio_.ordine,
                     Servizio_.sigla,
                     Servizio_.descrizione,

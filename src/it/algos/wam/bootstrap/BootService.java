@@ -86,7 +86,7 @@ public abstract class BootService {
         listaFunzioni = creaFunzioni(company, manager);
         listaServizi = creaServizi(company, manager, listaFunzioni);
 //        listaVolontari = creaVolontari(company, manager, listaFunzioni);
-//
+
 //        if (creaTurni) {
 //            listaTurni = creaTurniVuoti(company, manager, listaServizi);
 //        }// end of if cycle

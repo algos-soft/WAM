@@ -51,10 +51,10 @@ public class Servizio extends WamCompanyEntity {
     private String sigla = "";
 
     //--sigla di codifica interna specifica per company (obbligatoria, unica)
-    //--calcolata -> codeCompanyUnico = company.companyCode + funzione.sigla;
+    //--calcolata -> codeCompanyUnico = company.companyCode + funzione.sigla (20+20=40);
     @NotEmpty
     @NotNull
-    @Column(length = 80, unique = true)
+    @Column(length = 40, unique = true)
     @Index
     private String codeCompanyUnico;
 
@@ -91,7 +91,8 @@ public class Servizio extends WamCompanyEntity {
 
     @OneToMany(mappedBy = "servizio", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
-    private List<Turno> turni = new ArrayList();
+    private List<Turno> turni = new ArrayList<>();
+
 
     // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
     // alla lista e non ancora registrati (e così per tutte le operazioni dell'EntityManager)
@@ -116,6 +117,7 @@ public class Servizio extends WamCompanyEntity {
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
+     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      * L'ordine di presentazione nel tabellone viene inserito in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
@@ -129,6 +131,7 @@ public class Servizio extends WamCompanyEntity {
 
     /**
      * Costruttore ridotto
+     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
      * @param sigla       sigla di riferimento interna (obbligatoria)
@@ -143,6 +146,7 @@ public class Servizio extends WamCompanyEntity {
 
     /**
      * Costruttore completo
+     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
      * @param sigla       sigla di riferimento interna (obbligatoria)
@@ -326,7 +330,6 @@ public class Servizio extends WamCompanyEntity {
      * @param sigla   di riferimento interna (obbligatoria)
      * @return istanza della Entity, null se non trovata
      */
-    @SuppressWarnings("unchecked")
     public static Servizio findByCompanyAndBySigla(WamCompany company, String sigla) {
         return findByCompanyAndBySigla(company, sigla, null);
     }// end of static method
@@ -341,7 +344,6 @@ public class Servizio extends WamCompanyEntity {
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
-    @SuppressWarnings("unchecked")
     public static Servizio findByCompanyAndBySigla(WamCompany company, String sigla, EntityManager manager) {
         BaseEntity entity = CompanyQuery.queryOne(Servizio.class, Servizio_.sigla, sigla, manager, company);
         return check(entity);
@@ -358,7 +360,6 @@ public class Servizio extends WamCompanyEntity {
      *
      * @return lista di tutte le entities
      */
-    @SuppressWarnings("unchecked")
     public static List<Servizio> findByAllCompanies() {
         return findByAllCompanies(null);
     }// end of static method
@@ -383,10 +384,10 @@ public class Servizio extends WamCompanyEntity {
      *
      * @return lista di tutte le entities
      */
-    @SuppressWarnings("unchecked")
     public static List<Servizio> findByCurrentCompany() {
         return findByCurrentCompany(null);
     }// end of static method
+
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
@@ -395,7 +396,6 @@ public class Servizio extends WamCompanyEntity {
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
      */
-    @SuppressWarnings("unchecked")
     public static List<Servizio> findByCurrentCompany(EntityManager manager) {
         return findBySingleCompany(WamCompany.getCurrent(), manager);
     }// end of static method
@@ -409,7 +409,6 @@ public class Servizio extends WamCompanyEntity {
      * @param company di appartenenza (property della superclasse)
      * @return lista di tutte le entities
      */
-    @SuppressWarnings("unchecked")
     public static List<Servizio> findBySingleCompany(WamCompany company) {
         return findBySingleCompany(company, null);
     }// end of static method
@@ -429,7 +428,7 @@ public class Servizio extends WamCompanyEntity {
         if (company != null) {
             return (List<Servizio>) AQuery.findAll(Servizio.class, CompanyEntity_.company, company, manager);
         } else {
-            return new ArrayList<Servizio>();
+            return new ArrayList<>();
         }// end of if/else cycle
     }// end of static method
 
@@ -524,10 +523,10 @@ public class Servizio extends WamCompanyEntity {
      * @return istanza della Entity
      */
     public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine, EntityManager manager, List<Funzione> funzioni) {
-        if (funzioni!=null) {
+        if (funzioni != null) {
             return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, manager, funzioni.toArray(new Funzione[funzioni.size()]));
         } else {
-            return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, manager, (Funzione)null);
+            return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, manager, (Funzione) null);
         }// end of if/else cycle
     }// end of static method
 
@@ -565,12 +564,9 @@ public class Servizio extends WamCompanyEntity {
         return servizio;
     }// end of static method
 
-    //------------------------------------------------------------------------------------------------------------------------
-    // Delete
-    //------------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------------
-    // Save
+    // Delete
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -594,19 +590,13 @@ public class Servizio extends WamCompanyEntity {
     }// end of static method
 
 
-    //------------------------------------------------------------------------------------------------------------------------
-    // Getter and setter
-    //------------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------------
-    // Utilities
-    //------------------------------------------------------------------------------------------------------------------------
-
     /**
      * Recupera una istanza di Servizio usando la query di tutte e sole le property obbligatorie
      *
      * @param company selezionata
      * @param sigla   valore della property Sigla
      * @return istanza di Servizio, null se non trovata
+     * @deprecated
      */
     @SuppressWarnings("unchecked")
     public static Servizio find(WamCompany company, String sigla) {
@@ -624,22 +614,174 @@ public class Servizio extends WamCompanyEntity {
         return instance;
     }// end of method
 
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Getter and setter
+    //------------------------------------------------------------------------------------------------------------------------
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }// end of getter method
+
+    @Override
+    public String toString() {
+        return sigla;
+    }// end of method
+
+    public String getSigla() {
+        return sigla;
+    }// end of getter method
+
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
+    }//end of setter method
+
+    public String getCodeCompanyUnico() {
+        return codeCompanyUnico;
+    }// end of getter method
+
+    public void setCodeCompanyUnico(String codeCompanyUnico) {
+        this.codeCompanyUnico = codeCompanyUnico;
+    }//end of setter method
+
+    public String getDescrizione() {
+        return descrizione;
+    }// end of getter method
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }//end of setter method
+
+    public int getOrdine() {
+        return ordine;
+    }// end of getter method
+
+    public void setOrdine(int ordine) {
+        this.ordine = ordine;
+    }//end of setter method
+
+    public int getColore() {
+        return colore;
+    }// end of getter method
+
+    public void setColore(int colore) {
+        this.colore = colore;
+    }//end of setter method
+
+    public boolean isOrario() {
+        return orario;
+    }// end of getter method
+
+    public void setOrario(boolean orario) {
+        this.orario = orario;
+    }//end of setter method
+
+    public int getOraInizio() {
+        return oraInizio;
+    }// end of getter method
+
+    public void setOraInizio(int oraInizio) {
+        this.oraInizio = oraInizio;
+    }//end of setter method
+
+    public int getMinutiInizio() {
+        return minutiInizio;
+    }// end of getter method
+
+    public void setMinutiInizio(int minutiInizio) {
+        this.minutiInizio = minutiInizio;
+    }//end of setter method
+
+    public int getOraFine() {
+        return oraFine;
+    }// end of getter method
+
+    public void setOraFine(int oraFine) {
+        this.oraFine = oraFine;
+    }//end of setter method
+
+    public int getMinutiFine() {
+        return minutiFine;
+    }// end of getter method
+
+    public void setMinutiFine(int minutiFine) {
+        this.minutiFine = minutiFine;
+    }//end of setter method
+
+    public List<Turno> getTurni() {
+        return turni;
+    }// end of getter method
+
+    public void setTurni(List<Turno> turni) {
+        this.turni = turni;
+    }//end of setter method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Save
+    //------------------------------------------------------------------------------------------------------------------------
+
     /**
-     * Implementa come business logic, la obbligatorietà della company
+     * Saves this entity to the database using a local EntityManager
      * <p>
      *
-     * @return true se esiste, false se non esiste
+     * @return the merged Entity (new entity, unmanaged, has the id)
      */
-    private boolean checkCompany() {
-        String caption = "La funzione non può essere accettata, perché manca la company che è obbligatoria";
+    @Override
+    public BaseEntity save() {
+        return this.save(null);
+    }// end of method
 
-        if (getCompany() != null) {
-            return true;
+    /**
+     * Saves this entity to the database using a local EntityManager
+     * <p>
+     *
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    @Override
+    public BaseEntity save(EntityManager manager) {
+        return this.save(getWamCompany(), manager);
+    }// end of method
+
+    /**
+     * Saves this entity to the database.
+     * <p>
+     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
+     * Otherwise, a new transaction is used to save this single entity.
+     *
+     * @param company azienda da filtrare
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    public Servizio save(WamCompany company, EntityManager manager) {
+        boolean valido;
+
+        valido = super.checkCompany();
+        if (valido) {
+            valido = this.checkSigla();
+        }// end of if cycle
+        if (valido) {
+            valido = this.checkDescrizione();
+        }// end of if cycle
+        if (valido) {
+            valido = this.checkChiave(company);
+        }// end of if cycle
+        if (valido) {
+            this.checkOrdine(company, manager);
+        }// end of if cycle
+
+        if (valido) {
+            return (Servizio) super.save(manager);
         } else {
-            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
-            return false;
+            return null;
         }// end of if/else cycle
-    } // end of method
+
+    }// end of method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Utilities
+    //------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Implementa come business logic, la obbligatorietà della sigla
@@ -714,72 +856,6 @@ public class Servizio extends WamCompanyEntity {
     }// end of method
 
     /**
-     * Saves this entity to the database using a local EntityManager
-     * <p>
-     *
-     * @return the merged Entity (new entity, unmanaged, has the id)
-     */
-    @Override
-    public BaseEntity save() {
-        return this.save(null);
-    }// end of method
-
-    /**
-     * Saves this entity to the database using a local EntityManager
-     * <p>
-     *
-     * @param manager the entity manager to use (if null, a new one is created on the fly)
-     * @return the merged Entity (new entity, unmanaged, has the id)
-     */
-    @Override
-    public BaseEntity save(EntityManager manager) {
-        return this.save(getWamCompany(), manager);
-    }// end of method
-
-    /**
-     * Saves this entity to the database.
-     * <p>
-     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
-     * Otherwise, a new transaction is used to save this single entity.
-     *
-     * @param company azienda da filtrare
-     * @param manager the entity manager to use (if null, a new one is created on the fly)
-     * @return the merged Entity (new entity, unmanaged, has the id)
-     */
-    public Servizio save(WamCompany company, EntityManager manager) {
-        boolean valido = true;
-
-        valido = this.checkCompany();
-        if (valido) {
-            valido = this.checkSigla();
-        }// end of if cycle
-        if (valido) {
-            valido = this.checkDescrizione();
-        }// end of if cycle
-        if (valido) {
-            valido = this.checkChiave(company);
-        }// end of if cycle
-        if (valido) {
-            this.checkOrdine(company, manager);
-        }// end of if cycle
-
-        if (valido) {
-            return (Servizio) super.save(manager);
-        } else {
-            return null;
-        }// end of if/else cycle
-
-    }// end of method
-
-    @PrePersist
-    protected void prePersist() {
-        if (getOrdine() == 0) {
-            int max = WamQuery.queryMaxOrdineServizio(null);
-            setOrdine(max + 1);
-        }
-    }
-
-    /**
      * Ritorna l'elenco delle funzioni previste per questo servizio
      *
      * @return le funzioni
@@ -793,6 +869,15 @@ public class Servizio extends WamCompanyEntity {
 
         return lista;
     }
+
+
+//    @PrePersist
+//    protected void prePersist() {
+//        if (getOrdine() == 0) {
+//            int max = WamQuery.queryMaxOrdineServizio(null);
+//            setOrdine(max + 1);
+//        }
+//    }
 
     /**
      * Ritorna l'elenco delle funzioni obbligatorie previste per questo servizio
@@ -865,81 +950,6 @@ public class Servizio extends WamCompanyEntity {
         getServizioFunzioni().add(sf);
     }
 
-    @Override
-    public String toString() {
-        return sigla;
-    }// end of method
-
-    /**
-     * @return the nome
-     */
-    public String getSigla() {
-        return sigla;
-    }// end of getter method
-
-    /**
-     * @param sigla the sigla to set
-     */
-    public void setSigla(String sigla) {
-        this.sigla = sigla;
-    }// end of setter method
-
-    public String getDescrizione() {
-        return descrizione;
-    }// end of getter method
-
-    public void setDescrizione(String descrizione) {
-        this.descrizione = descrizione;
-    }//end of setter method
-
-    public int getOrdine() {
-        return ordine;
-    }// end of getter method
-
-    public void setOrdine(int ordine) {
-        this.ordine = ordine;
-    }//end of setter method
-
-    public int getColore() {
-        return colore;
-    }
-
-    public void setColore(int colore) {
-        this.colore = colore;
-    }
-
-    public int getOraInizio() {
-        return oraInizio;
-    }// end of getter method
-
-    public void setOraInizio(int oraInizio) {
-        this.oraInizio = oraInizio;
-    }//end of setter method
-
-    public int getMinutiInizio() {
-        return minutiInizio;
-    }// end of getter method
-
-    public void setMinutiInizio(int minutiInizio) {
-        this.minutiInizio = minutiInizio;
-    }//end of setter method
-
-    public int getOraFine() {
-        return oraFine;
-    }// end of getter method
-
-    public void setOraFine(int oraFine) {
-        this.oraFine = oraFine;
-    }//end of setter method
-
-    public int getMinutiFine() {
-        return minutiFine;
-    }// end of getter method
-
-    public void setMinutiFine(int minutiFine) {
-        this.minutiFine = minutiFine;
-    }//end of setter method
-
     /**
      * Ritorna il tempo totale del servizio in minuti
      */
@@ -956,20 +966,12 @@ public class Servizio extends WamCompanyEntity {
         return minutiTot;
     }
 
-    public boolean isOrario() {
-        return orario;
-    }// end of getter method
-
-    public void setOrario(boolean orario) {
-        this.orario = orario;
-    }//end of setter method
-
     /**
      * List NON garantisce l'ordinamento
      */
     public ArrayList<ServizioFunzione> getServizioFunzioni() {
         ArrayList<ServizioFunzione> listaOrdinata = new ArrayList<ServizioFunzione>();
-        LinkedHashMap<Integer, ServizioFunzione> mappa = new LinkedHashMap();
+        LinkedHashMap<Integer, ServizioFunzione> mappa = new LinkedHashMap<>();
 
         for (ServizioFunzione serFunz : servizioFunzioni) {
             mappa.put(serFunz.getFunzione().getOrdine(), serFunz);
@@ -1008,13 +1010,6 @@ public class Servizio extends WamCompanyEntity {
         }// end of if cycle
     }// end of method
 
-    public List<Turno> getTurni() {
-        return turni;
-    }
-
-    public void setTurni(List<Turno> turni) {
-        this.turni = turni;
-    }
 
     /**
      * Ritorna una stringa che rappresenta l'orario dalle... alle...
@@ -1034,6 +1029,9 @@ public class Servizio extends WamCompanyEntity {
         return s;
     }
 
+    //------------------------------------------------------------------------------------------------------------------------
+    // Clone
+    //------------------------------------------------------------------------------------------------------------------------
     /**
      * Clone di questa istanza
      * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)
@@ -1051,4 +1049,4 @@ public class Servizio extends WamCompanyEntity {
         }// fine del blocco try-catch
     }// end of method
 
-}// end of domain class
+}// end of Entity class

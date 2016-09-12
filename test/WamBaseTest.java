@@ -10,13 +10,21 @@ import javax.persistence.Persistence;
  */
 public abstract class WamBaseTest {
 
+    protected static EntityManager MANAGER;
+
+    protected final static String COMPANY_UNO = "Alfa";
+    protected final static String COMPANY_DUE = "Beta";
+
     protected final static String SIGLA_UNO = "Prima";
     protected final static String SIGLA_DUE = "Seconda";
     protected final static String DESCRIZIONE_UNO = "Prima descrizione";
     protected final static String DESCRIZIONE_DUE = "Seconda descrizione";
-    protected final static String COMPANY_UNO = "Alfa";
-    protected final static String COMPANY_DUE = "Beta";
-    protected static EntityManager MANAGER;
+
+    protected final static String NOME_UNO = "Mario";
+    protected final static String NOME_DUE = "Ilaria";
+    protected final static String COGNOME_UNO = "Bramieri";
+    protected final static String COGNOME_DUE = "Torricelli";
+
 
     // alcuni parametri utilizzati
     protected static WamCompany companyUno;

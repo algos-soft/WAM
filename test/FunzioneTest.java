@@ -105,6 +105,39 @@ public class FunzioneTest extends WamBaseTest {
         numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
+        // parametro obbligatorio vuoto
+        funzioneUno = new Funzione(companyUno, "", DESCRIZIONE_UNO);
+        try { // prova ad eseguire il codice
+            funzioneUno.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(funzioneUno);
+        assertNull(funzioneUno.getId());
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld);
+
+        // parametro obbligatorio vuoto
+        funzioneUno = new Funzione(companyUno, SIGLA_UNO, "");
+        try { // prova ad eseguire il codice
+            funzioneUno.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(funzioneUno);
+        assertNull(funzioneUno.getId());
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld);
+
+        // parametro obbligatorio vuoto
+        funzioneUno = new Funzione(companyUno, "", "");
+        try { // prova ad eseguire il codice
+            funzioneUno.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(funzioneUno);
+        assertNull(funzioneUno.getId());
+        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        assertEquals(numRecUnoNew, numRecUnoOld);
+
         // parametri obbligatori
         funzioneUno = new Funzione(companyUno, SIGLA_UNO, DESCRIZIONE_UNO);
         funzioneUno.save(companyUno, MANAGER);
@@ -286,7 +319,7 @@ public class FunzioneTest extends WamBaseTest {
         try { // prova ad eseguire il codice
             funzioneCinque.save(companyUno, MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
-            System.out.println(unErrore);
+            System.out.println(unErrore.toString());
         }// fine del blocco try-catch
         assertNotNull(funzioneCinque);
         assertNotNull(funzioneCinque.getId());
