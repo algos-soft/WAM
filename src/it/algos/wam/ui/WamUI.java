@@ -11,7 +11,6 @@ import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.*;
-import it.algos.wam.bootstrap.TestService;
 import it.algos.wam.entity.companyentity.CompanyListener;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
@@ -251,7 +250,6 @@ public class WamUI extends UI {
      * Elabora l'URL della Request ed estrae (se esiste) il parametro programmatore
      *
      * @param request the Vaadin request that caused this UI to be created
-     *
      * @return true se l'url è di un developer
      */
     private boolean checkDeveloper(VaadinRequest request) {
@@ -367,8 +365,8 @@ public class WamUI extends UI {
         if (LibSession.isAdmin()) {
             MenuBar menuBarAdmin = new MenuBar();
             addMod(menuBarAdmin, new LogMod());
-            navComp.addView(menuBarAdmin, ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
-            navComp.addMenu(menuBarAdmin,"verde");
+            addView(menuBarAdmin, ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
+            navComp.addMenu(menuBarAdmin, "verde");
         }// end of if cycle
 
         // controlla se è un developer
@@ -380,14 +378,14 @@ public class WamUI extends UI {
             addMod(menuUtilities, new UtenteModulo("User"));
             addMod(menuUtilities, new VersMod());
             addMod(menuUtilities, new PrefMod());
-            navComp.addView(menuBarDeveloper, MgrConfigScreen.class, "Settings", FontAwesome.WRENCH);
+            addView(menuUtilities, MgrConfigScreen.class, "Settings", FontAwesome.WRENCH);
             addMod(menuBarDeveloper, new WamCompanyMod());
 
             MenuBar.MenuItem menuTavole = menuBarDeveloper.addItem("Tavole", null, null);
             addMod(menuTavole, new ServizioFunzioneMod());
             addMod(menuTavole, new VolontarioFunzioneMod());
 
-            navComp.addMenu(menuBarDeveloper,"rosso");
+            navComp.addMenu(menuBarDeveloper, "rosso");
         }// end of if cycle
 
         // seleziona inizialmente il menuItem Funzioni
@@ -473,6 +471,50 @@ public class WamUI extends UI {
             addCompanyListeners((WamMod) modulo);
         }// end of if cycle
 
+        return menuItem;
+    }// end of method
+
+    /**
+     * Adds a View to the UI
+     * <p>
+     * Will create a lazy (class-based) view provider
+     * The view will be instantiated by the view provider from the provided class
+     * The viewCached parameter controls if the view will be instantiated only once
+     * or each time is requested by the Navigator.
+     *
+     * @param viewClass the view class to instantiate
+     * @param label     the text for the menu item
+     * @param icon      the icon for the menu item
+     * @return menuItem appena creato
+     */
+    public MenuBar.MenuItem addView(MenuBar menu, Class<? extends View> viewClass, String label, Resource icon) {
+        MenuBar.MenuItem menuItem;
+        WamMenuCommand cmd = new WamMenuCommand(null, viewClass, this);
+
+        menuItem = menu.addItem(label, icon, cmd);
+        menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);
+        return menuItem;
+    }// end of method
+
+    /**
+     * Adds a View to the UI
+     * <p>
+     * Will create a lazy (class-based) view provider
+     * The view will be instantiated by the view provider from the provided class
+     * The viewCached parameter controls if the view will be instantiated only once
+     * or each time is requested by the Navigator.
+     *
+     * @param viewClass the view class to instantiate
+     * @param label     the text for the menu item
+     * @param icon      the icon for the menu item
+     * @return menuItem appena creato
+     */
+    public MenuBar.MenuItem addView(MenuBar.MenuItem menu, Class<? extends View> viewClass, String label, Resource icon) {
+        MenuBar.MenuItem menuItem;
+        WamMenuCommand cmd = new WamMenuCommand(null, viewClass, this);
+
+        menuItem = menu.addItem(label, icon, cmd);
+        menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);
         return menuItem;
     }// end of method
 
@@ -581,9 +623,13 @@ public class WamUI extends UI {
     /**
      * The item has been selected.
      * Navigate to the View and select the item in the menubar
+     *
+     * @param selectedItem da evidenziare
      */
     public void menuSelected(MenuBar.MenuItem selectedItem) {
-        int a = 87;
+        if (menubar == null) {
+            navComp.menuSelected(selectedItem);
+        }// end of if cycle
     }// end of method
 
     /**

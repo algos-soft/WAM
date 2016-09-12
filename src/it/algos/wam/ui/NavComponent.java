@@ -110,7 +110,6 @@ public class NavComponent extends VerticalLayout {
      * @param viewClass the view class to instantiate
      * @param label     the text for the menu item
      * @param icon      the icon for the menu item
-     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, String label, Resource icon) {
@@ -129,7 +128,6 @@ public class NavComponent extends VerticalLayout {
      * @param viewCached true to instantiated only once, false to instantiate each time
      * @param label      the text for the menu item
      * @param icon       the icon for the menu item
-     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
@@ -148,7 +146,6 @@ public class NavComponent extends VerticalLayout {
      * @param viewClass the view class to instantiate
      * @param label     the text for the menu item
      * @param icon      the icon for the menu item
-     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(MenuBar menuBar, Class<? extends View> viewClass, String label, Resource icon) {
@@ -168,7 +165,6 @@ public class NavComponent extends VerticalLayout {
      * @param viewCached true to instantiated only once, false to instantiate each time
      * @param label      the text for the menu item
      * @param icon       the icon for the menu item
-     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addView(MenuBar menuBar, Class<? extends View> viewClass, boolean viewCached, String label, Resource icon) {
@@ -191,12 +187,12 @@ public class NavComponent extends VerticalLayout {
      * @param viewClass da visualizzare nell'area controllata dal navigatore
      *                  alla pressione del bottone di menu
      * @param icon      icona per il menu
-     *
      * @return menuItem appena creato
      */
     private MenuBar.MenuItem createMenuItem(MenuBar menuBar, Class<? extends View> viewClass, String label, boolean cached, Resource icon) {
         MenuBar.MenuItem menuItem;
         MenuCommand cmd = new MenuCommand(menuBar, viewClass, cached);
+
         menuItem = menuBar.addItem(label, icon, cmd);
         menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);
         return menuItem;
@@ -209,7 +205,6 @@ public class NavComponent extends VerticalLayout {
      * Tipicamente un ModulePop
      *
      * @param modulo da visualizzare nel placeholder alla pressione del bottone di menu
-     *
      * @return menuItem appena creato
      */
     public MenuBar.MenuItem addMod(ModulePop modulo) {
@@ -262,7 +257,6 @@ public class NavComponent extends VerticalLayout {
      *
      * @param vista    da visualizzare nel placeholder alla pressione del bottone di menu
      * @param menuIcon del menu
-     *
      * @return menuItem appena creato
      */
     private MenuBar.MenuItem createMenuItem(View vista, String menuAddress, Resource menuIcon) {
@@ -311,7 +305,7 @@ public class NavComponent extends VerticalLayout {
      * @param altroMenu da aggiungere
      */
     public void addMenu(Component altroMenu) {
-        addMenu(altroMenu,"");
+        addMenu(altroMenu, "");
     }// end of method
 
     /**
@@ -330,6 +324,17 @@ public class NavComponent extends VerticalLayout {
 
         if (altroMenu != null && altroMenu instanceof MenuBar) {
             this.setup((MenuBar) altroMenu);
+        }// end of if cycle
+    }// end of method
+
+    /**
+     * The item has been selected.
+     *
+     * @param selectedItem da evidenziare
+     */
+    public void menuSelected(MenuBar.MenuItem selectedItem) {
+        if (menuBar != null) {
+            menuBar.menuSelected(selectedItem);
         }// end of if cycle
     }// end of method
 

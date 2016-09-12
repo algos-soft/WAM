@@ -5,6 +5,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
 import it.algos.webbase.web.login.LoginButton;
 
+import java.util.List;
+
 /**
  * Componente che ospita una (o più) Menubar e il bottone Login
  * Created by alex on 24/05/16.
@@ -51,7 +53,7 @@ public class MenuBarWithLogin extends HorizontalLayout {
 
         addComponent(altroMenu, pos);
 
-        if (pos==0) {
+        if (pos == 0) {
             altroMenu.setWidth("100%");
             setExpandRatio(altroMenu, 1);
         }// fine del blocco if
@@ -79,5 +81,54 @@ public class MenuBarWithLogin extends HorizontalLayout {
         return loginButton;
     }// end of method
 
+    /**
+     * The item has been selected.
+     * de-selects all the menubars
+     * highlights the selected item
+     *
+     * @param selectedItem da evidenziare
+     */
+    public void menuSelected(MenuBar.MenuItem selectedItem) {
+
+        for (Component comp : components) {
+            if (comp instanceof MenuBar && !(comp instanceof WamLoginButton)) {
+                menuSelected((MenuBar) comp, selectedItem);
+            }// end of if cycle
+        }// end of for cycle
+
+        // highlights the selected item
+        // the style name will be prepended automatically with "v-menubar-menuitem-"
+        selectedItem.setStyleName("highlight");
+    }// end of method
+
+
+    /**
+     * De-selects all the items in the menubar
+     *
+     * @param menuBar      menu selezionato
+     * @param selectedItem da evidenziare
+     */
+    private void menuSelected(MenuBar menuBar, MenuBar.MenuItem selectedItem) {
+
+        if (menuBar != null) {
+            List<MenuBar.MenuItem> items = menuBar.getItems();
+            for (MenuBar.MenuItem item : items) {
+                deselectItem(item);
+            } // fine del ciclo for
+        }// fine del blocco if
+    }// end of method
+
+    /**
+     * Recursively de-selects one item and all its children
+     */
+    private void deselectItem(MenuBar.MenuItem item) {
+        item.setStyleName(null);
+        List<MenuBar.MenuItem> items = item.getChildren();
+        if (items != null) {
+            for (MenuBar.MenuItem child : items) {
+                deselectItem(child);
+            } // fine del ciclo for
+        }// fine del blocco if
+    }// end of method
 
 }// end of class
