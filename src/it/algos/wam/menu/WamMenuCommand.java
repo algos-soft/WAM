@@ -17,12 +17,11 @@ public class WamMenuCommand extends MenuCommand {
     /**
      * Constructor - lazy, cached
      *
-     * @param mb    the MenuBar
      * @param clazz the view to diplay
      * @param wamUI l'interfaccia di riferimento
      */
-    public WamMenuCommand(MenuBar mb, Class clazz, WamUI wamUI) {
-        super(mb, clazz);
+    public WamMenuCommand(Class clazz, WamUI wamUI) {
+        super(null, clazz);
         this.wamUI = wamUI;
     }// end of constructor
 
@@ -31,12 +30,11 @@ public class WamMenuCommand extends MenuCommand {
      * Will create a heavyweight view provider
      * The view provided here will be used
      *
-     * @param mb    the MenuBar
      * @param view  the view to diplay
      * @param wamUI l'interfaccia di riferimento
      */
-    public WamMenuCommand(MenuBar mb, View view, WamUI wamUI) {
-        super(mb, view);
+    public WamMenuCommand(View view, WamUI wamUI) {
+        super(null, view);
         this.wamUI = wamUI;
     }// end of constructor
 

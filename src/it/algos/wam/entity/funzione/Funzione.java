@@ -18,6 +18,7 @@ import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.persistence.metamodel.SingularAttribute;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -131,75 +132,98 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     //------------------------------------------------------------------------------------------------------------------------
     // Count records
+    // CountBy...
+    // Con e senza Company
+    // Con e senza EntityManager
+    // Con Company, EntityManager And Property
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero totale di records della Entity
      * Senza filtri.
      *
-     * @return il numero totale di record nella Entity
+     * @return il numero totale di records nella Entity
      */
     public static int countByAllCompanies() {
         return countByAllCompanies(null);
     }// end of static method
 
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero totale di records della Entity
      * Senza filtri.
-     * Use a specific manager (must be close by caller method)
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param manager the EntityManager to use
-     * @return il numero totale di record nella Entity
+     * @return il numero totale di records nella Entity
      */
     public static int countByAllCompanies(EntityManager manager) {
-        long totRec = AQuery.getCount(Funzione.class, manager);
-        return check(totRec);
+        return AQuery.count(Funzione.class, manager);
     }// end of static method
 
-
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero di records della Entity
      * Filtrato sulla azienda corrente.
      *
-     * @return il numero totale di record nella Entity
+     * @return il numero filtrato di records nella Entity
      */
     public static int countByCurrentCompany() {
         return countByCurrentCompany(null);
     }// end of static method
 
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero di records della Entity
      * Filtrato sulla azienda corrente.
-     * Use a specific manager (must be close by caller method)
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param manager the EntityManager to use
-     * @return il numero totale di record nella Entity
+     * @return il numero filtrato di records nella Entity
      */
     public static int countByCurrentCompany(EntityManager manager) {
-        return countBySingleCompany(WamCompany.getCurrent(), manager);
+        return countByCompany(WamCompany.getCurrent(), manager);
     }// end of static method
 
+
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero di records della Entity
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @return il numero totale di record nella Entity
+     * @return il numero filtrato di records nella Entity
      */
-    public static int countBySingleCompany(WamCompany company) {
-        return countBySingleCompany(company, null);
+    public static int countByCompany(WamCompany company) {
+        return countByCompany(company, null);
     }// end of static method
 
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero di records della Entity
      * Filtrato sulla azienda passata come parametro.
-     * Use a specific manager (must be close by caller method)
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
-     * @return il numero totale di record nella Entity
+     * @return il numero filtrato di records nella Entity
      */
-    public static int countBySingleCompany(WamCompany company, EntityManager manager) {
+    public static int countByCompany(WamCompany company, EntityManager manager) {
+        long totRec = CompanyQuery.getCount(Funzione.class, company, manager);
+        return check(totRec);
+    }// end of static method
+
+    /**
+     * Recupera il numero di records della Entity, filtrato sul valore della property indicata
+     * Filtrato sulla azienda passata come parametro.
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param attr    the searched attribute
+     * @param value   the value to search for
+     * @param manager the EntityManager to use
+     * @return il numero filtrato di records nella Entity
+     */
+    public static int countByCompanyAndProperty(WamCompany company, SingularAttribute attr, Object value, EntityManager manager) {
         long totRec = CompanyQuery.getCount(Funzione.class, company, manager);
         return check(totRec);
     }// end of static method
@@ -474,7 +498,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Delete all the records for the domain class
+     * Delete all the records for the Entity class
      * Bulk delete records with CriteriaDelete
      */
     public static void deleteAll() {
@@ -484,7 +508,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     }// end of static method
 
     /**
-     * Delete all the records for the domain class
+     * Delete all the records for the Entity class
      * Bulk delete records with CriteriaDelete
      *
      * @param manager the EntityManager to use
@@ -771,6 +795,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //------------------------------------------------------------------------------------------------------------------------
     // Clone
     //------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Clone di questa istanza
      * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)

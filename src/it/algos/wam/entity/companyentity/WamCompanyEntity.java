@@ -30,6 +30,7 @@ public abstract class WamCompanyEntity extends CompanyEntity {
      *
      * @param valore (long) restituita dalla query generica
      * @return totale dei records, zero se la query non ha funzionato
+     * @deprecated
      */
     protected  static int check(long valore) {
         int totRec = 0;

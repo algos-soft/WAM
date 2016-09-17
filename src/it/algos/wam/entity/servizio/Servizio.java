@@ -554,7 +554,7 @@ public class Servizio extends WamCompanyEntity {
 
             if (funzioni != null) {
                 for (int k = 0; k < funzioni.length; k++) {
-//                    servizio.servizioFunzioni.add(new ServizioFunzione(company, servizio, funzioni[k], k < obbligatori));
+                    servizio.servizioFunzioni.add(new ServizioFunzione(company, servizio, funzioni[k]));
                 }// end of for cycle
             }// fine del blocco if
 

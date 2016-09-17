@@ -77,9 +77,9 @@ public class FunzioneTest extends WamBaseTest {
         resetFunzioni();
         int numRecTotaliOld = Funzione.countByAllCompanies(MANAGER);
         int numRetTotaliNew;
-        int numRecUnoOld = Funzione.countBySingleCompany(companyUno, MANAGER);
+        int numRecUnoOld = Funzione.countByCompany(companyUno, MANAGER);
         int numRecUnoNew;
-        int numRecDueOld = Funzione.countBySingleCompany(companyDue, MANAGER);
+        int numRecDueOld = Funzione.countByCompany(companyDue, MANAGER);
         int numRecDueNew;
         int ordine;
 
@@ -91,7 +91,7 @@ public class FunzioneTest extends WamBaseTest {
         }// fine del blocco try-catch
         assertNotNull(funzioneUno);
         assertNull(funzioneUno.getId());
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // senza un parametro obbligatorio
@@ -102,7 +102,7 @@ public class FunzioneTest extends WamBaseTest {
         }// fine del blocco try-catch
         assertNotNull(funzioneUno);
         assertNull(funzioneUno.getId());
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
@@ -113,7 +113,7 @@ public class FunzioneTest extends WamBaseTest {
         }// fine del blocco try-catch
         assertNotNull(funzioneUno);
         assertNull(funzioneUno.getId());
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
@@ -124,7 +124,7 @@ public class FunzioneTest extends WamBaseTest {
         }// fine del blocco try-catch
         assertNotNull(funzioneUno);
         assertNull(funzioneUno.getId());
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
@@ -135,7 +135,7 @@ public class FunzioneTest extends WamBaseTest {
         }// fine del blocco try-catch
         assertNotNull(funzioneUno);
         assertNull(funzioneUno.getId());
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametri obbligatori
@@ -145,7 +145,7 @@ public class FunzioneTest extends WamBaseTest {
         assertNotNull(funzioneUno.getId());
         ordine = funzioneUno.getOrdine();
         assertEquals(ordine, 1);
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 1);
 
         // parametri obbligatori
@@ -155,7 +155,7 @@ public class FunzioneTest extends WamBaseTest {
         assertNotNull(funzioneDue.getId());
         ordine = funzioneDue.getOrdine();
         assertEquals(ordine, 2);
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 2);
 
         // tutti i parametri previsti
@@ -165,7 +165,7 @@ public class FunzioneTest extends WamBaseTest {
         assertNotNull(funzioneTre.getId());
         ordine = funzioneTre.getOrdine();
         assertEquals(ordine, 6);
-        numRecUnoNew = Funzione.countBySingleCompany(companyDue, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyDue, MANAGER);
         assertEquals(numRecUnoNew, numRecDueOld + 1);
 
         // parametri obbligatori
@@ -175,7 +175,7 @@ public class FunzioneTest extends WamBaseTest {
         assertNotNull(funzioneQuattro.getId());
         ordine = funzioneQuattro.getOrdine();
         assertEquals(ordine, 7);
-        numRecDueNew = Funzione.countBySingleCompany(companyDue, MANAGER);
+        numRecDueNew = Funzione.countByCompany(companyDue, MANAGER);
         assertEquals(numRecDueNew, numRecDueOld + 2);
 
         // campo unico, doppio
@@ -187,11 +187,11 @@ public class FunzioneTest extends WamBaseTest {
         }// fine del blocco try-catch
         assertNotNull(funzioneCinque);
         assertNull(funzioneCinque.getId());
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecDueNew, numRecDueOld + 2);
 
-        assertEquals(Funzione.countBySingleCompany(companyUno, MANAGER), numRecUnoOld + 2);
-        assertEquals(Funzione.countBySingleCompany(companyDue, MANAGER), numRecDueOld + 2);
+        assertEquals(Funzione.countByCompany(companyUno, MANAGER), numRecUnoOld + 2);
+        assertEquals(Funzione.countByCompany(companyDue, MANAGER), numRecDueOld + 2);
         numRetTotaliNew = Funzione.countByAllCompanies(MANAGER);
         assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
     }// end of single test
@@ -270,9 +270,9 @@ public class FunzioneTest extends WamBaseTest {
         cancellaFunzioni();
         int numRecTotaliOld = Funzione.countByAllCompanies(MANAGER);
         int numRetTotaliNew;
-        int numRecUnoOld = Funzione.countBySingleCompany(companyUno, MANAGER);
+        int numRecUnoOld = Funzione.countByCompany(companyUno, MANAGER);
         int numRecUnoNew;
-        int numRecDueOld = Funzione.countBySingleCompany(companyDue, MANAGER);
+        int numRecDueOld = Funzione.countByCompany(companyDue, MANAGER);
         int numRecDueNew;
         int ordine;
 
@@ -283,33 +283,33 @@ public class FunzioneTest extends WamBaseTest {
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
         assertNull(funzioneUno);
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametri obbligatori
         funzioneUno = Funzione.crea(companyUno, SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 1);
         ordine = funzioneUno.getOrdine();
         assertEquals(ordine, 1);
 
         // parametri obbligatori
         funzioneDue = Funzione.crea(companyUno, SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 2);
         ordine = funzioneDue.getOrdine();
         assertEquals(ordine, 2);
 
         // tutti i parametri previsti
         funzioneTre = Funzione.crea(companyDue, SIGLA_UNO, DESCRIZIONE_UNO, 6, FontAwesome.USER, MANAGER);
-        numRecUnoNew = Funzione.countBySingleCompany(companyDue, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyDue, MANAGER);
         assertEquals(numRecUnoNew, numRecDueOld + 1);
         ordine = funzioneTre.getOrdine();
         assertEquals(ordine, 6);
 
         // parametri obbligatori
         funzioneQuattro = Funzione.crea(companyDue, SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
-        numRecDueNew = Funzione.countBySingleCompany(companyDue, MANAGER);
+        numRecDueNew = Funzione.countByCompany(companyDue, MANAGER);
         assertEquals(numRecDueNew, numRecDueOld + 2);
         ordine = funzioneQuattro.getOrdine();
         assertEquals(ordine, 7);
@@ -323,10 +323,10 @@ public class FunzioneTest extends WamBaseTest {
         }// fine del blocco try-catch
         assertNotNull(funzioneCinque);
         assertNotNull(funzioneCinque.getId());
-        numRecUnoNew = Funzione.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
 
-        assertEquals(Funzione.countBySingleCompany(companyUno, MANAGER), numRecUnoOld + 2);
-        assertEquals(Funzione.countBySingleCompany(companyDue, MANAGER), numRecDueOld + 2);
+        assertEquals(Funzione.countByCompany(companyUno, MANAGER), numRecUnoOld + 2);
+        assertEquals(Funzione.countByCompany(companyDue, MANAGER), numRecDueOld + 2);
         numRetTotaliNew = Funzione.countByAllCompanies(MANAGER);
         assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
     }// end of single test

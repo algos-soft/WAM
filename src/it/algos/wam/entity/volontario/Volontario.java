@@ -7,10 +7,14 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.domain.company.BaseCompany_;
+import it.algos.webbase.multiazienda.CompanyEntity;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.BaseEntity_;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibCrypto;
 import it.algos.webbase.web.login.UserIF;
@@ -363,6 +367,8 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         return findByCompanyAndNomeAndCognome(company, nome, cognome, null);
     }// end of static method
 
+//    public static Volontario findByCompanyAndNomeAndCognome(WamCompany company, String nome, String cognome, EntityManager manager) {
+//    public static Volontario getEntityByCompanyAndNomeAndCognome(WamCompany company, String nome, String cognome, EntityManager manager) {
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
@@ -374,7 +380,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
-    @SuppressWarnings("unchecked")
     public static Volontario findByCompanyAndNomeAndCognome(WamCompany company, String nome, String cognome, EntityManager manager) {
 
         Container.Filter filterCompany = new Compare.Equal(Volontario_.company, company);
@@ -391,6 +396,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param nick il nick (come ritornato da getNickname())
      * @return il volontario
      */
+    @SuppressWarnings("unchecked")
     public static Volontario queryByNick(String nick) {
         Volontario found = null;
         List<Volontario> list = (List<Volontario>) CompanyQuery.queryList(Volontario.class);
@@ -404,6 +410,22 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         return found;
     }
 
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla azienda corrente.
+     *
+     * @param cognome  del volontario/milite (obbligatorio)
+     * @param password del volontario/milite
+     * @return istanza della Entity, null se non trovata
+     */
+    public static Volontario findByCognomeAndPassword(String cognome, String password) {
+
+        Container.Filter filterCognome = new Compare.Equal(Volontario_.cognome.getName(), cognome);
+        Container.Filter filterPassword = new Compare.Equal(Volontario_.password.getName(), password);
+
+        BaseEntity entity = CompanyQuery.getEntity(Volontario.class,  filterCognome, filterPassword);
+        return check(entity);
+    }// end of static method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Find entities (list)
@@ -492,7 +514,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<Volontario> findAll() {
-        return (ArrayList<Volontario>) CompanyQuery.getList(Volontario.class);
+        return (ArrayList<Volontario>) CompanyQuery.getListOld(Volontario.class);
     }// end of method
 
     /**

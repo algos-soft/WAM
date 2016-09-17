@@ -83,7 +83,7 @@ public abstract class BootService {
         manager.getTransaction().begin();
 
         creaPreferenze(company);
-        listaFunzioni = creaFunzioni(company, manager);
+        listaFunzioni = creaFunzioni(company,manager);
         listaServizi = creaServizi(company, manager, listaFunzioni);
 //        listaVolontari = creaVolontari(company, manager, listaFunzioni);
 
@@ -199,7 +199,7 @@ public abstract class BootService {
         String note = (String) listaTmp.get(1);
         FontAwesome glyph = (FontAwesome) listaTmp.get(2);
 
-        return Funzione.crea(company, sigla, note, ordine, glyph, manager);
+        return Funzione.crea(company, sigla, note, ordine, glyph);
     }// end of static method
 
     /**
@@ -236,7 +236,7 @@ public abstract class BootService {
         lista.add(Arrays.asList("cent-mat", "Centralino mattino", 8, 13, true, giallo, setCentralino(funz), 1));
         lista.add(Arrays.asList("cent-pom", "Centralino pomeriggio", 13, 18, true, giallo, setCentralino(funz), 1));
 
-        for (int k = 0; k < lista.size(); k++) {
+        for (int k = 0; k < 1; k++) {
             listaServizi.add(creaServBase(company, manager, k + 1, (List) lista.get(k)));
         }// end of for cycle
 

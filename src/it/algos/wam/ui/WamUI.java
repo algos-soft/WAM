@@ -40,7 +40,6 @@ import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
 import it.algos.webbase.web.menu.AMenuBar;
 import it.algos.webbase.web.module.ModulePop;
-import it.algos.webbase.web.navigator.MenuCommand;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -187,6 +186,9 @@ public class WamUI extends UI {
         String utente = request.getParameter("utente");
         String password = request.getParameter("password");
         if (utente != null && !utente.equals("")) {
+
+            Volontario vol= Volontario.findByCognomeAndPassword(utente,password);
+
             List<Volontario> militiPerCognome = (List<Volontario>) CompanyQuery.queryList(Volontario.class, Volontario_.cognome, utente);
 //           Object alfa= CompanyQuery.queryOne(Volontario.class,Volontario_.cognome,utente);
             if (militiPerCognome != null && militiPerCognome.size() > 0) {
@@ -434,7 +436,7 @@ public class WamUI extends UI {
         String label = modulo.getMenuLabel();
         Resource icon = modulo.getMenuIcon();
 
-        WamMenuCommand cmd = new WamMenuCommand(null, modulo, this);
+        WamMenuCommand cmd = new WamMenuCommand(modulo, this);
         menuItem = menu.addItem(label, icon, cmd);
 
         if (menuItem != null) {
@@ -460,7 +462,7 @@ public class WamUI extends UI {
         String label = modulo.getMenuLabel();
         Resource icon = modulo.getMenuIcon();
 
-        WamMenuCommand cmd = new WamMenuCommand(null, modulo, this);
+        WamMenuCommand cmd = new WamMenuCommand(modulo, this);
         menuItem = menu.addItem(label, icon, cmd);
 
         if (menuItem != null) {
@@ -489,7 +491,7 @@ public class WamUI extends UI {
      */
     public MenuBar.MenuItem addView(MenuBar menu, Class<? extends View> viewClass, String label, Resource icon) {
         MenuBar.MenuItem menuItem;
-        WamMenuCommand cmd = new WamMenuCommand(null, viewClass, this);
+        WamMenuCommand cmd = new WamMenuCommand(viewClass, this);
 
         menuItem = menu.addItem(label, icon, cmd);
         menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);
@@ -511,7 +513,7 @@ public class WamUI extends UI {
      */
     public MenuBar.MenuItem addView(MenuBar.MenuItem menu, Class<? extends View> viewClass, String label, Resource icon) {
         MenuBar.MenuItem menuItem;
-        WamMenuCommand cmd = new WamMenuCommand(null, viewClass, this);
+        WamMenuCommand cmd = new WamMenuCommand(viewClass, this);
 
         menuItem = menu.addItem(label, icon, cmd);
         menuItem.setStyleName(AMenuBar.MENU_DISABILITATO);

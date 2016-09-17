@@ -278,7 +278,7 @@ public class Turno extends WamCompanyEntity {
      */
     @SuppressWarnings("unchecked")
     public static List<Turno> findAll() {
-        return (ArrayList<Turno>) CompanyQuery.getList(Turno.class);
+        return (ArrayList<Turno>) CompanyQuery.getListOld(Turno.class);
     }// end of method
 
     /**

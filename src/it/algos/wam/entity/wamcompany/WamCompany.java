@@ -190,7 +190,7 @@ public class WamCompany extends BaseCompany {
     public static WamCompany getDemoCompanyOld() {
         WamCompany company = null;
         Container.Filter filter = new Compare.Equal(WamCompany_.companyCode.getName(), WAMApp.DEMO_COMPANY_CODE);
-        List demoCompanies = AQuery.getList(WamCompany.class, filter);
+        List demoCompanies = AQuery.getListOld(WamCompany.class, filter);
         if (demoCompanies.size() > 0) {
             company = (WamCompany) demoCompanies.get(0);
         }

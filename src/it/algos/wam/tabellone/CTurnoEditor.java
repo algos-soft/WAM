@@ -1025,7 +1025,7 @@ public class CTurnoEditor extends CTabelloneEditor {
 
                 // tutti i volontari che hanno la funzione corrente
                 Funzione funz = iscrizione.getServizioFunzione().getFunzione();
-                List volontari = CompanyQuery.getList(Volontario.class);
+                List volontari = CompanyQuery.getListOld(Volontario.class);
                 for (Object obj : volontari) {
                     Volontario v = (Volontario) obj;
                     if (v.haFunzione(funz)) {
