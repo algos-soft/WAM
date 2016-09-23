@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
  * Created by gac on 01 set 2016.
  * .
  */
-public class FunzioneTest extends WamBaseTest {
+public abstract class FunzioneTest extends WamBaseTest {
 
     Funzione funzioneUno;
     Funzione funzioneDue;

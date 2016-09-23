@@ -38,7 +38,7 @@ import java.util.List;
 public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     //------------------------------------------------------------------------------------------------------------------------
-    // Property
+    // Properties
     //------------------------------------------------------------------------------------------------------------------------
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
@@ -151,6 +151,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Recupera il numero totale di records della Entity
      * Senza filtri.
+     * Usa l'EntityManager passato come parametro
      * Se il manager è nullo, costruisce al volo un manager standard (and close it)
      * Se il manager è valido, lo usa (must be close by caller method)
      *
@@ -174,6 +175,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Recupera il numero di records della Entity
      * Filtrato sulla azienda corrente.
+     * Usa l'EntityManager passato come parametro
      * Se il manager è nullo, costruisce al volo un manager standard (and close it)
      * Se il manager è valido, lo usa (must be close by caller method)
      *
@@ -199,6 +201,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Recupera il numero di records della Entity
      * Filtrato sulla azienda passata come parametro.
+     * Usa l'EntityManager passato come parametro
      * Se il manager è nullo, costruisce al volo un manager standard (and close it)
      * Se il manager è valido, lo usa (must be close by caller method)
      *
@@ -207,13 +210,13 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCompany(WamCompany company, EntityManager manager) {
-        long totRec = CompanyQuery.getCount(Funzione.class, company, manager);
-        return check(totRec);
+        return CompanyQuery.count(Funzione.class, company, manager);
     }// end of static method
 
     /**
      * Recupera il numero di records della Entity, filtrato sul valore della property indicata
      * Filtrato sulla azienda passata come parametro.
+     * Usa l'EntityManager passato come parametro
      * Se il manager è nullo, costruisce al volo un manager standard (and close it)
      * Se il manager è valido, lo usa (must be close by caller method)
      *
@@ -224,8 +227,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCompanyAndProperty(WamCompany company, SingularAttribute attr, Object value, EntityManager manager) {
-        long totRec = CompanyQuery.getCount(Funzione.class, company, manager);
-        return check(totRec);
+        return CompanyQuery.count(Funzione.class, company, manager);
     }// end of static method
 
 
@@ -300,8 +302,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione findBySigla(String sigla, EntityManager manager) {
-        BaseEntity entity = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla, manager);
-        return check(entity);
+        return (Funzione)CompanyQuery.getEntity(Funzione.class, Funzione_.sigla, sigla, manager);
     }// end of static method
 
 
@@ -328,8 +329,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione findByCompanyAndBySigla(WamCompany company, String sigla, EntityManager manager) {
-        BaseEntity entity = CompanyQuery.queryOne(Funzione.class, Funzione_.sigla, sigla, manager, company);
-        return check(entity);
+        return (Funzione) CompanyQuery.getEntity(Funzione.class, Funzione_.sigla, sigla, company, manager);
     }// end of static method
 
 
