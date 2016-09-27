@@ -165,7 +165,7 @@ public class VolontarioForm extends ModuleForm {
         grid.setSpacing(true);
         grid.setCaption("Funzioni abilitate");
         grid.setColumns(3);
-        List<Funzione> funzioni = Funzione.findByCurrentCompany();
+        List<Funzione> funzioni = Funzione.getListByCurrentCompany();
         for (Funzione f : funzioni) {
             grid.addComponent(new CheckBoxFunzione(f));
         }

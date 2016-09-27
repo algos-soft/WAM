@@ -187,8 +187,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @return il numero totale di record nella Entity
      */
     public static int countByAllCompanies(EntityManager manager) {
-        long totRec = AQuery.getCount(Volontario.class, manager);
-        return check(totRec);
+        return AQuery.count(Volontario.class, manager);
     }// end of static method
 
     /**
@@ -234,8 +233,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @return il numero totale di record nella Entity
      */
     public static int countBySingleCompany(WamCompany company, EntityManager manager) {
-        long totRec = CompanyQuery.getCount(Volontario.class, company, manager);
-        return check(totRec);
+        return CompanyQuery.count(Volontario.class, company, manager);
     }// end of static method
 
     /**
@@ -399,7 +397,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     @SuppressWarnings("unchecked")
     public static Volontario queryByNick(String nick) {
         Volontario found = null;
-        List<Volontario> list = (List<Volontario>) CompanyQuery.queryList(Volontario.class);
+        List<Volontario> list = (List<Volontario>) CompanyQuery.getList(Volontario.class);
         for (Volontario v : list) {
             if (v.getNickname().equals(nick)) {
                 found = v;

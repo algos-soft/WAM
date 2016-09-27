@@ -26,23 +26,6 @@ public abstract class WamCompanyEntity extends CompanyEntity {
 
 
     /**
-     * Controlla se il valore della query è della classe corretta
-     *
-     * @param valore (long) restituita dalla query generica
-     * @return totale dei records, zero se la query non ha funzionato
-     * @deprecated
-     */
-    protected  static int check(long valore) {
-        int totRec = 0;
-
-        if (valore > 0) {
-            totRec = (int) valore;
-        }// fine del blocco if
-
-        return totRec;
-    }// end of static method
-
-    /**
      * Recupera la company specifica
      *
      * @return la company

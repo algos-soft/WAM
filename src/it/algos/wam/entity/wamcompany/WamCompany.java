@@ -78,7 +78,7 @@ public class WamCompany extends BaseCompany {
      */
     public static int count() {
         int totRec = 0;
-        long totTmp = AQuery.getCount(WamCompany.class);
+        long totTmp = AQuery.count(WamCompany.class);
 
         if (totTmp > 0) {
             totRec = (int) totTmp;
@@ -114,7 +114,7 @@ public class WamCompany extends BaseCompany {
      */
     @SuppressWarnings("unchecked")
     public static List<WamCompany> findAll() {
-        return (List<WamCompany>) AQuery.findAll(WamCompany.class);
+        return (List<WamCompany>) AQuery.getList(WamCompany.class);
     }// end of method
 
     /**
@@ -142,7 +142,7 @@ public class WamCompany extends BaseCompany {
      */
     public static WamCompany findByCode(String code, EntityManager manager) {
         WamCompany instance = null;
-        BaseEntity entity = AQuery.findOne(WamCompany.class, BaseCompany_.companyCode, code, manager);
+        BaseEntity entity = AQuery.getEntity(WamCompany.class, BaseCompany_.companyCode, code, manager);
 
         if (entity != null) {
             if (entity instanceof WamCompany) {

@@ -8,8 +8,10 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibArray;
@@ -193,8 +195,7 @@ public class Servizio extends WamCompanyEntity {
      * @return il numero totale di record nella Entity
      */
     public static int countByAllCompanies(EntityManager manager) {
-        long totRec = AQuery.getCount(Servizio.class, manager);
-        return check(totRec);
+        return AQuery.count(Servizio.class, manager);
     }// end of static method
 
 
@@ -241,8 +242,7 @@ public class Servizio extends WamCompanyEntity {
      * @return il numero totale di record nella Entity
      */
     public static int countBySingleCompany(WamCompany company, EntityManager manager) {
-        long totRec = CompanyQuery.getCount(Servizio.class, company, manager);
-        return check(totRec);
+        return CompanyQuery.count(Servizio.class, company, manager);
     }// end of static method
 
 
@@ -303,8 +303,8 @@ public class Servizio extends WamCompanyEntity {
      * @param sigla di riferimento interna (obbligatoria)
      * @return istanza della Entity, null se non trovata
      */
-    public static Servizio findBySigla(String sigla) {
-        return findBySigla(sigla, null);
+    public static Servizio getEntityBySigla(String sigla) {
+        return getEntityBySigla(sigla, null);
     }// end of static method
 
 
@@ -316,9 +316,8 @@ public class Servizio extends WamCompanyEntity {
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
-    public static Servizio findBySigla(String sigla, EntityManager manager) {
-        BaseEntity entity = CompanyQuery.queryOne(Funzione.class, Servizio_.sigla, sigla, manager);
-        return check(entity);
+    public static Servizio getEntityBySigla(String sigla, EntityManager manager) {
+        return (Servizio) CompanyQuery.getEntity(Funzione.class, Servizio_.sigla, sigla, manager);
     }// end of static method
 
 
@@ -330,8 +329,8 @@ public class Servizio extends WamCompanyEntity {
      * @param sigla   di riferimento interna (obbligatoria)
      * @return istanza della Entity, null se non trovata
      */
-    public static Servizio findByCompanyAndBySigla(WamCompany company, String sigla) {
-        return findByCompanyAndBySigla(company, sigla, null);
+    public static Servizio getEntityByCompanyAndBySigla(WamCompany company, String sigla) {
+        return getEntityByCompanyAndBySigla(company, sigla, null);
     }// end of static method
 
 
@@ -344,9 +343,8 @@ public class Servizio extends WamCompanyEntity {
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
-    public static Servizio findByCompanyAndBySigla(WamCompany company, String sigla, EntityManager manager) {
-        BaseEntity entity = CompanyQuery.queryOne(Servizio.class, Servizio_.sigla, sigla, manager, company);
-        return check(entity);
+    public static Servizio getEntityByCompanyAndBySigla(WamCompany company, String sigla, EntityManager manager) {
+        return (Servizio) CompanyQuery.getEntity(Servizio.class, Servizio_.sigla, sigla, company, manager);
     }// end of static method
 
 
@@ -360,8 +358,8 @@ public class Servizio extends WamCompanyEntity {
      *
      * @return lista di tutte le entities
      */
-    public static List<Servizio> findByAllCompanies() {
-        return findByAllCompanies(null);
+    public static List<Servizio> getListByAllCompanies() {
+        return getListByAllCompanies(null);
     }// end of static method
 
 
@@ -373,8 +371,8 @@ public class Servizio extends WamCompanyEntity {
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static List<Servizio> findByAllCompanies(EntityManager manager) {
-        return (List<Servizio>) AQuery.findAll(Servizio.class, manager);
+    public static List<Servizio> getListByAllCompanies(EntityManager manager) {
+        return (List<Servizio>) AQuery.getList(Servizio.class, manager);
     }// end of static method
 
 
@@ -384,8 +382,8 @@ public class Servizio extends WamCompanyEntity {
      *
      * @return lista di tutte le entities
      */
-    public static List<Servizio> findByCurrentCompany() {
-        return findByCurrentCompany(null);
+    public static List<Servizio> getListByCurrentCompany() {
+        return getListByCurrentCompany(null);
     }// end of static method
 
 
@@ -396,8 +394,8 @@ public class Servizio extends WamCompanyEntity {
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
      */
-    public static List<Servizio> findByCurrentCompany(EntityManager manager) {
-        return findBySingleCompany(WamCompany.getCurrent(), manager);
+    public static List<Servizio> getListByCurrentCompany(EntityManager manager) {
+        return getListBySingleCompany(WamCompany.getCurrent(), manager);
     }// end of static method
 
 
@@ -409,8 +407,8 @@ public class Servizio extends WamCompanyEntity {
      * @param company di appartenenza (property della superclasse)
      * @return lista di tutte le entities
      */
-    public static List<Servizio> findBySingleCompany(WamCompany company) {
-        return findBySingleCompany(company, null);
+    public static List<Servizio> getListBySingleCompany(WamCompany company) {
+        return getListBySingleCompany(company, null);
     }// end of static method
 
 
@@ -424,9 +422,9 @@ public class Servizio extends WamCompanyEntity {
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static List<Servizio> findBySingleCompany(WamCompany company, EntityManager manager) {
+    public static List<Servizio> getListBySingleCompany(WamCompany company, EntityManager manager) {
         if (company != null) {
-            return (List<Servizio>) AQuery.findAll(Servizio.class, CompanyEntity_.company, company, manager);
+            return (List<Servizio>) CompanyQuery.getList(Servizio.class, CompanyEntity_.company, company, manager);
         } else {
             return new ArrayList<>();
         }// end of if/else cycle
@@ -547,7 +545,7 @@ public class Servizio extends WamCompanyEntity {
      * @return istanza della Entity
      */
     public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine, EntityManager manager, Funzione... funzioni) {
-        Servizio servizio = Servizio.findByCompanyAndBySigla(company, sigla, manager);
+        Servizio servizio = Servizio.getEntityByCompanyAndBySigla(company, sigla, manager);
 
         if (servizio == null) {
             servizio = new Servizio(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine);
@@ -569,24 +567,26 @@ public class Servizio extends WamCompanyEntity {
     // Delete
     //------------------------------------------------------------------------------------------------------------------------
 
-    /**
-     * Delete all the records for the domain class
-     * Bulk delete records with CriteriaDelete
-     */
     public static void deleteAll() {
-        EntityManager manager = EM.createEntityManager();
-        deleteAll(manager);
-        manager.close();
+        deleteAll(CompanySessionLib.getCompany(), (EntityManager) null);
+    }// end of static method
+
+    public static void deleteAll(BaseCompany company) {
+        deleteAll((EntityManager) null);
+    }// end of static method
+
+    public static void deleteAll(EntityManager manager) {
+        deleteAll(CompanySessionLib.getCompany(), manager);
     }// end of static method
 
     /**
-     * Delete all the records for the domain class
+     * Delete all the records for the Entity class
      * Bulk delete records with CriteriaDelete
      *
      * @param manager the EntityManager to use
      */
-    public static void deleteAll(EntityManager manager) {
-        AQuery.deleteAll(Servizio.class, manager);
+    public static void deleteAll(BaseCompany company, EntityManager manager) {
+        CompanyQuery.delete(Servizio.class, company, manager);
     }// end of static method
 
 
@@ -1032,6 +1032,7 @@ public class Servizio extends WamCompanyEntity {
     //------------------------------------------------------------------------------------------------------------------------
     // Clone
     //------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Clone di questa istanza
      * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)

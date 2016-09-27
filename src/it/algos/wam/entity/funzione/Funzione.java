@@ -7,10 +7,11 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -133,6 +134,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //------------------------------------------------------------------------------------------------------------------------
     // Count records
     // CountBy...
+    // Con e senza Property (SingularAttribute)
     // Con e senza Company
     // Con e senza EntityManager
     // Con Company, EntityManager And Property
@@ -145,7 +147,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return il numero totale di records nella Entity
      */
     public static int countByAllCompanies() {
-        return countByAllCompanies(null);
+        return countByAllCompanies((EntityManager) null);
     }// end of static method
 
     /**
@@ -169,7 +171,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCurrentCompany() {
-        return countByCurrentCompany(null);
+        return countByCurrentCompany((EntityManager) null);
     }// end of static method
 
     /**
@@ -195,7 +197,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCompany(WamCompany company) {
-        return countByCompany(company, null);
+        return countByCompany(company, (EntityManager) null);
     }// end of static method
 
     /**
@@ -227,7 +229,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCompanyAndProperty(WamCompany company, SingularAttribute attr, Object value, EntityManager manager) {
-        return CompanyQuery.count(Funzione.class, company, manager);
+        return CompanyQuery.count(Funzione.class, attr, value, company, manager);
     }// end of static method
 
 
@@ -243,7 +245,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione find(long id) {
-        return find(id, null);
+        return find(id, (EntityManager) null);
     }// end of static method
 
 
@@ -256,29 +258,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione find(long id, EntityManager manager) {
-        BaseEntity entity = AQuery.find(Funzione.class, id, manager);
-        return check(entity);
-    }// end of static method
-
-    /**
-     * Controlla se l'istanza della Entity esiste ed è della classe corretta
-     *
-     * @param entity (BaseEntity) restituita dalla query generica
-     * @return istanza della Entity specifica, null se non trovata
-     */
-    private static Funzione check(BaseEntity entity) {
-        Funzione instance = null;
-
-        if (entity != null && entity instanceof Funzione) {
-            instance = (Funzione) entity;
-        }// end of if cycle
-
-        return instance;
+        return (Funzione) CompanyQuery.find(Funzione.class, id, manager);
     }// end of static method
 
 
     //------------------------------------------------------------------------------------------------------------------------
-    // Find entity by SingularAttribute
+    // Get single entity by SingularAttribute
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -288,8 +273,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param sigla di riferimento interna (obbligatoria)
      * @return istanza della Entity, null se non trovata
      */
-    public static Funzione findBySigla(String sigla) {
-        return findBySigla(sigla, null);
+    public static Funzione getEntityBySigla(String sigla) {
+        return getEntityBySigla(sigla, (EntityManager) null);
     }// end of static method
 
 
@@ -301,8 +286,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
-    public static Funzione findBySigla(String sigla, EntityManager manager) {
-        return (Funzione)CompanyQuery.getEntity(Funzione.class, Funzione_.sigla, sigla, manager);
+    public static Funzione getEntityBySigla(String sigla, EntityManager manager) {
+        return (Funzione) CompanyQuery.getEntity(Funzione.class, Funzione_.sigla, sigla, manager);
     }// end of static method
 
 
@@ -310,12 +295,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Recupera una istanza della Entity usando la query di una property specifica
      * Filtrato sulla azienda passata come parametro.
      *
-     * @param company di appartenenza (property della superclasse)
      * @param sigla   di riferimento interna (obbligatoria)
+     * @param company di appartenenza (property della superclasse)
      * @return istanza della Entity, null se non trovata
      */
-    public static Funzione findByCompanyAndBySigla(WamCompany company, String sigla) {
-        return findByCompanyAndBySigla(company, sigla, null);
+    public static Funzione getEntityByCompanyAndBySigla(String sigla, WamCompany company) {
+        return getEntityByCompanyAndBySigla(sigla, company, (EntityManager) null);
     }// end of static method
 
 
@@ -323,18 +308,18 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Recupera una istanza della Entity usando la query di una property specifica
      * Filtrato sulla azienda passata come parametro.
      *
-     * @param company di appartenenza (property della superclasse)
      * @param sigla   di riferimento interna (obbligatoria)
+     * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
-    public static Funzione findByCompanyAndBySigla(WamCompany company, String sigla, EntityManager manager) {
+    public static Funzione getEntityByCompanyAndBySigla(String sigla, WamCompany company, EntityManager manager) {
         return (Funzione) CompanyQuery.getEntity(Funzione.class, Funzione_.sigla, sigla, company, manager);
     }// end of static method
 
 
     //------------------------------------------------------------------------------------------------------------------------
-    // Find entities (list)
+    // Get entities (list)
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -343,21 +328,22 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @return lista di tutte le entities
      */
-    public static List<Funzione> findByAllCompanies() {
-        return findByAllCompanies(null);
+    public static List<Funzione> getListByAllCompanies() {
+        return getListByAllCompanies((EntityManager) null);
     }// end of static method
 
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Senza filtri.
+     * (non va usata CompanyQuery, altrimenti arriverebbe solo la lista della company corrente)
      *
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static List<Funzione> findByAllCompanies(EntityManager manager) {
-        return (List<Funzione>) AQuery.findAll(Funzione.class, manager);
+    public static List<Funzione> getListByAllCompanies(EntityManager manager) {
+        return (List<Funzione>) AQuery.getList(Funzione.class, manager);
     }// end of static method
 
 
@@ -367,8 +353,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @return lista di tutte le entities
      */
-    public static List<Funzione> findByCurrentCompany() {
-        return findByCurrentCompany(null);
+    public static List<Funzione> getListByCurrentCompany() {
+        return getListByCurrentCompany((EntityManager) null);
     }// end of static method
 
     /**
@@ -378,8 +364,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
      */
-    public static List<Funzione> findByCurrentCompany(EntityManager manager) {
-        return findBySingleCompany(WamCompany.getCurrent(), manager);
+    public static List<Funzione> getListByCurrentCompany(EntityManager manager) {
+        return getListBySingleCompany(WamCompany.getCurrent(), manager);
     }// end of static method
 
 
@@ -391,8 +377,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company di appartenenza (property della superclasse)
      * @return lista di tutte le entities
      */
-    public static List<Funzione> findBySingleCompany(WamCompany company) {
-        return findBySingleCompany(company, null);
+    public static List<Funzione> getListBySingleCompany(WamCompany company) {
+        return getListBySingleCompany(company, (EntityManager) null);
     }// end of static method
 
 
@@ -406,9 +392,9 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static List<Funzione> findBySingleCompany(WamCompany company, EntityManager manager) {
+    public static List<Funzione> getListBySingleCompany(WamCompany company, EntityManager manager) {
         if (company != null) {
-            return (List<Funzione>) AQuery.findAll(Funzione.class, CompanyEntity_.company, company, manager);
+            return (List<Funzione>) CompanyQuery.getList(Funzione.class, CompanyEntity_.company, company, manager);
         } else {
             return new ArrayList<>();
         }// end of if/else cycle
@@ -482,7 +468,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             int ordine,
             FontAwesome glyph,
             EntityManager manager) {
-        Funzione funzione = Funzione.findByCompanyAndBySigla(company, sigla, manager);
+        Funzione funzione = Funzione.getEntityByCompanyAndBySigla(sigla, company, manager);
 
         if (funzione == null) {
             funzione = new Funzione(company, sigla, descrizione, ordine, glyph);
@@ -497,14 +483,16 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     // Delete
     //------------------------------------------------------------------------------------------------------------------------
 
-    /**
-     * Delete all the records for the Entity class
-     * Bulk delete records with CriteriaDelete
-     */
     public static void deleteAll() {
-        EntityManager manager = EM.createEntityManager();
-        deleteAll(manager);
-        manager.close();
+        deleteAll(CompanySessionLib.getCompany(), (EntityManager) null);
+    }// end of static method
+
+    public static void deleteAll(BaseCompany company) {
+        deleteAll((EntityManager) null);
+    }// end of static method
+
+    public static void deleteAll(EntityManager manager) {
+        deleteAll(CompanySessionLib.getCompany(), manager);
     }// end of static method
 
     /**
@@ -513,8 +501,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @param manager the EntityManager to use
      */
-    public static void deleteAll(EntityManager manager) {
-        AQuery.deleteAll(Funzione.class, manager);
+    public static void deleteAll(BaseCompany company, EntityManager manager) {
+        CompanyQuery.delete(Funzione.class, company, manager);
     }// end of static method
 
 

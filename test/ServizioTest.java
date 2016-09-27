@@ -209,15 +209,15 @@ public class ServizioTest extends WamBaseTest {
             return;
         }// end of if cycle
 
-        servizioUno = Servizio.findByCompanyAndBySigla(companyUno, SIGLA_UNO, MANAGER);
+        servizioUno = Servizio.getEntityByCompanyAndBySigla(companyUno, SIGLA_UNO, MANAGER);
         assertNotNull(servizioUno);
 
-        servizioDue = Servizio.findByCompanyAndBySigla(companyDue, SIGLA_DUE, MANAGER);
+        servizioDue = Servizio.getEntityByCompanyAndBySigla(companyDue, SIGLA_DUE, MANAGER);
         assertNotNull(servizioDue);
         assertNotSame(servizioDue, servizioUno);
         key = servizioDue.getId();
 
-        servizioTre = Servizio.findByCompanyAndBySigla(companyUno, SIGLA_DUE, MANAGER);
+        servizioTre = Servizio.getEntityByCompanyAndBySigla(companyUno, SIGLA_DUE, MANAGER);
         assertNotNull(servizioTre);
         assertNotSame(servizioTre, servizioDue);
 
@@ -239,14 +239,14 @@ public class ServizioTest extends WamBaseTest {
             return;
         }// end of if cycle
 
-        listaUno = Servizio.findByAllCompanies(MANAGER);
+        listaUno = Servizio.getListByAllCompanies(MANAGER);
         assertNotNull(listaUno);
         assertEquals(listaUno.size(), numRecords);
 
-        listaDue = Servizio.findBySingleCompany(companyUno, MANAGER);
+        listaDue = Servizio.getListBySingleCompany(companyUno, MANAGER);
         assertNotNull(listaDue);
 
-        listaTre = Servizio.findBySingleCompany(companyDue, MANAGER);
+        listaTre = Servizio.getListBySingleCompany(companyDue, MANAGER);
         assertNotNull(listaTre);
     }// end of single test
 

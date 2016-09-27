@@ -1,5 +1,6 @@
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.webbase.multiazienda.CompanyQuery;
 import org.junit.*;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import static org.junit.Assert.*;
  * Created by gac on 01 set 2016.
  * .
  */
-public abstract class FunzioneTest extends WamBaseTest {
+public  class FunzioneTest extends WamBaseTest {
 
     Funzione funzioneUno;
     Funzione funzioneDue;
@@ -54,6 +55,8 @@ public abstract class FunzioneTest extends WamBaseTest {
      */
     private static void cancellaFunzioni() {
         Funzione.deleteAll(MANAGER);
+        CompanyQuery.delete(Funzione.class, MANAGER);
+int a=87;
     } // end of cleaup finale
 
     @Before
@@ -209,15 +212,15 @@ public abstract class FunzioneTest extends WamBaseTest {
             return;
         }// end of if cycle
 
-        funzioneUno = Funzione.findByCompanyAndBySigla(companyUno, SIGLA_UNO, MANAGER);
+        funzioneUno = Funzione.getEntityByCompanyAndBySigla(SIGLA_UNO,companyUno, MANAGER);
         assertNotNull(funzioneUno);
 
-        funzioneDue = Funzione.findByCompanyAndBySigla(companyDue, SIGLA_DUE, MANAGER);
+        funzioneDue = Funzione.getEntityByCompanyAndBySigla(SIGLA_DUE,companyDue, MANAGER);
         assertNotNull(funzioneDue);
         assertNotSame(funzioneDue, funzioneUno);
         key = funzioneDue.getId();
 
-        funzioneTre = Funzione.findByCompanyAndBySigla(companyUno, SIGLA_DUE, MANAGER);
+        funzioneTre = Funzione.getEntityByCompanyAndBySigla(SIGLA_DUE,companyUno, MANAGER);
         assertNotNull(funzioneTre);
         assertNotSame(funzioneTre, funzioneDue);
 
@@ -239,14 +242,14 @@ public abstract class FunzioneTest extends WamBaseTest {
             return;
         }// end of if cycle
 
-        listaUno = Funzione.findByAllCompanies(MANAGER);
+        listaUno = Funzione.getListByAllCompanies(MANAGER);
         assertNotNull(listaUno);
         assertEquals(listaUno.size(), numRecords);
 
-        listaDue = Funzione.findBySingleCompany(companyUno, MANAGER);
+        listaDue = Funzione.getListBySingleCompany(companyUno, MANAGER);
         assertNotNull(listaDue);
 
-        listaTre = Funzione.findBySingleCompany(companyDue, MANAGER);
+        listaTre = Funzione.getListBySingleCompany(companyDue, MANAGER);
         assertNotNull(listaTre);
     }// end of single test
 

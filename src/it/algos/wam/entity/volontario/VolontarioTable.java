@@ -10,8 +10,6 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
-import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 
@@ -46,7 +44,7 @@ public class VolontarioTable extends WamTable {
      */
     @Override
     protected void createAdditionalColumns() {
-        List<Funzione> listaFunzioni = Funzione.findByCurrentCompany();
+        List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
         for (Funzione funz : listaFunzioni) {
             addGeneratedColumn(funz.getSigla(), new FunzioniColumnGenerator(funz));
         }// end of for cycle
@@ -63,7 +61,7 @@ public class VolontarioTable extends WamTable {
     @Override
     protected Object[] getDisplayColumns() {
         ArrayList lista = new ArrayList<>();
-        List<Funzione> listaFunzioni = Funzione.findByCurrentCompany();
+        List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
 
         if (LibSession.isDeveloper()) {
             lista.add(WamCompanyEntity_.company);
@@ -111,7 +109,7 @@ public class VolontarioTable extends WamTable {
 
 
     private void fixColumn() {
-        List<Funzione> listaFunzioni = Funzione.findByCurrentCompany();
+        List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
 
         setColumnHeader(Volontario_.nome, "Nome");
         setColumnHeader(Volontario_.cognome, "Cognome");

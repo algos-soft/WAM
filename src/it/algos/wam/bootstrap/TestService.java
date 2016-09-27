@@ -3,7 +3,6 @@ package it.algos.wam.bootstrap;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -59,30 +58,30 @@ public abstract class TestService {
      */
     private static void testFunzione() {
         int numFunzioniTotali = Funzione.countByAllCompanies();
-        List<Funzione> listaFunzioniTotali = Funzione.findByAllCompanies();
+        List<Funzione> listaFunzioniTotali = Funzione.getListByAllCompanies();
         print("Numero di funzioni totali (count)", numFunzioniTotali);
         print("Numero di funzioni totali (lista)", listaFunzioniTotali.size());
 
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         int numFunzioniCorrenti = Funzione.countByCurrentCompany();
-        List<Funzione> listaFunzioniCorrenti = Funzione.findByCurrentCompany();
+        List<Funzione> listaFunzioniCorrenti = Funzione.getListByCurrentCompany();
         print("Numero di funzioni con company selezionata (count)", numFunzioniCorrenti);
         print("Numero di funzioni con company selezionata (lista)", listaFunzioniCorrenti.size());
 
         int numFunzioniCorrenti2 = Funzione.countByCurrentCompany();
-        List<Funzione> listaFunzioniCorrenti2 = Funzione.findByCurrentCompany();
+        List<Funzione> listaFunzioniCorrenti2 = Funzione.getListByCurrentCompany();
         print("Numero di funzioni con company corrente (count)-2", numFunzioniCorrenti2);
         print("Numero di funzioni con company corrente (lista)-2", listaFunzioniCorrenti2.size());
 
         CompanySessionLib.setCompany(null);
         int numFunzioniCorrenti3 = Funzione.countByCurrentCompany();
-        List<Funzione> listaFunzioniCorrenti3 = Funzione.findByCurrentCompany();
+        List<Funzione> listaFunzioniCorrenti3 = Funzione.getListByCurrentCompany();
         print("Numero di funzioni con company nulla (count)", numFunzioniCorrenti3);
         print("Numero di funzioni con company nulla (lista)", listaFunzioniCorrenti3.size());
         CompanySessionLib.setCompany(companyCorrente);
 
-        Funzione funz1= Funzione.findBySigla("Cen");
-        Funzione funz2= Funzione.findBySigla("Bar");
+        Funzione funz1= Funzione.getEntityBySigla("Cen");
+        Funzione funz2= Funzione.getEntityBySigla("Bar");
 
         BaseEntity funz4= AQuery.findOne(Funzione.class, Funzione_.sigla, "Bar");
         BaseEntity funz3= AQuery.findOne(Funzione.class, Funzione_.sigla, "Cen");
@@ -129,24 +128,24 @@ public abstract class TestService {
      */
     private static void testServizio() {
         int numServiziTotali = Servizio.countByAllCompanies();
-        List<Servizio> listaServiziTotali = Servizio.findByAllCompanies();
+        List<Servizio> listaServiziTotali = Servizio.getListByAllCompanies();
         print("Numero di servizi totali (count)", numServiziTotali);
         print("Numero di servizi totali (lista)", listaServiziTotali.size());
 
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         int numServiziCorrenti = Servizio.countBySingleCompany(companyCorrente);
-        List<Servizio> listaServiziCorrenti = Servizio.findBySingleCompany(companyCorrente);
+        List<Servizio> listaServiziCorrenti = Servizio.getListBySingleCompany(companyCorrente);
         print("Numero di servizi con company selezionata (count)", numServiziCorrenti);
         print("Numero di servizi con company selezionata (lista)", listaServiziCorrenti.size());
 
         int numServiziCorrenti2 = Servizio.countByAllCompanies();
-        List<Servizio> listaServiziCorrenti2 = Servizio.findByCurrentCompany();
+        List<Servizio> listaServiziCorrenti2 = Servizio.getListByCurrentCompany();
         print("Numero di servizi con company corrente (count)-2", numServiziCorrenti2);
         print("Numero di servizi con company corrente (lista)-2", listaServiziCorrenti2.size());
 
         CompanySessionLib.setCompany(null);
         int numServiziCorrenti3 = Servizio.countByAllCompanies();
-        List<Servizio> listaServiziCorrenti3 = Servizio.findByCurrentCompany();
+        List<Servizio> listaServiziCorrenti3 = Servizio.getListByCurrentCompany();
         print("Numero di servizi con company nulla (count)-2", numServiziCorrenti3);
         print("Numero di servizi con company nulla (lista)-2", listaServiziCorrenti3.size());
         CompanySessionLib.setCompany(companyCorrente);
