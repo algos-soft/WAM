@@ -13,6 +13,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.multiazienda.CompanyEntity_;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -415,6 +416,7 @@ public class ServizioForm extends ModuleForm {
 
 
             // combo di selezione della funzione
+            CompanySessionLib.setCompany(WamCompany.findByCode("gaps"));
             comboFunzioni = new ERelatedComboField(Funzione.class);
             comboFunzioni.sort(Funzione_.sigla);
             comboFunzioni.setWidth("12em");

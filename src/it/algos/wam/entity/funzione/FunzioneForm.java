@@ -48,12 +48,16 @@ public class FunzioneForm extends ModuleForm {
     protected Component creaCompDetail(FormLayout layout) {
         TextField fSigla = (TextField) getField(Funzione_.sigla);
         fSigla.setWidth("8em");
+        fSigla.setRequired(true);
+        fSigla.setRequiredError("Manca la sigla di codifica");
         fSigla.focus();
         TextField fCodeCompanyUnico = (TextField) getField(Funzione_.codeCompanyUnico);
         fCodeCompanyUnico.setWidth("16em");
         fCodeCompanyUnico.setEnabled(false);
         TextField fDescrizione = (TextField) getField(Funzione_.descrizione);
         fDescrizione.setWidth("24em");
+        fDescrizione.setRequired(true);
+        fDescrizione.setRequiredError("Manca la descrizione");
         IntegerField fOrdine = (IntegerField) getField(Funzione_.ordine);
         fOrdine.setEnabled(false);
 
@@ -95,6 +99,8 @@ public class FunzioneForm extends ModuleForm {
             if (isNewRecord()) {
                 RelatedComboField fCompany = (RelatedComboField) getField(CompanyEntity_.company);
                 fCompany.setWidth("8em");
+                fCompany.setRequired(true);
+                fCompany.setRequiredError("Manca la company");
                 layout.addComponent(fCompany);
             } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
                 BaseEntity entity = getEntity();
@@ -106,6 +112,7 @@ public class FunzioneForm extends ModuleForm {
                     TextField fCompany = new TextField("Company", company.getCompanyCode());
                     fCompany.setWidth("8em");
                     fCompany.setEnabled(false);
+                    fCompany.setRequired(true);
                     layout.addComponent(fCompany);
                     layout.addComponent(fCodeCompanyUnico);
                 }// end of if cycle
@@ -116,6 +123,7 @@ public class FunzioneForm extends ModuleForm {
         layout.addComponent(fSigla);
         layout.addComponent(fDescrizione);
         if (!isNewRecord()) {
+            fOrdine.setRequired(true);
             layout.addComponent(fOrdine);
         }// end of if cycle
 
