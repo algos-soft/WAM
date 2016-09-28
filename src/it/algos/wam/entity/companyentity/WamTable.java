@@ -11,6 +11,7 @@ import it.algos.webbase.web.module.ModulePop;
  */
 public class WamTable extends ETable {
 
+
     /**
      * Costruttore
      *
@@ -35,5 +36,6 @@ public class WamTable extends ETable {
             return null;
         }// end of if/else cycle
     }// end of method
+
 
 }// end of class

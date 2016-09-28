@@ -85,6 +85,7 @@ public class FunzioneTable extends WamTable {
         super.init();
 
         setColumnReorderingAllowed(true);
+        this.setColumnCollapsed(Funzione_.ordine.getName(), true);
 
         fixSort();
         fixColumn();

@@ -15,6 +15,7 @@ import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
 import com.vaadin.ui.components.colorpicker.ColorChangeListener;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
@@ -101,6 +102,7 @@ public class ServizioTable extends WamTable {
         super.init();
 
         setColumnReorderingAllowed(true);
+        this.setColumnCollapsed(Servizio_.ordine.getName(), true);
         fixSort();
         fixColumn();
 

@@ -5,6 +5,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany;
@@ -31,12 +32,8 @@ public class WamTablePortal extends TablePortal {
     public static final Resource ICON_MOVE_UP = FontAwesome.ARROW_UP;
     public static final String CMD_MOVE_DN = "Sposta giu";
     public static final Resource ICON_MOVE_DN = FontAwesome.ARROW_DOWN;
-//    private final static String MENU_CROCI_CAPTION = "Croce";
-//    private final static String ITEM_ALL_CROCI = "...";
     protected boolean useAllCompany;
     private boolean usaBottoniSpostamento;
-//    private HashMap<WamCompany, MenuBar.MenuItem> croci;
-//    private MenuBar.MenuItem bCroci;
     private MenuBar.MenuItem bMoveUp;
     private MenuBar.MenuItem bMoveDn;
 
@@ -63,8 +60,6 @@ public class WamTablePortal extends TablePortal {
 
         if (developer) {
             useAllCompany = true;
-//            addMenuCroci();
-//            fixInizialeCompany();
         } else {
             if (admin) {
                 useAllCompany = false;
@@ -79,64 +74,6 @@ public class WamTablePortal extends TablePortal {
         return toolbar;
     }// end of method
 
-//    /**
-//     * Regolazione iniziale se è selezionata una company.
-//     *
-//     * @deprecated
-//     */
-//    private void fixInizialeCompany() {
-//        BaseCompany company = CompanySessionLib.getCompany();
-//
-//        if (company != null) {
-//            syncBaseCompany((WamCompany) company);
-//        } else {
-//            syncBaseCompany(null);
-//        }// end of if/else cycle
-//
-//    }// end of method
-
-//    /**
-//     * Croci selection.
-//     * <p>
-//     * Costruisce un menu per selezionare la croce da filtrare
-//     * Costruisce i menuItem in funzione delle croci esistenti
-//     *
-//     * @deprecated
-//     */
-//    private void addMenuCroci() {
-//        MenuBar.MenuItem subItem;
-//        croci = new HashMap<WamCompany, MenuBar.MenuItem>();
-//
-//        bCroci = toolbar.addButton(MENU_CROCI_CAPTION, FontAwesome.NAVICON, null);
-//
-//        subItem = bCroci.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
-//            public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                fireCompanyChanged(null);
-//            }// end of inner method
-//        });// end of anonymous inner class
-//        for (WamCompany company : WamCompany.findAll()) {
-//            subItem = addCroce(company);
-//            croci.put(company, subItem);
-//        }// end of for cycle
-//
-//    }// end of method
-
-//    /**
-//     * Costruisce un menu per selezionare la croce da filtrare
-//     *
-//     * @deprecated
-//     */
-//    private MenuBar.MenuItem addCroce(WamCompany company) {
-//        MenuBar.MenuItem subItem;
-//
-//        subItem = bCroci.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
-//            public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                fireCompanyChanged(company);
-//            }// end of inner method
-//        });// end of anonymous inner class
-//
-//        return subItem;
-//    }// end of method
 
     /*
      * Spostamento in su ed in giu dei singoli records.
@@ -189,9 +126,9 @@ public class WamTablePortal extends TablePortal {
      * Creates a filter corresponding to the needed wamcompany in the table
      * I filtri sono comprensivi del livello sottostante (GreaterOrEqual)
      */
+    @SuppressWarnings("all")
     protected void setFiltro(WamCompany company) {
-        Container.Filter filter = null;
-        ATable table = this.getTable();
+        WamTable table = (WamTable)this.getTable();
         Container.Filterable cont = null;
 
         if (table != null) {
@@ -205,31 +142,10 @@ public class WamTablePortal extends TablePortal {
             table.refresh();
         }// end of if cycle
 
-        getTable().setColumnCollapsed(WamCompanyEntity_.company.getName(), !useAllCompany);
-
-//        this.spuntaMenu(company);
+        table.setColumnCollapsed(WamCompanyEntity_.company.getName(), !useAllCompany);
+        table.setColumnCollapsed(Funzione_.ordine.getName(), useAllCompany);
     }// end of method
 
-//    /**
-//     * Spunta il menu selezionato
-//     * Elimina la spunta in tutti gli altri
-//     *
-//     * @deprecated
-//     */
-//    private void spuntaMenu(WamCompany croceSelezionata) {
-//        MenuBar.MenuItem subItem;
-//
-//        if (croceSelezionata != null && croci.containsKey(croceSelezionata)) {
-//            subItem = croci.get(croceSelezionata);
-//            if (subItem != null) {
-//                for (WamCompany croce : croci.keySet()) {
-//                    croci.get(croce).setIcon(FontAwesome.MINUS);
-//                }// end of for cycle
-//
-//                subItem.setIcon(FontAwesome.CHECK);
-//            }// fine del blocco if
-//        }// fine del blocco if
-//    }// end of method
 
     /**
      * Spostamento effettivo, in su o in giu del singolo record.
@@ -258,41 +174,6 @@ public class WamTablePortal extends TablePortal {
 
     }// end of method
 
-//    /**
-//     * Aggiunge una company al menu
-//     * <p>
-//     * Creata una nuova company.
-//     * Sincronizza il filtro
-//     */
-//    public void addCompany(WamCompany companyNew) {
-//        addCroce(companyNew);
-//        syncCompany(companyNew);
-//    }// end of method
-
-//    /**
-//     * Elimina una company dal menu
-//     * <p>
-//     * Cancellata una company.
-//     * Sincronizza il filtro
-//     */
-//    public void deleteCompany(WamCompany companyNew) {
-//        deleteMenu(companyNew);
-//        syncCompany(companyNew);
-//    }// end of method
-
-//    /**
-//     * Cancella il menu selezionato
-//     */
-//    private void deleteMenu(WamCompany croceDaCancellare) {
-//        MenuBar.MenuItem subItem;
-//
-//        if (croceDaCancellare != null && croci.containsKey(croceDaCancellare)) {
-//            subItem = croci.get(croceDaCancellare);
-//            if (subItem != null) {
-//                bCroci.removeChild(subItem);
-//            }// fine del blocco if
-//        }// fine del blocco if
-//    }// end of method
 
     /**
      * Sincronizza la company selezionata

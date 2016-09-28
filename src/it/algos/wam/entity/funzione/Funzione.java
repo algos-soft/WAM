@@ -63,7 +63,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @Index
     private String codeCompanyUnico;
 
-    //--descrizione (obbligatoria)
+    //--descrizione (obbligatoria, non unico)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
     private String descrizione = "";

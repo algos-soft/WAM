@@ -85,7 +85,7 @@ public abstract class BootService {
         creaPreferenze(company);
         listaFunzioni = creaFunzioni(company,manager);
         listaServizi = creaServizi(company, manager, listaFunzioni);
-//        listaVolontari = creaVolontari(company, manager, listaFunzioni);
+        listaVolontari = creaVolontari(company, manager, listaFunzioni);
 
 //        if (creaTurni) {
 //            listaTurni = creaTurniVuoti(company, manager, listaServizi);

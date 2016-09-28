@@ -6,6 +6,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.TextField;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.iscrizione.Iscrizione;
@@ -13,12 +14,10 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
 import it.algos.webbase.multiazienda.CompanyEntity_;
-import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.field.IntegerField;
-import it.algos.webbase.web.field.RelatedComboField;
+import it.algos.webbase.web.field.*;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.lib.LibSession;
@@ -30,7 +29,7 @@ import java.util.List;
 
 /**
  * Created by alex on 5-04-2016.
- * .
+ * Scheda personalizzata per la entity Servizio
  */
 public class ServizioForm extends ModuleForm {
 
@@ -42,7 +41,7 @@ public class ServizioForm extends ModuleForm {
     private OreMinuti oraFine;
     private Field fOrarioPredefinito;
     private ColorPicker picker;
-
+    private WamCompany companyTmp = null;
 
     /**
      * The form used to edit an item.
@@ -56,17 +55,14 @@ public class ServizioForm extends ModuleForm {
         super(item, module);
     }// end of constructor
 
+
     @Override
     protected void init() {
+        picker = new ServizioColorPicker();
         super.init();
         servizioToUi();
-    }
+    }// end of method
 
-
-    @Override
-    public void createFields() {
-        super.createFields();
-    }
 
     /**
      * Create the detail component (the upper part containing the fields).
@@ -96,53 +92,17 @@ public class ServizioForm extends ModuleForm {
      * @return il componente dettagli
      */
     private Component creaCompDetail(VerticalLayout layout) {
-        TextField fSigla = (TextField) getField(Funzione_.sigla);
-        fSigla.setWidth("8em");
-        fSigla.focus();
-        TextField fCodeCompanyUnico = (TextField) getField(Funzione_.codeCompanyUnico);
-        fCodeCompanyUnico.setWidth("14em");
-        fCodeCompanyUnico.setEnabled(false);
-        TextField fDescrizione = (TextField) getField(Funzione_.descrizione);
-        fDescrizione.setWidth("22.5em");
-        IntegerField fOrdine = (IntegerField) getField(Funzione_.ordine);
-        fOrdine.setEnabled(false);
-
-        picker = new ServizioColorPicker();
-        picker.setWidth("8em");
 
         // selezione della company (solo per developer)
         if (LibSession.isDeveloper()) {
-            // popup di selezione (solo per nuovo record)
-            if (isNewRecord()) {
-                RelatedComboField fCompany = (RelatedComboField) getField(CompanyEntity_.company);
-                fCompany.setWidth("8em");
-                layout.addComponent(fCompany);
-            } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
-                BaseEntity entity = getEntity();
-                WamCompany company = null;
-                Servizio serv = null;
-                if (entity != null && entity instanceof Servizio) {
-                    serv = (Servizio) entity;
-                    company = (WamCompany) serv.getCompany();
-                    TextField fCompany = new TextField("Company", company.getCompanyCode());
-                    fCompany.setWidth("8em");
-                    fCompany.setEnabled(false);
-                    HorizontalLayout h = new HorizontalLayout(fCompany, fCodeCompanyUnico);
-                    h.setSpacing(true);
-                    layout.addComponent(h);
-                }// end of if cycle
-            }// end of if/else cycle
+            layout.addComponent(this.creaCompany());
+            if (!isNewRecord()) {
+                layout.addComponent(this.creaCode());
+            }// end of if cycle
         }// end of if cycle
 
-        HorizontalLayout hl = new HorizontalLayout(fSigla, picker);
-        if (!isNewRecord()) {
-            hl.addComponent(fOrdine);
-        }// end of if cycle
-        hl.setComponentAlignment(picker, Alignment.BOTTOM_CENTER);
-
-        hl.setSpacing(true);
-        layout.addComponent(hl);
-        layout.addComponent(fDescrizione);
+        layout.addComponent(this.creaRigaPicker());
+        layout.addComponent(this.creaDescrizione());
 
         fOrarioPredefinito = getField(Servizio_.orario);
         fOrarioPredefinito.setCaption("Orario predefinito");
@@ -159,11 +119,11 @@ public class ServizioForm extends ModuleForm {
         oraFine = new OreMinuti("Ora fine");
         placeholderOrario = new HorizontalLayout(oraInizio, oraFine);
         placeholderOrario.setSpacing(true);
-        layout.addComponent(placeholderOrario);
+//        layout.addComponent(placeholderOrario);
         placeholderOrario.setVisible(isOrarioPredefinito());
 
         // aggiunge un po di spazio
-        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+//        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
 
         // aggiunge il placeholder per le funzioni previste
         placeholderFunc = new VerticalLayout();
@@ -185,6 +145,151 @@ public class ServizioForm extends ModuleForm {
 
         return layout;
     }// end of method
+
+
+
+    /**
+     * Selezione della company (solo per developer)
+     * Crea il campo company, obbligatorio
+     * Nel nuovo record è un ComboBox di selezione
+     * Nella modifica è un TextField
+     *
+     * @return il campo creato
+     */
+    private Component creaCompany() {
+        // popup di selezione (solo per nuovo record)
+        if (isNewRecord()) {
+            RelatedComboField fCompanyCombo = (RelatedComboField) getField(CompanyEntity_.company);
+            fCompanyCombo.setWidth("8em");
+            fCompanyCombo.setRequired(true);
+            fCompanyCombo.setRequiredError("Manca la company");
+
+
+            //                fCompany.addListener(new Property.ValueChangeListener() {
+//                    private static final long serialVersionUID = -5188369735622627751L;
+//
+//                    public void valueChange(Property.ValueChangeEvent event) {
+//                        Object obj = fCompany.getValue();
+//                        if (obj != null) {
+//                            if (obj instanceof WamCompany) {
+//                                int a=87;
+//                            }// end of if cycle
+//
+//                        }// end of if cycle
+//                    }// end of inner method
+//                });// end of anonymous inner class
+
+
+
+            return fCompanyCombo;
+        } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
+            TextField fCompanyText = null;
+            BaseEntity entity = getEntity();
+            WamCompany company = null;
+            Servizio serv = null;
+            if (entity != null && entity instanceof Servizio) {
+                serv = (Servizio) entity;
+                company = (WamCompany) serv.getCompany();
+                fCompanyText = new TextField("Company", company.getCompanyCode());
+                fCompanyText.setWidth("8em");
+                fCompanyText.setEnabled(false);
+                fCompanyText.setRequired(true);
+            }// end of if cycle
+
+            return fCompanyText;
+        }// end of if/else cycle
+    }// end of method
+
+    /**
+     * Crea il campo codeCompanyUnico, obbligatorio e unico
+     * Viene inserito in automatico e NON dal form
+     *
+     * @return il campo creato
+     */
+    private TextField creaCode() {
+        TextField fCodeCompanyUnico = (TextField) getField(Servizio_.codeCompanyUnico);
+
+        fCodeCompanyUnico.setWidth("14em");
+        fCodeCompanyUnico.setEnabled(false);
+        if (!isNewRecord()) {
+            fCodeCompanyUnico.setRequired(true);
+        }// end of if cycle
+
+        return fCodeCompanyUnico;
+    }// end of method
+
+
+    /**
+     * Crea la riga (HorizontalLayout) con sigla, picker e ordine
+     *
+     * @return il campo creato
+     */
+    private HorizontalLayout creaRigaPicker() {
+        HorizontalLayout layout ;
+
+        picker.setWidth("8em");
+
+        layout = new HorizontalLayout(this.creaSigla(), picker);
+        if (!isNewRecord()) {
+            layout.addComponent(this.creaOrdine());
+        }// end of if cycle
+        layout.setComponentAlignment(picker, Alignment.BOTTOM_CENTER);
+        layout.setSpacing(true);
+
+        return layout;
+    }// end of method
+
+
+
+    /**
+     * Crea il campo sigla, obbligatorio
+     *
+     * @return il campo creato
+     */
+    private TextField creaSigla() {
+        TextField fSigla = (TextField) getField(Servizio_.sigla);
+        fSigla.setWidth("8em");
+        fSigla.setRequired(true);
+        fSigla.setRequiredError("Manca la sigla di codifica");
+        fSigla.focus();
+
+        return fSigla;
+    }// end of method
+
+
+    /**
+     * Crea il campo descrizione, obbligatorio
+     *
+     * @return il campo creato
+     */
+    private TextField creaDescrizione() {
+        TextField fDescrizione = (TextField) getField(Servizio_.descrizione);
+
+        fDescrizione.setWidth("22.5em");
+        fDescrizione.setRequired(true);
+        fDescrizione.setRequiredError("Manca la descrizione");
+
+        return fDescrizione;
+    }// end of method
+
+    /**
+     * Crea il campo ordine, obbligatorio con inserimento automatico
+     * Viene inserito in automatico e NON dal form
+     *
+     * @return il campo creato
+     */
+    private IntegerField creaOrdine() {
+        IntegerField fOrdine = (IntegerField) getField(Servizio_.ordine);
+        fOrdine.setEnabled(false);
+
+        fOrdine.setEnabled(false);
+        if (!isNewRecord()) {
+            fOrdine.setRequired(true);
+        }// end of if cycle
+
+        return fOrdine;
+    }// end of method
+
 
 
     private Servizio getServizio() {
@@ -416,7 +521,6 @@ public class ServizioForm extends ModuleForm {
 
 
             // combo di selezione della funzione
-            CompanySessionLib.setCompany(WamCompany.findByCode("gaps"));
             comboFunzioni = new ERelatedComboField(Funzione.class);
             comboFunzioni.sort(Funzione_.sigla);
             comboFunzioni.setWidth("12em");
