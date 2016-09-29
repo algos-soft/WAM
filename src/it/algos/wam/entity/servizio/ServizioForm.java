@@ -6,18 +6,20 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
-import com.vaadin.ui.TextField;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.query.WamQuery;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.field.*;
+import it.algos.webbase.web.field.CheckBoxField;
+import it.algos.webbase.web.field.IntegerField;
+import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.Lib;
 import it.algos.webbase.web.lib.LibSession;
@@ -33,15 +35,30 @@ import java.util.List;
  */
 public class ServizioForm extends ModuleForm {
 
-    private VerticalLayout placeholderFunc;
-    private ArrayList<EditorSF> sfEditors;
 
+    //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
+    @SuppressWarnings("all")
+    private RelatedComboField fCompanyCombo;
+    @SuppressWarnings("all")
+    private TextField fCompanyText;
+    @SuppressWarnings("all")
+    private TextField fCodeCompanyUnico;
+    @SuppressWarnings("all")
+    private TextField fSigla;
+    @SuppressWarnings("all")
+    private IntegerField fOrdine;
+    private ColorPicker picker;
+    @SuppressWarnings("all")
+    private TextField fDescrizione;
+    private CheckBoxField fOrarioPredefinito;
     private HorizontalLayout placeholderOrario;
     private OreMinuti oraInizio;
     private OreMinuti oraFine;
-    private Field fOrarioPredefinito;
-    private ColorPicker picker;
-    private WamCompany companyTmp = null;
+    private VerticalLayout placeholderFunz;
+    @SuppressWarnings("all")
+    private Button bNuova;
+    private ArrayList<EditorSF> sfEditors;
+
 
     /**
      * The form used to edit an item.
@@ -58,7 +75,6 @@ public class ServizioForm extends ModuleForm {
 
     @Override
     protected void init() {
-        picker = new ServizioColorPicker();
         super.init();
         servizioToUi();
     }// end of method
@@ -78,6 +94,7 @@ public class ServizioForm extends ModuleForm {
         layout.setMargin(true);
         layout.setSpacing(true);
 
+        picker = new ServizioColorPicker();
         sfEditors = new ArrayList<>();
 
         return creaCompDetail(layout);
@@ -95,57 +112,33 @@ public class ServizioForm extends ModuleForm {
 
         // selezione della company (solo per developer)
         if (LibSession.isDeveloper()) {
-            layout.addComponent(this.creaCompany());
-            if (!isNewRecord()) {
-                layout.addComponent(this.creaCode());
-            }// end of if cycle
+            if (isNewRecord()) {
+                layout.addComponent(this.creaCompany());
+            } else {
+                HorizontalLayout hLayout = new HorizontalLayout(this.creaCompany(), this.creaCode());
+                hLayout.setSpacing(true);
+                layout.addComponent(hLayout);
+            }// end of if/else cycle
         }// end of if cycle
 
         layout.addComponent(this.creaRigaPicker());
         layout.addComponent(this.creaDescrizione());
-
-        fOrarioPredefinito = getField(Servizio_.orario);
-        fOrarioPredefinito.setCaption("Orario predefinito");
-        layout.addComponent(fOrarioPredefinito);
-        fOrarioPredefinito.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                placeholderOrario.setVisible(isOrarioPredefinito());
-            }
-        });
-
-        // aggiunge il placeholder per l'orario di inizio e fine
-        oraInizio = new OreMinuti("Ora inizio");
-        oraFine = new OreMinuti("Ora fine");
-        placeholderOrario = new HorizontalLayout(oraInizio, oraFine);
-        placeholderOrario.setSpacing(true);
-//        layout.addComponent(placeholderOrario);
-        placeholderOrario.setVisible(isOrarioPredefinito());
+        layout.addComponent(this.creaChekOrario());
+        layout.addComponent(this.creaPlaceorderOrario());
 
         // aggiunge un po di spazio
-//        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
 
-        // aggiunge il placeholder per le funzioni previste
-        placeholderFunc = new VerticalLayout();
-        placeholderFunc.setCaption("Funzioni previste");
-        placeholderFunc.setSpacing(true);
-        layout.addComponent(placeholderFunc);
+        layout.addComponent(this.creaPlaceorderFunzioni());
+        layout.addComponent(this.creaBottoneNuova());
 
-        // aggiunge un bottone per creare nuove funzioni
-        Button bNuova = new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
-        bNuova.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent clickEvent) {
-                EditorSF editor = new EditorSF(null);
-                placeholderFunc.addComponent(editor);
-                sfEditors.add(editor);
-            }
-        });
-        layout.addComponent(bNuova);
+        //--stato iniziale
+        if (isNewRecord()) {
+            syncPlaceholderFunz();
+        }// end of if cycle
 
         return layout;
     }// end of method
-
 
 
     /**
@@ -154,36 +147,26 @@ public class ServizioForm extends ModuleForm {
      * Nel nuovo record è un ComboBox di selezione
      * Nella modifica è un TextField
      *
-     * @return il campo creato
+     * @return il componente creato
      */
     private Component creaCompany() {
         // popup di selezione (solo per nuovo record)
         if (isNewRecord()) {
-            RelatedComboField fCompanyCombo = (RelatedComboField) getField(CompanyEntity_.company);
+            fCompanyCombo = (RelatedComboField) getField(CompanyEntity_.company);
             fCompanyCombo.setWidth("8em");
             fCompanyCombo.setRequired(true);
             fCompanyCombo.setRequiredError("Manca la company");
 
-
-            //                fCompany.addListener(new Property.ValueChangeListener() {
-//                    private static final long serialVersionUID = -5188369735622627751L;
-//
-//                    public void valueChange(Property.ValueChangeEvent event) {
-//                        Object obj = fCompany.getValue();
-//                        if (obj != null) {
-//                            if (obj instanceof WamCompany) {
-//                                int a=87;
-//                            }// end of if cycle
-//
-//                        }// end of if cycle
-//                    }// end of inner method
-//                });// end of anonymous inner class
-
-
+            fCompanyCombo.addValueChangeListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                    syncPlaceholderFunz();
+                }// end of inner method
+            });// end of anonymous inner class
 
             return fCompanyCombo;
         } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
-            TextField fCompanyText = null;
+            fCompanyText = null;
             BaseEntity entity = getEntity();
             WamCompany company = null;
             Servizio serv = null;
@@ -204,10 +187,10 @@ public class ServizioForm extends ModuleForm {
      * Crea il campo codeCompanyUnico, obbligatorio e unico
      * Viene inserito in automatico e NON dal form
      *
-     * @return il campo creato
+     * @return il componente creato
      */
     private TextField creaCode() {
-        TextField fCodeCompanyUnico = (TextField) getField(Servizio_.codeCompanyUnico);
+        fCodeCompanyUnico = (TextField) getField(Servizio_.codeCompanyUnico);
 
         fCodeCompanyUnico.setWidth("14em");
         fCodeCompanyUnico.setEnabled(false);
@@ -222,10 +205,10 @@ public class ServizioForm extends ModuleForm {
     /**
      * Crea la riga (HorizontalLayout) con sigla, picker e ordine
      *
-     * @return il campo creato
+     * @return il componente creato
      */
     private HorizontalLayout creaRigaPicker() {
-        HorizontalLayout layout ;
+        HorizontalLayout layout;
 
         picker.setWidth("8em");
 
@@ -240,14 +223,13 @@ public class ServizioForm extends ModuleForm {
     }// end of method
 
 
-
     /**
      * Crea il campo sigla, obbligatorio
      *
-     * @return il campo creato
+     * @return il componente creato
      */
     private TextField creaSigla() {
-        TextField fSigla = (TextField) getField(Servizio_.sigla);
+        fSigla = (TextField) getField(Servizio_.sigla);
         fSigla.setWidth("8em");
         fSigla.setRequired(true);
         fSigla.setRequiredError("Manca la sigla di codifica");
@@ -260,10 +242,10 @@ public class ServizioForm extends ModuleForm {
     /**
      * Crea il campo descrizione, obbligatorio
      *
-     * @return il campo creato
+     * @return il componente creato
      */
     private TextField creaDescrizione() {
-        TextField fDescrizione = (TextField) getField(Servizio_.descrizione);
+        fDescrizione = (TextField) getField(Servizio_.descrizione);
 
         fDescrizione.setWidth("22.5em");
         fDescrizione.setRequired(true);
@@ -273,13 +255,48 @@ public class ServizioForm extends ModuleForm {
     }// end of method
 
     /**
+     * Crea il chekbox orario
+     *
+     * @return il componente creato
+     */
+    private CheckBoxField creaChekOrario() {
+        fOrarioPredefinito = (CheckBoxField) getField(Servizio_.orario);
+
+        fOrarioPredefinito.setCaption("Orario predefinito");
+        fOrarioPredefinito.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                placeholderOrario.setVisible(isOrarioPredefinito());
+            }// end of inner method
+        });// end of anonymous inner class
+
+        return fOrarioPredefinito;
+    }// end of method
+
+    /**
+     * Crea il placeholder per l'orario di inizio e fine
+     *
+     * @return il componente creato
+     */
+    private HorizontalLayout creaPlaceorderOrario() {
+        oraInizio = new OreMinuti("Ora inizio");
+        oraFine = new OreMinuti("Ora fine");
+
+        placeholderOrario = new HorizontalLayout(oraInizio, oraFine);
+        placeholderOrario.setSpacing(true);
+        placeholderOrario.setVisible(isOrarioPredefinito());
+
+        return placeholderOrario;
+    }// end of method
+
+    /**
      * Crea il campo ordine, obbligatorio con inserimento automatico
      * Viene inserito in automatico e NON dal form
      *
-     * @return il campo creato
+     * @return il componente creato
      */
     private IntegerField creaOrdine() {
-        IntegerField fOrdine = (IntegerField) getField(Servizio_.ordine);
+        fOrdine = (IntegerField) getField(Servizio_.ordine);
         fOrdine.setEnabled(false);
 
         fOrdine.setEnabled(false);
@@ -291,6 +308,52 @@ public class ServizioForm extends ModuleForm {
     }// end of method
 
 
+    /**
+     * Crea il placeholder per le funzioni previste
+     *
+     * @return il componente creato
+     */
+    private VerticalLayout creaPlaceorderFunzioni() {
+        placeholderFunz = new VerticalLayout();
+        placeholderFunz.setCaption("Funzioni previste");
+        placeholderFunz.setSpacing(true);
+
+        if (isNewRecord()) {
+            placeholderFunz.setVisible(false);
+        }// end of if cycle
+
+        return placeholderFunz;
+    }// end of method
+
+    /**
+     * Crea un bottone per creare nuove funzioni
+     *
+     * @return il componente creato
+     */
+    private Button creaBottoneNuova() {
+        bNuova = new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
+
+        bNuova.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                EditorSF editor = new EditorSF(null);
+                placeholderFunz.addComponent(editor);
+                sfEditors.add(editor);
+            }// end of inner method
+        });// end of anonymous inner class
+
+        if (isNewRecord()) {
+            bNuova.setVisible(false);
+        }// end of if cycle
+
+        return bNuova;
+    }// end of method
+
+
+    private void syncPlaceholderFunz() {
+        placeholderFunz.setVisible(fCompanyCombo.getValue() != null);
+        bNuova.setVisible(fCompanyCombo.getValue() != null);
+    }// end of method
 
     private Servizio getServizio() {
         return (Servizio) getEntity();
@@ -399,7 +462,7 @@ public class ServizioForm extends ModuleForm {
         Collections.sort(listaSF);
         for (ServizioFunzione sf : listaSF) {
             EditorSF editor = new EditorSF(sf);
-            placeholderFunc.addComponent(editor);
+            placeholderFunz.addComponent(editor);
             sfEditors.add(editor);
         }
 
@@ -457,26 +520,30 @@ public class ServizioForm extends ModuleForm {
         // cancella quelli inesistenti nell'editor (sono stati cancellati).
         // Dato che elimina elementi della stessa lista che viene iterata, esegue
         // l'iterazione partendo dal fondo
-        for (int i = getServizio().getServizioFunzioni().size() - 1; i >= 0; i--) {
-            ServizioFunzione sf = getServizio().getServizioFunzioni().get(i);
+        List<ServizioFunzione> lista = getServizio().getServizioFunzioni();
+        int dim = lista.size();
+        for (int i = dim - 1; i >= 0; i--) {
+            ServizioFunzione sf = lista.get(i);
             if (sf.getId() != null) {   // non considera quelli senza id, sono i nuovi!
                 boolean found = false;
+
                 for (EditorSF editor : sfEditors) {
                     if (editor.getServizioFunzione() != null) {
                         if (editor.getServizioFunzione().equals(sf)) {
                             found = true;
                             break;
-                        }
-                    }
-                }
+                        }// end of if cycle
+                    }// end of if cycle
+                }// end of for cycle
+
                 if (!found) {
-                    getServizio().getServizioFunzioni().remove(i);
-                }
-            }
+                    lista.remove(i);
+                }// end of if cycle
+            }// end of if cycle
+            getServizio().setServizioFunzioni(lista);
+        }// end of for cycle
 
-        }
-
-    }
+    }// end of method
 
 
     /**
@@ -521,7 +588,12 @@ public class ServizioForm extends ModuleForm {
 
 
             // combo di selezione della funzione
-            comboFunzioni = new ERelatedComboField(Funzione.class);
+            BaseCompany company = getServizio().getCompany();
+            if (company == null) {
+                company = WamCompany.find((long) fCompanyCombo.getValue());
+            }// end of if cycle
+            comboFunzioni = new ERelatedComboField(Funzione.class, company);
+
             comboFunzioni.sort(Funzione_.sigla);
             comboFunzioni.setWidth("12em");
             if (serFun != null) {
@@ -605,9 +677,8 @@ public class ServizioForm extends ModuleForm {
          */
         private void doDelete() {
             Servizio s = getServizio();
-            placeholderFunc.removeComponent(this);
+            placeholderFunz.removeComponent(this);
             sfEditors.remove(this);
-            int a = 87;
         }
 
         /**

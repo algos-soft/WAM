@@ -13,7 +13,6 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibArray;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -24,6 +23,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -500,33 +500,9 @@ public class Servizio extends WamCompanyEntity {
      * @return istanza della Entity
      */
     public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine, EntityManager manager) {
-        return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, manager, (List<Funzione>) null);
+        return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, 0, oraFine, 0, manager, (ArrayList<Funzione>) null);
     }// end of static method
 
-
-    /**
-     * Creazione iniziale di una istanza della Entity
-     * La crea SOLO se non esiste già
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param sigla       sigla di riferimento interna (obbligatoria)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
-     * @param colore      del gruppo (facoltativo)
-     * @param orario      servizio ad orario prefissato e fisso ogni giorno (facoltativo)
-     * @param oraInizio   del servizio (facoltativo, obbligatorio se orario è true)
-     * @param oraFine     del servizio (facoltativo, obbligatorio se orario è true)
-     * @param manager     the EntityManager to use
-     * @param funzioni    lista delle funzioni (facoltativa)
-     * @return istanza della Entity
-     */
-    public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine, EntityManager manager, List<Funzione> funzioni) {
-        if (funzioni != null) {
-            return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, manager, funzioni.toArray(new Funzione[funzioni.size()]));
-        } else {
-            return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, manager, (Funzione) null);
-        }// end of if/else cycle
-    }// end of static method
 
     /**
      * Creazione iniziale di una istanza della Entity
@@ -545,23 +521,109 @@ public class Servizio extends WamCompanyEntity {
      * @return istanza della Entity
      */
     public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine, EntityManager manager, Funzione... funzioni) {
+        if (funzioni != null) {
+            return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, 0, oraFine, 0, manager, new ArrayList<>(Arrays.asList(funzioni)));
+        } else {
+            return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, 0, oraFine, 0, manager, (ArrayList<Funzione>) null);
+        }// end of if/else cycle
+    }// end of static method
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company      di appartenenza (property della superclasse)
+     * @param sigla        sigla di riferimento interna (obbligatoria)
+     * @param descrizione  per il tabellone (obbligatoria)
+     * @param ordine       di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
+     * @param colore       del gruppo (facoltativo)
+     * @param orario       servizio ad orario prefissato e fisso ogni giorno (facoltativo)
+     * @param oraInizio    del servizio (facoltativo, obbligatorio se orario è true)
+     * @param minutiInizio del servizio (facoltativo, obbligatorio se orario è true)
+     * @param oraFine      del servizio (facoltativo, obbligatorio se orario è true)
+     * @param minutiFine   del servizio (facoltativo, obbligatorio se orario è true)
+     * @param manager      the EntityManager to use
+     * @param funzioni     lista delle funzioni (facoltativa)
+     * @return istanza della Entity
+     */
+    public static Servizio crea(
+            WamCompany company,
+            String sigla,
+            String descrizione,
+            int ordine,
+            int colore,
+            boolean orario,
+            int oraInizio,
+            int minutiInizio,
+            int oraFine,
+            int minutiFine,
+            EntityManager manager,
+            ArrayList<Funzione> funzioni) {
+        List<ServizioFunzione> servizioFunzioni = new ArrayList<>();
+
+        if (funzioni != null) {
+            for (int k = 0; k < funzioni.size(); k++) {
+                servizioFunzioni.add(new ServizioFunzione(company, null, funzioni.get(k)));
+            }// end of for cycle
+        }// fine del blocco if
+
+
+        return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, minutiInizio, oraFine, minutiFine, manager, servizioFunzioni);
+    }// end of static method
+
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company          di appartenenza (property della superclasse)
+     * @param sigla            sigla di riferimento interna (obbligatoria)
+     * @param descrizione      per il tabellone (obbligatoria)
+     * @param ordine           di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
+     * @param colore           del gruppo (facoltativo)
+     * @param orario           servizio ad orario prefissato e fisso ogni giorno (facoltativo)
+     * @param oraInizio        del servizio (facoltativo, obbligatorio se orario è true)
+     * @param minutiInizio     del servizio (facoltativo, obbligatorio se orario è true)
+     * @param oraFine          del servizio (facoltativo, obbligatorio se orario è true)
+     * @param minutiFine       del servizio (facoltativo, obbligatorio se orario è true)
+     * @param manager          the EntityManager to use
+     * @param servizioFunzioni lista delle funzioni (facoltativa)
+     * @return istanza della Entity
+     */
+    public static Servizio crea(
+            WamCompany company,
+            String sigla,
+            String descrizione,
+            int ordine,
+            int colore,
+            boolean orario,
+            int oraInizio,
+            int minutiInizio,
+            int oraFine,
+            int minutiFine,
+            EntityManager manager,
+            List<ServizioFunzione> servizioFunzioni) {
         Servizio servizio = Servizio.getEntityByCompanyAndBySigla(company, sigla, manager);
+        ServizioFunzione servFunz;
 
         if (servizio == null) {
             servizio = new Servizio(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine);
+            servizio.setMinutiInizio(minutiInizio);
+            servizio.setMinutiFine(minutiFine);
 
-            if (funzioni != null) {
-                for (int k = 0; k < funzioni.length; k++) {
-                    servizio.servizioFunzioni.add(new ServizioFunzione(company, servizio, funzioni[k]));
+            if (servizioFunzioni != null) {
+                for (int k = 0; k < servizioFunzioni.size(); k++) {
+                    servFunz = servizioFunzioni.get(k);
+                    servFunz.setServizio(servizio);
+                    servizio.servizioFunzioni.add(servFunz);
                 }// end of for cycle
             }// fine del blocco if
 
-            servizio.save(company, manager);
+            servizio = servizio.save(company, manager);
         }// end of if cycle
 
         return servizio;
     }// end of static method
-
 
     //------------------------------------------------------------------------------------------------------------------------
     // Delete
@@ -941,14 +1003,6 @@ public class Servizio extends WamCompanyEntity {
 
     }
 
-    /**
-     * Aggiunge un ServizioFunzione a questo servizio.
-     * Regola automaticamente il link al Servizio.
-     */
-    public void add(ServizioFunzione sf) {
-        sf.setServizio(this);
-        getServizioFunzioni().add(sf);
-    }
 
     /**
      * Ritorna il tempo totale del servizio in minuti
@@ -970,7 +1024,7 @@ public class Servizio extends WamCompanyEntity {
      * List NON garantisce l'ordinamento
      */
     public ArrayList<ServizioFunzione> getServizioFunzioni() {
-        ArrayList<ServizioFunzione> listaOrdinata = new ArrayList<ServizioFunzione>();
+        ArrayList<ServizioFunzione> listaOrdinata = new ArrayList<>();
         LinkedHashMap<Integer, ServizioFunzione> mappa = new LinkedHashMap<>();
 
         for (ServizioFunzione serFunz : servizioFunzioni) {
@@ -992,6 +1046,17 @@ public class Servizio extends WamCompanyEntity {
     public void add(Funzione funzione) {
         add(funzione, false);
     }// end of method
+
+
+    /**
+     * Aggiunge un ServizioFunzione a questo servizio.
+     * Regola automaticamente il link al Servizio.
+     */
+    public void add(ServizioFunzione sf) {
+        sf.setServizio(this);
+        servizioFunzioni.add(sf);
+    }
+
 
     public void add(Funzione funzione, boolean obbligatoria) {
         ServizioFunzione serFun = null;

@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
  * Created by gac on 01 set 2016.
  * .
  */
-public  class FunzioneTest extends WamBaseTest {
+public class FunzioneTest extends WamBaseTest {
 
     Funzione funzioneUno;
     Funzione funzioneDue;
@@ -56,7 +56,7 @@ public  class FunzioneTest extends WamBaseTest {
     private static void cancellaFunzioni() {
         Funzione.deleteAll(MANAGER);
         CompanyQuery.delete(Funzione.class, MANAGER);
-int a=87;
+        int a = 87;
     } // end of cleaup finale
 
     @Before
@@ -98,7 +98,7 @@ int a=87;
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // senza un parametro obbligatorio
-        funzioneUno = new Funzione(null, SIGLA_UNO, DESCRIZIONE_UNO);
+        funzioneUno = new Funzione(null, CODE_UNO, SIGLA_UNO, DESCRIZIONE_UNO);
         try { // prova ad eseguire il codice
             funzioneUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
@@ -109,7 +109,7 @@ int a=87;
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
-        funzioneUno = new Funzione(companyUno, "", DESCRIZIONE_UNO);
+        funzioneUno = new Funzione(companyUno, CODE_UNO, "", DESCRIZIONE_UNO);
         try { // prova ad eseguire il codice
             funzioneUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
@@ -120,7 +120,7 @@ int a=87;
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
-        funzioneUno = new Funzione(companyUno, SIGLA_UNO, "");
+        funzioneUno = new Funzione(companyUno, CODE_UNO, SIGLA_UNO, "");
         try { // prova ad eseguire il codice
             funzioneUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
@@ -131,7 +131,7 @@ int a=87;
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
-        funzioneUno = new Funzione(companyUno, "", "");
+        funzioneUno = new Funzione(companyUno, "", "", "");
         try { // prova ad eseguire il codice
             funzioneUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
@@ -142,7 +142,7 @@ int a=87;
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametri obbligatori
-        funzioneUno = new Funzione(companyUno, SIGLA_UNO, DESCRIZIONE_UNO);
+        funzioneUno = new Funzione(companyUno, CODE_UNO, SIGLA_UNO, DESCRIZIONE_UNO);
         funzioneUno.save(companyUno, MANAGER);
         assertNotNull(funzioneUno);
         assertNotNull(funzioneUno.getId());
@@ -152,7 +152,7 @@ int a=87;
         assertEquals(numRecUnoNew, numRecUnoOld + 1);
 
         // parametri obbligatori
-        funzioneDue = new Funzione(companyUno, SIGLA_DUE, DESCRIZIONE_DUE);
+        funzioneDue = new Funzione(companyUno, CODE_DUE, SIGLA_DUE, DESCRIZIONE_DUE);
         funzioneDue.save(companyUno, MANAGER);
         assertNotNull(funzioneDue);
         assertNotNull(funzioneDue.getId());
@@ -162,7 +162,7 @@ int a=87;
         assertEquals(numRecUnoNew, numRecUnoOld + 2);
 
         // tutti i parametri previsti
-        funzioneTre = new Funzione(companyDue, SIGLA_UNO, DESCRIZIONE_UNO, 6, FontAwesome.USER);
+        funzioneTre = new Funzione(companyDue, CODE_UNO, SIGLA_UNO, DESCRIZIONE_UNO, 6, FontAwesome.USER);
         funzioneTre.save(companyDue, MANAGER);
         assertNotNull(funzioneTre);
         assertNotNull(funzioneTre.getId());
@@ -172,7 +172,7 @@ int a=87;
         assertEquals(numRecUnoNew, numRecDueOld + 1);
 
         // parametri obbligatori
-        funzioneQuattro = new Funzione(companyDue, SIGLA_DUE, DESCRIZIONE_DUE);
+        funzioneQuattro = new Funzione(companyDue, CODE_DUE,SIGLA_DUE, DESCRIZIONE_DUE);
         funzioneQuattro.save(companyDue, MANAGER);
         assertNotNull(funzioneQuattro);
         assertNotNull(funzioneQuattro.getId());
@@ -182,7 +182,7 @@ int a=87;
         assertEquals(numRecDueNew, numRecDueOld + 2);
 
         // campo unico, doppio
-        funzioneCinque = new Funzione(companyUno, SIGLA_UNO, DESCRIZIONE_UNO);
+        funzioneCinque = new Funzione(companyUno, CODE_UNO, SIGLA_UNO, DESCRIZIONE_UNO);
         try { // prova ad eseguire il codice
             funzioneCinque.save(companyUno, MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
@@ -212,15 +212,15 @@ int a=87;
             return;
         }// end of if cycle
 
-        funzioneUno = Funzione.getEntityByCompanyAndBySigla(SIGLA_UNO,companyUno, MANAGER);
+        funzioneUno = Funzione.getEntityByCompanyAndByCode(CODE_UNO, companyUno, MANAGER);
         assertNotNull(funzioneUno);
 
-        funzioneDue = Funzione.getEntityByCompanyAndBySigla(SIGLA_DUE,companyDue, MANAGER);
+        funzioneDue = Funzione.getEntityByCompanyAndByCode(CODE_DUE, companyDue, MANAGER);
         assertNotNull(funzioneDue);
         assertNotSame(funzioneDue, funzioneUno);
         key = funzioneDue.getId();
 
-        funzioneTre = Funzione.getEntityByCompanyAndBySigla(SIGLA_DUE,companyUno, MANAGER);
+        funzioneTre = Funzione.getEntityByCompanyAndByCode(CODE_DUE, companyUno, MANAGER);
         assertNotNull(funzioneTre);
         assertNotSame(funzioneTre, funzioneDue);
 
@@ -281,7 +281,7 @@ int a=87;
 
         // senza un parametro obbligatorio
         try { // prova ad eseguire il codice
-            funzioneUno = Funzione.crea(null, SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
+            funzioneUno = Funzione.crea(null, CODE_UNO,SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
             funzioneUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
@@ -290,35 +290,35 @@ int a=87;
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametri obbligatori
-        funzioneUno = Funzione.crea(companyUno, SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
+        funzioneUno = Funzione.crea(companyUno, CODE_UNO,SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
         numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 1);
         ordine = funzioneUno.getOrdine();
         assertEquals(ordine, 1);
 
         // parametri obbligatori
-        funzioneDue = Funzione.crea(companyUno, SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
+        funzioneDue = Funzione.crea(companyUno, CODE_DUE,SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
         numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 2);
         ordine = funzioneDue.getOrdine();
         assertEquals(ordine, 2);
 
         // tutti i parametri previsti
-        funzioneTre = Funzione.crea(companyDue, SIGLA_UNO, DESCRIZIONE_UNO, 6, FontAwesome.USER, MANAGER);
+        funzioneTre = Funzione.crea(companyDue, CODE_UNO,SIGLA_UNO, DESCRIZIONE_UNO, 6, FontAwesome.USER, MANAGER);
         numRecUnoNew = Funzione.countByCompany(companyDue, MANAGER);
         assertEquals(numRecUnoNew, numRecDueOld + 1);
         ordine = funzioneTre.getOrdine();
         assertEquals(ordine, 6);
 
         // parametri obbligatori
-        funzioneQuattro = Funzione.crea(companyDue, SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
+        funzioneQuattro = Funzione.crea(companyDue, CODE_DUE,SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
         numRecDueNew = Funzione.countByCompany(companyDue, MANAGER);
         assertEquals(numRecDueNew, numRecDueOld + 2);
         ordine = funzioneQuattro.getOrdine();
         assertEquals(ordine, 7);
 
         // campo unico, doppio
-        funzioneCinque = Funzione.crea(companyUno, SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
+        funzioneCinque = Funzione.crea(companyUno, CODE_UNO,SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
         try { // prova ad eseguire il codice
             funzioneCinque.save(companyUno, MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore

@@ -46,7 +46,7 @@ public class VolontarioTable extends WamTable {
     protected void createAdditionalColumns() {
         List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
         for (Funzione funz : listaFunzioni) {
-            addGeneratedColumn(funz.getSigla(), new FunzioniColumnGenerator(funz));
+            addGeneratedColumn(funz.getCode(), new FunzioniColumnGenerator(funz));
         }// end of for cycle
     }// end of method
 
@@ -76,7 +76,7 @@ public class VolontarioTable extends WamTable {
 //        }// end of if cycle
 //
         for (Funzione funz : listaFunzioni) {
-            lista.add(funz.getSigla());
+            lista.add(funz.getCode());
         }// end of for cycle
 
         return lista.toArray();
@@ -115,7 +115,7 @@ public class VolontarioTable extends WamTable {
         setColumnHeader(Volontario_.cognome, "Cognome");
 
         for (Funzione funz : listaFunzioni) {
-            setColumnWidth(funz.getSigla(), LAR);
+            setColumnWidth(funz.getCode(), LAR);
         }// end of for cycle
     }// end of method
 

@@ -15,6 +15,9 @@ public abstract class WamBaseTest {
     protected final static String COMPANY_UNO = "Alfa";
     protected final static String COMPANY_DUE = "Beta";
 
+    protected final static String CODE_UNO = "uno";
+    protected final static String CODE_DUE = "due";
+
     protected final static String SIGLA_UNO = "Prima";
     protected final static String SIGLA_DUE = "Seconda";
     protected final static String DESCRIZIONE_UNO = "Prima descrizione";

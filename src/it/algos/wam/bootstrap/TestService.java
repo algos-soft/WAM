@@ -80,8 +80,8 @@ public abstract class TestService {
         print("Numero di funzioni con company nulla (lista)", listaFunzioniCorrenti3.size());
         CompanySessionLib.setCompany(companyCorrente);
 
-        Funzione funz1= Funzione.getEntityBySigla("Cen");
-        Funzione funz2= Funzione.getEntityBySigla("Bar");
+        Funzione funz1= Funzione.getEntityByCode("Cen");
+        Funzione funz2= Funzione.getEntityByCode("Bar");
 
         BaseEntity funz4= AQuery.findOne(Funzione.class, Funzione_.sigla, "Bar");
         BaseEntity funz3= AQuery.findOne(Funzione.class, Funzione_.sigla, "Cen");

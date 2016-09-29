@@ -62,6 +62,7 @@ public class FunzioneTable extends WamTable {
                     Funzione_.codeCompanyUnico,
                     Funzione_.ordine,
                     COL_ICON,
+                    Funzione_.code,
                     Funzione_.sigla,
                     Funzione_.descrizione,
             };// end of array
@@ -103,10 +104,11 @@ public class FunzioneTable extends WamTable {
 
     private void fixColumn() {
         setColumnHeader(Funzione_.ordine, "##"); // visibile solo per il developer
-        setColumnHeader(Funzione_.sigla, "Sigla");
+//        setColumnHeader(Funzione_.sigla, "Sigla");
 
         setColumnAlignment(COL_ICON, Align.CENTER);
 
+        setColumnExpandRatio(Funzione_.code, 1);
         setColumnExpandRatio(Funzione_.sigla, 1);
         setColumnExpandRatio(Funzione_.descrizione, 3);
 

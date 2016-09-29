@@ -40,6 +40,13 @@ public class ServizioAmb extends MigrationEntity {
     private boolean orario;
     private boolean primo;
 
+    private long funzione1_id;
+    private long funzione2_id;
+    private long funzione3_id;
+    private long funzione4_id;
+
+    private int funzioni_obbligatorie;
+
 
     /**
      * Costruttore senza argomenti
@@ -196,6 +203,46 @@ public class ServizioAmb extends MigrationEntity {
 
     public void setPrimo(boolean primo) {
         this.primo = primo;
+    }//end of setter method
+
+    public long getFunzione1_id() {
+        return funzione1_id;
+    }// end of getter method
+
+    public void setFunzione1_id(long funzione1_id) {
+        this.funzione1_id = funzione1_id;
+    }//end of setter method
+
+    public long getFunzione2_id() {
+        return funzione2_id;
+    }// end of getter method
+
+    public void setFunzione2_id(long funzione2_id) {
+        this.funzione2_id = funzione2_id;
+    }//end of setter method
+
+    public long getFunzione3_id() {
+        return funzione3_id;
+    }// end of getter method
+
+    public void setFunzione3_id(long funzione3_id) {
+        this.funzione3_id = funzione3_id;
+    }//end of setter method
+
+    public long getFunzione4_id() {
+        return funzione4_id;
+    }// end of getter method
+
+    public void setFunzione4_id(long funzione4_id) {
+        this.funzione4_id = funzione4_id;
+    }//end of setter method
+
+    public int getFunzioni_obbligatorie() {
+        return funzioni_obbligatorie;
+    }// end of getter method
+
+    public void setFunzioni_obbligatorie(int funzioni_obbligatorie) {
+        this.funzioni_obbligatorie = funzioni_obbligatorie;
     }//end of setter method
 
 }// end of entity class

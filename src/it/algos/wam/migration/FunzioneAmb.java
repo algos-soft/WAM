@@ -46,6 +46,18 @@ public class FunzioneAmb extends MigrationEntity {
     }// end of constructor
 
 
+
+    /**
+     * Recupera una istanza della Entity usando la query standard della Primary Key
+     * Nessun filtro sulla company, perché la primary key è unica
+     *
+     * @param id      valore (unico) della Primary Key
+     * @return istanza della Entity, null se non trovata
+     */
+    public static FunzioneAmb find(long id) {
+        return (FunzioneAmb) AQuery.find(FunzioneAmb.class, id, getManager());
+    }// end of static method
+
     /**
      * Recupera una istanza della Entity usando la query per una property specifica
      * Filtrato sulla company passata come parametro.
@@ -63,7 +75,7 @@ public class FunzioneAmb extends MigrationEntity {
 
         Container.Filter filterA = new Compare.Equal(FunzioneAmb_.croce.getName(), company);
         Container.Filter filterB = new Compare.Equal(FunzioneAmb_.sigla.getName(), sigla);
-        entities = (List<FunzioneAmb>) AQuery.findAll(FunzioneAmb.class, null, manager, filterA, filterB);
+        entities = (List<FunzioneAmb>) AQuery.getList(FunzioneAmb.class, null, manager, filterA, filterB);
         manager.close();
 
         if (entities != null && entities.size() == 1) {

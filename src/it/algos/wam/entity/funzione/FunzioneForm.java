@@ -1,6 +1,7 @@
 package it.algos.wam.entity.funzione;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -14,6 +15,7 @@ import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
 /**
@@ -22,7 +24,22 @@ import it.algos.webbase.web.module.ModulePop;
  */
 public class FunzioneForm extends ModuleForm {
 
-    private Button iconButton;
+    //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
+    @SuppressWarnings("all")
+    private RelatedComboField fCompanyCombo;
+    @SuppressWarnings("all")
+    private TextField fCompanyText;
+    @SuppressWarnings("all")
+    private TextField fCodeCompanyUnico;
+    private Button bIcona;
+    @SuppressWarnings("all")
+    private TextField fCode;
+    @SuppressWarnings("all")
+    private TextField fSigla;
+    @SuppressWarnings("all")
+    private TextField fDescrizione;
+    @SuppressWarnings("all")
+    private IntegerField fOrdine;
 
 
     /**
@@ -50,12 +67,11 @@ public class FunzioneForm extends ModuleForm {
         // selezione della company (solo per developer)
         if (LibSession.isDeveloper()) {
             layout.addComponent(this.creaCompany());
-            if (!isNewRecord()) {
-                layout.addComponent(this.creaCode());
-            }// end of if cycle
+            layout.addComponent(this.creaCodeCompany());
         }// end of if cycle
 
         layout.addComponent(this.creaBottoneIcona());
+        layout.addComponent(this.creaCode());
         layout.addComponent(this.creaSigla());
         layout.addComponent(this.creaDescrizione());
 
@@ -72,23 +88,23 @@ public class FunzioneForm extends ModuleForm {
      * Nel nuovo record è un ComboBox di selezione
      * Nella modifica è un TextField
      *
-     * @return il campo creato
+     * @return il componente creato
      */
     private Component creaCompany() {
         // popup di selezione (solo per nuovo record)
         if (isNewRecord()) {
-            RelatedComboField fCompanyCombo = (RelatedComboField) getField(CompanyEntity_.company);
+            fCompanyCombo = (RelatedComboField) getField(CompanyEntity_.company);
             fCompanyCombo.setWidth("8em");
             fCompanyCombo.setRequired(true);
             fCompanyCombo.setRequiredError("Manca la company");
 
-            if (LibSession.isDeveloper()) {
+            if (LibSession.isDeveloper() && fCompanyCombo.getValue() == null) {
                 fCompanyCombo.focus();
             }// end of if cycle
 
             return fCompanyCombo;
         } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
-            TextField fCompanyText = null;
+            fCompanyText = null;
             BaseEntity entity = getEntity();
             WamCompany company = null;
             Funzione funz = null;
@@ -109,16 +125,14 @@ public class FunzioneForm extends ModuleForm {
      * Crea il campo codeCompanyUnico, obbligatorio e unico
      * Viene inserito in automatico e NON dal form
      *
-     * @return il campo creato
+     * @return il componente creato
      */
-    private TextField creaCode() {
-        TextField fCodeCompanyUnico = (TextField) getField(Funzione_.codeCompanyUnico);
+    private TextField creaCodeCompany() {
+        fCodeCompanyUnico = (TextField) getField(Funzione_.codeCompanyUnico);
 
         fCodeCompanyUnico.setWidth("16em");
         fCodeCompanyUnico.setEnabled(false);
-        if (!isNewRecord()) {
-            fCodeCompanyUnico.setRequired(true);
-        }// end of if cycle
+        fCodeCompanyUnico.setRequired(true);
 
         return fCodeCompanyUnico;
     }// end of method
@@ -127,13 +141,13 @@ public class FunzioneForm extends ModuleForm {
     /**
      * Crea il bottone per la selezione dell'icona
      *
-     * @return il bottone
+     * @return il componente creato
      */
     private Button creaBottoneIcona() {
-        Button iconButton = new Button("Icona");
-        iconButton.setHtmlContentAllowed(true);
-        iconButton.addStyleName("verde");
-        iconButton.addClickListener(new Button.ClickListener() {
+        bIcona = new Button("Icona");
+        bIcona.setHtmlContentAllowed(true);
+        bIcona.addStyleName("verde");
+        bIcona.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 SelectIconDialog dialog = new SelectIconDialog();
@@ -160,27 +174,58 @@ public class FunzioneForm extends ModuleForm {
             }// end of inner method
         });// end of anonymous inner class
 
-        this.iconButton = iconButton;
+//        this.bIcona = bIcona;
         syncButton();
 
-        return iconButton;
+        return bIcona;
     }// end of method
 
     /**
-     * Crea il campo sigla, obbligatorio
+     * Crea il campo sigla interna, obbligatorio
      *
-     * @return il campo creato
+     * @return il componente creato
+     */
+    private TextField creaCode() {
+        fCode = (TextField) getField(Funzione_.code);
+
+        fCode.setWidth("8em");
+        fCode.setRequired(true);
+        fCode.setRequiredError("Manca la sigla interna");
+
+        if (isNewRecord()) {
+            if (LibSession.isDeveloper()) {
+                if (fCompanyCombo.getValue() != null) {
+                    fCode.focus();
+                }// end of if cycle
+            } else {
+                fCode.focus();
+            }// end of if/else cycle
+        } else {
+            fCode.focus();
+            fCode.selectAll();
+        }// end of if/else cycle
+
+        fCode.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                syncCode();
+            }// end of inner method
+        });// end of anonymous inner class
+
+        return fCode;
+    }// end of method
+
+    /**
+     * Crea il campo sigla visibile, obbligatorio
+     *
+     * @return il componente creato
      */
     private TextField creaSigla() {
-        TextField fSigla = (TextField) getField(Funzione_.sigla);
+        fSigla = (TextField) getField(Funzione_.sigla);
 
         fSigla.setWidth("8em");
         fSigla.setRequired(true);
-        fSigla.setRequiredError("Manca la sigla di codifica");
-
-        if (!LibSession.isDeveloper() && isNewRecord()) {
-            fSigla.focus();
-        }// end of if cycle
+        fSigla.setRequiredError("Manca la sigla visibile");
 
         return fSigla;
     }// end of method
@@ -189,10 +234,10 @@ public class FunzioneForm extends ModuleForm {
     /**
      * Crea il campo descrizione, obbligatorio
      *
-     * @return il campo creato
+     * @return il componente creato
      */
     private TextField creaDescrizione() {
-        TextField fDescrizione = (TextField) getField(Funzione_.descrizione);
+        fDescrizione = (TextField) getField(Funzione_.descrizione);
 
         fDescrizione.setWidth("24em");
         fDescrizione.setRequired(true);
@@ -205,10 +250,10 @@ public class FunzioneForm extends ModuleForm {
      * Crea il campo ordine, obbligatorio con inserimento automatico
      * Viene inserito in automatico e NON dal form
      *
-     * @return il campo creato
+     * @return il componente creato
      */
     private IntegerField creaOrdine() {
-        IntegerField fOrdine = (IntegerField) getField(Funzione_.ordine);
+        fOrdine = (IntegerField) getField(Funzione_.ordine);
 
         fOrdine.setEnabled(false);
         if (!isNewRecord()) {
@@ -260,11 +305,39 @@ public class FunzioneForm extends ModuleForm {
      * Sincronizza l'icona del bottone con il codepoint contenuto nel field
      */
     private void syncButton() {
-        iconButton.setCaption("Scegli una icona...");
+        bIcona.setCaption("Scegli una icona...");
         FontAwesome glyph = getGlyph();
         if (glyph != null) {
-            iconButton.setCaption(glyph.getHtml());
+            bIcona.setCaption(glyph.getHtml());
         }// end of if cycle
+    }// end of method
+
+    /**
+     * Sincronizza il codeCompanyUnico e suggerisce la sigla
+     */
+    private void syncCode() {
+        String codeCompany = getCodeCompany();
+        String code = fCode.getValue();
+        String codeCompanyUnico = codeCompany.toLowerCase() + code.toLowerCase();
+
+        fCodeCompanyUnico.setValue(codeCompanyUnico);
+        if (isNewRecord()) {
+            fSigla.setValue(LibText.primaMaiuscola(code));
+            fSigla.selectAll();
+        }// end of if cycle
+
+    }// end of method
+
+    /**
+     * Restituisce il codice della company selezionata
+     */
+    private String getCodeCompany() {
+        if (isNewRecord()) {
+            WamCompany company = WamCompany.find((long) fCompanyCombo.getValue());
+            return company.getCompanyCode();
+        } else {
+            return fCompanyText.getValue();
+        }// end of if/else cycle
     }// end of method
 
 }// end of class
