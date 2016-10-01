@@ -1,4 +1,3 @@
-import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.volontario.Volontario;
 import org.junit.*;
 
@@ -11,7 +10,7 @@ import static org.junit.Assert.*;
  * Created by gac on 11 set 2016.
  * .
  */
-public class VolontarioTest extends WamBaseTest {
+public class VolontarioTest extends WamTest {
 
     Volontario volontarioUno;
     Volontario volontarioDue;
@@ -31,7 +30,6 @@ public class VolontarioTest extends WamBaseTest {
     public static void setUpInizialeStaticoEseguitoSoloUnaVoltaAllaCreazioneDellaClasse() {
         // creazione del MANAGER statico per questa singola classe di test
         // creazione di alcune company
-        setUp();
 
         // Prima di iniziare a creare e modificare i volontari, cancello tutte gli (eventuali) precedenti
         cancellaVolontari();
@@ -46,7 +44,6 @@ public class VolontarioTest extends WamBaseTest {
         // Alla fine, cancello tutte i volontari creati
         cancellaVolontari();
 
-        cleanUp();
     } // end of cleaup finale
 
     /**
@@ -67,7 +64,7 @@ public class VolontarioTest extends WamBaseTest {
     } // end of cleaup finale
 
 
-    @Test
+//    @Test
     // Constructors
     // Count records
     /**
@@ -274,7 +271,7 @@ public class VolontarioTest extends WamBaseTest {
 
         // senza un parametro obbligatorio
         try { // prova ad eseguire il codice
-            volontarioUno = Volontario.crea(null, SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
+            volontarioUno = Volontario.crea(null, sigla1, desc1, MANAGER);
             volontarioUno.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
@@ -283,12 +280,12 @@ public class VolontarioTest extends WamBaseTest {
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametri obbligatori
-        volontarioUno = Volontario.crea(companyUno, SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
+        volontarioUno = Volontario.crea(companyUno, sigla1, desc1, MANAGER);
         numRecUnoNew = Volontario.countBySingleCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 1);
 
         // parametri obbligatori
-        volontarioDue = Volontario.crea(companyUno, SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
+        volontarioDue = Volontario.crea(companyUno, sigla2, desc2, MANAGER);
         numRecUnoNew = Volontario.countBySingleCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 2);
 
@@ -298,12 +295,12 @@ public class VolontarioTest extends WamBaseTest {
 //        assertEquals(numRecUnoNew, numRecDueOld + 1);
 
         // parametri obbligatori
-        volontarioQuattro = Volontario.crea(companyDue, SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
+        volontarioQuattro = Volontario.crea(companyDue, sigla2, desc2, MANAGER);
         numRecDueNew = Volontario.countBySingleCompany(companyDue, MANAGER);
         assertEquals(numRecDueNew, numRecDueOld + 2);
 
         // campo unico, doppio
-        volontarioCinque = Volontario.crea(companyUno, SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
+        volontarioCinque = Volontario.crea(companyUno, sigla1, desc1, MANAGER);
         try { // prova ad eseguire il codice
             volontarioCinque.save(companyUno, MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore

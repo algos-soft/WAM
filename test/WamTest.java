@@ -1,32 +1,43 @@
 import it.algos.wam.entity.wamcompany.WamCompany;
+import org.junit.After;
+import org.junit.Before;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by gac on 01 set 2016.
  * .
  */
-public abstract class WamBaseTest {
+public abstract class WamTest {
 
     protected static EntityManager MANAGER;
 
     protected final static String COMPANY_UNO = "Alfa";
     protected final static String COMPANY_DUE = "Beta";
 
-    protected final static String CODE_UNO = "uno";
-    protected final static String CODE_DUE = "due";
+    protected  String code1 = "uno";
+    protected  String code2 = "due";
+    protected  String code3 = "tre";
+    protected  String code4 = "quattro";
 
-    protected final static String SIGLA_UNO = "Prima";
-    protected final static String SIGLA_DUE = "Seconda";
-    protected final static String DESCRIZIONE_UNO = "Prima descrizione";
-    protected final static String DESCRIZIONE_DUE = "Seconda descrizione";
+    protected  String sigla1 = "Prima";
+    protected  String sigla2 = "Seconda";
+    protected  String sigla3 = "Terza";
+    protected  String desc1 = "Prima descrizione";
+    protected  String desc2 = "Seconda descrizione";
 
     protected final static String NOME_UNO = "Mario";
     protected final static String NOME_DUE = "Ilaria";
     protected final static String COGNOME_UNO = "Bramieri";
     protected final static String COGNOME_DUE = "Torricelli";
+
+    protected int numSorgente = 0;
+    protected int numPrevisto = 0;
+    protected int numOttenuto = 0;
 
 
     // alcuni parametri utilizzati
@@ -36,19 +47,37 @@ public abstract class WamBaseTest {
     protected String previsto = "";
     protected String ottenuto = "";
 
+    protected ArrayList<Long> chiavi = new ArrayList<>();
+    protected List<String> listStr = new ArrayList<>();
 
-    protected static void setUp() {
+    /**
+     * SetUp iniziale eseguito solo una volta alla creazione della sottoclasse
+     */
+    protected static void setUpClass() {
+        // creazione del MANAGER statico per questa singola classe di test
         creaManager();
 
+        // crea alcune company di prova
         creaCompanyUno();
         creaCompanyDue();
-    } // end of setup iniziale
+    } // end of setup statico iniziale della sottoclasse
+
+
+    /**
+     * Cleanup finale eseguito solo una volta alla chiusura della sottoclasse
+     */
+    protected static void cleanUpClass() {
+        cancellaCompanyUno();
+        cancellaCompanyDue();
+
+        closeManager();
+    } // end of cleaup finale
 
     /**
      * Creazione di un MANAGER specifico
      * DEVE essere chiuso (must be close by caller method)
      */
-    protected static void creaManager() {
+    private static void creaManager() {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("WAMTEST");
 
         if (factory != null) {
@@ -91,14 +120,6 @@ public abstract class WamBaseTest {
         }// fine del blocco try-catch
     }// end of single test
 
-
-    protected static void cleanUp() {
-        cancellaCompanyUno();
-        cancellaCompanyDue();
-
-        closeManager();
-    } // end of cleaup finale
-
     /**
      * Cancella la prima company di prova per i test
      */
@@ -122,13 +143,50 @@ public abstract class WamBaseTest {
         }// end of if cycle
     }// end of single test
 
+
     /**
      * Chiusura finale del MANAGER
      */
-    private static void closeManager() {
+    protected static void closeManager() {
         MANAGER.close();
         MANAGER = null;
     }// end of static method
+
+    /**
+     * SetUp eseguito prima dell'esecuzione di ogni metodo
+     */
+    public void setUp() {
+        cancellaRecords();
+        reset();
+        creaRecords();
+    } // end of setup iniziale
+
+
+    /**
+     * CleanUp eseguito dopo l'esecuzione di ogni metodo
+     */
+    public void cleanUp() {
+        reset();
+        cancellaRecords();
+    } // end of cleaup dopo ogni metodo di test
+
+
+    /**
+     * Prima di inizare a creare e modificare le funzioni, cancello tutte le (eventuali) precedenti
+     * Alla fine, cancello tutte le funzioni create
+     */
+    protected void cancellaRecords() {
+    } // end of cleaup finale
+
+    /**
+     * Azzera le variabili d'istanza
+     */
+    protected void reset() {
+        chiavi = new ArrayList<>();
+    }// end of method
+
+    protected void creaRecords() {
+    } // end of cleaup finale
 
 
 }// end of abstract class

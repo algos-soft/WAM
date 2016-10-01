@@ -1,27 +1,42 @@
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.funzione.Funzione;
-import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.wam.entity.funzione.Funzione_;
+import it.algos.webbase.web.entity.BaseEntity;
 import org.junit.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
 /**
  * Created by gac on 01 set 2016.
- * .
+ * <p>
+ * Test per la Entity Funzione
+ * I test vengono eseguiti su un DB di prova, usando un apposito EntityManager
+ * La Entity usa la multiazienda (company) e quindi estende CompanyEntity e non BaseEntity
  */
-public class FunzioneTest extends WamBaseTest {
+public class FunzioneTest extends WamTest {
 
-    Funzione funzioneUno;
-    Funzione funzioneDue;
-    Funzione funzioneTre;
-    Funzione funzioneQuattro;
-    Funzione funzioneCinque;
 
-    List<Funzione> listaUno;
-    List<Funzione> listaDue;
-    List<Funzione> listaTre;
+    private Funzione funz;
+
+    private Funzione funzioneUno;
+    private Funzione funzioneDue;
+    private Funzione funzioneTre;
+    private Funzione funzioneQuattro;
+    private Funzione funzioneCinque;
+
+    private List<Funzione> lista = new ArrayList<>();
+    private List<Funzione> listaUno = new ArrayList<>();
+    private List<Funzione> listaDue = new ArrayList<>();
+    private List<Funzione> listaTre = new ArrayList<>();
+
+    private int ordine;
+    private ArrayList<Long> chiaviUno = new ArrayList<>();
+    private ArrayList<Long> chiaviDue = new ArrayList<>();
+
+    private ArrayList<String> codeCompanyUnico = new ArrayList<>();
 
 
     /**
@@ -29,322 +44,803 @@ public class FunzioneTest extends WamBaseTest {
      */
     @BeforeClass
     public static void setUpInizialeStaticoEseguitoSoloUnaVoltaAllaCreazioneDellaClasse() {
-        // creazione del MANAGER statico per questa singola classe di test
-        // creazione di alcune company
-        setUp();
-
-        // Prima di inizare a creare e modificare le funzioni, cancello tutte le (eventuali) precedenti
-        cancellaFunzioni();
-    } // end of setup iniziale
+        WamTest.setUpClass();
+    } // end of setup statico iniziale della classe
 
 
     /**
      * CleanUp finale eseguito solo una volta alla chiusura della classe
      */
     @AfterClass
-    public static void cleanUpFinaleStaticoEseguitoAllaChiusuraDellaClasse() {
-        // Alla fine, cancello tutte le funzioni create
-        cancellaFunzioni();
+    public static void cleanUpFinaleStaticoEseguitoSoloUnaVoltaAllaChiusuraDellaClasse() {
+        WamTest.cleanUpClass();
+    } // end of cleaup statico finale della classe
 
-        cleanUp();
-    } // end of cleaup finale
+
+    /**
+     * SetUp eseguito prima dell'esecuzione di ogni metodo
+     */
+    @Before
+    public void setUp() {
+        super.setUp();
+    } // end of setup prima di ogni metodo di test
+
+
+    /**
+     * CleanUp eseguito dopo l'esecuzione di ogni metodo
+     */
+    @After
+    public void cleanUp() {
+        super.cleanUp();
+    } // end of cleaup dopo ogni metodo di test
+
+    /**
+     * Azzera le variabili d'istanza
+     */
+    protected void reset() {
+        funz = null;
+        chiaviUno = new ArrayList<>();
+        chiaviDue = new ArrayList<>();
+        super.reset();
+    }// end of method
 
     /**
      * Prima di inizare a creare e modificare le funzioni, cancello tutte le (eventuali) precedenti
      * Alla fine, cancello tutte le funzioni create
      */
-    private static void cancellaFunzioni() {
+    protected void cancellaRecords() {
         Funzione.deleteAll(MANAGER);
-        CompanyQuery.delete(Funzione.class, MANAGER);
-        int a = 87;
-    } // end of cleaup finale
+    }// end of method
 
-    @Before
-    public void setUpFunzioni() {
-        resetFunzioni();
-    } // end of setup iniziale
+    /**
+     * Crea alcuni records temporanei per effettuare le prove delle query
+     * Uso la Entity
+     * Creo alcuni nuovi records nel DB alternativo (WAMTEST)
+     */
+    protected void creaRecords() {
+        //--prima company
+        funz = new Funzione(companyUno, code1, sigla1, desc1);
+        funz.save(MANAGER);
+        chiaviUno.add(funz.getId());
+        chiavi.add(funz.getId());
+        listaUno.add(funz);
+        lista.add(funz);
+        codeCompanyUnico.add(funz.getCodeCompanyUnico());
 
-    @After
-    public void reset() {
-    } // end of cleaup finale
+        funz = new Funzione(companyUno, code2, sigla1, desc1);
+        funz.save(MANAGER);
+        chiaviUno.add(funz.getId());
+        chiavi.add(funz.getId());
+        listaUno.add(funz);
+        lista.add(funz);
+        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+
+        funz = new Funzione(companyUno, code3, sigla1, desc2);
+        funz.save(MANAGER);
+        chiaviUno.add(funz.getId());
+        chiavi.add(funz.getId());
+        listaUno.add(funz);
+        lista.add(funz);
+        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+
+        funz = new Funzione(companyUno, code4, sigla2, desc2);
+        funz.save(MANAGER);
+        chiaviUno.add(funz.getId());
+        chiavi.add(funz.getId());
+        listaUno.add(funz);
+        lista.add(funz);
+        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+
+        //--seconda company
+        funz = new Funzione(companyDue, code1, sigla1, desc1);
+        funz.save(MANAGER);
+        chiaviDue.add(funz.getId());
+        chiavi.add(funz.getId());
+        listaDue.add(funz);
+        lista.add(funz);
+        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+
+        funz = new Funzione(companyDue, code2, sigla1, desc1);
+        funz.save(MANAGER);
+        chiaviDue.add(funz.getId());
+        chiavi.add(funz.getId());
+        listaDue.add(funz);
+        lista.add(funz);
+        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+
+        funz = new Funzione(companyDue, code3, sigla3, desc2);
+        funz.save(MANAGER);
+        chiaviDue.add(funz.getId());
+        chiavi.add(funz.getId());
+        listaDue.add(funz);
+        lista.add(funz);
+        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+
+        funz = new Funzione(companyDue, code4, sigla2, desc2);
+        funz.save(MANAGER);
+        chiaviDue.add(funz.getId());
+        chiavi.add(funz.getId());
+        listaDue.add(funz);
+        lista.add(funz);
+        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+
+        numPrevisto = chiaviUno.size() + chiaviDue.size();
+        numOttenuto = chiavi.size();
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of method
 
     @Test
-    // Constructors
-    // Count records
     /**
-     * Crea una funzione
-     * Controlla che ci siano i parametri obbligatori
-     * Non riesco a controllare l'inserimento automatico dell'ordine di presentazione
+     * Costruttore minimo con tutte le properties obbligatorie
+     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
+     * Se manca l'ordine di presentazione o è uguale a zero, viene calcolato in automatico prima del persist
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param code        di riferimento interna (obbligatoria)
+     * @param sigla       di visibile nel tabellone (obbligatoria)
+     * @param descrizione (obbligatoria)
      */
-    public void nuovaFunzione() {
-        resetFunzioni();
-        int numRecTotaliOld = Funzione.countByAllCompanies(MANAGER);
-        int numRetTotaliNew;
-        int numRecUnoOld = Funzione.countByCompany(companyUno, MANAGER);
-        int numRecUnoNew;
-        int numRecDueOld = Funzione.countByCompany(companyDue, MANAGER);
-        int numRecDueNew;
-        int ordine;
+    public void costruttoreMinimo() {
+        //-cancello i records per riprovare qui
+        cancellaRecords();
+
+        //--prima company
+        numPrevisto = Funzione.countByCompany(companyUno, MANAGER);
 
         // senza nessun parametro
-        funzioneUno = new Funzione();
+        funz = new Funzione();
         try { // prova ad eseguire il codice
-            funzioneUno.save(MANAGER);
+            funz.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(funzioneUno);
-        assertNull(funzioneUno.getId());
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
+        assertNotNull(funz);
+        assertNull(funz.getId());
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
         // senza un parametro obbligatorio
-        funzioneUno = new Funzione(null, CODE_UNO, SIGLA_UNO, DESCRIZIONE_UNO);
+        funz = new Funzione(null, code1, sigla1, desc1);
         try { // prova ad eseguire il codice
-            funzioneUno.save(MANAGER);
+            funz.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(funzioneUno);
-        assertNull(funzioneUno.getId());
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
+        assertNotNull(funz);
+        assertNull(funz.getId());
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
         // parametro obbligatorio vuoto
-        funzioneUno = new Funzione(companyUno, CODE_UNO, "", DESCRIZIONE_UNO);
+        funz = new Funzione(companyUno, code1, "", desc1);
         try { // prova ad eseguire il codice
-            funzioneUno.save(MANAGER);
+            funz.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(funzioneUno);
-        assertNull(funzioneUno.getId());
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
+        assertNotNull(funz);
+        assertNull(funz.getId());
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
         // parametro obbligatorio vuoto
-        funzioneUno = new Funzione(companyUno, CODE_UNO, SIGLA_UNO, "");
+        funz = new Funzione(companyUno, code1, sigla1, "");
         try { // prova ad eseguire il codice
-            funzioneUno.save(MANAGER);
+            funz.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(funzioneUno);
-        assertNull(funzioneUno.getId());
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
+        assertNotNull(funz);
+        assertNull(funz.getId());
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
         // parametro obbligatorio vuoto
-        funzioneUno = new Funzione(companyUno, "", "", "");
+        funz = new Funzione(companyUno, "", "", "");
         try { // prova ad eseguire il codice
-            funzioneUno.save(MANAGER);
+            funz.save(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(funzioneUno);
-        assertNull(funzioneUno.getId());
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
+        assertNotNull(funz);
+        assertNull(funz.getId());
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
         // parametri obbligatori
-        funzioneUno = new Funzione(companyUno, CODE_UNO, SIGLA_UNO, DESCRIZIONE_UNO);
-        funzioneUno.save(companyUno, MANAGER);
-        assertNotNull(funzioneUno);
-        assertNotNull(funzioneUno.getId());
-        ordine = funzioneUno.getOrdine();
+        numPrevisto = numPrevisto + 1;
+        funz = new Funzione(companyUno, code1, sigla1, desc1);
+        funz.save(companyUno, MANAGER);
+        assertNotNull(funz);
+        assertNotNull(funz.getId());
+        ordine = funz.getOrdine();
         assertEquals(ordine, 1);
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld + 1);
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
         // parametri obbligatori
-        funzioneDue = new Funzione(companyUno, CODE_DUE, SIGLA_DUE, DESCRIZIONE_DUE);
-        funzioneDue.save(companyUno, MANAGER);
-        assertNotNull(funzioneDue);
-        assertNotNull(funzioneDue.getId());
-        ordine = funzioneDue.getOrdine();
+        numPrevisto = numPrevisto + 1;
+        funz = new Funzione(companyUno, code2, sigla2, desc2);
+        funz.save(companyUno, MANAGER);
+        assertNotNull(funz);
+        assertNotNull(funz.getId());
+        ordine = funz.getOrdine();
         assertEquals(ordine, 2);
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld + 2);
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
-        // tutti i parametri previsti
-        funzioneTre = new Funzione(companyDue, CODE_UNO, SIGLA_UNO, DESCRIZIONE_UNO, 6, FontAwesome.USER);
-        funzioneTre.save(companyDue, MANAGER);
-        assertNotNull(funzioneTre);
-        assertNotNull(funzioneTre.getId());
-        ordine = funzioneTre.getOrdine();
-        assertEquals(ordine, 6);
-        numRecUnoNew = Funzione.countByCompany(companyDue, MANAGER);
-        assertEquals(numRecUnoNew, numRecDueOld + 1);
+        //--seconda company
+        numPrevisto = Funzione.countByCompany(companyDue, MANAGER);
 
         // parametri obbligatori
-        funzioneQuattro = new Funzione(companyDue, CODE_DUE,SIGLA_DUE, DESCRIZIONE_DUE);
-        funzioneQuattro.save(companyDue, MANAGER);
-        assertNotNull(funzioneQuattro);
-        assertNotNull(funzioneQuattro.getId());
-        ordine = funzioneQuattro.getOrdine();
-        assertEquals(ordine, 7);
-        numRecDueNew = Funzione.countByCompany(companyDue, MANAGER);
-        assertEquals(numRecDueNew, numRecDueOld + 2);
+        numPrevisto = numPrevisto + 1;
+        funz = new Funzione(companyDue, code2, sigla2, desc2);
+        funz.save(companyDue, MANAGER);
+        assertNotNull(funz);
+        assertNotNull(funz.getId());
+        ordine = funz.getOrdine();
+        assertEquals(ordine, 1);
+        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
         // campo unico, doppio
-        funzioneCinque = new Funzione(companyUno, CODE_UNO, SIGLA_UNO, DESCRIZIONE_UNO);
+        numPrevisto = 2;
+        funz = new Funzione(companyUno, code1, sigla1, desc1);
         try { // prova ad eseguire il codice
-            funzioneCinque.save(companyUno, MANAGER);
+            funz.save(companyUno, MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
             System.out.println(unErrore.toString());
         }// fine del blocco try-catch
-        assertNotNull(funzioneCinque);
-        assertNull(funzioneCinque.getId());
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecDueNew, numRecDueOld + 2);
+        assertNotNull(funz);
+        assertNull(funz.getId());
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
-        assertEquals(Funzione.countByCompany(companyUno, MANAGER), numRecUnoOld + 2);
-        assertEquals(Funzione.countByCompany(companyDue, MANAGER), numRecDueOld + 2);
-        numRetTotaliNew = Funzione.countByAllCompanies(MANAGER);
-        assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
+        numPrevisto = 2;
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = 1;
+        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = 3;
+        numOttenuto = Funzione.countByAllCompanies(MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
     }// end of single test
 
     @Test
-    // Find entity
     /**
-     * Ricerca una funzione
+     * Costruttore completo
+     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param code        di riferimento interna (obbligatoria)
+     * @param sigla       di visibile nel tabellone (obbligatoria)
+     * @param descrizione (obbligatoria)
+     * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
+     * @param glyph       icona di FontAwesome (facoltative)
      */
-    public void cercaFunzione() {
-        resetFunzioni();
-        long key;
-        int numRecords = Funzione.countByAllCompanies(MANAGER);
-        if (numRecords < 1) {
-            return;
-        }// end of if cycle
+    public void costruttoreCompleto() {
+        //-cancello i records per riprovare qui
+        cancellaRecords();
 
-        funzioneUno = Funzione.getEntityByCompanyAndByCode(CODE_UNO, companyUno, MANAGER);
-        assertNotNull(funzioneUno);
+        //--prima company
+        numPrevisto = Funzione.countByCompany(companyDue, MANAGER);
 
-        funzioneDue = Funzione.getEntityByCompanyAndByCode(CODE_DUE, companyDue, MANAGER);
-        assertNotNull(funzioneDue);
-        assertNotSame(funzioneDue, funzioneUno);
-        key = funzioneDue.getId();
+        // tutti i parametri previsti
+        numPrevisto = numPrevisto + 1;
+        funz = new Funzione(companyDue, code1, sigla1, desc1, 6, FontAwesome.USER);
+        funz.save(companyDue, MANAGER);
+        assertNotNull(funz);
+        assertNotNull(funz.getId());
+        ordine = funz.getOrdine();
+        assertEquals(ordine, 6);
+        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
 
-        funzioneTre = Funzione.getEntityByCompanyAndByCode(CODE_DUE, companyUno, MANAGER);
-        assertNotNull(funzioneTre);
-        assertNotSame(funzioneTre, funzioneDue);
 
-        funzioneQuattro = Funzione.find(key, MANAGER);
-        assertNotNull(funzioneQuattro);
-        assertNotSame(funzioneQuattro, funzioneTre);
-        assertEquals(funzioneQuattro, funzioneDue);
+    @Test
+    /**
+     * Recupera il numero totale di records della Entity
+     * Senza filtri.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param manager the EntityManager to use
+     * @return il numero totale di records nella Entity
+     */
+    public void countByAllCompanies() {
+        numPrevisto = chiavi.size();
+        numOttenuto = Funzione.countByAllCompanies(MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+
+    @Test
+    /**
+     * Recupera il numero di records della Entity
+     * Filtrato sulla azienda passata come parametro.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     * @return il numero filtrato di records nella Entity
+     */
+    public void countByCompany() {
+        numPrevisto = chiaviUno.size();
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = chiaviDue.size();
+        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = chiaviUno.size() + chiaviDue.size();
+        numOttenuto = Funzione.countByAllCompanies(MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+
+    @Test
+    /**
+     * Recupera il numero di records della Entity, filtrato sul valore della property indicata
+     * Filtrato sulla azienda passata come parametro.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param attr    the searched attribute
+     * @param value   the value to search for
+     * @param manager the EntityManager to use
+     * @return il numero filtrato di records nella Entity
+     */
+    public void countByCompanyAndProperty() {
+        numPrevisto = 3;
+        numOttenuto = Funzione.countByCompanyAndProperty(companyUno, Funzione_.sigla, sigla1, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = 2;
+        numOttenuto = Funzione.countByCompanyAndProperty(companyDue, Funzione_.sigla, sigla1, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = 1;
+        numOttenuto = Funzione.countByCompanyAndProperty(companyUno, Funzione_.code, code1, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = 0;
+        numOttenuto = Funzione.countByCompanyAndProperty(companyUno, Funzione_.sigla, sigla3, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = 1;
+        numOttenuto = Funzione.countByCompanyAndProperty(companyDue, Funzione_.sigla, sigla3, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
     }// end of single test
 
     @Test
-    // Find list
     /**
-     * Ricerca una lista
+     * Recupera una istanza della Entity usando la query standard della Primary Key
+     * Nessun filtro sulla company, perché la primary key è unica
+     *
+     * @param id      valore (unico) della Primary Key
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
      */
-    public void cercaLista() {
-        resetFunzioni();
-        int numRecords = Funzione.countByAllCompanies(MANAGER);
-        if (numRecords < 1) {
-            return;
-        }// end of if cycle
+    public void find() {
+        int pos;
+
+        pos = 3;
+        funz = Funzione.find(chiavi.get(pos), MANAGER);
+        assertEquals(funz, lista.get(pos));
+
+        //--volutamente sbagliato il long
+        pos = 7;
+        funz = Funzione.find(1, MANAGER);
+        assertNull(funz);
+
+        pos = 7;
+        funz = Funzione.find(chiavi.get(pos), MANAGER);
+        assertEquals(funz, lista.get(pos));
+
+        pos = 3;
+        funz = Funzione.find(chiaviUno.get(pos), MANAGER);
+        assertEquals(funz, listaUno.get(pos));
+
+        pos = 3;
+        funz = Funzione.find(chiaviDue.get(pos), MANAGER);
+        assertEquals(funz, listaDue.get(pos));
+    }// end of single test
+
+
+    @Test
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     *
+     * @param codeCompanyUnico di riferimento interna (obbligatoria e unica)
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    public void getEntityByCodeCompanyUnico() {
+        int pos;
+        String key;
+
+        pos = 2;
+        key = codeCompanyUnico.get(pos);
+        funz = Funzione.getEntityByCodeCompanyUnico(key, MANAGER);
+        assertNotNull(funz);
+        assertEquals(funz, lista.get(pos));
+
+        pos = 7;
+        key = codeCompanyUnico.get(pos);
+        funz = Funzione.getEntityByCodeCompanyUnico(key, MANAGER);
+        assertNotNull(funz);
+        assertEquals(funz, lista.get(pos));
+
+        //--volutamente sbagliato il codeCompanyUnico
+        key = "codeCompanyUnico";
+        funz = Funzione.getEntityByCodeCompanyUnico(key, MANAGER);
+        assertNull(funz);
+    }// end of single test
+
+    @Test
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param code    di riferimento interna (obbligatorio, non unico in generale ma unico all'interno della company)
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    public void getEntityByCompanyAndCode() {
+        int pos;
+
+        funz = Funzione.getEntityByCompanyAndCode(null, code1, MANAGER);
+        assertNull(funz);
+
+        funz = Funzione.getEntityByCompanyAndCode(companyUno, "sbagliato", MANAGER);
+        assertNull(funz);
+
+        pos = 0;
+        funz = Funzione.getEntityByCompanyAndCode(companyUno, code1, MANAGER);
+        assertNotNull(funz);
+        assertEquals(funz.getId(), lista.get(pos).getId());
+
+        pos = 6;
+        funz = Funzione.getEntityByCompanyAndCode(companyDue, code3, MANAGER);
+        assertNotNull(funz);
+        assertEquals(funz.getId(), lista.get(pos).getId());
+    }// end of single test
+
+    @Test
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param sigla   visibile nel tabellone (obbligatoria, non unica)
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    public void getEntityByCompanyAndSigla() {
+        int pos;
+
+        funz = Funzione.getEntityByCompanyAndSigla(null, sigla1, MANAGER);
+        assertNull(funz);
+
+        funz = Funzione.getEntityByCompanyAndSigla(companyUno, "sbagliata", MANAGER);
+        assertNull(funz);
+
+        //--ce n'è più di una
+        funz = Funzione.getEntityByCompanyAndSigla(companyUno, sigla1, MANAGER);
+        assertNull(funz);
+
+        pos = 3;
+        funz = Funzione.getEntityByCompanyAndSigla(companyUno, sigla2, MANAGER);
+        assertNotNull(funz);
+        assertEquals(funz.getId(), lista.get(pos).getId());
+    }// end of single test
+
+    @Test
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Senza filtri.
+     * (non va usata CompanyQuery, altrimenti arriverebbe solo la lista della company corrente)
+     *
+     * @param manager the EntityManager to use
+     * @return lista di tutte le entities
+     */
+    public void getListByAllCompanies() {
 
         listaUno = Funzione.getListByAllCompanies(MANAGER);
         assertNotNull(listaUno);
-        assertEquals(listaUno.size(), numRecords);
+        assertEquals(listaUno, lista);
+        assertListeUguali(listaUno, lista);
+    }// end of single test
 
-        listaDue = Funzione.getListBySingleCompany(companyUno, MANAGER);
-        assertNotNull(listaDue);
+    @Test
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla company passata come parametro.
+     * Se si arriva qui con una company null, vuol dire che non esiste la company corrente
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     * @return lista di tutte le entities
+     */
+    public void getListBySingleCompany() {
+
+        listaTre = Funzione.getListBySingleCompany(companyUno, MANAGER);
+        assertNotNull(listaTre);
+        assertEquals(listaTre, listaUno);
+        assertListeUguali(listaTre, listaUno);
 
         listaTre = Funzione.getListBySingleCompany(companyDue, MANAGER);
         assertNotNull(listaTre);
+        assertEquals(listaTre, listaDue);
+        assertListeUguali(listaTre, listaDue);
     }// end of single test
 
-
     @Test
-    // New and save
     /**
      * Creazione iniziale di una istanza della Entity
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param sigla       di riferimento interna (obbligatoria)
+     * @param code        di riferimento interna (obbligatoria)
+     * @param sigla       di visibile nel tabellone (obbligatoria)
      * @param descrizione (obbligatoria)
-     * @param ordine      di presentazione nelle liste
-     * @param glyph       dell'icona (facoltativo)
-     * @param MANAGER     the EntityManager to use
+     * @param manager     the EntityManager to use
      * @return istanza della Entity
      */
-    public void creaFunzione() {
-        resetFunzioni();
-        cancellaFunzioni();
-        int numRecTotaliOld = Funzione.countByAllCompanies(MANAGER);
-        int numRetTotaliNew;
-        int numRecUnoOld = Funzione.countByCompany(companyUno, MANAGER);
-        int numRecUnoNew;
-        int numRecDueOld = Funzione.countByCompany(companyDue, MANAGER);
-        int numRecDueNew;
-        int ordine;
+    public void crea() {
+        //-cancello i records per riprovare qui
+        cancellaRecords();
 
-        // senza un parametro obbligatorio
-        try { // prova ad eseguire il codice
-            funzioneUno = Funzione.crea(null, CODE_UNO,SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
-            funzioneUno.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNull(funzioneUno);
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
+        //--prima company
+        numPrevisto = Funzione.countByCompany(companyUno, MANAGER);
 
-        // parametri obbligatori
-        funzioneUno = Funzione.crea(companyUno, CODE_UNO,SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld + 1);
-        ordine = funzioneUno.getOrdine();
+        // senza tutti i parametri obbligatori
+        funz = Funzione.crea(null, code1, sigla1, desc1, MANAGER);
+        assertNull(funz);
+        funz = Funzione.crea(companyUno, null, sigla1, desc1, MANAGER);
+        assertNull(funz);
+        funz = Funzione.crea(companyUno, code1, "", desc1, MANAGER);
+        assertNull(funz);
+        funz = Funzione.crea(companyDue, code1, sigla1, null, MANAGER);
+        assertNull(funz);
+
+        //--con i parametri obbligatori
+        numPrevisto = 1;
+        funz = Funzione.crea(companyUno, code1, sigla1, desc1, MANAGER);
+        assertNotNull(funz);
+        assertNotNull(funz.getId());
+        ordine = funz.getOrdine();
         assertEquals(ordine, 1);
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
-        // parametri obbligatori
-        funzioneDue = Funzione.crea(companyUno, CODE_DUE,SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld + 2);
-        ordine = funzioneDue.getOrdine();
-        assertEquals(ordine, 2);
-
-        // tutti i parametri previsti
-        funzioneTre = Funzione.crea(companyDue, CODE_UNO,SIGLA_UNO, DESCRIZIONE_UNO, 6, FontAwesome.USER, MANAGER);
-        numRecUnoNew = Funzione.countByCompany(companyDue, MANAGER);
-        assertEquals(numRecUnoNew, numRecDueOld + 1);
-        ordine = funzioneTre.getOrdine();
-        assertEquals(ordine, 6);
-
-        // parametri obbligatori
-        funzioneQuattro = Funzione.crea(companyDue, CODE_DUE,SIGLA_DUE, DESCRIZIONE_DUE, MANAGER);
-        numRecDueNew = Funzione.countByCompany(companyDue, MANAGER);
-        assertEquals(numRecDueNew, numRecDueOld + 2);
-        ordine = funzioneQuattro.getOrdine();
-        assertEquals(ordine, 7);
-
-        // campo unico, doppio
-        funzioneCinque = Funzione.crea(companyUno, CODE_UNO,SIGLA_UNO, DESCRIZIONE_UNO, MANAGER);
-        try { // prova ad eseguire il codice
-            funzioneCinque.save(companyUno, MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-            System.out.println(unErrore.toString());
-        }// fine del blocco try-catch
-        assertNotNull(funzioneCinque);
-        assertNotNull(funzioneCinque.getId());
-        numRecUnoNew = Funzione.countByCompany(companyUno, MANAGER);
-
-        assertEquals(Funzione.countByCompany(companyUno, MANAGER), numRecUnoOld + 2);
-        assertEquals(Funzione.countByCompany(companyDue, MANAGER), numRecDueOld + 2);
-        numRetTotaliNew = Funzione.countByAllCompanies(MANAGER);
-        assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
+        //--seconda company
+        //--tutti i parametri previsti
+        numPrevisto = 1;
+        funz = Funzione.crea(companyDue, code1, sigla1, desc1, 6, FontAwesome.USER, MANAGER);
+        assertNotNull(funz);
+        assertNotNull(funz.getId());
+        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+        assertEquals(funz.getCode(), code1);
+        assertEquals(funz.getSigla(), sigla1);
+        assertEquals(funz.getDescrizione(), desc1);
+        assertEquals(funz.getOrdine(), 6);
     }// end of single test
 
 
+    @Test
     /**
-     * Annulla le variabili d'istanza
+     * Delete all the records for the Entity class
+     * Bulk delete records with CriteriaDelete
+     *
+     * @param manager the EntityManager to use
      */
-    private void resetFunzioni() {
-        funzioneUno = null;
-        funzioneDue = null;
-        funzioneTre = null;
-        funzioneQuattro = null;
-        funzioneCinque = null;
-    } // end of cleaup finale
+    public void delete() {
+        numPrevisto = chiavi.size();
+        numOttenuto = Funzione.deleteAll(MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
+        //--cancello e ricreo i records per riprovare qui
+        cancellaRecords();
+        reset();
+        creaRecords();
+
+        numPrevisto = chiaviUno.size();
+        numOttenuto = Funzione.deleteAll(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = chiaviDue.size();
+        numOttenuto = Funzione.deleteAll(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+
+    @Test
+    /**
+     * Saves this entity to the database.
+     * <p>
+     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
+     * Otherwise, a new transaction is used to save this single entity.
+     *
+     * @param company azienda da filtrare
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    public void save() {
+        BaseEntity entity = null;
+
+        //--cancello i records per riprovare qui
+        cancellaRecords();
+        reset();
+
+        //--prima company
+        //-mancano le properties obbligatorie - NON registra
+        funz = new Funzione();
+        assertNotNull(funz);
+        try { // prova ad eseguire il codice
+            entity = funz.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNull(entity);
+        assertNull(funz.getId());
+
+        //-mancano le properties obbligatorie - NON registra
+        funz = new Funzione(null, code1, sigla1, desc1);
+        assertNotNull(funz);
+        try { // prova ad eseguire il codice
+            entity = funz.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNull(entity);
+        assertNull(funz.getId());
+
+        //-mancano le properties obbligatorie - NON registra
+        funz = new Funzione(companyUno, "", sigla1, desc1);
+        assertNotNull(funz);
+        try { // prova ad eseguire il codice
+            entity = funz.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNull(entity);
+        assertNull(funz.getId());
+
+        //--mancano le properties obbligatorie - NON registra
+        funz = new Funzione(companyUno, code1, "", desc1);
+        assertNotNull(funz);
+        try { // prova ad eseguire il codice
+            entity = funz.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNull(entity);
+        assertNull(funz.getId());
+
+        //--ci sono i parametri obbligatori
+        numPrevisto = 1;
+        funz = new Funzione(companyUno, code1, sigla1, desc1);
+        assertNotNull(funz);
+        entity = funz.save(companyUno, MANAGER);
+        assertNotNull(entity);
+        assertTrue(entity instanceof Funzione);
+        assertNotNull(funz);
+        assertNotNull(funz.getId());
+        ordine = funz.getOrdine();
+        assertEquals(ordine, 1);
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+    @Test
+    /**
+     * Saves this entity to the database.
+     * <p>
+     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
+     * Otherwise, a new transaction is used to save this single entity.
+     *
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
+     */
+    public void saveSafe() {
+        //--cancello i records per riprovare qui
+        cancellaRecords();
+        reset();
+
+        //--prima company
+        //--mancano le properties obbligatorie - NON registra
+        funz = new Funzione();
+        assertNotNull(funz);
+        try { // prova ad eseguire il codice
+            funz = funz.saveSafe(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(funz);
+        assertNull(funz.getId());
+
+        //--ci sono i parametri obbligatori
+        numPrevisto = 1;
+        funz = new Funzione(companyUno, code1, sigla1, desc1);
+        assertNotNull(funz);
+        funz = funz.save(companyUno, MANAGER);
+        assertNotNull(funz);
+        assertNotNull(funz.getId());
+        ordine = funz.getOrdine();
+        assertEquals(ordine, 1);
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+    @Test
+    /**
+     * Numero massimo conenuto nella property
+     *
+     * @param company azienda da filtrare
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return massimo valore
+     */
+    public void maxOrdine() {
+        //--prima company
+        numPrevisto = listaUno.size();
+
+        numOttenuto = Funzione.maxOrdine(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        //--seconda company
+        numPrevisto = listaDue.size();
+
+        numOttenuto = Funzione.maxOrdine(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+    @Test
+    /**
+     * Search for the values of a given property of the given Entity class
+     * Ordinate sul valore della property indicata
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param manager the EntityManager to use
+     */
+    public void getListStrByCodeCompanyUnico() {
+        listStr = Funzione.getListStrByCodeCompanyUnico(MANAGER);
+        assertEquals(listStr.size(), lista.size());
+    }// end of single test
+
+    @Test
+    /**
+     * Search for the values of a given property of the given Entity class
+     * Filtrato sulla company passata come parametro.
+     * Ordinate sul valore della property indicata
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     */
+    public void getListStrByCompanyAndCode() {
+        listStr = Funzione.getListStrByCompanyAndCode(companyUno, MANAGER);
+        assertEquals(listStr.size(), listaUno.size());
+
+        listStr = Funzione.getListStrByCompanyAndCode(companyDue, MANAGER);
+        assertEquals(listStr.size(), listaDue.size());
+    }// end of single test
+
+
+    private void assertListeUguali(List<Funzione> lista1, List<Funzione> lista2) {
+        for (int k = 0; k < lista1.size(); k++) {
+            assertEquals(lista1.get(k).getId(), lista2.get(k).getId());
+            assertEquals(lista1.get(k).getCodeCompanyUnico(), lista2.get(k).getCodeCompanyUnico());
+            assertEquals(lista1.get(k).getCode(), lista2.get(k).getCode());
+            assertEquals(lista1.get(k).getSigla(), lista2.get(k).getSigla());
+            assertEquals(lista1.get(k).getDescrizione(), lista2.get(k).getDescrizione());
+        }// end of for cycle
+    }// end of single test
 
 }// end of test class
