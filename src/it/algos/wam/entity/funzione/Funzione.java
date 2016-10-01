@@ -72,7 +72,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @Index
     private String sigla = "";
 
-    //--descrizione (obbligatoria, non unico)
+    //--descrizione (obbligatoria, non unica)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
     private String descrizione = "";
@@ -86,11 +86,19 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     private int iconCodepoint;
 
     //--tavola di incrocio
+    // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
+    // alla lista e non ancora registrati (e così per tutte le operazioni dell'EntityManager)
+    // orphanRemoval = true: quando registro il padre, cancella tutti i figli eventualmente rimasti orfani.
+    // CascadeOnDelete: instaura l'integrità referenziale a livello di database (foreign key on delete cascade)
     @OneToMany(mappedBy = "funzione", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<ServizioFunzione> servizioFunzioni = new ArrayList<>();
 
     //--tavola di incrocio
+    // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
+    // alla lista e non ancora registrati (e così per tutte le operazioni dell'EntityManager)
+    // orphanRemoval = true: quando registro il padre, cancella tutti i figli eventualmente rimasti orfani.
+    // CascadeOnDelete: instaura l'integrità referenziale a livello di database (foreign key on delete cascade)
     @OneToMany(mappedBy = "funzione", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList<>();
@@ -113,7 +121,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Se manca l'ordine di presentazione o è uguale a zero, viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
+     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
      * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      */
@@ -126,7 +134,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
+     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
      * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
@@ -281,7 +289,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
      *
-     * @param codeCompanyUnico di riferimento interna (obbligatoria e unica)
+     * @param codeCompanyUnico di riferimento interno (obbligatorio e unico)
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione getEntityByCodeCompanyUnico(String codeCompanyUnico) {
@@ -292,7 +300,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
      *
-     * @param codeCompanyUnico di riferimento interna (obbligatoria e unica)
+     * @param codeCompanyUnico di riferimento interno (obbligatorio e unico)
      * @param manager          the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
@@ -319,7 +327,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @param code    di riferimento interna (obbligatorio, non unico in generale ma unico all'interno della company)
+     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
@@ -332,7 +340,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @param sigla   visibile nel tabellone (obbligatoria, non unica)
+     * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
@@ -474,8 +482,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
-     * @param sigla       di visibile nel tabellone (obbligatoria)
+     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      * @return istanza della Entity
      */
@@ -489,8 +497,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
-     * @param sigla       di visibile nel tabellone (obbligatoria)
+     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      * @param manager     the EntityManager to use
      * @return istanza della Entity
@@ -504,8 +512,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
-     * @param sigla       di visibile nel tabellone (obbligatoria)
+     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param glyph       dell'icona (facoltativo)
@@ -521,8 +529,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
-     * @param sigla       di visibile nel tabellone (obbligatoria)
+     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param glyph       dell'icona (facoltativo)
@@ -838,22 +846,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
         return valido;
     } // end of method
-
-//    /**
-//     * Appena prima di persistere sul DB
-//     * Elimino l'annotazione ed uso una chiamata dal metodo save(),
-//     * perché altrimenti non riuscirei a passare il parametro manager
-//     *
-//     * @param company azienda da filtrare
-//     * @param manager the entity manager to use (if null, a new one is created on the fly)
-//     *                //@PrePersist
-//     */
-//    private void checkOrdine(WamCompany company, EntityManager manager) {
-//        if (getOrdine() == 0) {
-//            int max = WamQuery.maxOrdineFunzione(company, manager);
-//            setOrdine(max + 1);
-//        }// end of if cycle
-//    }// end of method
 
     /**
      * Appena prima di persistere sul DB

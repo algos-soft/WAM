@@ -30,6 +30,7 @@ import java.util.List;
 /**
  * Entity che descrive un Servizio (tipo di turno)
  * Estende la Entity astratta WamCompany che contiene la property wamcompany
+ * La property wamcompany può essere nulla nella superclasse, ma NON in questa classe dove è obbligatoria
  * <p>
  * 1) la classe deve avere un costruttore senza argomenti
  * 2) le proprietà devono essere private e accessibili solo con get, set e is (usato per i boolena al posto di get)
@@ -45,7 +46,11 @@ public class Servizio extends WamCompanyEntity {
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
-    //--sigla di codifica visibile (obbligatoria, non unica)
+    //--company di riferimento (facoltativa nella superclasse)
+    //--company di riferimento (obbligatoria in questa classe)
+    //--private BaseCompany company;
+
+    //--sigla di codifica visibile (obbligatoria, non unica in generale ma unica all'interno della company)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
     @Column(length = 20)
@@ -60,7 +65,7 @@ public class Servizio extends WamCompanyEntity {
     @Index
     private String codeCompanyUnico;
 
-    //--descrizione per il tabellone (obbligatoria)
+    //--descrizione per il tabellone (obbligatoria, non unica)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
     private String descrizione = "";
@@ -91,11 +96,17 @@ public class Servizio extends WamCompanyEntity {
     private int minutiFine = 0;
 
 
+    //--tavola di incrocio
+    // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
+    // alla lista e non ancora registrati (e così per tutte le operazioni dell'EntityManager)
+    // orphanRemoval = true: quando registro il padre, cancella tutti i figli eventualmente rimasti orfani.
+    // CascadeOnDelete: instaura l'integrità referenziale a livello di database (foreign key on delete cascade)
     @OneToMany(mappedBy = "servizio", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<Turno> turni = new ArrayList<>();
 
 
+    //--tavola di incrocio
     // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
     // alla lista e non ancora registrati (e così per tutte le operazioni dell'EntityManager)
     // orphanRemoval = true: quando registro il padre, cancella tutti i figli eventualmente rimasti orfani.
@@ -150,6 +161,11 @@ public class Servizio extends WamCompanyEntity {
      * Costruttore completo
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
+     * @param sigla       visibile nel tabellone (obbligatoria, non unica)
+     * @param descrizione (obbligatoria)
+     * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
+
+
      * @param company     di appartenenza (property della superclasse)
      * @param sigla       sigla di riferimento interna (obbligatoria)
      * @param descrizione per il tabellone (obbligatoria)

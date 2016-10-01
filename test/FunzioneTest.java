@@ -832,15 +832,42 @@ public class FunzioneTest extends WamTest {
         assertEquals(listStr.size(), listaDue.size());
     }// end of single test
 
+    @Test
+    /**
+     * Clone di questa istanza
+     * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)
+     * È obbligatorio invocare questo metodo all'interno di un codice try/catch
+     *
+     * @return nuova istanza di Funzione con gli stessi valori dei parametri di questa istanza
+     */
+    public void cloneTest() {
+        Funzione funzClonata = null;
+
+        funz = Funzione.find(chiavi.get(0), MANAGER);
+        assertNotNull(funz);
+
+        try { // prova ad eseguire il codice
+            funzClonata = funz.clone();
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(funzClonata);
+        assertFunzioniUguali(funzClonata, funz);
+    }// end of single test
+
 
     private void assertListeUguali(List<Funzione> lista1, List<Funzione> lista2) {
         for (int k = 0; k < lista1.size(); k++) {
-            assertEquals(lista1.get(k).getId(), lista2.get(k).getId());
-            assertEquals(lista1.get(k).getCodeCompanyUnico(), lista2.get(k).getCodeCompanyUnico());
-            assertEquals(lista1.get(k).getCode(), lista2.get(k).getCode());
-            assertEquals(lista1.get(k).getSigla(), lista2.get(k).getSigla());
-            assertEquals(lista1.get(k).getDescrizione(), lista2.get(k).getDescrizione());
+            assertFunzioniUguali(lista1.get(k), lista2.get(k));
         }// end of for cycle
+    }// end of single test
+
+
+    private void assertFunzioniUguali(Funzione funz1, Funzione funz2) {
+        assertEquals(funz1.getId(), funz2.getId());
+        assertEquals(funz1.getCodeCompanyUnico(), funz2.getCodeCompanyUnico());
+        assertEquals(funz1.getCode(), funz2.getCode());
+        assertEquals(funz1.getSigla(), funz2.getSigla());
+        assertEquals(funz1.getDescrizione(), funz2.getDescrizione());
     }// end of single test
 
 }// end of test class
