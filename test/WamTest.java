@@ -27,8 +27,10 @@ public abstract class WamTest {
     protected  String sigla1 = "Prima";
     protected  String sigla2 = "Seconda";
     protected  String sigla3 = "Terza";
+    protected  String sigla4 = "Quarta";
     protected  String desc1 = "Prima descrizione";
     protected  String desc2 = "Seconda descrizione";
+    protected  String desc3 = "Terza descrizione";
 
     protected final static String NOME_UNO = "Mario";
     protected final static String NOME_DUE = "Ilaria";
@@ -39,6 +41,7 @@ public abstract class WamTest {
     protected int numPrevisto = 0;
     protected int numOttenuto = 0;
 
+    protected int ordine;
 
     // alcuni parametri utilizzati
     protected static WamCompany companyUno;
@@ -48,7 +51,11 @@ public abstract class WamTest {
     protected String ottenuto = "";
 
     protected ArrayList<Long> chiavi = new ArrayList<>();
+    protected ArrayList<Long> chiaviUno = new ArrayList<>();
+    protected ArrayList<Long> chiaviDue = new ArrayList<>();
     protected List<String> listStr = new ArrayList<>();
+
+    protected ArrayList<String> codeCompanyUnico = new ArrayList<>();
 
     /**
      * SetUp iniziale eseguito solo una volta alla creazione della sottoclasse

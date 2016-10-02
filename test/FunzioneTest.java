@@ -32,12 +32,6 @@ public class FunzioneTest extends WamTest {
     private List<Funzione> listaDue = new ArrayList<>();
     private List<Funzione> listaTre = new ArrayList<>();
 
-    private int ordine;
-    private ArrayList<Long> chiaviUno = new ArrayList<>();
-    private ArrayList<Long> chiaviDue = new ArrayList<>();
-
-    private ArrayList<String> codeCompanyUnico = new ArrayList<>();
-
 
     /**
      * SetUp iniziale eseguito solo una volta alla creazione della classe
@@ -100,69 +94,29 @@ public class FunzioneTest extends WamTest {
     protected void creaRecords() {
         //--prima company
         funz = new Funzione(companyUno, code1, sigla1, desc1);
-        funz.save(MANAGER);
-        chiaviUno.add(funz.getId());
-        chiavi.add(funz.getId());
-        listaUno.add(funz);
-        lista.add(funz);
-        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+        singoloRecordPrimaCompany(funz);
 
         funz = new Funzione(companyUno, code2, sigla1, desc1);
-        funz.save(MANAGER);
-        chiaviUno.add(funz.getId());
-        chiavi.add(funz.getId());
-        listaUno.add(funz);
-        lista.add(funz);
-        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+        singoloRecordPrimaCompany(funz);
 
         funz = new Funzione(companyUno, code3, sigla1, desc2);
-        funz.save(MANAGER);
-        chiaviUno.add(funz.getId());
-        chiavi.add(funz.getId());
-        listaUno.add(funz);
-        lista.add(funz);
-        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+        singoloRecordPrimaCompany(funz);
 
         funz = new Funzione(companyUno, code4, sigla2, desc2);
-        funz.save(MANAGER);
-        chiaviUno.add(funz.getId());
-        chiavi.add(funz.getId());
-        listaUno.add(funz);
-        lista.add(funz);
-        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+        singoloRecordPrimaCompany(funz);
 
         //--seconda company
         funz = new Funzione(companyDue, code1, sigla1, desc1);
-        funz.save(MANAGER);
-        chiaviDue.add(funz.getId());
-        chiavi.add(funz.getId());
-        listaDue.add(funz);
-        lista.add(funz);
-        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+        singoloRecordSecondaCompany(funz);
 
         funz = new Funzione(companyDue, code2, sigla1, desc1);
-        funz.save(MANAGER);
-        chiaviDue.add(funz.getId());
-        chiavi.add(funz.getId());
-        listaDue.add(funz);
-        lista.add(funz);
-        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+        singoloRecordSecondaCompany(funz);
 
         funz = new Funzione(companyDue, code3, sigla3, desc2);
-        funz.save(MANAGER);
-        chiaviDue.add(funz.getId());
-        chiavi.add(funz.getId());
-        listaDue.add(funz);
-        lista.add(funz);
-        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+        singoloRecordSecondaCompany(funz);
 
         funz = new Funzione(companyDue, code4, sigla2, desc2);
-        funz.save(MANAGER);
-        chiaviDue.add(funz.getId());
-        chiavi.add(funz.getId());
-        listaDue.add(funz);
-        lista.add(funz);
-        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+        singoloRecordSecondaCompany(funz);
 
         numPrevisto = chiaviUno.size() + chiaviDue.size();
         numOttenuto = chiavi.size();
@@ -189,80 +143,33 @@ public class FunzioneTest extends WamTest {
 
         // senza nessun parametro
         funz = new Funzione();
-        try { // prova ad eseguire il codice
-            funz.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNotNull(funz);
-        assertNull(funz.getId());
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numOttenuto, numPrevisto);
+        costruttoreNullo(funz);
 
-        // senza un parametro obbligatorio
+        // parametro obbligatorio vuoto
         funz = new Funzione(null, code1, sigla1, desc1);
-        try { // prova ad eseguire il codice
-            funz.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNotNull(funz);
-        assertNull(funz.getId());
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numOttenuto, numPrevisto);
+        costruttoreNullo(funz);
 
         // parametro obbligatorio vuoto
         funz = new Funzione(companyUno, code1, "", desc1);
-        try { // prova ad eseguire il codice
-            funz.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNotNull(funz);
-        assertNull(funz.getId());
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numOttenuto, numPrevisto);
+        costruttoreNullo(funz);
 
         // parametro obbligatorio vuoto
         funz = new Funzione(companyUno, code1, sigla1, "");
-        try { // prova ad eseguire il codice
-            funz.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNotNull(funz);
-        assertNull(funz.getId());
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numOttenuto, numPrevisto);
+        costruttoreNullo(funz);
 
         // parametro obbligatorio vuoto
         funz = new Funzione(companyUno, "", "", "");
-        try { // prova ad eseguire il codice
-            funz.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNotNull(funz);
-        assertNull(funz.getId());
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numOttenuto, numPrevisto);
+        costruttoreNullo(funz);
 
         // parametri obbligatori
         numPrevisto = numPrevisto + 1;
         funz = new Funzione(companyUno, code1, sigla1, desc1);
-        funz.save(companyUno, MANAGER);
-        assertNotNull(funz);
-        assertNotNull(funz.getId());
-        ordine = funz.getOrdine();
-        assertEquals(ordine, 1);
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numOttenuto, numPrevisto);
+        costruttoreValidoPrimaCompany(funz, 1, numPrevisto);
 
         // parametri obbligatori
         numPrevisto = numPrevisto + 1;
         funz = new Funzione(companyUno, code2, sigla2, desc2);
-        funz.save(companyUno, MANAGER);
-        assertNotNull(funz);
-        assertNotNull(funz.getId());
-        ordine = funz.getOrdine();
-        assertEquals(ordine, 2);
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numOttenuto, numPrevisto);
+        costruttoreValidoPrimaCompany(funz, 2, numPrevisto);
 
         //--seconda company
         numPrevisto = Funzione.countByCompany(companyDue, MANAGER);
@@ -270,26 +177,21 @@ public class FunzioneTest extends WamTest {
         // parametri obbligatori
         numPrevisto = numPrevisto + 1;
         funz = new Funzione(companyDue, code2, sigla2, desc2);
-        funz.save(companyDue, MANAGER);
-        assertNotNull(funz);
-        assertNotNull(funz.getId());
-        ordine = funz.getOrdine();
-        assertEquals(ordine, 1);
-        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
-        assertEquals(numOttenuto, numPrevisto);
+        costruttoreValidoSecondaCompany(funz, 1, numPrevisto);
 
         // campo unico, doppio
-        numPrevisto = 2;
         funz = new Funzione(companyUno, code1, sigla1, desc1);
-        try { // prova ad eseguire il codice
-            funz.save(companyUno, MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-            System.out.println(unErrore.toString());
-        }// fine del blocco try-catch
-        assertNotNull(funz);
-        assertNull(funz.getId());
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
-        assertEquals(numOttenuto, numPrevisto);
+        costruttoreNullo(funz, 2);
+
+//        try { // prova ad eseguire il codice
+//            funz.save(companyUno, MANAGER);
+//        } catch (Exception unErrore) { // intercetta l'errore
+//            System.out.println(unErrore.toString());
+//        }// fine del blocco try-catch
+//        assertNotNull(funz);
+//        assertNull(funz.getId());
+//        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+//        assertEquals(numOttenuto, numPrevisto);
 
         numPrevisto = 2;
         numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
@@ -830,7 +732,7 @@ public class FunzioneTest extends WamTest {
         for (int k = 0; k < lista1.size(); k++) {
             assertFunzioniUguali(lista1.get(k), lista2.get(k));
         }// end of for cycle
-    }// end of single test
+    }// end of method
 
 
     private void assertFunzioniUguali(Funzione funz1, Funzione funz2) {
@@ -839,6 +741,64 @@ public class FunzioneTest extends WamTest {
         assertEquals(funz1.getCode(), funz2.getCode());
         assertEquals(funz1.getSigla(), funz2.getSigla());
         assertEquals(funz1.getDescrizione(), funz2.getDescrizione());
-    }// end of single test
+    }// end of method
+
+    private void singoloRecordPrimaCompany(Funzione funz) {
+        singoloRecord(funz);
+        chiaviUno.add(funz.getId());
+        listaUno.add(funz);
+    }// end of method
+
+    private void singoloRecordSecondaCompany(Funzione funz) {
+        singoloRecord(funz);
+        chiaviDue.add(funz.getId());
+        listaDue.add(funz);
+    }// end of method
+
+    private void singoloRecord(Funzione funz) {
+        funz.save(MANAGER);
+        chiavi.add(funz.getId());
+        lista.add(funz);
+        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+    }// end of method
+
+    private void costruttoreNullo(Funzione funz) {
+        costruttoreNullo(funz, 0);
+    }// end of method
+
+    private void costruttoreNullo(Funzione funz, int numPrevisto) {
+        try { // prova ad eseguire il codice
+            funz.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(funz);
+        assertNull(funz.getId());
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of method
+
+    private void costruttoreValidoPrimaCompany(Funzione funz, int ordinePrevisto, int numPrevisto) {
+        costruttoreValido(funz, ordinePrevisto);
+        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of method
+
+    private void costruttoreValidoSecondaCompany(Funzione funz, int ordinePrevisto, int numPrevisto) {
+        costruttoreValido(funz, ordinePrevisto);
+        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of method
+
+    private void costruttoreValido(Funzione funz, int ordinePrevisto) {
+        try { // prova ad eseguire il codice
+            funz.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+
+        assertNotNull(funz);
+        assertNotNull(funz.getId());
+        ordine = funz.getOrdine();
+        assertEquals(ordine, ordinePrevisto);
+    }// end of method
 
 }// end of test class
