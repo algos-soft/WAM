@@ -7,14 +7,10 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.webbase.domain.company.BaseCompany;
-import it.algos.webbase.domain.company.BaseCompany_;
-import it.algos.webbase.multiazienda.CompanyEntity;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.entity.BaseEntity_;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibCrypto;
 import it.algos.webbase.web.login.UserIF;
@@ -380,13 +376,14 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      */
     public static Volontario findByCompanyAndNomeAndCognome(WamCompany company, String nome, String cognome, EntityManager manager) {
 
-        Container.Filter filterCompany = new Compare.Equal(Volontario_.company, company);
-        Container.Filter filterNome = new Compare.Equal(Volontario_.nome, nome);
-        Container.Filter filterCognome = new Compare.Equal(Volontario_.cognome, cognome);
+        Container.Filter filterCompany = new Compare.Equal(Volontario_.company.getName(), company);
+        Container.Filter filterNome = new Compare.Equal(Volontario_.nome.getName(), nome);
+        Container.Filter filterCognome = new Compare.Equal(Volontario_.cognome.getName(), cognome);
 
-        BaseEntity entity = AQuery.getEntity(Volontario.class, filterCompany, filterNome, filterCognome);
+        BaseEntity entity = AQuery.getEntity(Volontario.class, manager, filterCompany, filterNome, filterCognome);
         return check(entity);
     }// end of static method
+
 
     /**
      * Recupera un volontario della company corrente per nick
@@ -421,7 +418,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         Container.Filter filterCognome = new Compare.Equal(Volontario_.cognome.getName(), cognome);
         Container.Filter filterPassword = new Compare.Equal(Volontario_.password.getName(), password);
 
-        BaseEntity entity = CompanyQuery.getEntity(Volontario.class,  filterCognome, filterPassword);
+        BaseEntity entity = CompanyQuery.getEntity(Volontario.class, filterCognome, filterPassword);
         return check(entity);
     }// end of static method
 
@@ -790,7 +787,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param manager the EntityManager to use
      */
     public static void deleteAll(EntityManager manager) {
-        AQuery.deleteAll(Volontario.class, manager);
+        AQuery.delete(Volontario.class, manager);
     }// end of static method
 
 

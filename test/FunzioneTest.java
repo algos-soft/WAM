@@ -434,7 +434,6 @@ public class FunzioneTest extends WamTest {
         assertEquals(funz, lista.get(pos));
 
         //--volutamente sbagliato il long
-        pos = 7;
         funz = Funzione.find(1, MANAGER);
         assertNull(funz);
 
@@ -512,34 +511,6 @@ public class FunzioneTest extends WamTest {
         assertEquals(funz.getId(), lista.get(pos).getId());
     }// end of single test
 
-    @Test
-    /**
-     * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param sigla   visibile nel tabellone (obbligatoria, non unica)
-     * @param manager the EntityManager to use
-     * @return istanza della Entity, null se non trovata
-     */
-    public void getEntityByCompanyAndSigla() {
-        int pos;
-
-        funz = Funzione.getEntityByCompanyAndSigla(null, sigla1, MANAGER);
-        assertNull(funz);
-
-        funz = Funzione.getEntityByCompanyAndSigla(companyUno, "sbagliata", MANAGER);
-        assertNull(funz);
-
-        //--ce n'è più di una
-        funz = Funzione.getEntityByCompanyAndSigla(companyUno, sigla1, MANAGER);
-        assertNull(funz);
-
-        pos = 3;
-        funz = Funzione.getEntityByCompanyAndSigla(companyUno, sigla2, MANAGER);
-        assertNotNull(funz);
-        assertEquals(funz.getId(), lista.get(pos).getId());
-    }// end of single test
 
     @Test
     /**

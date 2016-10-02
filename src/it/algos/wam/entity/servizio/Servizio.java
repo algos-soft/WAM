@@ -21,6 +21,7 @@ import org.eclipse.persistence.annotations.Index;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.persistence.metamodel.SingularAttribute;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +39,7 @@ import java.util.List;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
-public class Servizio extends WamCompanyEntity {
+public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     //------------------------------------------------------------------------------------------------------------------------
     // Property
@@ -57,7 +58,7 @@ public class Servizio extends WamCompanyEntity {
     @Index
     private String sigla = "";
 
-    //--sigla di codifica interna specifica per company (obbligatoria, unica)
+    //--sigla di codifica interna specifica per company (obbligatoria, unica all'interno della company)
     //--calcolata -> codeCompanyUnico = company.companyCode + funzione.sigla (20+20=40);
     @NotEmpty
     @NotNull
@@ -134,7 +135,7 @@ public class Servizio extends WamCompanyEntity {
      * L'ordine di presentazione nel tabellone viene inserito in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param sigla       di riferimento interna (obbligatoria)
+     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione per il tabellone (obbligatoria)
      */
     public Servizio(WamCompany company, String sigla, String descrizione) {
@@ -147,7 +148,7 @@ public class Servizio extends WamCompanyEntity {
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione per il tabellone (obbligatoria)
      * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param colore      del gruppo (facoltativo)
@@ -161,13 +162,8 @@ public class Servizio extends WamCompanyEntity {
      * Costruttore completo
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
-     * @param sigla       visibile nel tabellone (obbligatoria, non unica)
-     * @param descrizione (obbligatoria)
-     * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
-
-
      * @param company     di appartenenza (property della superclasse)
-     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione per il tabellone (obbligatoria)
      * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param colore      del gruppo (facoltativo)
@@ -199,68 +195,91 @@ public class Servizio extends WamCompanyEntity {
      * @return il numero totale di record nella Entity
      */
     public static int countByAllCompanies() {
-        return countByAllCompanies(null);
+        return countByAllCompanies((EntityManager) null);
     }// end of static method
 
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero totale di records della Entity
      * Senza filtri.
-     * Use a specific manager (must be close by caller method)
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param manager the EntityManager to use
-     * @return il numero totale di record nella Entity
+     * @return il numero totale di records nella Entity
      */
     public static int countByAllCompanies(EntityManager manager) {
-        return AQuery.count(Servizio.class, manager);
+        return AQuery.count(Funzione.class, manager);
     }// end of static method
 
 
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero di records della Entity
      * Filtrato sulla azienda corrente.
      *
-     * @return il numero totale di record nella Entity
+     * @return il numero filtrato di records nella Entity
      */
     public static int countByCurrentCompany() {
-        return countByCurrentCompany(null);
+        return countByCurrentCompany((EntityManager) null);
     }// end of static method
 
+
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero di records della Entity
      * Filtrato sulla azienda corrente.
-     * Use a specific manager (must be close by caller method)
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param manager the EntityManager to use
-     * @return il numero totale di record nella Entity
+     * @return il numero filtrato di records nella Entity
      */
     public static int countByCurrentCompany(EntityManager manager) {
-        return countBySingleCompany(WamCompany.getCurrent(), manager);
+        return countByCompany(WamCompany.getCurrent(), manager);
     }// end of static method
 
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero di records della Entity
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @return il numero totale di record nella Entity
+     * @return il numero filtrato di records nella Entity
      */
-    public static int countBySingleCompany(WamCompany company) {
-        return countBySingleCompany(company, null);
+    public static int countByCompany(WamCompany company) {
+        return countByCompany(company, (EntityManager) null);
     }// end of static method
 
     /**
-     * Recupera il numero totale dei records della Entity
+     * Recupera il numero di records della Entity
      * Filtrato sulla azienda passata come parametro.
-     * Use a specific manager (must be close by caller method)
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
-     * @return il numero totale di record nella Entity
+     * @return il numero filtrato di records nella Entity
      */
-    public static int countBySingleCompany(WamCompany company, EntityManager manager) {
+    public static int countByCompany(WamCompany company, EntityManager manager) {
         return CompanyQuery.count(Servizio.class, company, manager);
     }// end of static method
 
+    /**
+     * Recupera il numero di records della Entity, filtrato sul valore della property indicata
+     * Filtrato sulla azienda passata come parametro.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param attr    the searched attribute
+     * @param value   the value to search for
+     * @param manager the EntityManager to use
+     * @return il numero filtrato di records nella Entity
+     */
+    public static int countByCompanyAndProperty(WamCompany company, SingularAttribute attr, Object value, EntityManager manager) {
+        return CompanyQuery.count(Servizio.class, attr, value, company, manager);
+    }// end of static method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Find entity by primary key
@@ -274,66 +293,52 @@ public class Servizio extends WamCompanyEntity {
      * @return istanza della Entity, null se non trovata
      */
     public static Servizio find(long id) {
-        return find(id, null);
+        return find(id, (EntityManager) null);
     }// end of static method
 
 
     /**
      * Recupera una istanza della Entity usando la query standard della Primary Key
      * Nessun filtro sulla company, perché la primary key è unica
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param id      valore (unico) della Primary Key
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
     public static Servizio find(long id, EntityManager manager) {
-        BaseEntity entity = AQuery.find(Servizio.class, id, manager);
-        return check(entity);
-    }// end of static method
-
-    /**
-     * Controlla se l'istanza della Entity esiste ed è della classe corretta
-     *
-     * @param entity (BaseEntity) restituita dalla query generica
-     * @return istanza della Entity specifica, null se non trovata
-     */
-    private static Servizio check(BaseEntity entity) {
-        Servizio instance = null;
-
-        if (entity != null && entity instanceof Servizio) {
-            instance = (Servizio) entity;
-        }// end of if cycle
-
-        return instance;
+        return (Servizio) CompanyQuery.find(Servizio.class, id, manager);
     }// end of static method
 
 
     //------------------------------------------------------------------------------------------------------------------------
-    // Find entity by SingularAttribute
+    // Get single entity by SingularAttribute
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda corrente.
+     * Nessun filtro sulla company, perché la property è unica
      *
-     * @param sigla di riferimento interna (obbligatoria)
+     * @param codeCompanyUnico di riferimento interno (obbligatorio e unico)
      * @return istanza della Entity, null se non trovata
      */
-    public static Servizio getEntityBySigla(String sigla) {
-        return getEntityBySigla(sigla, null);
+    public static Servizio getEntityByCodeCompanyUnico(String codeCompanyUnico) {
+        return getEntityByCodeCompanyUnico(codeCompanyUnico, (EntityManager) null);
     }// end of static method
 
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda corrente.
+     * Nessun filtro sulla company, perché la property è unica
      *
-     * @param sigla   di riferimento interna (obbligatoria)
-     * @param manager the EntityManager to use
+     * @param codeCompanyUnico di riferimento interno (obbligatorio e unico)
+     * @param manager          the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
-    public static Servizio getEntityBySigla(String sigla, EntityManager manager) {
-        return (Servizio) CompanyQuery.getEntity(Funzione.class, Servizio_.sigla, sigla, manager);
+    public static Servizio getEntityByCodeCompanyUnico(String codeCompanyUnico, EntityManager manager) {
+        return (Servizio) AQuery.getEntity(Funzione.class, Servizio_.codeCompanyUnico, codeCompanyUnico, manager);
     }// end of static method
 
 
@@ -342,11 +347,11 @@ public class Servizio extends WamCompanyEntity {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @param sigla   di riferimento interna (obbligatoria)
+     * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
      * @return istanza della Entity, null se non trovata
      */
-    public static Servizio getEntityByCompanyAndBySigla(WamCompany company, String sigla) {
-        return getEntityByCompanyAndBySigla(company, sigla, null);
+    public static Servizio getEntityByCompanyAndSigla(WamCompany company, String sigla) {
+        return getEntityByCompanyAndSigla(company, sigla, null);
     }// end of static method
 
 
@@ -355,17 +360,17 @@ public class Servizio extends WamCompanyEntity {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @param sigla   di riferimento interna (obbligatoria)
+     * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
-    public static Servizio getEntityByCompanyAndBySigla(WamCompany company, String sigla, EntityManager manager) {
+    public static Servizio getEntityByCompanyAndSigla(WamCompany company, String sigla, EntityManager manager) {
         return (Servizio) CompanyQuery.getEntity(Servizio.class, Servizio_.sigla, sigla, company, manager);
     }// end of static method
 
 
     //------------------------------------------------------------------------------------------------------------------------
-    // Find entities (list)
+    // Get entities (list)
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -375,20 +380,21 @@ public class Servizio extends WamCompanyEntity {
      * @return lista di tutte le entities
      */
     public static List<Servizio> getListByAllCompanies() {
-        return getListByAllCompanies(null);
+        return getListByAllCompanies((EntityManager) null);
     }// end of static method
 
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Senza filtri.
+     * (non va usata CompanyQuery, altrimenti arriverebbe solo la lista della company corrente)
      *
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
     public static List<Servizio> getListByAllCompanies(EntityManager manager) {
-        return (List<Servizio>) AQuery.getList(Servizio.class, manager);
+        return (List<Servizio>) AQuery.getList(Funzione.class, manager);
     }// end of static method
 
 
@@ -399,7 +405,7 @@ public class Servizio extends WamCompanyEntity {
      * @return lista di tutte le entities
      */
     public static List<Servizio> getListByCurrentCompany() {
-        return getListByCurrentCompany(null);
+        return getListByCurrentCompany((EntityManager) null);
     }// end of static method
 
 
@@ -424,14 +430,16 @@ public class Servizio extends WamCompanyEntity {
      * @return lista di tutte le entities
      */
     public static List<Servizio> getListBySingleCompany(WamCompany company) {
-        return getListBySingleCompany(company, null);
+        return getListBySingleCompany(company, (EntityManager) null);
     }// end of static method
 
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Filtrato sulla company passata come parametro.
-     * Se si arriva qui con una company null, vuol dire che non esiste la company corrente
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
@@ -448,6 +456,46 @@ public class Servizio extends WamCompanyEntity {
 
 
     //------------------------------------------------------------------------------------------------------------------------
+    // Get properties (list)
+    //------------------------------------------------------------------------------------------------------------------------
+
+    public static List<String> getListStrByCodeCompanyUnico() {
+        return getListStrByCodeCompanyUnico((EntityManager) null);
+    }// end of static method
+
+    /**
+     * Search for the values of a given property of the given Entity class
+     * Ordinate sul valore della property indicata
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param manager the EntityManager to use
+     */
+    public static List<String> getListStrByCodeCompanyUnico(EntityManager manager) {
+        return CompanyQuery.getListStr(Funzione.class, Servizio_.codeCompanyUnico, null, manager);
+    }// end of static method
+
+    public static List<String> getListStrByCompanyAndSigla(WamCompany company) {
+        return getListStrByCompanyAndSigla(company, (EntityManager) null);
+    }// end of static method
+
+    /**
+     * Search for the values of a given property of the given Entity class
+     * Filtrato sulla company passata come parametro.
+     * Ordinate sul valore della property indicata
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     */
+    public static List<String> getListStrByCompanyAndSigla(WamCompany company, EntityManager manager) {
+        return CompanyQuery.getListStr(Funzione.class, Servizio_.sigla, company, manager);
+    }// end of static method
+
+    //------------------------------------------------------------------------------------------------------------------------
     // New and save
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -457,7 +505,7 @@ public class Servizio extends WamCompanyEntity {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione per il tabellone (obbligatoria)
      * @return istanza della Entity
      */
@@ -471,7 +519,7 @@ public class Servizio extends WamCompanyEntity {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione per il tabellone (obbligatoria)
      * @param manager     the EntityManager to use
      * @return istanza della Entity
@@ -486,7 +534,7 @@ public class Servizio extends WamCompanyEntity {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione per il tabellone (obbligatoria)
      * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param colore      del gruppo (facoltativo)
@@ -505,7 +553,7 @@ public class Servizio extends WamCompanyEntity {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione per il tabellone (obbligatoria)
      * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param colore      del gruppo (facoltativo)
@@ -525,7 +573,7 @@ public class Servizio extends WamCompanyEntity {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param sigla       sigla di riferimento interna (obbligatoria)
+     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione per il tabellone (obbligatoria)
      * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param colore      del gruppo (facoltativo)
@@ -549,7 +597,7 @@ public class Servizio extends WamCompanyEntity {
      * La crea SOLO se non esiste già
      *
      * @param company      di appartenenza (property della superclasse)
-     * @param sigla        sigla di riferimento interna (obbligatoria)
+     * @param sigla        di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione  per il tabellone (obbligatoria)
      * @param ordine       di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param colore       del gruppo (facoltativo)
@@ -593,7 +641,7 @@ public class Servizio extends WamCompanyEntity {
      * La crea SOLO se non esiste già
      *
      * @param company          di appartenenza (property della superclasse)
-     * @param sigla            sigla di riferimento interna (obbligatoria)
+     * @param sigla            di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione      per il tabellone (obbligatoria)
      * @param ordine           di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param colore           del gruppo (facoltativo)
@@ -619,23 +667,27 @@ public class Servizio extends WamCompanyEntity {
             int minutiFine,
             EntityManager manager,
             List<ServizioFunzione> servizioFunzioni) {
-        Servizio servizio = Servizio.getEntityByCompanyAndBySigla(company, sigla, manager);
+        Servizio servizio = Servizio.getEntityByCompanyAndSigla(company, sigla, manager);
         ServizioFunzione servFunz;
 
         if (servizio == null) {
-            servizio = new Servizio(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine);
-            servizio.setMinutiInizio(minutiInizio);
-            servizio.setMinutiFine(minutiFine);
+            try { // prova ad eseguire il codice
+                servizio = new Servizio(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine);
+                servizio.setMinutiInizio(minutiInizio);
+                servizio.setMinutiFine(minutiFine);
 
-            if (servizioFunzioni != null) {
-                for (int k = 0; k < servizioFunzioni.size(); k++) {
-                    servFunz = servizioFunzioni.get(k);
-                    servFunz.setServizio(servizio);
-                    servizio.servizioFunzioni.add(servFunz);
-                }// end of for cycle
-            }// fine del blocco if
+                if (servizioFunzioni != null) {
+                    for (int k = 0; k < servizioFunzioni.size(); k++) {
+                        servFunz = servizioFunzioni.get(k);
+                        servFunz.setServizio(servizio);
+                        servizio.servizioFunzioni.add(servFunz);
+                    }// end of for cycle
+                }// fine del blocco if
 
-            servizio = servizio.save(company, manager);
+                servizio = servizio.save(company, manager);
+            } catch (Exception unErrore) { // intercetta l'errore
+                servizio = null;
+            }// fine del blocco try-catch
         }// end of if cycle
 
         return servizio;
@@ -645,16 +697,16 @@ public class Servizio extends WamCompanyEntity {
     // Delete
     //------------------------------------------------------------------------------------------------------------------------
 
-    public static void deleteAll() {
-        deleteAll(CompanySessionLib.getCompany(), (EntityManager) null);
+    public static int deleteAll() {
+        return deleteAll(CompanySessionLib.getCompany(), (EntityManager) null);
     }// end of static method
 
-    public static void deleteAll(BaseCompany company) {
-        deleteAll((EntityManager) null);
+    public static int deleteAll(BaseCompany company) {
+        return deleteAll(company, (EntityManager) null);
     }// end of static method
 
-    public static void deleteAll(EntityManager manager) {
-        deleteAll(CompanySessionLib.getCompany(), manager);
+    public static int deleteAll(EntityManager manager) {
+        return deleteAll(CompanySessionLib.getCompany(), manager);
     }// end of static method
 
     /**
@@ -663,34 +715,27 @@ public class Servizio extends WamCompanyEntity {
      *
      * @param manager the EntityManager to use
      */
-    public static void deleteAll(BaseCompany company, EntityManager manager) {
-        CompanyQuery.delete(Servizio.class, company, manager);
+    public static int deleteAll(BaseCompany company, EntityManager manager) {
+        return CompanyQuery.delete(Servizio.class, company, manager);
     }// end of static method
 
 
+    //------------------------------------------------------------------------------------------------------------------------
+    // utilities
+    //------------------------------------------------------------------------------------------------------------------------
+
     /**
-     * Recupera una istanza di Servizio usando la query di tutte e sole le property obbligatorie
+     * Numero massimo conenuto nella property
      *
-     * @param company selezionata
-     * @param sigla   valore della property Sigla
-     * @return istanza di Servizio, null se non trovata
-     * @deprecated
+     * @param company azienda da filtrare
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return massimo valore
      */
-    @SuppressWarnings("unchecked")
-    public static Servizio find(WamCompany company, String sigla) {
-        Servizio instance = null;
-
-        List<Servizio> serviziPerSigla = (List<Servizio>) AQuery.queryList(Servizio.class, Servizio_.sigla, sigla);
-        if (serviziPerSigla != null && serviziPerSigla.size() > 0) {
-            for (Servizio servizio : serviziPerSigla) {
-                if (servizio.getCompany() != null && servizio.getCompany().equals(company)) {
-                    instance = servizio;
-                }// end of if cycle
-            }// end of for cycle
-        }// end of if cycle
-
-        return instance;
+    public static int maxOrdine(WamCompany company, EntityManager manager) {
+        return CompanyQuery.maxInt(Servizio.class, Servizio_.ordine, company, manager);
     }// end of method
+
+
 
 
     //------------------------------------------------------------------------------------------------------------------------
@@ -806,7 +851,7 @@ public class Servizio extends WamCompanyEntity {
      */
     @Override
     public BaseEntity save() {
-        return this.save(null);
+        return this.save((EntityManager)null);
     }// end of method
 
     /**
@@ -856,6 +901,29 @@ public class Servizio extends WamCompanyEntity {
 
     }// end of method
 
+    /**
+     * Saves this entity to the database.
+     * <p>
+     * Usa l'EntityManager di default
+     *
+     * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
+     */
+    public Servizio saveSafe() {
+        return saveSafe((EntityManager)null);
+    }// end of method
+
+    /**
+     * Saves this entity to the database.
+     * <p>
+     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
+     * Otherwise, a new transaction is used to save this single entity.
+     *
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
+     */
+    public Servizio saveSafe(EntityManager manager) {
+        return (Servizio) this.save(manager);
+    }// end of method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Utilities
@@ -928,8 +996,7 @@ public class Servizio extends WamCompanyEntity {
      */
     private void checkOrdine(WamCompany company, EntityManager manager) {
         if (getOrdine() == 0) {
-            int max = WamQuery.maxOrdineServizio(company, manager);
-            setOrdine(max + 1);
+            setOrdine(maxOrdine(company, manager) + 1);
         }// end of if cycle
     }// end of method
 
@@ -946,7 +1013,7 @@ public class Servizio extends WamCompanyEntity {
         }// end of for cycle
 
         return lista;
-    }
+    }// end of method
 
 
 //    @PrePersist
@@ -1110,6 +1177,20 @@ public class Servizio extends WamCompanyEntity {
         return s;
     }
 
+    /**
+     * Compara per ordine del servizio
+     *
+     * @param other servizio
+     * @return a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.
+     */
+    @Override
+    @SuppressWarnings("all")
+    public int compareTo(Servizio other) {
+        Integer ordQuesto = getOrdine();
+        Integer ordAltro = other.getOrdine();
+        return ordQuesto.compareTo(ordAltro);
+    }// end of method
     //------------------------------------------------------------------------------------------------------------------------
     // Clone
     //------------------------------------------------------------------------------------------------------------------------

@@ -74,9 +74,9 @@ public class ServizioTest extends WamTest {
         resetServizi();
         int numRecTotaliOld = Servizio.countByAllCompanies(MANAGER);
         int numRetTotaliNew;
-        int numRecUnoOld = Servizio.countBySingleCompany(companyUno, MANAGER);
+        int numRecUnoOld = Servizio.countByCompany(companyUno, MANAGER);
         int numRecUnoNew;
-        int numRecDueOld = Servizio.countBySingleCompany(companyDue, MANAGER);
+        int numRecDueOld = Servizio.countByCompany(companyDue, MANAGER);
         int numRecDueNew;
         int ordine;
 
@@ -88,7 +88,7 @@ public class ServizioTest extends WamTest {
         }// fine del blocco try-catch
         assertNotNull(servizioUno);
         assertNull(servizioUno.getId());
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // senza un parametro obbligatorio
@@ -99,7 +99,7 @@ public class ServizioTest extends WamTest {
         }// fine del blocco try-catch
         assertNotNull(servizioUno);
         assertNull(servizioUno.getId());
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
@@ -110,7 +110,7 @@ public class ServizioTest extends WamTest {
         }// fine del blocco try-catch
         assertNotNull(servizioUno);
         assertNull(servizioUno.getId());
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
@@ -121,7 +121,7 @@ public class ServizioTest extends WamTest {
         }// fine del blocco try-catch
         assertNotNull(servizioUno);
         assertNull(servizioUno.getId());
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametro obbligatorio vuoto
@@ -132,7 +132,7 @@ public class ServizioTest extends WamTest {
         }// fine del blocco try-catch
         assertNotNull(servizioUno);
         assertNull(servizioUno.getId());
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametri obbligatori
@@ -142,7 +142,7 @@ public class ServizioTest extends WamTest {
         assertNotNull(servizioUno.getId());
         ordine = servizioUno.getOrdine();
         assertEquals(ordine, 1);
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 1);
 
         // parametri obbligatori
@@ -152,7 +152,7 @@ public class ServizioTest extends WamTest {
         assertNotNull(servizioDue.getId());
         ordine = servizioDue.getOrdine();
         assertEquals(ordine, 2);
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 2);
 
         // tutti i parametri previsti
@@ -162,7 +162,7 @@ public class ServizioTest extends WamTest {
         assertNotNull(servizioTre.getId());
         ordine = servizioTre.getOrdine();
         assertEquals(ordine, 6);
-        numRecUnoNew = Servizio.countBySingleCompany(companyDue, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyDue, MANAGER);
         assertEquals(numRecUnoNew, numRecDueOld + 1);
 
         // parametri obbligatori
@@ -172,7 +172,7 @@ public class ServizioTest extends WamTest {
         assertNotNull(servizioQuattro.getId());
         ordine = servizioQuattro.getOrdine();
         assertEquals(ordine, 7);
-        numRecDueNew = Servizio.countBySingleCompany(companyDue, MANAGER);
+        numRecDueNew = Servizio.countByCompany(companyDue, MANAGER);
         assertEquals(numRecDueNew, numRecDueOld + 2);
 
         // campo unico, doppio
@@ -184,11 +184,11 @@ public class ServizioTest extends WamTest {
         }// fine del blocco try-catch
         assertNotNull(servizioCinque);
         assertNull(servizioCinque.getId());
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecDueNew, numRecDueOld + 2);
 
-        assertEquals(Servizio.countBySingleCompany(companyUno, MANAGER), numRecUnoOld + 2);
-        assertEquals(Servizio.countBySingleCompany(companyDue, MANAGER), numRecDueOld + 2);
+        assertEquals(Servizio.countByCompany(companyUno, MANAGER), numRecUnoOld + 2);
+        assertEquals(Servizio.countByCompany(companyDue, MANAGER), numRecDueOld + 2);
         numRetTotaliNew = Servizio.countByAllCompanies(MANAGER);
         assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
     }// end of single test
@@ -207,15 +207,15 @@ public class ServizioTest extends WamTest {
             return;
         }// end of if cycle
 
-        servizioUno = Servizio.getEntityByCompanyAndBySigla(companyUno, sigla1, MANAGER);
+        servizioUno = Servizio.getEntityByCompanyAndSigla(companyUno, sigla1, MANAGER);
         assertNotNull(servizioUno);
 
-        servizioDue = Servizio.getEntityByCompanyAndBySigla(companyDue, sigla2, MANAGER);
+        servizioDue = Servizio.getEntityByCompanyAndSigla(companyDue, sigla2, MANAGER);
         assertNotNull(servizioDue);
         assertNotSame(servizioDue, servizioUno);
         key = servizioDue.getId();
 
-        servizioTre = Servizio.getEntityByCompanyAndBySigla(companyUno, sigla2, MANAGER);
+        servizioTre = Servizio.getEntityByCompanyAndSigla(companyUno, sigla2, MANAGER);
         assertNotNull(servizioTre);
         assertNotSame(servizioTre, servizioDue);
 
@@ -268,9 +268,9 @@ public class ServizioTest extends WamTest {
         cancellaServizi();
         int numRecTotaliOld = Servizio.countByAllCompanies(MANAGER);
         int numRetTotaliNew;
-        int numRecUnoOld = Servizio.countBySingleCompany(companyUno, MANAGER);
+        int numRecUnoOld = Servizio.countByCompany(companyUno, MANAGER);
         int numRecUnoNew;
-        int numRecDueOld = Servizio.countBySingleCompany(companyDue, MANAGER);
+        int numRecDueOld = Servizio.countByCompany(companyDue, MANAGER);
         int numRecDueNew;
         int ordine;
 
@@ -281,33 +281,33 @@ public class ServizioTest extends WamTest {
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
         assertNull(servizioUno);
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld);
 
         // parametri obbligatori
         servizioUno = Servizio.crea(companyUno, sigla1, desc1, MANAGER);
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 1);
         ordine = servizioUno.getOrdine();
         assertEquals(ordine, 1);
 
         // parametri obbligatori
         servizioDue = Servizio.crea(companyUno, sigla2, desc2, MANAGER);
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
         assertEquals(numRecUnoNew, numRecUnoOld + 2);
         ordine = servizioDue.getOrdine();
         assertEquals(ordine, 2);
 
         // tutti i parametri previsti
         servizioTre = Servizio.crea(companyDue, sigla1, desc1, 6, 0, false, 0, 0, MANAGER);
-        numRecUnoNew = Servizio.countBySingleCompany(companyDue, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyDue, MANAGER);
         assertEquals(numRecUnoNew, numRecDueOld + 1);
         ordine = servizioTre.getOrdine();
         assertEquals(ordine, 6);
 
         // parametri obbligatori
         servizioQuattro = Servizio.crea(companyDue, sigla2, desc2, MANAGER);
-        numRecDueNew = Servizio.countBySingleCompany(companyDue, MANAGER);
+        numRecDueNew = Servizio.countByCompany(companyDue, MANAGER);
         assertEquals(numRecDueNew, numRecDueOld + 2);
         ordine = servizioQuattro.getOrdine();
         assertEquals(ordine, 7);
@@ -321,10 +321,10 @@ public class ServizioTest extends WamTest {
         }// fine del blocco try-catch
         assertNotNull(servizioCinque);
         assertNotNull(servizioCinque.getId());
-        numRecUnoNew = Servizio.countBySingleCompany(companyUno, MANAGER);
+        numRecUnoNew = Servizio.countByCompany(companyUno, MANAGER);
 
-        assertEquals(Servizio.countBySingleCompany(companyUno, MANAGER), numRecUnoOld + 2);
-        assertEquals(Servizio.countBySingleCompany(companyDue, MANAGER), numRecDueOld + 2);
+        assertEquals(Servizio.countByCompany(companyUno, MANAGER), numRecUnoOld + 2);
+        assertEquals(Servizio.countByCompany(companyDue, MANAGER), numRecDueOld + 2);
         numRetTotaliNew = Servizio.countByAllCompanies(MANAGER);
         assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
     }// end of single test

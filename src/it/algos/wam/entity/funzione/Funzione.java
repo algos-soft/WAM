@@ -153,11 +153,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     //------------------------------------------------------------------------------------------------------------------------
     // Count records
-    // CountBy...
-    // Con e senza Property (SingularAttribute)
-    // Con e senza Company
-    // Con e senza EntityManager
-    // Con Company, EntityManager And Property
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -272,6 +267,9 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Recupera una istanza della Entity usando la query standard della Primary Key
      * Nessun filtro sulla company, perché la primary key è unica
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param id      valore (unico) della Primary Key
      * @param manager the EntityManager to use
@@ -288,6 +286,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
+     * Nessun filtro sulla company, perché la property è unica
      *
      * @param codeCompanyUnico di riferimento interno (obbligatorio e unico)
      * @return istanza della Entity, null se non trovata
@@ -299,6 +298,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
+     * Nessun filtro sulla company, perché la property è unica
      *
      * @param codeCompanyUnico di riferimento interno (obbligatorio e unico)
      * @param manager          the EntityManager to use
@@ -327,25 +327,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param code    di riferimento interno (obbligatorio, unico all'interno della company)
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione getEntityByCompanyAndCode(WamCompany company, String code, EntityManager manager) {
         return (Funzione) CompanyQuery.getEntity(Funzione.class, Funzione_.code, code, company, manager);
-    }// end of static method
-
-    /**
-     * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param sigla       visibile nel tabellone (obbligatoria, non unica)
-     * @param manager the EntityManager to use
-     * @return istanza della Entity, null se non trovata
-     */
-    public static Funzione getEntityByCompanyAndSigla(WamCompany company, String sigla, EntityManager manager) {
-        return (Funzione) CompanyQuery.getEntity(Funzione.class, Funzione_.sigla, sigla, company, manager);
     }// end of static method
 
 
@@ -550,7 +537,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         if (funzione == null) {
             try { // prova ad eseguire il codice
                 funzione = new Funzione(company, code, sigla, descrizione, ordine, glyph);
-                funzione.save(company, manager);
+                funzione = funzione.save(company, manager);
             } catch (Exception unErrore) { // intercetta l'errore
                 funzione = null;
             }// fine del blocco try-catch
@@ -569,7 +556,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     }// end of static method
 
     public static int deleteAll(BaseCompany company) {
-        return deleteAll((EntityManager) null);
+        return deleteAll(company,(EntityManager) null);
     }// end of static method
 
     public static int deleteAll(EntityManager manager) {
@@ -692,7 +679,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     @Override
     public BaseEntity save() {
-        return this.save(null);
+        return this.save((EntityManager)null);
     }// end of method
 
     /**
@@ -753,7 +740,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
      */
     public Funzione saveSafe() {
-        return saveSafe(null);
+        return saveSafe((EntityManager)null);
     }// end of method
 
     /**
@@ -892,17 +879,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         setIconCodepoint(codepoint);
     }// end of method
 
-    /**
-     * Compara per ordine della funzione
-     *
-     * @param other funzione
-     */
-    @Override
-    public int compareTo(Funzione other) {
-        Integer ordQuesto = getOrdine();
-        Integer ordAltro = other.getOrdine();
-        return ordQuesto.compareTo(ordAltro);
-    }// end of method
 
     /**
      * Recupera l'icona in formato htlm
@@ -924,6 +900,20 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return iconHtml;
     }// end of method
 
+    /**
+     * Compara per ordine della funzione
+     *
+     * @param other funzione
+     * @return a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.
+     */
+    @Override
+    @SuppressWarnings("all")
+    public int compareTo(Funzione other) {
+        Integer ordQuesto = getOrdine();
+        Integer ordAltro = other.getOrdine();
+        return ordQuesto.compareTo(ordAltro);
+    }// end of method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Clone

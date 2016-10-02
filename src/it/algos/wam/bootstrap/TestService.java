@@ -133,7 +133,7 @@ public abstract class TestService {
         print("Numero di servizi totali (lista)", listaServiziTotali.size());
 
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        int numServiziCorrenti = Servizio.countBySingleCompany(companyCorrente);
+        int numServiziCorrenti = Servizio.countByCompany(companyCorrente);
         List<Servizio> listaServiziCorrenti = Servizio.getListBySingleCompany(companyCorrente);
         print("Numero di servizi con company selezionata (count)", numServiziCorrenti);
         print("Numero di servizi con company selezionata (lista)", listaServiziCorrenti.size());

@@ -485,9 +485,9 @@ public class WamQuery {
         Object a;
         if (company != null) {
             Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
-            lista = (List<Funzione>) AQuery.findAll(Funzione.class, sort, manager, filter);
+            lista = (List<Funzione>) AQuery.getList(Funzione.class, sort, manager, filter);
         } else {
-            lista = (List<Funzione>) AQuery.findAll(Funzione.class, sort, manager);
+            lista = (List<Funzione>) AQuery.getList(Funzione.class, sort, manager);
         }// end of if/else cycle
 
         if (lista != null && lista.size() > 0) {
@@ -514,9 +514,9 @@ public class WamQuery {
         Object a;
         if (company != null) {
             Container.Filter filter = new Compare.Equal(CompanyEntity_.company.getName(), company);
-            lista = (List<Servizio>) AQuery.findAll(Servizio.class, sort, manager, filter);
+            lista = (List<Servizio>) AQuery.getList(Servizio.class, sort, manager, filter);
         } else {
-            lista = (List<Servizio>) AQuery.findAll(Servizio.class, sort, manager);
+            lista = (List<Servizio>) AQuery.getList(Servizio.class, sort, manager);
         }// end of if/else cycle
 
         if (lista != null && lista.size() > 0) {

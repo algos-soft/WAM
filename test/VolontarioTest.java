@@ -1,4 +1,9 @@
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.volontario.Volontario_;
+import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.query.AQuery;
 import org.junit.*;
 
 import java.util.Date;
@@ -30,9 +35,10 @@ public class VolontarioTest extends WamTest {
     public static void setUpInizialeStaticoEseguitoSoloUnaVoltaAllaCreazioneDellaClasse() {
         // creazione del MANAGER statico per questa singola classe di test
         // creazione di alcune company
+        WamTest.setUpClass();
 
         // Prima di iniziare a creare e modificare i volontari, cancello tutte gli (eventuali) precedenti
-        cancellaVolontari();
+//        cancellaVolontari();
     } // end of setup iniziale
 
 
@@ -64,7 +70,7 @@ public class VolontarioTest extends WamTest {
     } // end of cleaup finale
 
 
-//    @Test
+    @Test
     // Constructors
     // Count records
     /**
@@ -81,6 +87,7 @@ public class VolontarioTest extends WamTest {
         int numRecDueNew;
         int ordine;
 
+        cancellaVolontari();
         // senza nessun parametro
         volontarioUno = new Volontario();
         try { // prova ad eseguire il codice
@@ -186,7 +193,7 @@ public class VolontarioTest extends WamTest {
         assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
     }// end of single test
 
-//    @Test
+    @Test
     // Find entity
 
     /**
@@ -199,6 +206,14 @@ public class VolontarioTest extends WamTest {
         if (numRecords < 1) {
             return;
         }// end of if cycle
+
+        Container.Filter filterCompany = new Compare.Equal(Volontario_.company.getName(), companyUno);
+        Container.Filter filterNome = new Compare.Equal(Volontario_.nome.getName(), NOME_UNO);
+        Container.Filter filterCognome = new Compare.Equal(Volontario_.cognome.getName(), COGNOME_UNO);
+        List<? extends BaseEntity> listaBE = AQuery.getList(Volontario.class, MANAGER,filterCompany);
+        List<? extends BaseEntity> listaBEw = AQuery.getList(Volontario.class, MANAGER,filterNome);
+        List<? extends BaseEntity> listaBEr = AQuery.getList(Volontario.class, MANAGER,filterCognome);
+        List<? extends BaseEntity> pippoz = AQuery.getList(Volontario.class, MANAGER,filterCompany,filterCognome);
 
         volontarioUno = Volontario.findByCompanyAndNomeAndCognome(companyUno, NOME_UNO, COGNOME_UNO, MANAGER);
         assertNotNull(volontarioUno);

@@ -106,7 +106,7 @@ public class Turno extends WamCompanyEntity {
      */
     public static Turno find(long id) {
         Turno instance = null;
-        BaseEntity entity = AQuery.queryById(Turno.class, id);
+        BaseEntity entity = AQuery.find(Turno.class, id);
 
         if (entity != null) {
             if (entity instanceof Turno) {
@@ -130,7 +130,7 @@ public class Turno extends WamCompanyEntity {
         BaseCompany company = CompanySessionLib.getCompany();
 
         ArrayList<Turno> lista = null;
-        List<Turno> listaPerChiave = (List<Turno>) CompanyQuery.queryList(Turno.class, Turno_.chiave, chiave);
+        List<Turno> listaPerChiave = (List<Turno>) CompanyQuery.getList(Turno.class, Turno_.chiave, chiave);
 
         if (listaPerChiave != null && listaPerChiave.size() > 0) {
             lista = new ArrayList();
@@ -278,7 +278,7 @@ public class Turno extends WamCompanyEntity {
      */
     @SuppressWarnings("unchecked")
     public static List<Turno> findAll() {
-        return (ArrayList<Turno>) CompanyQuery.getListOld(Turno.class);
+        return (ArrayList<Turno>) CompanyQuery.getList(Turno.class);
     }// end of method
 
     /**

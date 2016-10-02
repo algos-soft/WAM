@@ -122,7 +122,7 @@ public class Iscrizione extends WamCompanyEntity {
         BaseEntity bean;
 
 //        EntityManager manager = EM.createEntityManager();
-        bean = CompanyQuery.queryOne(Iscrizione.class, Iscrizione_.turno ,turno);
+        bean = CompanyQuery.getEntity(Iscrizione.class, Iscrizione_.turno ,turno);
 //        manager.close();
 
         if (bean != null && bean instanceof Iscrizione) {

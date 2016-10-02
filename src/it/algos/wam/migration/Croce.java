@@ -50,7 +50,7 @@ public class Croce extends MigrationEntity {
         Croce instance = null;
         EntityManager manager = getManager();
 
-        BaseEntity entity = AQuery.findOne(Croce.class, Croce_.sigla, sigla, manager);
+        BaseEntity entity = AQuery.getEntity(Croce.class, Croce_.sigla, sigla, manager);
         manager.close();
 
         if (entity != null) {
@@ -73,7 +73,7 @@ public class Croce extends MigrationEntity {
         List<Croce> lista;
         EntityManager manager = getManager();
 
-        lista = (List<Croce>) AQuery.findAll(Croce.class, manager);
+        lista = (List<Croce>) AQuery.getList(Croce.class, manager);
         manager.close();
 
         return lista;
