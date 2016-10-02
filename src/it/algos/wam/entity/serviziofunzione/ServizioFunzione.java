@@ -88,7 +88,7 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
      */
     public static ServizioFunzione find(long id) {
         ServizioFunzione instance = null;
-        BaseEntity entity = AQuery.queryById(ServizioFunzione.class, id);
+        BaseEntity entity = AQuery.find(ServizioFunzione.class, id);
 
         if (entity != null) {
             if (entity instanceof ServizioFunzione) {

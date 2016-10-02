@@ -556,7 +556,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     }// end of static method
 
     public static int deleteAll(BaseCompany company) {
-        return deleteAll(company,(EntityManager) null);
+        return deleteAll(company, (EntityManager) null);
     }// end of static method
 
     public static int deleteAll(EntityManager manager) {
@@ -599,7 +599,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     @Override
     public String toString() {
-        return sigla;
+        return sigla + " - " + descrizione;
     }// end of method
 
     public String getCode() {
@@ -679,7 +679,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      */
     @Override
     public BaseEntity save() {
-        return this.save((EntityManager)null);
+        return this.save((EntityManager) null);
     }// end of method
 
     /**
@@ -740,7 +740,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
      */
     public Funzione saveSafe() {
-        return saveSafe((EntityManager)null);
+        return saveSafe((EntityManager) null);
     }// end of method
 
     /**

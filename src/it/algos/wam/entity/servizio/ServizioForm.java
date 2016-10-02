@@ -595,7 +595,7 @@ public class ServizioForm extends ModuleForm {
             comboFunzioni = new ERelatedComboField(Funzione.class, company);
 
             comboFunzioni.sort(Funzione_.sigla);
-            comboFunzioni.setWidth("12em");
+            comboFunzioni.setWidth("25em");
             if (serFun != null) {
                 Funzione f = serFun.getFunzione();
                 if (f != null) {
@@ -620,13 +620,13 @@ public class ServizioForm extends ModuleForm {
                 }// end of inner method
             });// end of anonymous inner class
 
-            checkObbl = new CheckBox("obbligatoria");
+            checkObbl = new CheckBox("obb.");
             // imposta il checkbox obbligatorio
             if (serFun != null) {
                 checkObbl.setValue(this.serFun.isObbligatoria());
             }
 
-            Button bElimina = new Button("Elimina", FontAwesome.TRASH_O);
+            Button bElimina = new Button("", FontAwesome.TRASH_O);
             bElimina.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent clickEvent) {

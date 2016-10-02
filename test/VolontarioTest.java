@@ -6,6 +6,7 @@ import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.junit.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,8 @@ import static org.junit.Assert.*;
  * .
  */
 public class VolontarioTest extends WamTest {
+
+    private Volontario vol;
 
     Volontario volontarioUno;
     Volontario volontarioDue;
@@ -33,44 +36,56 @@ public class VolontarioTest extends WamTest {
      */
     @BeforeClass
     public static void setUpInizialeStaticoEseguitoSoloUnaVoltaAllaCreazioneDellaClasse() {
-        // creazione del MANAGER statico per questa singola classe di test
-        // creazione di alcune company
         WamTest.setUpClass();
-
-        // Prima di iniziare a creare e modificare i volontari, cancello tutte gli (eventuali) precedenti
-//        cancellaVolontari();
-    } // end of setup iniziale
+    } // end of setup statico iniziale della classe
 
 
     /**
      * CleanUp finale eseguito solo una volta alla chiusura della classe
      */
     @AfterClass
-    public static void cleanUpFinaleStaticoEseguitoAllaChiusuraDellaClasse() {
-        // Alla fine, cancello tutte i volontari creati
-        cancellaVolontari();
+    public static void cleanUpFinaleStaticoEseguitoSoloUnaVoltaAllaChiusuraDellaClasse() {
+        WamTest.cleanUpClass();
+    } // end of cleaup statico finale della classe
 
-    } // end of cleaup finale
 
     /**
-     * Prima di iniziare a creare e modificare i volontari, cancello tutte gli (eventuali) precedenti
-     * Alla fine, cancello tutte i volontari creati
+     * SetUp eseguito prima dell'esecuzione di ogni metodo
      */
-    private static void cancellaVolontari() {
-        Volontario.deleteAll(MANAGER);
-    } // end of cleaup finale
-
     @Before
-    public void setUpVolontari() {
-        resetVolontari();
-    } // end of setup iniziale
+    public void setUp() {
+        super.setUp();
+    } // end of setup prima di ogni metodo di test
 
+
+    /**
+     * CleanUp eseguito dopo l'esecuzione di ogni metodo
+     */
     @After
-    public void reset() {
-    } // end of cleaup finale
+    public void cleanUp() {
+        super.cleanUp();
+    } // end of cleaup dopo ogni metodo di test
+
+    /**
+     * Azzera le variabili d'istanza
+     */
+    protected void reset() {
+        vol = null;
+        chiaviUno = new ArrayList<>();
+        chiaviDue = new ArrayList<>();
+        super.reset();
+    }// end of method
+
+    /**
+     * Prima di inizare a creare e modificare le funzioni, cancello tutte le (eventuali) precedenti
+     * Alla fine, cancello tutte le funzioni create
+     */
+    protected void cancellaRecords() {
+        Volontario.deleteAll(MANAGER);
+    }// end of method
 
 
-    @Test
+//    @Test
     // Constructors
     // Count records
     /**
@@ -87,7 +102,6 @@ public class VolontarioTest extends WamTest {
         int numRecDueNew;
         int ordine;
 
-        cancellaVolontari();
         // senza nessun parametro
         volontarioUno = new Volontario();
         try { // prova ad eseguire il codice
@@ -193,7 +207,7 @@ public class VolontarioTest extends WamTest {
         assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
     }// end of single test
 
-    @Test
+//    @Test
     // Find entity
 
     /**
@@ -275,7 +289,6 @@ public class VolontarioTest extends WamTest {
      */
     public void creaVolontario() {
         resetVolontari();
-        cancellaVolontari();
         int numRecTotaliOld = Volontario.countByAllCompanies(MANAGER);
         int numRetTotaliNew;
         int numRecUnoOld = Volontario.countBySingleCompany(companyUno, MANAGER);
