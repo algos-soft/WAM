@@ -21,12 +21,6 @@ public class FunzioneTest extends WamTest {
 
     private Funzione funz;
 
-    private Funzione funzioneUno;
-    private Funzione funzioneDue;
-    private Funzione funzioneTre;
-    private Funzione funzioneQuattro;
-    private Funzione funzioneCinque;
-
     private List<Funzione> lista = new ArrayList<>();
     private List<Funzione> listaUno = new ArrayList<>();
     private List<Funzione> listaDue = new ArrayList<>();
@@ -183,16 +177,6 @@ public class FunzioneTest extends WamTest {
         funz = new Funzione(companyUno, code1, sigla1, desc1);
         costruttoreNullo(funz, 2);
 
-//        try { // prova ad eseguire il codice
-//            funz.save(companyUno, MANAGER);
-//        } catch (Exception unErrore) { // intercetta l'errore
-//            System.out.println(unErrore.toString());
-//        }// fine del blocco try-catch
-//        assertNotNull(funz);
-//        assertNull(funz.getId());
-//        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
-//        assertEquals(numOttenuto, numPrevisto);
-
         numPrevisto = 2;
         numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
@@ -228,13 +212,7 @@ public class FunzioneTest extends WamTest {
         // tutti i parametri previsti
         numPrevisto = numPrevisto + 1;
         funz = new Funzione(companyDue, code1, sigla1, desc1, 6, FontAwesome.USER);
-        funz.save(companyDue, MANAGER);
-        assertNotNull(funz);
-        assertNotNull(funz.getId());
-        ordine = funz.getOrdine();
-        assertEquals(ordine, 6);
-        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
-        assertEquals(numOttenuto, numPrevisto);
+        costruttoreValidoSecondaCompany(funz, 6, numPrevisto);
     }// end of single test
 
 
@@ -456,6 +434,41 @@ public class FunzioneTest extends WamTest {
 
     @Test
     /**
+     * Search for the values of a given property of the given Entity class
+     * Ordinate sul valore della property indicata
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param manager the EntityManager to use
+     */
+    public void getListStrByCodeCompanyUnico() {
+        listStr = Funzione.getListStrByCodeCompanyUnico(MANAGER);
+        assertEquals(listStr.size(), lista.size());
+    }// end of single test
+
+    @Test
+    /**
+     * Search for the values of a given property of the given Entity class
+     * Filtrato sulla company passata come parametro.
+     * Ordinate sul valore della property indicata
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     */
+    public void getListStrByCompanyAndCode() {
+        listStr = Funzione.getListStrByCompanyAndCode(companyUno, MANAGER);
+        assertEquals(listStr.size(), listaUno.size());
+
+        listStr = Funzione.getListStrByCompanyAndCode(companyDue, MANAGER);
+        assertEquals(listStr.size(), listaDue.size());
+    }// end of single test
+
+    @Test
+    /**
      * Creazione iniziale di una istanza della Entity
      * La crea SOLO se non esiste già
      *
@@ -670,40 +683,6 @@ public class FunzioneTest extends WamTest {
         assertEquals(numOttenuto, numPrevisto);
     }// end of single test
 
-    @Test
-    /**
-     * Search for the values of a given property of the given Entity class
-     * Ordinate sul valore della property indicata
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param manager the EntityManager to use
-     */
-    public void getListStrByCodeCompanyUnico() {
-        listStr = Funzione.getListStrByCodeCompanyUnico(MANAGER);
-        assertEquals(listStr.size(), lista.size());
-    }// end of single test
-
-    @Test
-    /**
-     * Search for the values of a given property of the given Entity class
-     * Filtrato sulla company passata come parametro.
-     * Ordinate sul valore della property indicata
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param manager the EntityManager to use
-     */
-    public void getListStrByCompanyAndCode() {
-        listStr = Funzione.getListStrByCompanyAndCode(companyUno, MANAGER);
-        assertEquals(listStr.size(), listaUno.size());
-
-        listStr = Funzione.getListStrByCompanyAndCode(companyDue, MANAGER);
-        assertEquals(listStr.size(), listaDue.size());
-    }// end of single test
 
     @Test
     /**

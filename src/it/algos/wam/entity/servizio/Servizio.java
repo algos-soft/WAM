@@ -209,7 +209,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @return il numero totale di records nella Entity
      */
     public static int countByAllCompanies(EntityManager manager) {
-        return AQuery.count(Funzione.class, manager);
+        return AQuery.count(Servizio.class, manager);
     }// end of static method
 
 
@@ -338,7 +338,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @return istanza della Entity, null se non trovata
      */
     public static Servizio getEntityByCodeCompanyUnico(String codeCompanyUnico, EntityManager manager) {
-        return (Servizio) AQuery.getEntity(Funzione.class, Servizio_.codeCompanyUnico, codeCompanyUnico, manager);
+        return (Servizio) AQuery.getEntity(Servizio.class, Servizio_.codeCompanyUnico, codeCompanyUnico, manager);
     }// end of static method
 
 
@@ -394,7 +394,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      */
     @SuppressWarnings("unchecked")
     public static List<Servizio> getListByAllCompanies(EntityManager manager) {
-        return (List<Servizio>) AQuery.getList(Funzione.class, manager);
+        return (List<Servizio>) AQuery.getList(Servizio.class, manager);
     }// end of static method
 
 
@@ -473,7 +473,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @param manager the EntityManager to use
      */
     public static List<String> getListStrByCodeCompanyUnico(EntityManager manager) {
-        return CompanyQuery.getListStr(Funzione.class, Servizio_.codeCompanyUnico, null, manager);
+        return CompanyQuery.getListStr(Servizio.class, Servizio_.codeCompanyUnico, null, manager);
     }// end of static method
 
     public static List<String> getListStrByCompanyAndSigla(WamCompany company) {
@@ -492,7 +492,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @param manager the EntityManager to use
      */
     public static List<String> getListStrByCompanyAndSigla(WamCompany company, EntityManager manager) {
-        return CompanyQuery.getListStr(Funzione.class, Servizio_.sigla, company, manager);
+        return CompanyQuery.getListStr(Servizio.class, Servizio_.sigla, company, manager);
     }// end of static method
 
     //------------------------------------------------------------------------------------------------------------------------
