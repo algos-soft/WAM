@@ -196,7 +196,7 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
 
         // aggiunge le iscrizioni
         int row = 0;
-        for (ServizioFunzione sf : serv.getServizioFunzioni()) {
+        for (ServizioFunzione sf : serv.getServizioFunzioniOrdine()) {
             Iscrizione iscr = turno.getIscrizione(sf);
             FontAwesome icon = sf.getFunzione().getIcon();
             Component ci;

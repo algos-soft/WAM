@@ -20,6 +20,7 @@ public class WamLoginForm extends DefaultLoginForm {
     @Override
     public Component createUsernameComponent() {
         userCombo = new ERelatedComboField(Volontario.class, "Utente");
+        int alfa= userCombo.size();
         userCombo.sort(Volontario_.cognome, Volontario_.nome);
         userCombo.addValueChangeListener(new Property.ValueChangeListener() {
             @Override

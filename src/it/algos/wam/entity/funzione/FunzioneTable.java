@@ -5,14 +5,20 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
+import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
+
+import java.util.List;
 
 /**
  * Created by alex on 08/04/16.
@@ -21,8 +27,12 @@ import it.algos.webbase.web.module.ModulePop;
 public class FunzioneTable extends WamTable {
 
 
-    // id della colonna generata "Icona"
+    //--id della colonna generata "Icona"
     protected static final String COL_ICON = "Icona";
+
+
+    //--id della colonna generata "Altre funzioni"
+    protected static final String COL_FUNZIONI = "Funzioni automaticamente abilitate";
 
 
     /**
@@ -44,6 +54,7 @@ public class FunzioneTable extends WamTable {
     @Override
     protected void createAdditionalColumns() {
         addGeneratedColumn(COL_ICON, new IconColumnGenerator());
+        addGeneratedColumn(COL_FUNZIONI, new FunzColumnGenerator());
     }// end of method
 
 
@@ -65,12 +76,14 @@ public class FunzioneTable extends WamTable {
                     Funzione_.code,
                     Funzione_.sigla,
                     Funzione_.descrizione,
+                    COL_FUNZIONI,
             };// end of array
         } else {
             return new Object[]{
                     COL_ICON,
                     Funzione_.sigla,
                     Funzione_.descrizione,
+                    COL_FUNZIONI,
             };// end of array
         }// end of if/else cycle
     }// end of method
@@ -104,13 +117,16 @@ public class FunzioneTable extends WamTable {
 
     private void fixColumn() {
         setColumnHeader(Funzione_.ordine, "##"); // visibile solo per il developer
-//        setColumnHeader(Funzione_.sigla, "Sigla");
+        setColumnHeader(Funzione_.code, "Cod.");
+        setColumnHeader(Funzione_.sigla, "Sigla");
+        setColumnHeader(Funzione_.descrizione, "Descrizione");
 
         setColumnAlignment(COL_ICON, Align.CENTER);
 
         setColumnExpandRatio(Funzione_.code, 1);
         setColumnExpandRatio(Funzione_.sigla, 1);
-        setColumnExpandRatio(Funzione_.descrizione, 3);
+        setColumnExpandRatio(Funzione_.descrizione, 2);
+        setColumnExpandRatio(COL_FUNZIONI, 3);
 
         setColumnWidth(Funzione_.ordine, 50);
         setColumnWidth(COL_ICON, 80);
@@ -130,7 +146,7 @@ public class FunzioneTable extends WamTable {
             bIcon.setHtmlContentAllowed(true);
             bIcon.setWidth("3em");
             bIcon.setCaption("...");
-            bIcon.addStyleName("verde");
+            bIcon.addStyleName("blue");
 
             if (LibSession.isAdmin()) {
                 bIcon.addClickListener(new Button.ClickListener() {
@@ -180,6 +196,48 @@ public class FunzioneTable extends WamTable {
             }// end of if cycle
 
             return bIcon;
+        }// end of method
+    }// end of inner class
+
+    /**
+     * Colonna generata: icona.
+     */
+    private class FunzColumnGenerator implements ColumnGenerator {
+
+        /**
+         * Genera la cella delle funzioni.
+         * Usando una Label come componente, la selezione della
+         * riga funziona anche cliccando sulla colonna custom.
+         */
+        public Component generateCell(Table table, Object itemId, Object columnId) {
+//            Item item = table.getItem(itemId);
+//            BeanItem bi = LibBean.fromItem(item);
+//            Funzione funz = (Funzione) bi.getBean();
+
+//            List<ServizioFunzione> lista = funz.getServizioFunzioniOrd();
+//            String str = "";
+//            for (int k = 0; k < lista.size(); k++) {
+//                ServizioFunzione sf = funz.getServizioFunzioniOrd().get(k);
+//                int codePoint = sf.getFunzione().getIconCodepoint();
+//                FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
+//                str += glyph.getHtml() + " ";
+//
+//                String sigla = sf.getFunzione().getSigla();
+//                str+="<strong>";
+//                if (sf.isObbligatoria()) {
+//                    str += "<font color=\"red\">" + sigla + "</font>";
+//                } else {
+//                    str += "<font color=\"green\">" + sigla + "</font>";
+//                }
+//                str+="</strong>";
+//
+//                if (k < lista.size() - 1) {
+//                    str += ", ";
+//                }
+//
+//            }
+
+            return new Label("Nessuna");
         }// end of method
     }// end of inner class
 

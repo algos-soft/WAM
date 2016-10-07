@@ -15,6 +15,7 @@ import it.algos.wam.query.WamQuery;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.ERelatedComboField;
+import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.dialog.ConfirmDialog;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.field.CheckBoxField;
@@ -26,7 +27,6 @@ import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,6 +51,8 @@ public class ServizioForm extends ModuleForm {
     @SuppressWarnings("all")
     private TextField fDescrizione;
     private CheckBoxField fOrarioPredefinito;
+    @SuppressWarnings("all")
+    private CheckBoxField fVisibileTabellone;
     private HorizontalLayout placeholderOrario;
     private OreMinuti oraInizio;
     private OreMinuti oraFine;
@@ -113,24 +115,25 @@ public class ServizioForm extends ModuleForm {
         // selezione della company (solo per developer)
         if (LibSession.isDeveloper()) {
             if (isNewRecord()) {
-                layout.addComponent(this.creaCompany());
+                layout.addComponent(creaCompany());
             } else {
-                HorizontalLayout hLayout = new HorizontalLayout(this.creaCompany(), this.creaCode());
-                hLayout.setSpacing(true);
-                layout.addComponent(hLayout);
+                layout.addComponent(new AHorizontalLayout(creaCompany(), creaCode()));
             }// end of if/else cycle
         }// end of if cycle
 
-        layout.addComponent(this.creaRigaPicker());
-        layout.addComponent(this.creaDescrizione());
-        layout.addComponent(this.creaChekOrario());
-        layout.addComponent(this.creaPlaceorderOrario());
+        layout.addComponent(creaRigaPicker());
+        layout.addComponent(creaDescrizione());
 
         // aggiunge un po di spazio
         layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+        layout.addComponent(creaChekVisibile());
+        layout.addComponent(creaChekOrario());
+        layout.addComponent(creaPlaceorderOrario());
 
-        layout.addComponent(this.creaPlaceorderFunzioni());
-        layout.addComponent(this.creaBottoneNuova());
+        // aggiunge un po di spazio
+        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+        layout.addComponent(creaPlaceorderFunzioni());
+        layout.addComponent(creaBottoneNuova());
 
         //--stato iniziale
         if (isNewRecord()) {
@@ -290,6 +293,17 @@ public class ServizioForm extends ModuleForm {
     }// end of method
 
     /**
+     * Crea il chekbox visibile
+     *
+     * @return il componente creato
+     */
+    private CheckBoxField creaChekVisibile() {
+        fVisibileTabellone = (CheckBoxField) getField(Servizio_.visibile);
+        fVisibileTabellone.setCaption("Visibile nel tabellone");
+        return fVisibileTabellone;
+    }// end of method
+
+    /**
      * Crea il campo ordine, obbligatorio con inserimento automatico
      * Viene inserito in automatico e NON dal form
      *
@@ -351,8 +365,12 @@ public class ServizioForm extends ModuleForm {
 
 
     private void syncPlaceholderFunz() {
-        placeholderFunz.setVisible(fCompanyCombo.getValue() != null);
-        bNuova.setVisible(fCompanyCombo.getValue() != null);
+        if (LibSession.isDeveloper()) {
+            placeholderFunz.setVisible(fCompanyCombo.getValue() != null);
+            bNuova.setVisible(fCompanyCombo.getValue() != null);
+        } else {
+            bNuova.setVisible(true);
+        }// end of if/else cycle
     }// end of method
 
     private Servizio getServizio() {
@@ -458,8 +476,8 @@ public class ServizioForm extends ModuleForm {
         picker.setColor(color);
 
         // aggiunge gli editor per le funzioni esistenti
-        List<ServizioFunzione> listaSF = getServizio().getServizioFunzioni();
-        Collections.sort(listaSF);
+        List<ServizioFunzione> listaSF = getServizio().getServizioFunzioniOrd();
+//        Collections.sort(listaSF);
         for (ServizioFunzione sf : listaSF) {
             EditorSF editor = new EditorSF(sf);
             placeholderFunz.addComponent(editor);
@@ -520,7 +538,7 @@ public class ServizioForm extends ModuleForm {
         // cancella quelli inesistenti nell'editor (sono stati cancellati).
         // Dato che elimina elementi della stessa lista che viene iterata, esegue
         // l'iterazione partendo dal fondo
-        List<ServizioFunzione> lista = getServizio().getServizioFunzioni();
+        List<ServizioFunzione> lista = getServizio().getServizioFunzioniOrd();
         int dim = lista.size();
         for (int i = dim - 1; i >= 0; i--) {
             ServizioFunzione sf = lista.get(i);
@@ -577,7 +595,14 @@ public class ServizioForm extends ModuleForm {
                 iconButton.setHtmlContentAllowed(true);
                 iconButton.addStyleName("bfunzione");
                 iconButton.setWidth("3em");
-                iconButton.addStyleName("verde");
+                if (serFun != null) {
+                    syncIconaColor(serFun.isObbligatoria());
+                }
+//                if (serFun.isObbligatoria()) {
+//                    iconButton.setStyleName("rosso");
+//                } else {
+//                    iconButton.addStyleName("verde");
+//                }// end of if/else cycle
 
                 addComponent(iconButton);
                 if (serFun != null) {
@@ -625,6 +650,12 @@ public class ServizioForm extends ModuleForm {
             if (serFun != null) {
                 checkObbl.setValue(this.serFun.isObbligatoria());
             }
+            checkObbl.addValueChangeListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                    syncIconaColor((boolean) valueChangeEvent.getProperty().getValue());
+                }// end of inner method
+            });// end of anonymous inner class
 
             Button bElimina = new Button("", FontAwesome.TRASH_O);
             bElimina.addClickListener(new Button.ClickListener() {
@@ -670,6 +701,16 @@ public class ServizioForm extends ModuleForm {
 
         public boolean isObbligatoria() {
             return checkObbl.getValue();
+        }
+
+        public void syncIconaColor(boolean obbligatoria) {
+            if (iconButton != null) {
+                if (obbligatoria) {
+                    iconButton.setStyleName("rosso");
+                } else {
+                    iconButton.setStyleName("verde");
+                }// end of if/else cycle
+            }// end of if cycle
         }
 
         /**

@@ -143,7 +143,6 @@ public class WamTablePortal extends TablePortal {
         }// end of if cycle
 
         table.setColumnCollapsed(WamCompanyEntity_.company.getName(), !useAllCompany);
-        table.setColumnCollapsed(Funzione_.ordine.getName(), useAllCompany);
     }// end of method
 
 

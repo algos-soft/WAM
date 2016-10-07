@@ -1,5 +1,7 @@
 package it.algos.wam.entity.servizio;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.ui.Notification;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
@@ -7,14 +9,15 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.query.WamQuery;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.lib.LibArray;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.AQuery;
+import it.algos.webbase.web.query.SortProperty;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
@@ -58,7 +61,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     @Index
     private String sigla = "";
 
-    //--sigla di codifica interna specifica per company (obbligatoria, unica all'interno della company)
+    //--sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
     //--calcolata -> codeCompanyUnico = company.companyCode + funzione.sigla (20+20=40);
     @NotEmpty
     @NotNull
@@ -75,6 +78,9 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     @NotNull
     @Index
     private int ordine = 0;
+
+    // visibile nel tabellone (di default true)
+    private boolean visibile = true;
 
     // colore del servizio (facoltativo)
     private int colore = new Color(128, 128, 128).getRGB();
@@ -321,7 +327,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Recupera una istanza della Entity usando la query di una property specifica
      * Nessun filtro sulla company, perché la property è unica
      *
-     * @param codeCompanyUnico di riferimento interno (obbligatorio e unico)
+     * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
      * @return istanza della Entity, null se non trovata
      */
     public static Servizio getEntityByCodeCompanyUnico(String codeCompanyUnico) {
@@ -333,7 +339,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Recupera una istanza della Entity usando la query di una property specifica
      * Nessun filtro sulla company, perché la property è unica
      *
-     * @param codeCompanyUnico di riferimento interno (obbligatorio e unico)
+     * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
      * @param manager          the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
@@ -452,6 +458,41 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         } else {
             return new ArrayList<>();
         }// end of if/else cycle
+    }// end of static method
+
+    public static List<Servizio> getListVisibiliConOrario(EntityManager manager) {
+        return getListVisibiliConOrario(WamCompany.getCurrent(), manager);
+    }// end of static method
+
+    public static List<Servizio> getListVisibiliConOrario(WamCompany company, EntityManager manager) {
+        return getListVisibili(company, manager, true);
+    }// end of static method
+
+    public static List<Servizio> getListVisibiliSenzaOrario(EntityManager manager) {
+        return getListVisibiliSenzaOrario(WamCompany.getCurrent(), manager);
+    }// end of static method
+
+    public static List<Servizio> getListVisibiliSenzaOrario(WamCompany company, EntityManager manager) {
+        return getListVisibili(company, manager, false);
+    }// end of static method
+
+    /**
+     * Recupera una lista (array) di tutti i servizi visibili con e senza orario prestabilito
+     * Filtrato sulla company passata come parametro.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     * @return lista di tutte le entities
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Servizio> getListVisibili(WamCompany company, EntityManager manager, boolean orario) {
+        SortProperty sort = new SortProperty(Servizio_.ordine);
+        Container.Filter filtroVisibile = new Compare.Equal(Servizio_.visibile.getName(), true);
+        Container.Filter filtroOrario = new Compare.Equal(Servizio_.orario.getName(), orario);
+        return (List<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroVisibile, filtroOrario);
     }// end of static method
 
 
@@ -632,7 +673,65 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         }// fine del blocco if
 
 
-        return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, minutiInizio, oraFine, minutiFine, manager, servizioFunzioni);
+        return crea(company, sigla, true, descrizione, ordine, colore, orario, oraInizio, minutiInizio, oraFine, minutiFine, manager, servizioFunzioni);
+    }// end of static method
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company          di appartenenza (property della superclasse)
+     * @param sigla            di riferimento interna (obbligatoria, unica all'interno della company)
+     * @param descrizione      per il tabellone (obbligatoria)
+     * @param colore           del gruppo (facoltativo)
+     * @param orario           servizio ad orario prefissato e fisso ogni giorno (facoltativo)
+     * @param oraInizio        del servizio (facoltativo, obbligatorio se orario è true)
+     * @param oraFine          del servizio (facoltativo, obbligatorio se orario è true)
+     * @param manager          the EntityManager to use
+     * @param servizioFunzioni lista delle funzioni (facoltativa)
+     * @return istanza della Entity
+     */
+    public static Servizio crea(
+            WamCompany company,
+            String sigla,
+            String descrizione,
+            int colore,
+            boolean orario,
+            int oraInizio,
+            int oraFine,
+            EntityManager manager,
+            List<ServizioFunzione> servizioFunzioni) {
+        return crea(company, sigla, true, descrizione, 0, colore, orario, oraInizio, 0, oraFine, 0, manager, servizioFunzioni);
+    }// end of static method
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company          di appartenenza (property della superclasse)
+     * @param sigla            di riferimento interna (obbligatoria, unica all'interno della company)
+     * @param descrizione      per il tabellone (obbligatoria)
+     * @param visibile         nel tabellone (di default true)
+     * @param colore           del gruppo (facoltativo)
+     * @param orario           servizio ad orario prefissato e fisso ogni giorno (facoltativo)
+     * @param oraInizio        del servizio (facoltativo, obbligatorio se orario è true)
+     * @param oraFine          del servizio (facoltativo, obbligatorio se orario è true)
+     * @param manager          the EntityManager to use
+     * @param servizioFunzioni lista delle funzioni (facoltativa)
+     * @return istanza della Entity
+     */
+    public static Servizio crea(
+            WamCompany company,
+            String sigla,
+            boolean visibile,
+            String descrizione,
+            int colore,
+            boolean orario,
+            int oraInizio,
+            int oraFine,
+            EntityManager manager,
+            List<ServizioFunzione> servizioFunzioni) {
+        return crea(company, sigla, visibile, descrizione, 0, colore, orario, oraInizio, 0, oraFine, 0, manager, servizioFunzioni);
     }// end of static method
 
 
@@ -642,6 +741,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      *
      * @param company          di appartenenza (property della superclasse)
      * @param sigla            di riferimento interna (obbligatoria, unica all'interno della company)
+     * @param visibile         nel tabellone (di default true)
      * @param descrizione      per il tabellone (obbligatoria)
      * @param ordine           di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param colore           del gruppo (facoltativo)
@@ -657,6 +757,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     public static Servizio crea(
             WamCompany company,
             String sigla,
+            boolean visibile,
             String descrizione,
             int ordine,
             int colore,
@@ -675,6 +776,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
                 servizio = new Servizio(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine);
                 servizio.setMinutiInizio(minutiInizio);
                 servizio.setMinutiFine(minutiFine);
+                servizio.setVisibile(visibile);
 
                 if (servizioFunzioni != null) {
                     for (int k = 0; k < servizioFunzioni.size(); k++) {
@@ -734,8 +836,6 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     public static int maxOrdine(WamCompany company, EntityManager manager) {
         return CompanyQuery.maxInt(Servizio.class, Servizio_.ordine, company, manager);
     }// end of method
-
-
 
 
     //------------------------------------------------------------------------------------------------------------------------
@@ -838,8 +938,15 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         this.turni = turni;
     }//end of setter method
 
+    public boolean isVisibile() {
+        return visibile;
+    }// end of getter method
 
-    //------------------------------------------------------------------------------------------------------------------------
+    public void setVisibile(boolean visibile) {
+        this.visibile = visibile;
+    }//end of setter method
+
+//------------------------------------------------------------------------------------------------------------------------
     // Save
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -851,7 +958,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      */
     @Override
     public BaseEntity save() {
-        return this.save((EntityManager)null);
+        return this.save((EntityManager) null);
     }// end of method
 
     /**
@@ -909,7 +1016,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
      */
     public Servizio saveSafe() {
-        return saveSafe((EntityManager)null);
+        return saveSafe((EntityManager) null);
     }// end of method
 
     /**
@@ -976,9 +1083,9 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
             codeCompanyUnico = null;
         } else {
             if (company != null) {
-                codeCompanyUnico = company.getCompanyCode();
+                codeCompanyUnico = LibText.primaMaiuscola(company.getCompanyCode());
             }// end of if cycle
-            codeCompanyUnico += getSigla();
+            codeCompanyUnico += LibText.primaMaiuscola(getSigla());
             valido = true;
         }// end of if/else cycle
 
@@ -1075,7 +1182,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      */
     public ServizioFunzione getServizioFunzione(Funzione f) {
         ServizioFunzione sfOut = null;
-        for (ServizioFunzione sf : getServizioFunzioni()) {
+        for (ServizioFunzione sf : getServizioFunzioniOrdine()) {
             if (sf.getFunzione().equals(f)) {
                 sfOut = sf;
                 break;
@@ -1106,7 +1213,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     /**
      * List NON garantisce l'ordinamento
      */
-    public ArrayList<ServizioFunzione> getServizioFunzioni() {
+    public ArrayList<ServizioFunzione> getServizioFunzioniOrdine() {
         ArrayList<ServizioFunzione> listaOrdinata = new ArrayList<>();
         LinkedHashMap<Integer, ServizioFunzione> mappa = new LinkedHashMap<>();
 
@@ -1120,6 +1227,29 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         }// end of for cycle
 
         return listaOrdinata;
+    }// end of getter method
+
+    /**
+     * List NON garantisce l'ordinamento
+     */
+    public ArrayList<ServizioFunzione> getServizioFunzioniOrd() {
+        ArrayList<ServizioFunzione> listaOrdinata = new ArrayList<>();
+        LinkedHashMap<Integer, ServizioFunzione> mappa = new LinkedHashMap<>();
+
+        for (ServizioFunzione serFunz : servizioFunzioni) {
+            mappa.put(serFunz.getOrdine(), serFunz);
+        }// end of for cycle
+
+        mappa = LibArray.ordinaMappa(mappa);
+        for (Integer key : mappa.keySet()) {
+            listaOrdinata.add(mappa.get(key));
+        }// end of for cycle
+
+        return listaOrdinata;
+    }// end of getter method
+
+    public List<ServizioFunzione> getServizioFunzioni() {
+        return servizioFunzioni;
     }// end of getter method
 
     public void setServizioFunzioni(List<ServizioFunzione> servizioFunzioni) {

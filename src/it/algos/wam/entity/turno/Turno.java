@@ -46,7 +46,7 @@ public class Turno extends WamCompanyEntity {
     // iscrizioni dei volontari a questo turno
     @OneToMany(mappedBy = "turno", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
-    private List<Iscrizione> iscrizioni = new ArrayList();
+    private List<Iscrizione> iscrizioni = new ArrayList<>();
 
     //--chiave indicizzata per query più veloci e 'mirate' (obbligatoria)
     //--annoX1000 + giorno nell'anno
@@ -502,7 +502,7 @@ public class Turno extends WamCompanyEntity {
      */
     public boolean isCompleto() {
         boolean completo = true;
-        List<ServizioFunzione> lista = getServizio().getServizioFunzioni();
+        List<ServizioFunzione> lista = getServizio().getServizioFunzioniOrdine();
         for (ServizioFunzione sf : lista) {
             if (getIscrizione(sf) == null) {
                 completo = false;

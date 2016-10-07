@@ -346,13 +346,6 @@ public class WamUI extends UI {
         // il menu utente c'è sempre
         // aggiunge una menubar con le funzioni di utente
         MenuBar menuBarUtente = new MenuBar();
-        // aggiungo un MenuItem con il tabellone.
-        menuBarUtente.addItem("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                UI.getCurrent().setContent(getTabellone());
-            }
-        });
 //        navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
 //        navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
 //        navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);
@@ -360,6 +353,14 @@ public class WamUI extends UI {
         this.addMod(menuBarUtente, new FunzioneMod());
         this.addMod(menuBarUtente, new ServizioMod());
         this.addMod(menuBarUtente, new VolontarioMod());
+
+        // aggiungo un MenuItem con il tabellone.
+        menuBarUtente.addItem("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                UI.getCurrent().setContent(getTabellone());
+            }
+        });
         navComp.addMenu(menuBarUtente);
 
         // controlla se è un admin

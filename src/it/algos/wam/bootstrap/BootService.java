@@ -16,7 +16,6 @@ import it.algos.webbase.web.lib.LibDate;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -150,59 +149,76 @@ public abstract class BootService {
      * Creazione iniziale di alcune funzioni standard per la croce selezionata
      * Le crea SOLO se non esistono già
      *
-     * @param company croce di appartenenza
-     * @param manager the EntityManager to use
+     * @param c croce di appartenenza
+     * @param m the EntityManager to use
      * @return lista delle funzioni create
      */
     @SuppressWarnings("unchecked")
-    private static ArrayList<Funzione> creaFunzioni(WamCompany company, EntityManager manager) {
-        ArrayList<Funzione> listaFunzioni = new ArrayList<>();
-        ArrayList lista = new ArrayList<>();
+    private static ArrayList<Funzione> creaFunzioni(WamCompany c, EntityManager m) {
+        ArrayList<Funzione> l = new ArrayList<>();
 
-        if (company == null) {
+        if (c == null) {
             return null;
         }// end of if cycle
 
-        lista.add(Arrays.asList("autmsa", "Aut-msa", "Autista automedica abilitato 118", FontAwesome.AMBULANCE));
-        lista.add(Arrays.asList("1msa", "1° Soc", "Primo soccorritore automedica", FontAwesome.HEART));
-        lista.add(Arrays.asList("2msa", "2° Soc", "Secondo soccorritore automedica", FontAwesome.STETHOSCOPE));
+        switch (c.getCompanyCode()) {
+            case WAMApp.DEMO_COMPANY_CODE:
+                l.add(funz(c, m, "autmsa", "Aut-msa", "Autista automedica abilitato 118", FontAwesome.AMBULANCE));
+                l.add(funz(c, m, "1msa", "1° Soc", "Primo soccorritore automedica", FontAwesome.HEART));
+                l.add(funz(c, m, "2msa", "2° Soc", "Secondo soccorritore automedica", FontAwesome.STETHOSCOPE));
 
-        lista.add(Arrays.asList("autamb", "Aut-amb", "Autista ambulanza abilitato 118", FontAwesome.AMBULANCE));
-        lista.add(Arrays.asList("1amb", "1° Soc", "Primo soccorritore ambulanza", FontAwesome.HEART));
-        lista.add(Arrays.asList("2amb", "2° Soc", "Secondo soccorritore ambulanza", FontAwesome.STETHOSCOPE));
+                l.add(funz(c, m, "autamb", "Aut-amb", "Autista ambulanza abilitato 118", FontAwesome.AMBULANCE));
+                l.add(funz(c, m, "1amb", "1° Soc", "Primo soccorritore ambulanza", FontAwesome.HEART));
+                l.add(funz(c, m, "2amb", "2° Soc", "Secondo soccorritore ambulanza", FontAwesome.STETHOSCOPE));
 
-        lista.add(Arrays.asList("autord", "Aut-ord", "Autista ordinario", FontAwesome.AMBULANCE));
-        lista.add(Arrays.asList("dae", "DAE", "Soccorritore abilitato DAE", FontAwesome.HEART));
-        lista.add(Arrays.asList("bar", "Bar", "Barelliere", FontAwesome.STETHOSCOPE));
-        lista.add(Arrays.asList("bar2", "Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
+                l.add(funz(c, m, "autord", "Aut-ord", "Autista ordinario", FontAwesome.AMBULANCE));
+                l.add(funz(c, m, "dae", "DAE", "Soccorritore abilitato DAE", FontAwesome.HEART));
+                l.add(funz(c, m, "bar", "Bar", "Barelliere", FontAwesome.STETHOSCOPE));
+                l.add(funz(c, m, "bar2", "Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
 
-        lista.add(Arrays.asList("avis", "Avis", "Operatore trasporto AVIS", FontAwesome.MEDKIT));
-        lista.add(Arrays.asList("cen", "Cen", "Centralinista", FontAwesome.PHONE));
+                l.add(funz(c, m, "avis", "Avis", "Operatore trasporto AVIS", FontAwesome.MEDKIT));
+                l.add(funz(c, m, "cen", "Cen", "Centralinista", FontAwesome.PHONE));
+                break;
+            case WAMApp.TEST_COMPANY_CODE:
+                l.add(funz(c, m, "autmsa", "Aut-msa", "Autista abilitato 118", FontAwesome.AMBULANCE));
+                l.add(funz(c, m, "dae", "DAE", "Soccorritore abilitato DAE", FontAwesome.HEART));
+                l.add(funz(c, m, "bar", "Bar", "Barelliere", FontAwesome.STETHOSCOPE));
+                l.add(funz(c, m, "bar2", "Bar-aff", "Barelliere in affiancamento", FontAwesome.USER));
 
-        for (int k = 0; k < lista.size(); k++) {
-            listaFunzioni.add(creaFunzBase(company, manager, k + 1, (List) lista.get(k)));
-        }// end of for cycle
+                l.add(funz(c, m, "autord", "Aut-ord", "Autista ordinario", FontAwesome.AMBULANCE));
+                l.add(funz(c, m, "1msa", "1° Soc", "Soccorritore abilitato", FontAwesome.HEART));
+                l.add(funz(c, m, "bar", "Bar", "Barelliere", FontAwesome.STETHOSCOPE));
 
-        return listaFunzioni;
+                l.add(funz(c, m, "avis", "Avis", "Operatore trasporto AVIS", FontAwesome.MEDKIT));
+                l.add(funz(c, m, "cen", "Cen", "Centralinista", FontAwesome.PHONE));
+                break;
+            default: // caso non definito
+                l.add(funz(c, m, "autmsa", "Aut-msa", "Autista 118", FontAwesome.AMBULANCE));
+                l.add(funz(c, m, "dae", "DAE", "Soccorritore abilitato DAE", FontAwesome.HEART));
+                l.add(funz(c, m, "2msa", "2° Soc", "Secondo soccorritore 118", FontAwesome.STETHOSCOPE));
+
+                l.add(funz(c, m, "autamb", "Aut-amb", "Autista ambulanza", FontAwesome.AMBULANCE));
+                l.add(funz(c, m, "1amb", "1° Soc", "Primo soccorritore", FontAwesome.HEART));
+                l.add(funz(c, m, "2amb", "2° Soc", "Secondo soccorritore", FontAwesome.STETHOSCOPE));
+                l.add(funz(c, m, "bar", "Bar", "Barelliere", FontAwesome.USER));
+
+                l.add(funz(c, m, "avis", "Avis", "Operatore trasporto AVIS", FontAwesome.MEDKIT));
+                l.add(funz(c, m, "cen", "Cen", "Centralinista", FontAwesome.PHONE));
+                break;
+        } // fine del blocco switch
+
+        return l;
     }// end of static method
 
-    /**
-     * Creazione della singola funzione per la croce selezionata
-     * La crea SOLO se non esiste già
-     *
-     * @param company  croce di appartenenza
-     * @param manager  the EntityManager to use
-     * @param ordine   di presentazione nelle liste
-     * @param listaTmp di alcune property
-     * @return istanza di Funzione
-     */
-    private static Funzione creaFunzBase(WamCompany company, EntityManager manager, int ordine, List listaTmp) {
-        String code = (String) listaTmp.get(0);
-        String sigla = (String) listaTmp.get(1);
-        String descrizione = (String) listaTmp.get(2);
-        FontAwesome glyph = (FontAwesome) listaTmp.get(3);
+    private static Funzione funz(
+            WamCompany company,
+            EntityManager manager,
+            String code,
+            String sigla,
+            String descrizione,
+            FontAwesome glyph) {
 
-        return Funzione.crea(company, code, sigla, descrizione, ordine, glyph);
+        return Funzione.crea(company, code, sigla, descrizione, glyph, manager);
     }// end of static method
 
     /**
@@ -216,9 +232,7 @@ public abstract class BootService {
      */
     @SuppressWarnings("unchecked")
     private static ArrayList<Servizio> creaServizi(WamCompany c, EntityManager m, ArrayList<Funzione> funz) {
-        ArrayList<Servizio> listaServizi = new ArrayList<>();
         ArrayList<Servizio> l = new ArrayList<>();
-        ArrayList lista = new ArrayList<>();
         int azzurro = Color.BLUE.hashCode();
         int verdino = Color.CYAN.hashCode();
         int rosa = Color.MAGENTA.hashCode();
@@ -228,20 +242,47 @@ public abstract class BootService {
             return null;
         }// end of if cycle
 
-        l.add(servo(c, m, funz, "med-mat", "Automedica mattino", 8, 13, azzurro, 2, 0, 1, 2, 8));
-        l.add(servo(c, m, funz, "med-pom", "Automedica pomeriggio", 13, 18, azzurro, 2, 0, 1, 2, 8));
-        l.add(servo(c, m, funz, "med-sera", "Automedica sera", 18, 22, azzurro, 2, 0, 1, 2));
+        switch (c.getCompanyCode()) {
+            case WAMApp.DEMO_COMPANY_CODE:
+                l.add(servo(c, m, funz, "med-mat", "Automedica mattino", 8, 13, azzurro, 2, 0, 1, 2, 8));
+                l.add(servo(c, m, funz, "med-pom", "Automedica pomeriggio", 13, 18, azzurro, 2, 0, 1, 2, 8));
+                l.add(servo(c, m, funz, "med-sera", "Automedica sera", 18, 22, azzurro, 2, 0, 1, 2));
 
-        l.add(servo(c, m, funz, "amb-mat", "Ambulanza mattino", 8, 14, verdino, 2, 3, 4, 5, 8));
-        l.add(servo(c, m, funz, "amb-pom", "Ambulanza pomeriggio", 14, 20, verdino, 2, 3, 4, 5, 8));
-        l.add(servo(c, m, funz, "amb-notte", "Ambulanza notte", 20, 8, verdino, 2, 3, 4, 5));
+                l.add(servo(c, m, funz, "amb-mat", "Ambulanza mattino", 8, 14, verdino, 2, 3, 4, 5, 8));
+                l.add(servo(c, m, funz, "amb-pom", "Ambulanza pomeriggio", 14, 20, verdino, 2, 3, 4, 5, 8));
+                l.add(servo(c, m, funz, "amb-notte", "Ambulanza notte", 20, 8, verdino, 2, 3, 4, 5));
 
-        l.add(servn(c, m, funz, "dim", "Dimissioni ordinarie", false, rosa, 2, 6, 7, 8, 9));
-        l.add(servn(c, m, funz, "ext", "Extra", false, rosa, 2, 6, 7, 8, 9));
-        l.add(servn(c, m, funz, "avis", "Avis", false, rosa, 1, 10, 9));
+                l.add(servnt(c, m, funz, "dim", "Dimissioni ordinarie", rosa, 2, 6, 7, 8, 9));
+                l.add(servn(c, m, funz, "ext", "Extra", rosa, 2, 6, 7, 8, 9));
+                l.add(servn(c, m, funz, "avis", "Avis", rosa, 1, 10, 9));
 
-        l.add(servo(c, m, funz, "cent-mat", "Centralino mattino", 8, 13, giallo, 0, 11));
-        l.add(servo(c, m, funz, "cent-pom", "Centralino pomeriggio", 13, 18, giallo, 0, 11));
+                l.add(servo(c, m, funz, "cent-mat", "Centralino mattino", 8, 13, giallo, 0, 11));
+                l.add(servnt(c, m, funz, "cent-pom", "Centralino pomeriggio", 13, 18, giallo, 0, 11));
+                break;
+            case WAMApp.TEST_COMPANY_CODE:
+                l.add(servo(c, m, funz, "amb-mat", "Ambulanza mattino", 8, 14, verdino, 2, 0, 1, 2, 3));
+                l.add(servo(c, m, funz, "amb-pom", "Ambulanza pomeriggio", 14, 20, verdino, 2, 0, 1, 2, 3));
+                l.add(servo(c, m, funz, "amb-notte", "Ambulanza notte", 20, 8, verdino, 2, 0, 1, 2, 3));
+
+                l.add(servn(c, m, funz, "ext", "Extra", rosa, 2, 4, 5, 6));
+                l.add(servn(c, m, funz, "avis", "Avis", rosa, 1, 7, 3));
+
+                l.add(servo(c, m, funz, "cent-mat", "Centralino mattino", 8, 13, giallo, 0, 8));
+                break;
+            default: // caso non definito
+                l.add(servo(c, m, funz, "med-mat", "Automedica mattino", 8, 13, azzurro, 2, 0, 1, 2, 3));
+                l.add(servo(c, m, funz, "med-pom", "Automedica pomeriggio", 13, 18, azzurro, 2, 0, 1, 2, 3));
+                l.add(servo(c, m, funz, "med-sera", "Automedica sera", 18, 22, azzurro, 2, 0, 1));
+
+                l.add(servo(c, m, funz, "amb-mat", "Ambulanza mattino", 8, 14, verdino, 2, 4, 5, 6, 7));
+                l.add(servo(c, m, funz, "amb-pom", "Ambulanza pomeriggio", 14, 20, verdino, 2, 4, 5, 6, 7));
+                l.add(servo(c, m, funz, "amb-notte", "Ambulanza notte", 20, 8, verdino, 2, 4, 5));
+
+                l.add(servn(c, m, funz, "dim", "Dimissioni ordinarie", rosa, 2, 4, 5, 6));
+                l.add(servnt(c, m, funz, "ext", "Extra", rosa, 2, 4, 5, 6));
+                l.add(servn(c, m, funz, "avis", "Avis", rosa, 1, 8, 7));
+                break;
+        } // fine del blocco switch
 
         return l;
     }// end of static method
@@ -260,7 +301,7 @@ public abstract class BootService {
             int colore,
             int obbligatori,
             int... numFunz) {
-        return serv(company, manager, funzioni, sigla, descrizione, true, oraInizio, oraFine, colore, obbligatori, numFunz);
+        return serv(company, manager, funzioni, sigla, true, descrizione, true, oraInizio, oraFine, colore, obbligatori, numFunz);
     }// end of static method
 
     /**
@@ -272,19 +313,35 @@ public abstract class BootService {
             ArrayList<Funzione> funzioni,
             String sigla,
             String descrizione,
-            boolean orario,
             int colore,
             int obbligatori,
             int... numFunz) {
-        return serv(company, manager, funzioni, sigla, descrizione, false, 0, 0, colore, obbligatori, numFunz);
+        return serv(company, manager, funzioni, sigla, true, descrizione, false, 0, 0, colore, obbligatori, numFunz);
     }// end of static method
 
-
-    private static Servizio serv(
+    /**
+     * Servizio non visibile nel tabellone
+     */
+    private static Servizio servnt(
             WamCompany company,
             EntityManager manager,
             ArrayList<Funzione> funzioni,
             String sigla,
+            String descrizione,
+            int oraInizio,
+            int oraFine,
+            int colore,
+            int obbligatori,
+            int... numFunz) {
+        return serv(company, manager, funzioni, sigla, false, descrizione, true, oraInizio, oraFine, colore, obbligatori, numFunz);
+    }// end of static method
+
+    private static Servizio serv(
+            WamCompany company,
+            EntityManager manager,
+            ArrayList<Funzione> allFunzioniCompany,
+            String sigla,
+            boolean visibile,
             String descrizione,
             boolean orario,
             int oraInizio,
@@ -292,21 +349,22 @@ public abstract class BootService {
             int colore,
             int obbligatori,
             int... numFunz) {
+
         int k = 0;
         Funzione funz;
-        List<ServizioFunzione> servizioFunzioni = new ArrayList<>();
+        List<ServizioFunzione> listaServizioFunzioni = new ArrayList<>();
 
         for (int num : numFunz) {
             k++;
-            funz = funzioni.get(num);
+            funz = allFunzioniCompany.get(num);
             if (k <= obbligatori) {
-                servizioFunzioni.add(new ServizioFunzione(company, null, funz, true));
+                listaServizioFunzioni.add(new ServizioFunzione(company, null, funz, true, k));
             } else {
-                servizioFunzioni.add(new ServizioFunzione(company, null, funz, false));
+                listaServizioFunzioni.add(new ServizioFunzione(company, null, funz, false, k));
             }// end of if/else cycle
         }// end of for cycle
 
-        return Servizio.crea(company, sigla, descrizione, 0, colore, orario, oraInizio, 0, oraFine, 0, manager, servizioFunzioni);
+        return Servizio.crea(company, sigla, visibile, descrizione, colore, orario, oraInizio, oraFine, manager, listaServizioFunzioni);
     }// end of static method
 
 
@@ -314,116 +372,120 @@ public abstract class BootService {
      * Creazione iniziale di alcuni volontari per la croce selezionata
      * Li crea SOLO se non esistono già
      *
-     * @param company croce di appartenenza
-     * @param manager the EntityManager to use
-     * @param funz    lista delle funzioni di questa croce
+     * @param c    croce di appartenenza
+     * @param m    the EntityManager to use
+     * @param funz lista delle funzioni di questa croce
      * @return lista dei volontari creati
      */
     @SuppressWarnings("unchecked")
-    private static ArrayList<Volontario> creaVolontari(WamCompany company, EntityManager manager, ArrayList<Funzione> funz) {
-        ArrayList<Volontario> listaVolontari = new ArrayList<>();
-        ArrayList lista = new ArrayList<>();
+    private static ArrayList<Volontario> creaVolontari(WamCompany c, EntityManager m, ArrayList<Funzione> funz) {
+        ArrayList<Volontario> l = new ArrayList<>();
 
-        if (company == null) {
+        if (c == null) {
             return null;
         }// end of if cycle
 
-        if (company.getCompanyCode().equals(WAMApp.DEMO_COMPANY_CODE)) {
-            lista.add(Arrays.asList("Stefano", "Brambilla", "stefano.brambilla@wamdemo.it", "bra", false, funz.get(1)));
-            lista.add(Arrays.asList("Giovanna", "Durante", "giovanna.durante@wamdemo.it", "dur", false, funz));
-            lista.add(Arrays.asList("Roberto", "Marchetti", "roberto.marchetti@wamdemo.it", "mar", false, funz.get(7), funz.get(9)));
-            lista.add(Arrays.asList("Edoardo", "Politi", "edoardo.politi@wamdemo.it", "pol", false, funz.get(5)));
-            lista.add(Arrays.asList("Lucia", "Casaroli", "lucia.casaroli@wamdemo.it", "cas", true, funz.get(0)));
-            lista.add(Arrays.asList("Flavia", "Robusti", "flavia.robusti@wamdemo.it", "rob", false, funz.get(8), funz.get(9)));
-            lista.add(Arrays.asList("Marco", "Terzani", "marco.terzani@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
-            lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it", "abb", false, funz.get(2)));
-            lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it", "ber", true, funz.get(3)));
-            lista.add(Arrays.asList("Mirella", "Pace", "mirella.pace@wamdemo.it", "pac", false, funz.get(4)));
-            lista.add(Arrays.asList("Sabina", "Roncelli", "sabina.roncelli@wamdemo.it", "ron", false, funz.get(6)));
-            lista.add(Arrays.asList("Antonio", "Zambetti", "antonio.zambetti@wamdemo.it", "zam", false, funz.get(8)));
-            lista.add(Arrays.asList("Aldo", "Terzino", "aldo.terzino@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
-            lista.add(Arrays.asList("Alice", "Mantovani", "alice.mantovani@wamdemo.it", "man", false, funz.get(8), funz.get(9)));
-        }// end of if cycle
+        switch (c.getCompanyCode()) {
+            case WAMApp.DEMO_COMPANY_CODE:
+                l.add(volu(c, m, funz, "Stefano", "Brambilla", "337 2453817", "stefano.brambilla@wamdemo.it", "bra", 0, 3));
+                l.add(volu(c, m, funz, "Giovanna", "Durante", "338 7394672", "giovanna.durante@wamdemo.it", "dur", 1, 2, 4, 5, 6, 7));
+                l.add(volu(c, m, funz, "Roberto", "Marchetti", "345 673351", "roberto.marchetti@wamdemo.it", "mar", 7, 8));
+                l.add(volu(c, m, funz, "Edoardo", "Politi", "327 4233681", "edoardo.politi@wamdemo.it", "pol", 6));
+                l.add(vola(c, m, funz, "Arturo", "Casaroli", "327 9931245", "arturo.casaroli@wamdemo.it", "cas", 0, 1, 2, 3, 4, 5, 6));
+                l.add(volu(c, m, funz, "Flavia", "Robusti", "328 131476", "flavia.robusti@wamdemo.it", "rob", 2, 5));
+                l.add(volu(c, m, funz, "Marco", "Terzani", "339 397235", "marco.terzani@wamdemo.it", "ter", 1, 2, 4, 5, 6));
 
-        if (company.getCompanyCode().equals(WAMApp.TEST_COMPANY_CODE)) {
-            lista.add(Arrays.asList("Angela", "Ferrara", "angela.ferrara@wamdemo.it", "fer", false, funz.get(2)));
-            lista.add(Arrays.asList("Marco", "Castelli", "marco.castelli@wamdemo.it", "cas", true, funz.get(3)));
-            lista.add(Arrays.asList("Roberto", "Robusti", "roberto.robusti@wamdemo.it", "rob", false, funz.get(4)));
-            lista.add(Arrays.asList("Flavia", "Bianchi", "flavia.bianchi@wamdemo.it", "bia", false, funz.get(6)));
-            lista.add(Arrays.asList("Giovanna", "Esposito", "giovanna.esposito@wamdemo.it", "esp", false, funz.get(8)));
-            lista.add(Arrays.asList("Arturo", "Della Monica", "arturo.dellamonica@wamdemo.it", "del", false, funz.get(8), funz.get(9)));
-            lista.add(Arrays.asList("Stefano", "Bramieri", "stefano.bramieri@wamdemo.it", "bra", false, funz.get(8), funz.get(9)));
-            lista.add(Arrays.asList("Lucio", "Bertuzzi", "lucio.bertuzzi@wamdemo.it", "ber", false, funz.get(2)));
-            lista.add(Arrays.asList("Renato", "Sortino", "renato.sortino@wamdemo.it", "sor", true, funz.get(3)));
-            lista.add(Arrays.asList("Maria", "Tomba", "maria.tomba@wamdemo.it", "tom", false, funz.get(4)));
-            lista.add(Arrays.asList("Teresa", "Torriglia", "teresa.torriglia@wamdemo.it", "tor", false, funz.get(6)));
-            lista.add(Arrays.asList("Carlo", "Malaguti", "carlo.malaguti@wamdemo.it", "mal", false, funz.get(8)));
-            lista.add(Arrays.asList("Luigi", "Savarese", "luigi.savarese@wamdemo.it", "sav", false, funz.get(8), funz.get(9)));
-            lista.add(Arrays.asList("Tomaso", "Zanichetti", "tomaso.zanichetti@wamdemo.it", "zan", false, funz.get(8), funz.get(9)));
-        }// end of if cycle
+//                lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it", "abb", false, funz.get(2)));
+//                lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it", "ber", true, funz.get(3)));
+//                lista.add(Arrays.asList("Mirella", "Pace", "mirella.pace@wamdemo.it", "pac", false, funz.get(4)));
+//                lista.add(Arrays.asList("Sabina", "Roncelli", "sabina.roncelli@wamdemo.it", "ron", false, funz.get(6)));
+//                lista.add(Arrays.asList("Antonio", "Zambetti", "antonio.zambetti@wamdemo.it", "zam", false, funz.get(8)));
+//                lista.add(Arrays.asList("Aldo", "Terzino", "aldo.terzino@wamdemo.it", "ter", false, funz.get(8), funz.get(9)));
+//                lista.add(Arrays.asList("Alice", "Mantovani", "alice.mantovani@wamdemo.it", "man", false, funz.get(8), funz.get(9)));
+                break;
+            case WAMApp.TEST_COMPANY_CODE:
+                l.add(volu(c, m, funz, "Angela", "Ferrara", "337 2453817", "angela.ferrara@wamdemo.it", "fer", 1));
+                l.add(volu(c, m, funz, "Marco", "Castelli", "377 334292", "marco.castelli@wamdemo.it", "cas", 1));
+                l.add(volu(c, m, funz, "Roberto", "Bianchi", "", "roberto.bianchi@wamdemo.it", "bia", 1));
 
-        for (int k = 0; k < lista.size(); k++) {
-            listaVolontari.add(creaVolBase(company, manager, (List) lista.get(k)));
+//                lista.add(Arrays.asList("Roberto", "Robusti", "roberto.robusti@wamdemo.it", "rob", false, funz.get(4)));
+//                lista.add(Arrays.asList("Flavia", "Bianchi", "flavia.bianchi@wamdemo.it", "bia", false, funz.get(6)));
+//                lista.add(Arrays.asList("Giovanna", "Esposito", "giovanna.esposito@wamdemo.it", "esp", false, funz.get(8)));
+//                lista.add(Arrays.asList("Arturo", "Della Monica", "arturo.dellamonica@wamdemo.it", "del", false, funz.get(8), funz.get(9)));
+//                lista.add(Arrays.asList("Stefano", "Bramieri", "stefano.bramieri@wamdemo.it", "bra", false, funz.get(8), funz.get(9)));
+//                lista.add(Arrays.asList("Lucio", "Bertuzzi", "lucio.bertuzzi@wamdemo.it", "ber", false, funz.get(2)));
+//                lista.add(Arrays.asList("Renato", "Sortino", "renato.sortino@wamdemo.it", "sor", true, funz.get(3)));
+//                lista.add(Arrays.asList("Maria", "Tomba", "maria.tomba@wamdemo.it", "tom", false, funz.get(4)));
+//                lista.add(Arrays.asList("Teresa", "Torriglia", "teresa.torriglia@wamdemo.it", "tor", false, funz.get(6)));
+//                lista.add(Arrays.asList("Carlo", "Malaguti", "carlo.malaguti@wamdemo.it", "mal", false, funz.get(8)));
+//                lista.add(Arrays.asList("Luigi", "Savarese", "luigi.savarese@wamdemo.it", "sav", false, funz.get(8), funz.get(9)));
+//                lista.add(Arrays.asList("Tomaso", "Zanichetti", "tomaso.zanichetti@wamdemo.it", "zan", false, funz.get(8), funz.get(9)));
+                break;
+            default: // caso non definito
+                l.add(volu(c, m, funz, "Arturo", "Marchini", "338 185592", "arturo.marchini@wamdemo.it", "mar", 1, 2, 4, 5, 6, 7));
+                l.add(volu(c, m, funz, "Luisa", "Lozenzini", "345 9931245", "luisa.lorenzini@wamdemo.it", "lor", 0, 3));
+                l.add(volu(c, m, funz, "Giovanni", "Speranza", "339 7394672", "giovanni.speranza@wamdemo.it", "spe", 1, 2, 4, 5, 6, 7));
+                l.add(volu(c, m, funz, "Tomaso", "Savarese", "328 875124", "tomaso.savarese@wamdemo.it", "sav", 7, 8));
+                l.add(volu(c, m, funz, "Teresa", "Barbieri", "377 5145764", "terese.barbieri@wamdemo.it", "bar", 6));
+                l.add(volu(c, m, funz, "Stefano", "Della Monaca", "331 897432", "stefano.dellamonica@wamdemo.it", "del", 0, 1, 2, 3, 4, 5, 6));
+                l.add(volu(c, m, funz, "Lucio", "Bertuzzi", "337 131476", "lucio.bertuzzi@wamdemo.it", "ber", 2, 5));
+                l.add(volu(c, m, funz, "Marta", "Poltronieri", "345 673351", "marta.poltronieri@wamdemo.it", "pol", 1, 2, 4, 5, 6));
+                break;
+        } // fine del blocco switch
+
+        return l;
+    }// end of static method
+
+    private static Volontario volu(
+            WamCompany company,
+            EntityManager manager,
+            ArrayList<Funzione> allFunzioniCompany,
+            String nome,
+            String cognome,
+            String cellulare,
+            String email,
+            String password,
+            int... numFunz) {
+
+        return vol(company, manager, allFunzioniCompany, nome, cognome, cellulare, email, password, false, numFunz);
+    }// end of static method
+
+    private static Volontario vola(
+            WamCompany company,
+            EntityManager manager,
+            ArrayList<Funzione> allFunzioniCompany,
+            String nome,
+            String cognome,
+            String cellulare,
+            String email,
+            String password,
+            int... numFunz) {
+        return vol(company, manager, allFunzioniCompany, nome, cognome, cellulare, email, password, true, numFunz);
+    }// end of static method
+
+    private static Volontario vol(
+            WamCompany company,
+            EntityManager manager,
+            ArrayList<Funzione> allFunzioniCompany,
+            String nome,
+            String cognome,
+            String cellulare,
+            String email,
+            String password,
+            boolean admin,
+            int... numFunz) {
+
+        Funzione funz;
+        List<Funzione> listaFunzioni = new ArrayList<>();
+
+        for (int num : numFunz) {
+            funz = allFunzioniCompany.get(num);
+            listaFunzioni.add(funz);
         }// end of for cycle
 
-        return listaVolontari;
+        return Volontario.crea(company, manager, nome, cognome, cellulare, email, password, admin, listaFunzioni);
     }// end of static method
 
-    /**
-     * Creazione iniziale di un volontario
-     * Lo crea SOLO se non esiste già
-     *
-     * @param company  croce di appartenenza
-     * @param manager  the EntityManager to use
-     * @param listaTmp di alcune property
-     * @return istanza di Volontario
-     */
-    private static Volontario creaVolBase(WamCompany company, EntityManager manager, List listaTmp) {
-        String nome = "";
-        String cognome = "";
-        String password = "";
-        String email = "";
-        boolean admin = false;
-        Funzione[] funzioni = null;
-        ArrayList lista = null;
-
-        if (listaTmp.size() > 0 && listaTmp.get(0) instanceof String) {
-            nome = (String) listaTmp.get(0);
-        }// end of if cycle
-
-        if (listaTmp.size() > 1 && listaTmp.get(1) instanceof String) {
-            cognome = (String) listaTmp.get(1);
-        }// end of if cycle
-
-        if (listaTmp.size() > 2 && listaTmp.get(2) instanceof String) {
-            email = (String) listaTmp.get(2);
-        }// end of if cycle
-
-        if (listaTmp.size() > 3 && listaTmp.get(3) instanceof String) {
-            password = (String) listaTmp.get(3);
-        }// end of if cycle
-
-        if (listaTmp.size() > 4 && listaTmp.get(4) instanceof Boolean) {
-            admin = (Boolean) listaTmp.get(4);
-        }// end of if cycle
-
-        if (listaTmp.size() > 5) {
-            if (listaTmp.get(5) instanceof ArrayList) {
-                lista = (ArrayList) listaTmp.get(5);
-                funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
-            } else {
-                lista = new ArrayList();
-                for (int k = 5; k < listaTmp.size(); k++) {
-                    if (listaTmp.get(k) instanceof Funzione) {
-                        lista.add(listaTmp.get(k));
-                    }// end of if cycle
-                }// end of for cycle
-                funzioni = (Funzione[]) lista.toArray(new Funzione[lista.size()]);
-            }// end of if/else cycle
-        }// end of if cycle
-
-        return Volontario.crea(company, manager, nome, cognome, email, password, admin, funzioni);
-    }// end of static method
 
     /**
      * Creazione iniziale di alcuni turni vuoti per la croce selezionata
@@ -477,7 +539,7 @@ public abstract class BootService {
                 chiave = turno.getChiave();
             }// end of if cycle
             serv = turno.getServizio();
-            serviziFunzione = serv.getServizioFunzioni();
+            serviziFunzione = serv.getServizioFunzioniOrdine();
             for (ServizioFunzione servFunz : serviziFunzione) {
                 for (Volontario vol : volontari) {
                     if (vol.haFunzione(servFunz.getFunzione())) {

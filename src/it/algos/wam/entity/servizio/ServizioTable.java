@@ -15,7 +15,6 @@ import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
 import com.vaadin.ui.components.colorpicker.ColorChangeListener;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
-import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
@@ -33,7 +32,7 @@ public class ServizioTable extends WamTable {
     protected static final String COL_DURATA = "Durata";
 
     // id della colonna generata "funzioni"
-    protected static final String COL_FUNZIONI = "Funzioni";
+    protected static final String COL_FUNZIONI = "Funzioni obbligatorie e facoltative";
 
     // id della colonna generata "colore"
     protected static final String COL_COLORE = ServizioMod.LABEL_COLOR;
@@ -61,8 +60,7 @@ public class ServizioTable extends WamTable {
     }// end of method
 
     /**
-     * Returns an array of the visible columns ids. Ids might be of type String
-     * or Attribute.<br>
+     * Returns an array of the visible columns ids. Ids might be of type String or Attribute.<br>
      * This implementations returns all the columns (no order).
      *
      * @return the list
@@ -75,6 +73,7 @@ public class ServizioTable extends WamTable {
                     Servizio_.codeCompanyUnico,
                     Servizio_.ordine,
                     Servizio_.sigla,
+                    Servizio_.visibile,
                     Servizio_.descrizione,
                     COL_DURATA,
                     COL_FUNZIONI,
@@ -83,6 +82,7 @@ public class ServizioTable extends WamTable {
         } else {
             return new Object[]{
                     Servizio_.sigla,
+                    Servizio_.visibile,
                     Servizio_.descrizione,
                     COL_DURATA,
                     COL_FUNZIONI,
@@ -121,8 +121,10 @@ public class ServizioTable extends WamTable {
     private void fixColumn() {
         setColumnHeader(Servizio_.ordine, "##"); // visibile solo per il developer
         setColumnHeader(Servizio_.sigla, "Sigla");
+        setColumnHeader(Servizio_.visibile, "Tab");
         setColumnHeader(Servizio_.descrizione, "Descrizione");
 
+        setColumnAlignment(Servizio_.visibile, Align.CENTER);
         setColumnAlignment(COL_DURATA, Align.LEFT);
         setColumnAlignment(COL_COLORE, Align.CENTER);
 
@@ -130,6 +132,7 @@ public class ServizioTable extends WamTable {
         setColumnExpandRatio(Servizio_.sigla, 1);
         setColumnExpandRatio(Servizio_.descrizione, 2);
 
+        setColumnWidth(Servizio_.visibile, 50);
         setColumnWidth(Servizio_.ordine, 50);
         setColumnWidth(COL_DURATA, 140);
         setColumnWidth(COL_COLORE, 100);
@@ -179,7 +182,7 @@ public class ServizioTable extends WamTable {
 //            BeanItem bi = LibBean.fromItem(item);
 //            Servizio serv = (Servizio) bi.getBean();
 //            String testo;
-//            List<ServizioFunzione> lista = serv.getServizioFunzioni();
+//            List<ServizioFunzione> lista = serv.getServizioFunzioniOrdine();
 //            Label label;
 //            ServizioFunzione servFunz;
 //            Funzione funz;
@@ -235,20 +238,22 @@ public class ServizioTable extends WamTable {
             BeanItem bi = LibBean.fromItem(item);
             Servizio serv = (Servizio) bi.getBean();
 
-            List<ServizioFunzione> lista = serv.getServizioFunzioni();
+            List<ServizioFunzione> lista = serv.getServizioFunzioniOrd();
             String str = "";
             for (int k = 0; k < lista.size(); k++) {
-                ServizioFunzione sf = serv.getServizioFunzioni().get(k);
+                ServizioFunzione sf = serv.getServizioFunzioniOrd().get(k);
                 int codePoint = sf.getFunzione().getIconCodepoint();
                 FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
                 str += glyph.getHtml() + " ";
 
-                String sigla = sf.getFunzione().getSigla();
+                String sigla = sf.getFunzione().getCode();
+                str+="<strong>";
                 if (sf.isObbligatoria()) {
-                    str += "<strong>" + sigla + "</strong>";
+                    str += "<font color=\"red\">" + sigla + "</font>";
                 } else {
-                    str += sigla;
+                    str += "<font color=\"green\">" + sigla + "</font>";
                 }
+                str+="</strong>";
 
                 if (k < lista.size() - 1) {
                     str += ", ";

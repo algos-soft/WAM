@@ -9,6 +9,7 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
+import org.eclipse.persistence.annotations.Index;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -37,6 +38,10 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
     @NotNull
     @ManyToOne
     private Funzione funzione = null;
+
+    //--ordine di presentazione nel servizio (obbligatorio, con controllo automatico prima del persist se è zero)@todo da fare
+    @Index
+    private int ordine = 0;
 
     private boolean obbligatoria;
 
@@ -78,6 +83,24 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
         this.setServizio(servizio);
         this.setFunzione(funzione);
         this.setObbligatoria(obbligatoria);
+    }// end of general constructor
+
+    /**
+     * Costruttore completo
+     *
+     * @param company      croce di appartenenza (obbligatorio)
+     * @param servizio     di riferimento (obbligatorio)
+     * @param funzione     di riferimento (obbligatorio)
+     * @param obbligatoria la funzione (facoltativo)
+     * @param ordine
+     */
+    public ServizioFunzione(WamCompany company, Servizio servizio, Funzione funzione, boolean obbligatoria, int ordine) {
+        super();
+        this.setCompany(company);
+        this.setServizio(servizio);
+        this.setFunzione(funzione);
+        this.setObbligatoria(obbligatoria);
+        this.setOrdine(ordine);
     }// end of general constructor
 
     /**
@@ -201,6 +224,9 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
         return (ArrayList<ServizioFunzione>) AQuery.getLista(ServizioFunzione.class);
     }// end of method
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }// end of getter method
 
     public Servizio getServizio() {
         return servizio;
@@ -224,6 +250,14 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
 
     public void setObbligatoria(boolean obbligatoria) {
         this.obbligatoria = obbligatoria;
+    }//end of setter method
+
+    public int getOrdine() {
+        return ordine;
+    }// end of getter method
+
+    public void setOrdine(int ordine) {
+        this.ordine = ordine;
     }//end of setter method
 
     /**

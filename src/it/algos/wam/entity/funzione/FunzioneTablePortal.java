@@ -59,7 +59,7 @@ public class FunzioneTablePortal extends WamTablePortalSposta {
      */
     protected void setFiltro(WamCompany company) {
         super.setFiltro(company);
-//        getTable().setColumnCollapsed(Funzione_.ordine.getName(), useAllCompany);
+        table.setColumnCollapsed(Funzione_.ordine.getName(), useAllCompany);
         getTable().refresh();
     }// end of method
 

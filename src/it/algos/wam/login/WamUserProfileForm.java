@@ -20,6 +20,7 @@ public class WamUserProfileForm extends AbsUserProfileForm{
 
     private TextField nomeField;
     private TextField cognomeField;
+    private TextField cellulareField;
     private EmailField emailField;
     Volontario volontario;
 
@@ -33,6 +34,7 @@ public class WamUserProfileForm extends AbsUserProfileForm{
         cognomeField.setWidth("20em");
         cognomeField.setRequired(true);
         cognomeField.setRequiredError("Il cognome deve essere compilato");
+        cellulareField = new TextField("Cellulare");
         emailField = new EmailField("Email");
 
         Button button = new Button("Cambia password");
@@ -45,6 +47,7 @@ public class WamUserProfileForm extends AbsUserProfileForm{
 
         addComponent(nomeField);
         addComponent(cognomeField);
+        addComponent(cellulareField);
         addComponent(emailField);
         addComponent(new Spacer());
         addComponent(button);
@@ -60,6 +63,7 @@ public class WamUserProfileForm extends AbsUserProfileForm{
         volontario = (Volontario)user;
         nomeField.setValue(volontario.getNome());
         cognomeField.setValue(volontario.getCognome());
+        cellulareField.setValue(volontario.getCellulare());
         emailField.setValue(volontario.getEmail());
     }
 
@@ -74,10 +78,12 @@ public class WamUserProfileForm extends AbsUserProfileForm{
         try {
             nomeField.validate();
             cognomeField.validate();
+            cellulareField.validate();
             emailField.validate();
 
             volontario.setNome(nomeField.getValue());
             volontario.setCognome(cognomeField.getValue());
+            volontario.setCellulare(cellulareField.getValue());
             volontario.setEmail(emailField.getValue());
             volontario.save();
 

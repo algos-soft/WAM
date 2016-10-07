@@ -241,6 +241,7 @@ public class WamCompanyForm extends ModuleForm {
         if (ui instanceof WamUI) {
             wamUI = (WamUI) ui;
             wamUI.fireCompanyAdded(company);
+            wamUI.fireCompanyChanged(company);
         }// fine del blocco if
 
     }// end of method

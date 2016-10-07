@@ -12,7 +12,10 @@ import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.EM;
+import it.algos.webbase.web.field.AFType;
+import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.LibCrypto;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.login.UserIF;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -45,56 +48,89 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     //------------------------------------------------------------------------------------------------------------------------
     // Property
     //------------------------------------------------------------------------------------------------------------------------
-    // versione della classe per la serializzazione
+
+    /**
+     * versione della classe per la serializzazione
+     */
     private static final long serialVersionUID = 1L;
-
-    //--nome del volontario (obbligatorio, non unico)
+    /**
+     * Nel form un field di tipo EmailField (facoltativo)
+     */
+    @AIField(type = AFType.email, width = "16em", caption = "Indirizzo internet", prompt = "nome.cognome@mail.it", help = "Inserire un indirizzo valido, oppure lasciare vuoto")
+    public String email = "";
+    /**
+     * Cognome del volontario (obbligatorio, non unico)
+     */
     @NotEmpty
     @Column(length = 30)
     @Index
-    private String nome = "";
-
-    //--cognome del volontario (obbligatorio, non unico)
-    @NotEmpty
-    @Column(length = 30)
-    @Index
+    @AIField(type = AFType.text, required = true, width = "16em", caption = "Cognome", prompt = "Rossi", help = "Inserire un cognome. Obbligatorio")
     private String cognome = "";
-
-    //--sigla di codifica interna specifica per company (obbligatoria, unica)
-    //--calcolata -> codeCompanyUnico = company.companyCode + volontario.cognome + volontario.nome (20+30+30=80);
+    /**
+     * Nome del volontario (obbligatorio, non unico)
+     */
+    @NotEmpty
+    @Column(length = 30)
+    @Index
+    @AIField(type = AFType.text, required = true, width = "12em", caption = "Nome", prompt = "Giovanni", help = "Inserire un nome. Obbligatorio")
+    private String nome = "";
+    /**
+     * Sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
+     * Calcolata -> codeCompanyUnico = company.companyCode + volontario.cognome + volontario.nome (20+30+30=80);
+     * Va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
+     */
     @NotEmpty
     @NotNull
     @Column(length = 80, unique = true)
     @Index
-    private String codeCompanyUnico;
-
-    //--dati personali facoltativi
+    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "Codice", help = "Codifica interna. Valore unico")
+    private String codeCompanyUnico = "";
+    /**
+     * Dati personali facoltativi
+     */
+    @AIField(type = AFType.text, width = "12em", caption = "Cellulare", prompt = "337 451899", help = "Inserire un numero di cellulare")
     private String cellulare = "";
     private String telefono = "";
-    private String email = "";
-    private String note = "";
+    @AIField(type = AFType.date, caption = "Nascita", help = "Data di nascita (non obbligatoria)")
     private Date dataNascita = null;
+    @AIField(type = AFType.password, required = true,caption = "Password", prompt = "...", help = "Password iniziale modificabile solo dal volontario.")
+    private String password = "";
+    private String note = "";
 
-    //--dati dell'associazione
+    /**
+     * Dati dell'associazione
+     */
+    @AIField(type = AFType.checkbox, caption = "Admin")
+    private Boolean admin = false;
+    @AIField(type = AFType.checkbox, caption = "Dipendente")
     private boolean dipendente = false;
+    @AIField(type = AFType.checkbox, caption = "Attivo")
     private boolean attivo = true;
 
-    private String password;
 
-    // se è admin
-    private boolean admin;
-
+    //--scadenza patente di guida (per autisti)
+    //--data di scadenza della patente (normale o CRI)
+    //--se non valorizzata, il milite non ha acquisito la patente
+    private Date scadenzaPatente = null;
     //--scadenza certificati
     //--data di scadenza del certificato BSD
     //--se non valorizzata, il milite non ha acquisito il certificato
-//    private Date scadenzaBLSD = null;
-//    //--data di scadenza del certificato Trauma
-//    //--se non valorizzata, il milite non ha acquisito il certificato
-//    private Date scadenzaTrauma = null;
-//    //--data di scadenza del certificato Non Trauma
-//    //--se non valorizzata, il milite non ha acquisito il certificato
-//    private Date scadenzaNonTrauma = null;
+    @AIField(type = AFType.date, caption = "BLSD", help = "Basic LifeSupport & Defibrillation")
+    private Date scadenzaBLSD = null;
+    //    //--data di scadenza del certificato Non Trauma
+    //--se non valorizzata, il milite non ha acquisito il certificato
+    @AIField(type = AFType.date, caption = "PNT", help = "Patologie Non Traumatiche")
+    private Date scadenzaNonTrauma = null;
+    //--data di scadenza del certificato Trauma
+    //--se non valorizzata, il milite non ha acquisito il certificato
+    @AIField(type = AFType.date, caption = "BPHTP", help = "Basic Pre Hospital & Presidi")
+    private Date scadenzaTrauma = null;
 
+    //--tavola di incrocio
+    // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
+    // alla lista e non ancora registrati (e così per tutte le operazioni dell'EntityManager)
+    // orphanRemoval = true: quando registro il padre, cancella tutti i figli eventualmente rimasti orfani.
+    // CascadeOnDelete: instaura l'integrità referenziale a livello di database (foreign key on delete cascade)
     @OneToMany(mappedBy = "volontario", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList<>();
@@ -725,28 +761,68 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, Funzione... funzioni) {
-        return crea(company, manager, nome, cognome, email, "", false, funzioni);
+        return crea(company, manager, nome, cognome, "", email, "", false, funzioni);
     }// end of static method
 
     /**
      * Creazione iniziale di un volontario
      * Lo crea SOLO se non esiste già
      *
-     * @param company  croce di appartenenza
-     * @param manager  the EntityManager to use
-     * @param nome     del volontario/milite (obbligatorio)
-     * @param cognome  del volontario/milite (obbligatorio)
-     * @param email    del volontario/milite
-     * @param password del volontario/milite (facoltativa)
-     * @param admin    flag per il ruolo (facoltativa)
-     * @param funzioni lista delle funzioni (facoltativa)
+     * @param company   croce di appartenenza
+     * @param manager   the EntityManager to use
+     * @param nome      del volontario/milite (obbligatorio)
+     * @param cognome   del volontario/milite (obbligatorio)
+     * @param cellulare del volontario/milite (facoltativo)
+     * @param email     del volontario/milite
+     * @param password  del volontario/milite (facoltativa)
+     * @param listaFunz lista delle funzioni (facoltativa)
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, String password, boolean admin, Funzione... funzioni) {
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, List<Funzione> listaFunz) {
+        return crea(company, manager, nome, cognome, cellulare, email, password, false, listaFunz.toArray(new Funzione[listaFunz.size()]));
+    }// end of static method
+
+
+    /**
+     * Creazione iniziale di un volontario
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company   croce di appartenenza
+     * @param manager   the EntityManager to use
+     * @param nome      del volontario/milite (obbligatorio)
+     * @param cognome   del volontario/milite (obbligatorio)
+     * @param cellulare del volontario/milite (facoltativo)
+     * @param email     del volontario/milite
+     * @param password  del volontario/milite (facoltativa)
+     * @param admin     flag per il ruolo (facoltativa)
+     * @param listaFunz lista delle funzioni (facoltativa)
+     * @return istanza di Volontario
+     */
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, boolean admin, List<Funzione> listaFunz) {
+        return crea(company, manager, nome, cognome, cellulare, email, password, admin, listaFunz.toArray(new Funzione[listaFunz.size()]));
+    }// end of static method
+
+    /**
+     * Creazione iniziale di un volontario
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company   croce di appartenenza
+     * @param manager   the EntityManager to use
+     * @param nome      del volontario/milite (obbligatorio)
+     * @param cognome   del volontario/milite (obbligatorio)
+     * @param cellulare del volontario/milite (facoltativo)
+     * @param email     del volontario/milite
+     * @param password  del volontario/milite (facoltativa)
+     * @param admin     flag per il ruolo (facoltativa)
+     * @param funzioni  lista delle funzioni (facoltativa)
+     * @return istanza di Volontario
+     */
+    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, boolean admin, Funzione... funzioni) {
         Volontario vol = Volontario.find(company, nome, cognome);
 
         if (vol == null) {
             vol = new Volontario(company, nome, cognome);
+            vol.setCellulare(cellulare);
             vol.setEmail(email);
             vol.setPassword(password);
             vol.setAdmin(admin);
@@ -894,8 +970,39 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         this.volontarioFunzioni = volontarioFunzioni;
     }//end of setter method
 
+    public Date getScadenzaPatente() {
+        return scadenzaPatente;
+    }// end of getter method
 
-    //------------------------------------------------------------------------------------------------------------------------
+    public void setScadenzaPatente(Date scadenzaPatente) {
+        this.scadenzaPatente = scadenzaPatente;
+    }//end of setter method
+
+    public Date getScadenzaBLSD() {
+        return scadenzaBLSD;
+    }// end of getter method
+
+    public void setScadenzaBLSD(Date scadenzaBLSD) {
+        this.scadenzaBLSD = scadenzaBLSD;
+    }//end of setter method
+
+    public Date getScadenzaTrauma() {
+        return scadenzaTrauma;
+    }// end of getter method
+
+    public void setScadenzaTrauma(Date scadenzaTrauma) {
+        this.scadenzaTrauma = scadenzaTrauma;
+    }//end of setter method
+
+    public Date getScadenzaNonTrauma() {
+        return scadenzaNonTrauma;
+    }// end of getter method
+
+    public void setScadenzaNonTrauma(Date scadenzaNonTrauma) {
+        this.scadenzaNonTrauma = scadenzaNonTrauma;
+    }//end of setter method
+
+//------------------------------------------------------------------------------------------------------------------------
     // Save
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -1006,9 +1113,9 @@ public class Volontario extends WamCompanyEntity implements UserIF {
             codeCompanyUnico = null;
         } else {
             if (company != null) {
-                codeCompanyUnico = company.getCompanyCode();
+                codeCompanyUnico = LibText.primaMaiuscola(company.getCompanyCode());
             }// end of if cycle
-            codeCompanyUnico += getCognome() + getNome();
+            codeCompanyUnico += LibText.primaMaiuscola(getCognome()) + LibText.primaMaiuscola(getNome());
             valido = true;
         }// end of if/else cycle
 

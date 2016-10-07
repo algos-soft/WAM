@@ -11,6 +11,7 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -47,7 +48,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //--company di riferimento (obbligatoria in questa classe)
     //--private BaseCompany company;
 
-    //--sigla di codifica interna (obbligatoria, non unica in generale ma unica all'interno della company)
+    //--sigla di codifica interna specifica per ogni company (obbligatoria, non unica in generale ma unica all'interno della company)
     //--visibile solo per admin e developer
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
@@ -55,7 +56,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @Index
     private String code = "";
 
-    //--sigla di codifica interna specifica per company (obbligatoria, unica)
+    //--sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
     //--calcolata -> codeCompanyUnico = company.companyCode + funzione.code (20+20=40);
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
@@ -121,7 +122,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Se manca l'ordine di presentazione o è uguale a zero, viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      */
@@ -134,7 +135,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
@@ -288,7 +289,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Recupera una istanza della Entity usando la query di una property specifica
      * Nessun filtro sulla company, perché la property è unica
      *
-     * @param codeCompanyUnico di riferimento interno (obbligatorio e unico)
+     * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione getEntityByCodeCompanyUnico(String codeCompanyUnico) {
@@ -300,7 +301,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Recupera una istanza della Entity usando la query di una property specifica
      * Nessun filtro sulla company, perché la property è unica
      *
-     * @param codeCompanyUnico di riferimento interno (obbligatorio e unico)
+     * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
      * @param manager          the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
@@ -314,7 +315,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @param code    di riferimento interna (obbligatorio, non unico in generale ma unico all'interno della company)
+     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione getEntityByCompanyAndCode(WamCompany company, String code) {
@@ -327,7 +328,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @param code    di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
@@ -469,7 +470,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      * @return istanza della Entity
@@ -484,7 +485,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      * @param manager     the EntityManager to use
@@ -499,7 +500,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
@@ -510,13 +511,29 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return crea(company, code, sigla, descrizione, ordine, glyph, (EntityManager) null);
     }// end of static method
 
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param company     di appartenenza (property della superclasse)
+     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
+     * @param sigla       visibile nel tabellone (obbligatoria, non unica)
+     * @param descrizione (obbligatoria)
+     * @param glyph       dell'icona (facoltativo)
+     * @param manager     the EntityManager to use
+     * @return istanza della Entity
+     */
+    public static Funzione crea(WamCompany company, String code, String sigla, String descrizione, FontAwesome glyph, EntityManager manager) {
+        return crea(company, code, sigla, descrizione, 0, glyph, manager);
+    }// end of static method
+
 
     /**
      * Creazione iniziale di una istanza della Entity
      * La crea SOLO se non esiste già
      *
      * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interno (obbligatorio, unico all'interno della company)
+     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param sigla       visibile nel tabellone (obbligatoria, non unica)
      * @param descrizione (obbligatoria)
      * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
@@ -825,9 +842,9 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             codeCompanyUnico = null;
         } else {
             if (company != null) {
-                codeCompanyUnico = company.getCompanyCode().toLowerCase();
+                codeCompanyUnico = LibText.primaMaiuscola(company.getCompanyCode());
             }// end of if cycle
-            codeCompanyUnico += getCode().toLowerCase();
+            codeCompanyUnico += LibText.primaMaiuscola(getCode());
             valido = true;
         }// end of if/else cycle
 

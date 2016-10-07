@@ -173,7 +173,7 @@ public class Migration {
         String descrizione = funzioneOld.getDescrizione();
         FontAwesome glyph = selezionaIcona(descrizione);
 
-        return Funzione.crea(companyNew, code,sigla, descrizione, ordine, glyph);
+        return Funzione.crea(companyNew, code, sigla, descrizione, ordine, glyph);
     }// end of method
 
     /**
@@ -251,7 +251,7 @@ public class Migration {
         int oraFine = servizioOld.getOra_fine();
         int minutiFine = servizioOld.getMinuti_fine();
 
-        return Servizio.crea(companyNew, sigla, descrizione, ordine, colore, true, oraInizio, minutiInizio, oraFine, minutiFine, null, listaServizioFunzioni);
+        return Servizio.crea(companyNew, sigla, true, descrizione, ordine, colore, true, oraInizio, minutiInizio, oraFine, minutiFine, null, listaServizioFunzioni);
     }// end of method
 
     /**
@@ -284,12 +284,12 @@ public class Migration {
             if (funzOld != null) {
                 code = funzOld.getSigla();
                 for (Funzione funz : listaFunzioniAll) {
-                    obbligatoria=false;
+                    obbligatoria = false;
                     if (code.equals(funz.getCode())) {
                         if (pos <= numObbligatorie) {
                             obbligatoria = true;
                         }// end of if cycle
-                        servFunz = new ServizioFunzione(companyNew, null, funz, obbligatoria);
+                        servFunz = new ServizioFunzione(companyNew, null, funz, obbligatoria, pos);
                         listaServizioFunzioni.add(servFunz);
                     }// end of if cycle
                 }// end of for cycle

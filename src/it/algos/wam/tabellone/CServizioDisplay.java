@@ -201,7 +201,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
                 addComponent(label);
             }
 
-            List<ServizioFunzione> lista = servizio.getServizioFunzioni();
+            List<ServizioFunzione> lista = servizio.getServizioFunzioniOrdine();
             Collections.sort(lista);
             for (ServizioFunzione serFun : lista) {
                 funz = serFun.getFunzione();

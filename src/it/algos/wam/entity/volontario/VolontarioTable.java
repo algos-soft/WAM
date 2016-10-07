@@ -1,6 +1,7 @@
 package it.algos.wam.entity.volontario;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
@@ -11,10 +12,14 @@ import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by gac on 25 mag 2016.
@@ -23,8 +28,10 @@ import java.util.List;
 public class VolontarioTable extends WamTable {
 
     // larghezza delle colonne funzioni
-    private static int LAR = 90;
+    private static int LAR_SCADENZE = 85;
+    private static int LAR_FUNZIONI = 80;
 
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("MMM-yy");
 
     /**
      * Costruttore
@@ -46,14 +53,13 @@ public class VolontarioTable extends WamTable {
     protected void createAdditionalColumns() {
         List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
         for (Funzione funz : listaFunzioni) {
-            addGeneratedColumn(funz.getCode(), new FunzioniColumnGenerator(funz));
+            addGeneratedColumn(LibText.primaMaiuscola(funz.getCode()), new FunzioniColumnGenerator(funz));
         }// end of for cycle
     }// end of method
 
 
     /**
-     * Returns an array of the visible columns ids. Ids might be of type String
-     * or Attribute.<br>
+     * Returns an array of the visible columns ids. Ids might be of type String or Attribute.<br>
      * This implementations returns all the columns (no order).
      *
      * @return the list
@@ -65,18 +71,19 @@ public class VolontarioTable extends WamTable {
 
         if (LibSession.isDeveloper()) {
             lista.add(WamCompanyEntity_.company);
+            lista.add(Volontario_.codeCompanyUnico);
         }// end of if cycle
 
+        lista.add(Volontario_.admin);
         lista.add(Volontario_.cognome);
         lista.add(Volontario_.nome);
-        lista.add(Volontario_.admin);
+        lista.add(Volontario_.cellulare);
+        lista.add(Volontario_.scadenzaBLSD);
+        lista.add(Volontario_.scadenzaNonTrauma);
+        lista.add(Volontario_.scadenzaTrauma);
 
-//        if (LibSession.isDeveloper()||LibSession.isAdmin()) {
-//            lista.add(Volontario_.admin);
-//        }// end of if cycle
-//
         for (Funzione funz : listaFunzioni) {
-            lista.add(funz.getCode());
+            lista.add(LibText.primaMaiuscola(funz.getCode()));
         }// end of for cycle
 
         return lista.toArray();
@@ -111,14 +118,71 @@ public class VolontarioTable extends WamTable {
     private void fixColumn() {
         List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
 
-        setColumnHeader(Volontario_.nome, "Nome");
+        setColumnHeader(Volontario_.admin, "Admin");
         setColumnHeader(Volontario_.cognome, "Cognome");
+        setColumnHeader(Volontario_.nome, "Nome");
+        setColumnHeader(Volontario_.cellulare, "Cellulare");
+        setColumnHeader(Volontario_.scadenzaBLSD, "BLSD");
+        setColumnHeader(Volontario_.scadenzaTrauma, "BPHT");
+        setColumnHeader(Volontario_.scadenzaNonTrauma, "PNT");
+
+        setColumnWidth(Volontario_.admin, 70);
+        setColumnWidth(Volontario_.cognome, 190);
+        setColumnWidth(Volontario_.nome, 130);
+        setColumnWidth(Volontario_.cellulare, 140);
+        setColumnWidth(Volontario_.scadenzaBLSD, LAR_SCADENZE);
+        setColumnWidth(Volontario_.scadenzaTrauma, LAR_SCADENZE);
+        setColumnWidth(Volontario_.scadenzaNonTrauma, LAR_SCADENZE);
+
+        setColumnAlignment(Volontario_.admin, Align.CENTER);
+        setColumnAlignment(Volontario_.scadenzaBLSD, Align.CENTER);
+        setColumnAlignment(Volontario_.scadenzaTrauma, Align.CENTER);
+        setColumnAlignment(Volontario_.scadenzaNonTrauma, Align.CENTER);
 
         for (Funzione funz : listaFunzioni) {
-            setColumnWidth(funz.getCode(), LAR);
+            setColumnWidth(LibText.primaMaiuscola(funz.getCode()), LAR_FUNZIONI);
+            setColumnAlignment(LibText.primaMaiuscola(funz.getCode()), Align.CENTER);
         }// end of for cycle
     }// end of method
 
+    @Override
+    protected String formatPropertyValue(Object rowId, Object colId, Property<?> property) {
+        String string = null;
+        Object value;
+
+        // Format for Dates
+        if (property.getType() == Date.class) {
+            value = property.getValue();
+            if (value != null && value instanceof Date) {
+                Date date = (Date) value;
+                try {
+                    string = this.dateFormat.format(date);
+                } catch (Exception e) {
+                }
+            }
+
+        }
+
+        // Format for Booleans
+        if (property.getType() == Boolean.class) {
+            string = "";
+            value = property.getValue();
+
+            if (value != null && value instanceof Boolean) {
+                if ((boolean) value) {
+                    string = "\u2714";
+                }
+            }
+
+        }
+
+        // none of the above
+        if (string == null) {
+            string = super.formatPropertyValue(rowId, colId, property);
+        }
+
+        return string;
+    }
 
     /**
      * Colonna generata.

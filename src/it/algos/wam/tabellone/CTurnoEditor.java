@@ -471,7 +471,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             setSpacing(true);
 
             // crea gli editor di iscrizione e li aggiunge
-            for (ServizioFunzione sf : turno.getServizio().getServizioFunzioni()) {
+            for (ServizioFunzione sf : turno.getServizio().getServizioFunzioniOrdine()) {
 
                 Iscrizione i = turno.getIscrizione(sf);
 

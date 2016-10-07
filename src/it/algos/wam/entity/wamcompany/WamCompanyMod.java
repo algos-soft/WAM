@@ -33,6 +33,8 @@ public class WamCompanyMod extends ModulePop {
     // icona (eventuale) del modulo
     public static Resource ICON = FontAwesome.AMBULANCE;
 
+    private MenuBar.MenuItem menuFiltro;
+
     /**
      * Costruttore senza parametri
      * <p>
@@ -68,12 +70,23 @@ public class WamCompanyMod extends ModulePop {
     private void addMenuFiltro(MenuBar.MenuItem menu) {
         MenuBar.MenuItem menuItem = menu.addItem("Filtro", null, null);
 
+        menuFiltro = creaFiltri(menuItem);
+    }// end of method
+
+    /**
+     * Creazione dei filtri singoli
+     *
+     * @param menuItem dei filtri
+     */
+    private MenuBar.MenuItem creaFiltri(MenuBar.MenuItem menuItem) {
+        menuItem.removeChildren();
         addCommandAllCroci(menuItem);
 
         for (WamCompany company : WamCompany.findAll()) {
             addCommandSingolaCroce(menuItem, company);
         }// end of for cycle
 
+        return menuItem;
     }// end of method
 
     /**
@@ -85,6 +98,8 @@ public class WamCompanyMod extends ModulePop {
         menu.addItem("Importa", null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 new Migration();
+                menuFiltro = creaFiltri(menuFiltro);
+                ;
                 getTable().refresh();
             }// end of inner method
         });// end of anonymous inner class
@@ -210,6 +225,7 @@ public class WamCompanyMod extends ModulePop {
 
     }// end of method
 
+
     /**
      *
      */
@@ -222,6 +238,7 @@ public class WamCompanyMod extends ModulePop {
             wamUI.fireCompanyChanged(company);
         }// fine del blocco if
     }// end of method
+
 
     protected void fireCompanyRemoved(WamCompany company) {
         UI ui = getUI();

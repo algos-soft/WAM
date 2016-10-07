@@ -93,27 +93,27 @@ public class VolontarioMod extends WamMod {
     }// end of method
 
 
-    /**
-     * Crea i campi visibili nella scheda (form)
-     * <p>
-     * Come default spazzola tutti i campi della Entity <br>
-     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
-     */
-    protected Attribute<?, ?>[] creaFieldsForm() {
-        return new Attribute[]{
-                WamCompanyEntity_.company,
-                Volontario_.funzioni,
-                Volontario_.nome,
-                Volontario_.cognome,
-                Volontario_.cellulare,
-                Volontario_.telefono,
-                Volontario_.dataNascita,
-                Volontario_.email,
-                Volontario_.note,
-                Volontario_.dipendente,
-                Volontario_.attivo};
-    }// end of method
+//    /**
+//     * Crea i campi visibili nella scheda (form)
+//     * <p>
+//     * Come default spazzola tutti i campi della Entity <br>
+//     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+//     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
+//     */
+//    protected Attribute<?, ?>[] creaFieldsForm() {
+//        return new Attribute[]{
+//                WamCompanyEntity_.company,
+//                Volontario_.funzioni,
+//                Volontario_.nome,
+//                Volontario_.cognome,
+//                Volontario_.cellulare,
+//                Volontario_.telefono,
+//                Volontario_.dataNascita,
+//                Volontario_.email,
+//                Volontario_.note,
+//                Volontario_.dipendente,
+//                Volontario_.attivo};
+//    }// end of method
 
     /**
      * Crea i campi visibili nella scheda (search)
@@ -147,9 +147,9 @@ public class VolontarioMod extends WamMod {
     public void companyChanged(WamCompany company) {
         super.companyChanged(company);
 
-//        tablePortal = createTablePortal();
-//        tablePortal.table = this.createTable();
-//        tablePortal.table.refresh();
+        tablePortal = createTablePortal();
+        tablePortal.table = this.createTable();
+        tablePortal.table.refresh();
 
 //        return new VolontarioTable(this);
     }// end of method
