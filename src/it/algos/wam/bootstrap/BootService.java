@@ -253,8 +253,8 @@ public abstract class BootService {
                 l.add(servo(c, m, funz, "amb-notte", "Ambulanza notte", 20, 8, verdino, 2, 3, 4, 5));
 
                 l.add(servnt(c, m, funz, "dim", "Dimissioni ordinarie", rosa, 2, 6, 7, 8, 9));
-                l.add(servn(c, m, funz, "ext", "Extra", rosa, 2, 6, 7, 8, 9));
-                l.add(servn(c, m, funz, "avis", "Avis", rosa, 1, 10, 9));
+                l.add(servno(c, m, funz, "ext", "Extra", rosa, 2, 6, 7, 8, 9));
+                l.add(servno(c, m, funz, "avis", "Avis", rosa, 1, 10, 9));
 
                 l.add(servo(c, m, funz, "cent-mat", "Centralino mattino", 8, 13, giallo, 0, 11));
                 l.add(servnt(c, m, funz, "cent-pom", "Centralino pomeriggio", 13, 18, giallo, 0, 11));
@@ -264,8 +264,8 @@ public abstract class BootService {
                 l.add(servo(c, m, funz, "amb-pom", "Ambulanza pomeriggio", 14, 20, verdino, 2, 0, 1, 2, 3));
                 l.add(servo(c, m, funz, "amb-notte", "Ambulanza notte", 20, 8, verdino, 2, 0, 1, 2, 3));
 
-                l.add(servn(c, m, funz, "ext", "Extra", rosa, 2, 4, 5, 6));
-                l.add(servn(c, m, funz, "avis", "Avis", rosa, 1, 7, 3));
+                l.add(servno(c, m, funz, "ext", "Extra", rosa, 2, 4, 5, 6));
+                l.add(servno(c, m, funz, "avis", "Avis", rosa, 1, 7, 3));
 
                 l.add(servo(c, m, funz, "cent-mat", "Centralino mattino", 8, 13, giallo, 0, 8));
                 break;
@@ -278,9 +278,9 @@ public abstract class BootService {
                 l.add(servo(c, m, funz, "amb-pom", "Ambulanza pomeriggio", 14, 20, verdino, 2, 4, 5, 6, 7));
                 l.add(servo(c, m, funz, "amb-notte", "Ambulanza notte", 20, 8, verdino, 2, 4, 5));
 
-                l.add(servn(c, m, funz, "dim", "Dimissioni ordinarie", rosa, 2, 4, 5, 6));
-                l.add(servnt(c, m, funz, "ext", "Extra", rosa, 2, 4, 5, 6));
-                l.add(servn(c, m, funz, "avis", "Avis", rosa, 1, 8, 7));
+                l.add(servno(c, m, funz, "dim", "Dimissioni ordinarie", rosa, 2, 4, 5, 6));
+                l.add(servnot(c, m, funz, "ext", "Extra", rosa, 2, 4, 5, 6));
+                l.add(servno(c, m, funz, "avis", "Avis", rosa, 1, 8, 7));
                 break;
         } // fine del blocco switch
 
@@ -307,7 +307,7 @@ public abstract class BootService {
     /**
      * Servizio senza orario
      */
-    private static Servizio servn(
+    private static Servizio servno(
             WamCompany company,
             EntityManager manager,
             ArrayList<Funzione> funzioni,
@@ -336,6 +336,25 @@ public abstract class BootService {
         return serv(company, manager, funzioni, sigla, false, descrizione, true, oraInizio, oraFine, colore, obbligatori, numFunz);
     }// end of static method
 
+    /**
+     * Servizio senza orario
+     * Servizio non visibile nel tabellone
+     */
+    private static Servizio servnot(
+            WamCompany company,
+            EntityManager manager,
+            ArrayList<Funzione> funzioni,
+            String sigla,
+            String descrizione,
+            int colore,
+            int obbligatori,
+            int... numFunz) {
+        return serv(company, manager, funzioni, sigla, false, descrizione, false, 0, 0, colore, obbligatori, numFunz);
+    }// end of static method
+
+    /**
+     * Servizio base
+     */
     private static Servizio serv(
             WamCompany company,
             EntityManager manager,
@@ -380,6 +399,12 @@ public abstract class BootService {
     @SuppressWarnings("unchecked")
     private static ArrayList<Volontario> creaVolontari(WamCompany c, EntityManager m, ArrayList<Funzione> funz) {
         ArrayList<Volontario> l = new ArrayList<>();
+        Date d1 = new Date(2016, 4, 21);
+        Date d2 = new Date(2017, 2, 13);
+        Date d3 = new Date(2016, 11, 4);
+        Date d4 = new Date(2017, 7, 15);
+        Date d5 = new Date(2018, 4, 7);
+        Date d6 = new Date(2018, 8, 30);
 
         if (c == null) {
             return null;
@@ -387,13 +412,13 @@ public abstract class BootService {
 
         switch (c.getCompanyCode()) {
             case WAMApp.DEMO_COMPANY_CODE:
-                l.add(volu(c, m, funz, "Stefano", "Brambilla", "337 2453817", "stefano.brambilla@wamdemo.it", "bra", 0, 3));
+                l.add(volub(c, m, funz, "Stefano", "Brambilla", "337 2453817", "stefano.brambilla@wamdemo.it", "bra", d2, null, null, 0, 3));
                 l.add(volu(c, m, funz, "Giovanna", "Durante", "338 7394672", "giovanna.durante@wamdemo.it", "dur", 1, 2, 4, 5, 6, 7));
                 l.add(volu(c, m, funz, "Roberto", "Marchetti", "345 673351", "roberto.marchetti@wamdemo.it", "mar", 7, 8));
-                l.add(volu(c, m, funz, "Edoardo", "Politi", "327 4233681", "edoardo.politi@wamdemo.it", "pol", 6));
-                l.add(vola(c, m, funz, "Arturo", "Casaroli", "327 9931245", "arturo.casaroli@wamdemo.it", "cas", 0, 1, 2, 3, 4, 5, 6));
+                l.add(vola(c, m, funz, "Edoardo", "Politi", "327 4233681", "edoardo.politi@wamdemo.it", "pol", 6));
+                l.add(volub(c, m, funz, "Arturo", "Casaroli", "327 9931245", "arturo.casaroli@wamdemo.it", "cas", d3, d4, d1, 0, 1, 2, 3, 4, 5, 6));
                 l.add(volu(c, m, funz, "Flavia", "Robusti", "328 131476", "flavia.robusti@wamdemo.it", "rob", 2, 5));
-                l.add(volu(c, m, funz, "Marco", "Terzani", "339 397235", "marco.terzani@wamdemo.it", "ter", 1, 2, 4, 5, 6));
+                l.add(volub(c, m, funz, "Marco", "Terzani", "339 397235", "marco.terzani@wamdemo.it", "ter", d1, d4, d5, 1, 2, 4, 5, 6));
 
 //                lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it", "abb", false, funz.get(2)));
 //                lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it", "ber", true, funz.get(3)));
@@ -422,20 +447,23 @@ public abstract class BootService {
 //                lista.add(Arrays.asList("Tomaso", "Zanichetti", "tomaso.zanichetti@wamdemo.it", "zan", false, funz.get(8), funz.get(9)));
                 break;
             default: // caso non definito
-                l.add(volu(c, m, funz, "Arturo", "Marchini", "338 185592", "arturo.marchini@wamdemo.it", "mar", 1, 2, 4, 5, 6, 7));
-                l.add(volu(c, m, funz, "Luisa", "Lozenzini", "345 9931245", "luisa.lorenzini@wamdemo.it", "lor", 0, 3));
+                l.add(vola(c, m, funz, "Arturo", "Marchini", "338 185592", "arturo.marchini@wamdemo.it", "mar", 1, 2, 4, 5, 6, 7));
+                l.add(volub(c, m, funz, "Luisa", "Poltronieri", "345 9931245", "luisa.poltronieri@wamdemo.it", "pol", d1, null, null, 0, 3));
                 l.add(volu(c, m, funz, "Giovanni", "Speranza", "339 7394672", "giovanni.speranza@wamdemo.it", "spe", 1, 2, 4, 5, 6, 7));
                 l.add(volu(c, m, funz, "Tomaso", "Savarese", "328 875124", "tomaso.savarese@wamdemo.it", "sav", 7, 8));
                 l.add(volu(c, m, funz, "Teresa", "Barbieri", "377 5145764", "terese.barbieri@wamdemo.it", "bar", 6));
-                l.add(volu(c, m, funz, "Stefano", "Della Monaca", "331 897432", "stefano.dellamonica@wamdemo.it", "del", 0, 1, 2, 3, 4, 5, 6));
+                l.add(volub(c, m, funz, "Stefano", "Della Monaca", "331 897432", "stefano.dellamonica@wamdemo.it", "del", d2, d3, d4, 0, 1, 2, 3, 4, 5, 6));
                 l.add(volu(c, m, funz, "Lucio", "Bertuzzi", "337 131476", "lucio.bertuzzi@wamdemo.it", "ber", 2, 5));
-                l.add(volu(c, m, funz, "Marta", "Poltronieri", "345 673351", "marta.poltronieri@wamdemo.it", "pol", 1, 2, 4, 5, 6));
+                l.add(volu(c, m, funz, "Marta", "Lorenzini", "345 673351", "marta.lorenzini@wamdemo.it", "lor", 1, 2, 4, 5, 6));
                 break;
         } // fine del blocco switch
 
         return l;
     }// end of static method
 
+    /**
+     * Volontario utente
+     */
     private static Volontario volu(
             WamCompany company,
             EntityManager manager,
@@ -447,9 +475,32 @@ public abstract class BootService {
             String password,
             int... numFunz) {
 
-        return vol(company, manager, allFunzioniCompany, nome, cognome, cellulare, email, password, false, numFunz);
+        return vol(company, manager, allFunzioniCompany, nome, cognome, cellulare, email, password, false, null, null, null, numFunz);
     }// end of static method
 
+    /**
+     * Volontario utente con brevetti
+     */
+    private static Volontario volub(
+            WamCompany company,
+            EntityManager manager,
+            ArrayList<Funzione> allFunzioniCompany,
+            String nome,
+            String cognome,
+            String cellulare,
+            String email,
+            String password,
+            Date bBLSD,
+            Date bPNT,
+            Date bBPHTP,
+            int... numFunz) {
+
+        return vol(company, manager, allFunzioniCompany, nome, cognome, cellulare, email, password, false, bBLSD, bPNT, bBPHTP, numFunz);
+    }// end of static method
+
+    /**
+     * Volontario admin
+     */
     private static Volontario vola(
             WamCompany company,
             EntityManager manager,
@@ -460,9 +511,12 @@ public abstract class BootService {
             String email,
             String password,
             int... numFunz) {
-        return vol(company, manager, allFunzioniCompany, nome, cognome, cellulare, email, password, true, numFunz);
+        return vol(company, manager, allFunzioniCompany, nome, cognome, cellulare, email, password, true, null, null, null, numFunz);
     }// end of static method
 
+    /**
+     * Volontario base
+     */
     private static Volontario vol(
             WamCompany company,
             EntityManager manager,
@@ -473,6 +527,9 @@ public abstract class BootService {
             String email,
             String password,
             boolean admin,
+            Date sBLSD,
+            Date sPNT,
+            Date sBPHTP,
             int... numFunz) {
 
         Funzione funz;
@@ -483,7 +540,7 @@ public abstract class BootService {
             listaFunzioni.add(funz);
         }// end of for cycle
 
-        return Volontario.crea(company, manager, nome, cognome, cellulare, email, password, admin, listaFunzioni);
+        return Volontario.crea(company, manager, nome, cognome, cellulare, email, password, admin, sBLSD, sPNT, sBPHTP, listaFunzioni);
     }// end of static method
 
 

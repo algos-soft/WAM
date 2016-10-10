@@ -5,6 +5,7 @@ import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
@@ -47,6 +48,7 @@ public class VolontarioForm extends ModuleForm {
     private Field fEmail;
     @SuppressWarnings("all")
     private Field fPassword;
+    private  TextField fPasswordTextField = null;
     @SuppressWarnings("all")
     private Field fAdmin;
     @SuppressWarnings("all")
@@ -78,64 +80,6 @@ public class VolontarioForm extends ModuleForm {
     }// end of constructor
 
 
-//    /**
-//     * Populate the map to bind item properties to fields.
-//     * <p>
-//     * Crea e aggiunge i campi.<br>
-//     * Implementazione di default nella superclasse.<br>
-//     * I campi vengono recuperati dal Modello.<br>
-//     * I campi vengono creati del tipo grafico previsto nella Entity.<br>
-//     * Se si vuole aggiungere un campo (solo nel form e non nel Modello),<br>
-//     * usare il metodo sovrascritto nella sottoclasse
-//     * invocando prima (o dopo) il metodo della superclasse.
-//     * Se si vuole un layout completamente diverso sovrascrivere
-//     * senza invocare il metodo della superclasse
-//     */
-//    @Override
-//    public void createFields() {
-//        TextField field;
-//        CheckBoxField fieldCheck;
-//        TextArea fieldArea;
-//
-//        field = new TextField(Volontario_.nome.getName());
-//        field.setColumns(20);
-//        field.focus();
-//        addField(Volontario_.nome, field);
-//
-//        field = new TextField(Volontario_.cognome.getName());
-//        field.setColumns(20);
-//        addField(Volontario_.cognome, field);
-//
-//        Field femail = new EmailField(Volontario_.email.getName());
-//        addField(Volontario_.email, femail);
-//
-//        PasswordField passFld = new PasswordField(Volontario_.password.getName());
-//        passFld.setColumns(20);
-//        addField(Volontario_.password, passFld);
-//
-////        field = new TextField(Volontario_.password.getName());
-////        field.setColumns(20);
-////        addField(Volontario_.password, field);
-//
-//        DateField  field2 = new DateField(Volontario_.scadenzaBLSD.getName());
-//        addField(Volontario_.scadenzaBLSD, field2);
-//
-//        fieldCheck = new CheckBoxField(Volontario_.dipendente.getName());
-//        addField(Volontario_.dipendente, fieldCheck);
-//
-//        fieldCheck = new CheckBoxField(Volontario_.attivo.getName());
-//        addField(Volontario_.attivo, fieldCheck);
-//
-//        fieldArea = new TextArea(Volontario_.note.getName());
-//        fieldArea.setColumns(25);
-//        fieldArea.setRows(4);
-//        addField(Volontario_.note, fieldArea);
-//
-//        fieldCheck = new CheckBoxField(Volontario_.admin.getName());
-//        addField(Volontario_.admin, fieldCheck);
-//
-//    }// end of method
-
     /**
      * Create the detail component (the upper part containing the fields).
      * <p>
@@ -160,6 +104,7 @@ public class VolontarioForm extends ModuleForm {
      * @param layout per visualizzare i componenti
      * @return il componente dettagli
      */
+    @SuppressWarnings("all")
     private Component creaCompDetail(VerticalLayout layout) {
         creaFields();
 
@@ -172,7 +117,11 @@ public class VolontarioForm extends ModuleForm {
         if (isNewRecord()) {
             layout.addComponent(new AHorizontalLayout(fCellulare, fEmail, fPassword));
         } else {
-            layout.addComponent(new AHorizontalLayout(fCellulare, fEmail));
+            if (LibSession.isDeveloper()|| WAMApp.ADMIN_VEDE_PASSWORD) {
+                layout.addComponent(new AHorizontalLayout(fCellulare, fEmail, regolaPasswordField()));
+            } else {
+                layout.addComponent(new AHorizontalLayout(fCellulare, fEmail));
+            }// end of if/else cycle
         }// end of if/else cycle
 
         // aggiunge un po di spazio
@@ -185,46 +134,6 @@ public class VolontarioForm extends ModuleForm {
         layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
         layout.addComponent(mostraFunzioni);
         layout.addComponent(creaPlaceorderFunzioni());
-
-//        HorizontalLayout layoutBoxFunz;
-//        Field field;
-//        Volontario volontario;
-//        List<VolontarioFunzione> listaFunzioni = null;
-//        String funzText;
-//        Label label;
-//
-//        field = getField(Volontario_.nome.getName());
-//        layout.addComponent(field);
-//
-//        TextField fNome = (TextField) getField(Volontario_.nome);
-//
-//        field = getField(Volontario_.cognome.getName());
-//        layout.addComponent(field);
-//
-//        field = getField(Volontario_.email.getName());
-//        layout.addComponent(field);
-//
-//        Field passField = getField(Volontario_.password.getName());
-//        layout.addComponent(passField);
-//
-//        Field passField2 = getField(Volontario_.scadenzaBLSD.getName());
-//        layout.addComponent(passField2);
-//
-//        HorizontalLayout layoutBox = new HorizontalLayout();
-//        layoutBox.setSpacing(true);
-//        field = getField(Volontario_.dipendente.getName());
-//        layoutBox.addComponent(field);
-//        field = getField(Volontario_.attivo.getName());
-//        layoutBox.addComponent(field);
-//        layout.addComponent(layoutBox);
-//
-//        field = getField(Volontario_.admin.getName());
-//        layout.addComponent(field);
-//
-//        // aggiunge un po di spazio
-//        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
-//
-//        layout.addComponent(creaCompFunzioni());
 
         syncPlaceholderFunzioni();
 
@@ -253,13 +162,6 @@ public class VolontarioForm extends ModuleForm {
         fEmail = getField(Volontario_.email);
 
         fPassword = getField(Volontario_.password);
-
-//        if (isNewRecord() || LibSession.isDeveloper()) {
-//            fPassword = null;
-//            fPassword = regolaPasswordField();
-//        } else {
-//            fPassword = getField(Volontario_.password);
-//        }// end of if/else cycle
 
         fAdmin = getField(Volontario_.admin);
         fDipendente = getField(Volontario_.dipendente);
@@ -367,7 +269,7 @@ public class VolontarioForm extends ModuleForm {
     }// end of method
 
     /**
-     * Crea un afield di tipo Text invece che Password
+     * Crea un field di tipo Text invece che Password
      * Permette di vedere la password solo alla creazione di una nuova scheda
      * Permette di vedere sempre la password al programmatore
      *
@@ -375,12 +277,12 @@ public class VolontarioForm extends ModuleForm {
      */
     @SuppressWarnings("all")
     private TextField regolaPasswordField() {
-        TextField fPasswordTextField = null;
         Field vaadinField = null;
         java.lang.reflect.Field javaField = null;
         Annotation annotation = null;
         String fieldType = "";
         AIField fieldAnnotation = null;
+        Property<String> value;
 
         try { // prova ad eseguire il codice
             javaField = Volontario.class.getDeclaredField("password");
@@ -408,8 +310,20 @@ public class VolontarioForm extends ModuleForm {
         fPasswordTextField.setCaption(fieldAnnotation.caption());
         fPasswordTextField.setWidth(fieldAnnotation.width());
 
+        //--carica i valori dal DB alla UI
+        value = getItem().getItemProperty(Volontario_.password.getName());
+        fPasswordTextField.setValue(value.getValue());
+
+        fPasswordTextField.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                fPassword.setValue(valueChangeEvent.getProperty().getValue());
+            }// end of inner method
+        });// end of anonymous inner class
+
         return fPasswordTextField;
     }// end of method
+
 
     /**
      * Selezione della company (solo per developer)
@@ -453,64 +367,7 @@ public class VolontarioForm extends ModuleForm {
         }// end of if/else cycle
     }// end of method
 
-//    /**
-//     * Crea il campo codeCompanyUnico, obbligatorio e unico
-//     * Viene inserito in automatico e NON dal form
-//     *
-//     * @return il componente creato
-//     */
-//    private TextField creaCode() {
-//        fCodeCompanyUnico = (TextField) getField(Servizio_.codeCompanyUnico);
-//
-//        fCodeCompanyUnico.setWidth("14em");
-//        fCodeCompanyUnico.setEnabled(false);
-//        if (!isNewRecord()) {
-//            fCodeCompanyUnico.setRequired(true);
-//        }// end of if cycle
-//
-//        return fCodeCompanyUnico;
-//    }// end of method
 
-//    /**
-//     * Crea il campo nome, obbligatorio
-//     *
-//     * @return il componente creato
-//     */
-//    private TextField creaNome() {
-//        fNome = (TextField) getField(Volontario_.nome);
-//        fNome.setWidth("8em");
-//        fNome.setRequired(true);
-//        fNome.setRequiredError("Manca il nome");
-//        fNome.focus();
-//
-//        return fNome;
-//    }// end of method
-
-//    /**
-//     * Crea il campo cognome, obbligatorio
-//     *
-//     * @return il componente creato
-//     */
-//    private TextField creaCognome() {
-//        fCognome = (TextField) getField(Volontario_.cognome);
-//        fCognome.setWidth("8em");
-//        fCognome.setRequired(true);
-//        fCognome.setRequiredError("Manca il cognome");
-//
-//        return fCognome;
-//    }// end of method
-
-//    /**
-//     * Crea il campo cellulare, facoltativo
-//     *
-//     * @return il componente creato
-//     */
-//    private TextField creaCellulare() {
-//        fCellulare = (TextField) getField(Volontario_.cellulare);
-//        fCellulare.setWidth("8em");
-//
-//        return fCellulare;
-//    }// end of method
 
     /**
      * Crea il placeholder per i brevetti, facoltativi
@@ -619,10 +476,6 @@ public class VolontarioForm extends ModuleForm {
         return (Volontario) getEntity();
     }
 
-    @Override
-    protected boolean save() {
-        return super.save();
-    }
 
     /**
      * Componente per il checkbox funzione, fatto di CheckBox e label HTML con icona

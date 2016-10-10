@@ -9,6 +9,8 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.servizio.ServizioTablePortal;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;

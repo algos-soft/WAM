@@ -1083,9 +1083,9 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
             codeCompanyUnico = null;
         } else {
             if (company != null) {
-                codeCompanyUnico = LibText.primaMaiuscola(company.getCompanyCode());
+                codeCompanyUnico = company.getCompanyCode().toLowerCase();
             }// end of if cycle
-            codeCompanyUnico += LibText.primaMaiuscola(getSigla());
+            codeCompanyUnico += getSigla().toLowerCase();
             valido = true;
         }// end of if/else cycle
 

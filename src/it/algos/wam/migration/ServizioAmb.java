@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by gac on 30 ago 2016.
  * <p>
- * Entity per una funzione
+ * Entity per un servizio
  * Entity della vecchia versione di webambulanze da cui migrare i dati. Solo lettura
  * <p>
  * Classe di tipo JavaBean
@@ -25,10 +25,10 @@ import java.util.List;
 @Table(name = "Tipo_turno")
 @Access(AccessType.PROPERTY)
 @ReadOnly
-public class ServizioAmb extends MigrationEntity {
+public class ServizioAmb extends BaseEntity {
 
     @ManyToOne
-    private Croce croce;
+    private CroceAmb croce;
 
     private String sigla;
     private String descrizione;
@@ -57,56 +57,6 @@ public class ServizioAmb extends MigrationEntity {
 
 
     /**
-     * Recupera una istanza della Entity usando la query per una property specifica
-     * Filtrato sulla company passata come parametro.
-     *
-     * @param company di appartenenza
-     * @param sigla   valore della property code
-     * @return istanza della Entity, null se non trovata
-     */
-    @SuppressWarnings("unchecked")
-    public static ServizioAmb findByCompanyAndSigla(Croce company, String sigla) {
-        ServizioAmb instance = null;
-        BaseEntity entity = null;
-        EntityManager manager = getManager();
-        List<ServizioAmb> entities;
-
-        Container.Filter filterA = new Compare.Equal(ServizioAmb_.croce.getName(), company);
-        Container.Filter filterB = new Compare.Equal(ServizioAmb_.sigla.getName(), sigla);
-        entities = (List<ServizioAmb>) AQuery.findAll(ServizioAmb.class, null, manager, filterA, filterB);
-        manager.close();
-
-        if (entities != null && entities.size() == 1) {
-            entity = entities.get(0);
-        }// end of if cycle
-
-        if (entity != null) {
-            instance = (ServizioAmb) entity;
-        }// end of if cycle
-
-        return instance;
-    }// end of method
-
-
-    /**
-     * Recupera una lista di tutti i records della Entity
-     * Nessun filtro sulla company
-     *
-     * @return lista di tutte le istanze della Entity
-     */
-    @SuppressWarnings("unchecked")
-    public static List<ServizioAmb> findAll() {
-        List<ServizioAmb> lista;
-        EntityManager manager = getManager();
-
-        lista = (List<ServizioAmb>) AQuery.findAll(ServizioAmb.class, manager);
-        manager.close();
-
-        return lista;
-    }// end of method
-
-
-    /**
      * Recupera una lista di tutti i records della Entity
      * Filtrato sulla company passata come parametro.
      *
@@ -114,22 +64,22 @@ public class ServizioAmb extends MigrationEntity {
      * @return lista delle istanze filtrate della Entity
      */
     @SuppressWarnings("unchecked")
-    public static List<ServizioAmb> findAll(Croce company) {
-        List<ServizioAmb> lista;
-        EntityManager manager = getManager();
+    public static List<ServizioAmb> findAll(CroceAmb company, EntityManager manager) {
+        List<ServizioAmb> lista = null;
 
-        lista = (List<ServizioAmb>) AQuery.findAll(ServizioAmb.class, ServizioAmb_.croce, company, manager);
-        manager.close();
+        if (manager != null) {
+            lista = (List<ServizioAmb>) AQuery.getList(ServizioAmb.class, ServizioAmb_.croce, company, manager);
+        }// end of if cycle
 
         return lista;
     }// end of method
 
 
-    public Croce getCroce() {
+    public CroceAmb getCroce() {
         return croce;
     }// end of getter method
 
-    public void setCroce(Croce croce) {
+    public void setCroce(CroceAmb croce) {
         this.croce = croce;
     }//end of setter method
 

@@ -2,6 +2,7 @@ package it.algos.wam.entity.wamcompany;
 
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Table;
@@ -9,6 +10,7 @@ import com.vaadin.ui.UI;
 import it.algos.wam.migration.Migration;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany_;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
@@ -68,25 +70,21 @@ public class WamCompanyMod extends ModulePop {
      * @param menu principale del modulo
      */
     private void addMenuFiltro(MenuBar.MenuItem menu) {
-        MenuBar.MenuItem menuItem = menu.addItem("Filtro", null, null);
-
-        menuFiltro = creaFiltri(menuItem);
+        menuFiltro = menu.addItem("Filtro", null, null);
+        creaFiltri();
     }// end of method
 
     /**
      * Creazione dei filtri singoli
-     *
-     * @param menuItem dei filtri
      */
-    private MenuBar.MenuItem creaFiltri(MenuBar.MenuItem menuItem) {
-        menuItem.removeChildren();
-        addCommandAllCroci(menuItem);
+    public void creaFiltri() {
+        menuFiltro.removeChildren();
+        addCommandAllCroci(menuFiltro);
 
         for (WamCompany company : WamCompany.findAll()) {
-            addCommandSingolaCroce(menuItem, company);
+            addCommandSingolaCroce(menuFiltro, company);
         }// end of for cycle
 
-        return menuItem;
     }// end of method
 
     /**
@@ -95,14 +93,15 @@ public class WamCompanyMod extends ModulePop {
      * @param menu principale del modulo
      */
     private void addMenuImport(MenuBar.MenuItem menu) {
+
         menu.addItem("Importa", null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 new Migration();
-                menuFiltro = creaFiltri(menuFiltro);
-                ;
+                creaFiltri();
                 getTable().refresh();
             }// end of inner method
         });// end of anonymous inner class
+
     }// end of method
 
     /**
@@ -111,7 +110,6 @@ public class WamCompanyMod extends ModulePop {
      * @param menuItem del modulo a cui aggiungere i sottomenu
      */
     private void addCommandAllCroci(MenuBar.MenuItem menuItem) {
-        MenuBar.MenuItem menu = null;
 
         menuItem.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -230,13 +228,8 @@ public class WamCompanyMod extends ModulePop {
      *
      */
     protected void fireCompanyChanged(WamCompany company) {
-        UI ui = getUI();
-        WamUI wamUI;
-
-        if (ui instanceof WamUI) {
-            wamUI = (WamUI) ui;
-            wamUI.fireCompanyChanged(company);
-        }// fine del blocco if
+        CompanySessionLib.setCompany(company);
+        Page.getCurrent().reload();
     }// end of method
 
 

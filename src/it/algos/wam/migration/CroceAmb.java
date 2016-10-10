@@ -4,10 +4,7 @@ import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.eclipse.persistence.annotations.ReadOnly;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -21,9 +18,10 @@ import java.util.List;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
+@Table(name = "Croce")
 @Access(AccessType.PROPERTY)
 @ReadOnly
-public class Croce extends MigrationEntity {
+public class CroceAmb extends BaseEntity {
 
     private String sigla;
     private String descrizione;
@@ -36,7 +34,7 @@ public class Croce extends MigrationEntity {
      * Costruttore senza argomenti
      * Necessario per le specifiche JavaBean
      */
-    public Croce() {
+    public CroceAmb() {
     }// end of constructor
 
 
@@ -46,16 +44,17 @@ public class Croce extends MigrationEntity {
      * @param sigla valore della property code
      * @return istanza della Entity, null se non trovata
      */
-    public static Croce findBySigla(String sigla) {
-        Croce instance = null;
-        EntityManager manager = getManager();
+    public static CroceAmb findBySigla(String sigla, EntityManager manager) {
+        CroceAmb instance = null;
+        BaseEntity entity = null;
 
-        BaseEntity entity = AQuery.getEntity(Croce.class, Croce_.sigla, sigla, manager);
-        manager.close();
+        if (manager != null) {
+            entity = AQuery.getEntity(CroceAmb.class, CroceAmb_.sigla, sigla, manager);
+        }// end of if cycle
 
         if (entity != null) {
-            if (entity instanceof Croce) {
-                instance = (Croce) entity;
+            if (entity instanceof CroceAmb) {
+                instance = (CroceAmb) entity;
             }// end of if cycle
         }// end of if cycle
 
@@ -69,12 +68,12 @@ public class Croce extends MigrationEntity {
      * @return lista di tutte le istanze della Entity
      */
     @SuppressWarnings("unchecked")
-    public static List<Croce> findAll() {
-        List<Croce> lista;
-        EntityManager manager = getManager();
+    public static List<CroceAmb> findAll(EntityManager manager) {
+        List<CroceAmb> lista = null;
 
-        lista = (List<Croce>) AQuery.getList(Croce.class, manager);
-        manager.close();
+        if (manager != null) {
+            lista = (List<CroceAmb>) AQuery.getList(CroceAmb.class, manager);
+        }// end of if cycle
 
         return lista;
     }// end of method

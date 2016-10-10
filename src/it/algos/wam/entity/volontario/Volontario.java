@@ -3,6 +3,7 @@ package it.algos.wam.entity.volontario;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.ui.Notification;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
@@ -15,7 +16,6 @@ import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.LibCrypto;
-import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.login.UserIF;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -93,7 +93,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     private String telefono = "";
     @AIField(type = AFType.date, caption = "Nascita", help = "Data di nascita (non obbligatoria)")
     private Date dataNascita = null;
-    @AIField(type = AFType.password, required = true,caption = "Password", prompt = "...", help = "Password iniziale modificabile solo dal volontario.")
+    @AIField(type = AFType.password, required = true, caption = "Password", prompt = "...", help = "Password iniziale modificabile solo dal volontario.")
     private String password = "";
     private String note = "";
 
@@ -101,7 +101,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Dati dell'associazione
      */
     @AIField(type = AFType.checkbox, caption = "Admin")
-    private Boolean admin = false;
+    private boolean admin = false;
     @AIField(type = AFType.checkbox, caption = "Dipendente")
     private boolean dipendente = false;
     @AIField(type = AFType.checkbox, caption = "Attivo")
@@ -135,6 +135,10 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList<>();
 
+    //--dal vecchio programma webambulanze - forse non vanno usate
+    private int oreAnno;
+    private int turniAnno;
+    private int oreExtra;
 
     //------------------------------------------------------------------------------------------------------------------------
     // Constructors
@@ -761,7 +765,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, Funzione... funzioni) {
-        return crea(company, manager, nome, cognome, "", email, "", false, funzioni);
+        return crea(company, manager, nome, cognome, "", email, "", false, null, null, null, funzioni);
     }// end of static method
 
     /**
@@ -779,7 +783,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, List<Funzione> listaFunz) {
-        return crea(company, manager, nome, cognome, cellulare, email, password, false, listaFunz.toArray(new Funzione[listaFunz.size()]));
+        return crea(company, manager, nome, cognome, cellulare, email, password, false, null, null, null, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
 
 
@@ -799,7 +803,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @return istanza di Volontario
      */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, boolean admin, List<Funzione> listaFunz) {
-        return crea(company, manager, nome, cognome, cellulare, email, password, admin, listaFunz.toArray(new Funzione[listaFunz.size()]));
+        return crea(company, manager, nome, cognome, cellulare, email, password, admin, null, null, null, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
 
     /**
@@ -814,10 +818,59 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param email     del volontario/milite
      * @param password  del volontario/milite (facoltativa)
      * @param admin     flag per il ruolo (facoltativa)
-     * @param funzioni  lista delle funzioni (facoltativa)
+     * @param sBLSD     del brevetto (facoltativa)
+     * @param sPNT      del brevetto (facoltativa)
+     * @param sBPHTP    del brevetto (facoltativa)
+     * @param listaFunz lista delle funzioni (facoltativa)
      * @return istanza di Volontario
      */
-    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, boolean admin, Funzione... funzioni) {
+    public static Volontario crea(
+            WamCompany company,
+            EntityManager manager,
+            String nome,
+            String cognome,
+            String cellulare,
+            String email,
+            String password,
+            boolean admin,
+            Date sBLSD,
+            Date sPNT,
+            Date sBPHTP,
+            List<Funzione> listaFunz) {
+        return crea(company, manager, nome, cognome, cellulare, email, password, admin, sBLSD, sPNT, sBPHTP, listaFunz.toArray(new Funzione[listaFunz.size()]));
+    }// end of static method
+
+    /**
+     * Creazione iniziale di un volontario
+     * Lo crea SOLO se non esiste già
+     *
+     * @param company       croce di appartenenza
+     * @param manager       the EntityManager to use
+     * @param nome          del volontario/milite (obbligatorio)
+     * @param cognome       del volontario/milite (obbligatorio)
+     * @param cellulare     del volontario/milite (facoltativo)
+     * @param email         del volontario/milite
+     * @param password      del volontario/milite (facoltativa)
+     * @param admin         flag per il ruolo (facoltativa)
+     * @param scadenzaBLSD  del brevetto (facoltativa)
+     * @param scadenzaPNT   del brevetto (facoltativa)
+     * @param scadenzaBPHTP del brevetto (facoltativa)
+     * @param funzioni      lista delle funzioni (facoltativa)
+     * @return istanza di Volontario
+     */
+    public static Volontario crea(
+            WamCompany company,
+            EntityManager manager,
+            String nome,
+            String cognome,
+            String cellulare,
+            String email,
+            String password,
+            boolean admin,
+            Date scadenzaBLSD,
+            Date scadenzaPNT,
+            Date scadenzaBPHTP,
+            Funzione... funzioni) {
         Volontario vol = Volontario.find(company, nome, cognome);
 
         if (vol == null) {
@@ -828,6 +881,9 @@ public class Volontario extends WamCompanyEntity implements UserIF {
             vol.setAdmin(admin);
             vol.setDipendente(false);
             vol.setAttivo(true);
+            vol.setScadenzaBLSD(scadenzaBLSD);
+            vol.setScadenzaNonTrauma(scadenzaPNT);
+            vol.setScadenzaTrauma(scadenzaBPHTP);
 
             if (funzioni != null) {
                 for (Funzione funz : funzioni) {
@@ -1002,7 +1058,39 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         this.scadenzaNonTrauma = scadenzaNonTrauma;
     }//end of setter method
 
-//------------------------------------------------------------------------------------------------------------------------
+    public boolean getAdmin() {
+        return admin;
+    }// end of getter method
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }//end of setter method
+
+    public int getOreAnno() {
+        return oreAnno;
+    }// end of getter method
+
+    public void setOreAnno(int oreAnno) {
+        this.oreAnno = oreAnno;
+    }//end of setter method
+
+    public int getTurniAnno() {
+        return turniAnno;
+    }// end of getter method
+
+    public void setTurniAnno(int turniAnno) {
+        this.turniAnno = turniAnno;
+    }//end of setter method
+
+    public int getOreExtra() {
+        return oreExtra;
+    }// end of getter method
+
+    public void setOreExtra(int oreExtra) {
+        this.oreExtra = oreExtra;
+    }//end of setter method
+
+    //------------------------------------------------------------------------------------------------------------------------
     // Save
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -1113,9 +1201,9 @@ public class Volontario extends WamCompanyEntity implements UserIF {
             codeCompanyUnico = null;
         } else {
             if (company != null) {
-                codeCompanyUnico = LibText.primaMaiuscola(company.getCompanyCode());
+                codeCompanyUnico = company.getCompanyCode().toLowerCase();
             }// end of if cycle
-            codeCompanyUnico += LibText.primaMaiuscola(getCognome()) + LibText.primaMaiuscola(getNome());
+            codeCompanyUnico += getCognome().toLowerCase() + getNome().toLowerCase();
             valido = true;
         }// end of if/else cycle
 
@@ -1134,23 +1222,39 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
     public String getPassword() {
         String pass = null;
-        if (password != null) {
+
+//        if (password != null) {
+//            pass = LibCrypto.decrypt(password);
+//        }
+
+        if (WAMApp.PASSWORD_CRIPTATE) {
             pass = LibCrypto.decrypt(password);
-        }
+        } else {
+            pass = password;
+        }// end of if/else cycle
+
         return pass;
-    }
+    }// end of method
 
     public void setPassword(String password) {
         String pass = null;
-        if (password != null) {
+
+//        if (password != null) {
+//            pass = LibCrypto.encrypt(password);
+//        }
+
+        if (WAMApp.PASSWORD_CRIPTATE) {
             pass = LibCrypto.encrypt(password);
-        }
+        } else {
+            pass = password;
+        }// end of if/else cycle
+
         this.password = pass;
-    }
+    }// end of method
 
     public String getEncryptedPassword() {
         return password;
-    }
+    }// end of method
 
     @Override
     /**
@@ -1220,10 +1324,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      */
     public boolean isAdmin() {
         return admin;
-    }
-
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
     }
 
 

@@ -7,7 +7,7 @@ import javax.persistence.metamodel.SingularAttribute;
  * Entity della vecchia versione di webambulanze da cui migrare i dati
  */
 public class FunzioneAmb_ {
-    public static volatile SingularAttribute<FunzioneAmb, Croce> croce;
+    public static volatile SingularAttribute<FunzioneAmb, CroceAmb> croce;
     public static volatile SingularAttribute<FunzioneAmb, String> sigla;
     public static volatile SingularAttribute<FunzioneAmb, String> descrizione;
     public static volatile SingularAttribute<FunzioneAmb, Integer> ordine;

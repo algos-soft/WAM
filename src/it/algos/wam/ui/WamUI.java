@@ -36,6 +36,7 @@ import it.algos.webbase.domain.utente.UtenteModulo;
 import it.algos.webbase.domain.vers.VersMod;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.AlgosApp;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
 import it.algos.webbase.web.menu.AMenuBar;
@@ -187,7 +188,7 @@ public class WamUI extends UI {
         String password = request.getParameter("password");
         if (utente != null && !utente.equals("")) {
 
-            Volontario vol= Volontario.findByCognomeAndPassword(utente,password);
+            Volontario vol = Volontario.findByCognomeAndPassword(utente, password);
 
             List<Volontario> militiPerCognome = (List<Volontario>) CompanyQuery.queryList(Volontario.class, Volontario_.cognome, utente);
 //           Object alfa= CompanyQuery.queryOne(Volontario.class,Volontario_.cognome,utente);
@@ -280,6 +281,7 @@ public class WamUI extends UI {
      */
     private WamCompany fixCompanySession() {
         WamCompany company = null;
+        WamCompany oldCompanySession = (WamCompany) CompanySessionLib.getCompany();
 
         // recupero il codice della company dall'url
         URI uri = Page.getCurrent().getLocation();
@@ -300,6 +302,10 @@ public class WamUI extends UI {
                 company = WamCompany.findByCode(WamCompany.DEMO_COMPANY_CODE);
             }// end of if cycle
         }
+
+        if (company == null && oldCompanySession != null) {
+            company = oldCompanySession;
+        }// end of if cycle
 
         // registra la company nella sessione
         CompanySessionLib.setCompany(company);

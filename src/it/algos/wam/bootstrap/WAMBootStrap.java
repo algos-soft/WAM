@@ -2,17 +2,11 @@ package it.algos.wam.bootstrap;
 
 import it.algos.wam.WAMApp;
 import it.algos.wam.daemons.WamScheduler;
-import it.algos.wam.migration.Croce;
-import it.algos.wam.migration.Croce_;
 import it.algos.wam.settings.ManagerPrefs;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.web.AlgosApp;
 import it.algos.webbase.web.bootstrap.ABootStrap;
-import it.algos.webbase.web.query.AQuery;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import java.util.List;

@@ -65,10 +65,13 @@
 
         <!--Le entity astratte (@MappedSuperclass) vanno obbligatoriamente listate-->
         <class>it.algos.webbase.web.entity.BaseEntity</class>
-        <class>it.algos.wam.migration.MigrationEntity</class>
-        <class>it.algos.wam.migration.Croce</class>
+        <class>it.algos.wam.migration.CroceAmb</class>
         <class>it.algos.wam.migration.FunzioneAmb</class>
         <class>it.algos.wam.migration.ServizioAmb</class>
+        <class>it.algos.wam.migration.VolontarioAmb</class>
+        <class>it.algos.wam.migration.UtenteAmb</class>
+        <class>it.algos.wam.migration.UtenteRuoloAmb</class>
+        <class>it.algos.wam.migration.MiliteFunzioneAmb</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

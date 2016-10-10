@@ -39,4 +39,5 @@ public class VolontarioTablePortal extends WamTablePortal {
         getTable().refresh();
     }// end of method
 
+
 }// end of class

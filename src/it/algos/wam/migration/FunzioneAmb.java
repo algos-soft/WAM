@@ -1,7 +1,5 @@
 package it.algos.wam.migration;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.util.filter.Compare;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
 import org.eclipse.persistence.annotations.ReadOnly;
@@ -26,10 +24,11 @@ import java.util.List;
 @Table(name = "Funzione")
 @Access(AccessType.PROPERTY)
 @ReadOnly
-public class FunzioneAmb extends MigrationEntity {
+public class FunzioneAmb extends BaseEntity {
 
+    //--croce di riferimento
     @ManyToOne
-    private Croce croce;
+    private CroceAmb croce;
 
     private String sigla;
     private String descrizione;
@@ -46,66 +45,19 @@ public class FunzioneAmb extends MigrationEntity {
     }// end of constructor
 
 
-
     /**
      * Recupera una istanza della Entity usando la query standard della Primary Key
      * Nessun filtro sulla company, perché la primary key è unica
      *
-     * @param id      valore (unico) della Primary Key
+     * @param id valore (unico) della Primary Key
      * @return istanza della Entity, null se non trovata
      */
-    public static FunzioneAmb find(long id) {
-        return (FunzioneAmb) AQuery.find(FunzioneAmb.class, id, getManager());
+    public static FunzioneAmb find(long id, EntityManager manager) {
+        if (manager != null) {
+            return (FunzioneAmb) AQuery.find(FunzioneAmb.class, id, manager);
+        }// end of if cycle
+        return null;
     }// end of static method
-
-    /**
-     * Recupera una istanza della Entity usando la query per una property specifica
-     * Filtrato sulla company passata come parametro.
-     *
-     * @param company di appartenenza
-     * @param sigla   valore della property code
-     * @return istanza della Entity, null se non trovata
-     */
-    @SuppressWarnings("unchecked")
-    public static FunzioneAmb findByCompanyAndSigla(Croce company, String sigla) {
-        FunzioneAmb instance = null;
-        BaseEntity entity = null;
-        EntityManager manager = getManager();
-        List<FunzioneAmb> entities;
-
-        Container.Filter filterA = new Compare.Equal(FunzioneAmb_.croce.getName(), company);
-        Container.Filter filterB = new Compare.Equal(FunzioneAmb_.sigla.getName(), sigla);
-        entities = (List<FunzioneAmb>) AQuery.getList(FunzioneAmb.class, null, manager, filterA, filterB);
-        manager.close();
-
-        if (entities != null && entities.size() == 1) {
-            entity = entities.get(0);
-        }// end of if cycle
-
-        if (entity != null) {
-            instance = (FunzioneAmb) entity;
-        }// end of if cycle
-
-        return instance;
-    }// end of method
-
-
-    /**
-     * Recupera una lista di tutti i records della Entity
-     * Nessun filtro sulla company
-     *
-     * @return lista di tutte le istanze della Entity
-     */
-    @SuppressWarnings("unchecked")
-    public static List<FunzioneAmb> findAll() {
-        List<FunzioneAmb> lista;
-        EntityManager manager = getManager();
-
-        lista = (List<FunzioneAmb>) AQuery.findAll(FunzioneAmb.class, manager);
-        manager.close();
-
-        return lista;
-    }// end of method
 
 
     /**
@@ -116,22 +68,22 @@ public class FunzioneAmb extends MigrationEntity {
      * @return lista delle istanze filtrate della Entity
      */
     @SuppressWarnings("unchecked")
-    public static List<FunzioneAmb> findAll(Croce company) {
-        List<FunzioneAmb> lista;
-        EntityManager manager = getManager();
+    public static List<FunzioneAmb> findAll(CroceAmb company, EntityManager manager) {
+        List<FunzioneAmb> lista = null;
 
-        lista = (List<FunzioneAmb>) AQuery.findAll(FunzioneAmb.class, FunzioneAmb_.croce, company, manager);
-        manager.close();
+        if (manager != null) {
+            lista = (List<FunzioneAmb>) AQuery.getList(FunzioneAmb.class, FunzioneAmb_.croce, company, manager);
+        }// end of if cycle
 
         return lista;
     }// end of method
 
 
-    public Croce getCroce() {
+    public CroceAmb getCroce() {
         return croce;
     }// end of getter method
 
-    public void setCroce(Croce croce) {
+    public void setCroce(CroceAmb croce) {
         this.croce = croce;
     }//end of setter method
 

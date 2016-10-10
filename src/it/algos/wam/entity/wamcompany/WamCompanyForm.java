@@ -4,9 +4,11 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import it.algos.wam.bootstrap.BootService;
 import it.algos.wam.ui.WamUI;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.field.CheckBoxField;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibBean;
@@ -232,18 +234,19 @@ public class WamCompanyForm extends ModuleForm {
     /**
      * La company (croce) è stata creata/cambiata.
      * Spedisce un avviso a tutti i listener.
-     *
      */
     protected void fireCompanyAdded(WamCompany company) {
         UI ui = getModule().getUI();
         WamUI wamUI;
+        WamCompanyMod mod;
 
         if (ui instanceof WamUI) {
             wamUI = (WamUI) ui;
             wamUI.fireCompanyAdded(company);
             wamUI.fireCompanyChanged(company);
         }// fine del blocco if
-
+        CompanySessionLib.setCompany(company);
+        Page.getCurrent().reload();
     }// end of method
 
 }// end of form class

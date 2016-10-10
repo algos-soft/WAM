@@ -11,7 +11,6 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -315,7 +314,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
+     * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione getEntityByCompanyAndCode(WamCompany company, String code) {
@@ -328,7 +327,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
+     * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
@@ -842,9 +841,9 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             codeCompanyUnico = null;
         } else {
             if (company != null) {
-                codeCompanyUnico = LibText.primaMaiuscola(company.getCompanyCode());
+                codeCompanyUnico = company.getCompanyCode().toLowerCase();
             }// end of if cycle
-            codeCompanyUnico += LibText.primaMaiuscola(getCode());
+            codeCompanyUnico += getCode().toLowerCase();
             valido = true;
         }// end of if/else cycle
 
