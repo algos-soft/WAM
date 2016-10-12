@@ -15,7 +15,6 @@ import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.lib.LibArray;
-import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.AQuery;
 import it.algos.webbase.web.query.SortProperty;
 import org.apache.commons.beanutils.BeanUtils;
@@ -372,6 +371,32 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      */
     public static Servizio getEntityByCompanyAndSigla(WamCompany company, String sigla, EntityManager manager) {
         return (Servizio) CompanyQuery.getEntity(Servizio.class, Servizio_.sigla, sigla, company, manager);
+    }// end of static method
+
+    /**
+     * Controlla che esista una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
+     * @param manager the EntityManager to use
+     * @return vero se esiste Entity, false se non trovata
+     */
+    public static boolean isEntityByCompanyAndSigla(WamCompany company, String sigla, EntityManager manager) {
+        return getEntityByCompanyAndSigla(company, sigla, manager) != null;
+    }// end of static method
+
+    /**
+     * Controlla che non esista una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
+     * @param manager the EntityManager to use
+     * @return vero se esiste Entity, false se non trovata
+     */
+    public static boolean isNotEntityByCompanyAndSigla(WamCompany company, String sigla, EntityManager manager) {
+        return !isEntityByCompanyAndSigla(company, sigla, manager);
     }// end of static method
 
 
@@ -768,10 +793,10 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
             int minutiFine,
             EntityManager manager,
             List<ServizioFunzione> servizioFunzioni) {
-        Servizio servizio = Servizio.getEntityByCompanyAndSigla(company, sigla, manager);
+        Servizio servizio = null;
         ServizioFunzione servFunz;
 
-        if (servizio == null) {
+        if (isNotEntityByCompanyAndSigla(company, sigla, manager)) {
             try { // prova ad eseguire il codice
                 servizio = new Servizio(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine);
                 servizio.setMinutiInizio(minutiInizio);

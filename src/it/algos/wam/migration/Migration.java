@@ -2,8 +2,10 @@ package it.algos.wam.migration;
 
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.Organizzazione;
 import it.algos.wam.entity.wamcompany.WamCompany;
@@ -125,6 +127,8 @@ public class Migration {
         WamCompany companyNew = WamCompany.findByCode(siglaCompanyNew);
         List<WrapFunzione> listaWrapFunzioni;
         List<Funzione> listaFunzioniNew;
+        List<WrapServizio> listaWrapServizi;
+        List<WrapVolontario> listaWrapVolontari;
 
         if (companyNew != null) {
             companyNew.delete();
@@ -133,8 +137,9 @@ public class Migration {
         companyNew = importSingolaCroce(companyOld, siglaCompanyNew);
         listaWrapFunzioni = importFunzioni(companyOld, companyNew);
         listaFunzioniNew = getSoloFunzioniNew(listaWrapFunzioni);
-        importServizi(companyOld, companyNew, listaFunzioniNew);
-        importaVolontari(companyOld, companyNew, listaWrapFunzioni);
+        listaWrapServizi = importServizi(companyOld, companyNew, listaFunzioniNew);
+        listaWrapVolontari = importaVolontari(companyOld, companyNew, listaWrapFunzioni);
+        importaTurni(companyOld, companyNew, listaWrapServizi, listaWrapVolontari);
     }// end of method
 
     /**
@@ -172,13 +177,13 @@ public class Migration {
      */
     private List<WrapFunzione> importFunzioni(CroceAmb companyOld, WamCompany companyNew) {
         List<WrapFunzione> listaWrapFunzioni = new ArrayList<>();
-        Funzione funzioneNuova;
+        Funzione funzioneNew;
         List<FunzioneAmb> listaFunzioniOld = FunzioneAmb.findAll(companyOld, MANAGER);
 
         if (listaFunzioniOld != null && listaFunzioniOld.size() > 0) {
             for (FunzioneAmb funzioneOld : listaFunzioniOld) {
-                funzioneNuova = creaSingolaFunzione(companyNew, funzioneOld);
-                listaWrapFunzioni.add(new WrapFunzione(funzioneOld, funzioneNuova));
+                funzioneNew = creaSingolaFunzione(companyNew, funzioneOld);
+                listaWrapFunzioni.add(new WrapFunzione(funzioneOld, funzioneNew));
             }// end of for cycle
         }// end of if cycle
 
@@ -241,19 +246,19 @@ public class Migration {
      * @param companyNew    company usata in wam
      * @param listaFunzioni nuove appena create
      */
-    private List<Servizio> importServizi(CroceAmb companyOld, WamCompany companyNew, List<Funzione> listaFunzioni) {
-        List<Servizio> listaServiziNuovi = new ArrayList<>();
+    private List<WrapServizio> importServizi(CroceAmb companyOld, WamCompany companyNew, List<Funzione> listaFunzioni) {
+        List<WrapServizio> listaWrapServizi = new ArrayList<>();
         List<ServizioAmb> lista = ServizioAmb.findAll(companyOld, MANAGER);
-        Servizio servizioCreato;
+        Servizio servizioNew;
 
         if (lista != null && lista.size() > 0) {
-            for (ServizioAmb serv : lista) {
-                servizioCreato = creaSingoloServizio(companyNew, serv, listaFunzioni);
-                listaServiziNuovi.add(servizioCreato);
+            for (ServizioAmb servizioOld : lista) {
+                servizioNew = creaSingoloServizio(companyNew, servizioOld, listaFunzioni);
+                listaWrapServizi.add(new WrapServizio(servizioOld, servizioNew));
             }// end of for cycle
         }// end of if cycle
 
-        return listaServiziNuovi;
+        return listaWrapServizi;
     }// end of method
 
     /**
@@ -328,24 +333,24 @@ public class Migration {
     /**
      * Importa i volontari della croce
      *
-     * @param companyOld        company usata in webambulanze
-     * @param companyNew        company usata in wam
-     * @param listaWrapFunzioni vecchie e nuove appena create
+     * @param companyOld           company usata in webambulanze
+     * @param companyNew           company usata in wam
+     * @param listaWrapFunzioniAll vecchie e nuove appena create
      */
-    private List<Volontario> importaVolontari(CroceAmb companyOld, WamCompany companyNew, List<WrapFunzione> listaWrapFunzioniAll) {
-        List<Volontario> listaVolontariNuovi = new ArrayList<>();
+    private List<WrapVolontario> importaVolontari(CroceAmb companyOld, WamCompany companyNew, List<WrapFunzione> listaWrapFunzioniAll) {
+        List<WrapVolontario> listaWrapVolontari = new ArrayList<>();
         List<VolontarioAmb> listaVolontari = VolontarioAmb.findAll(companyOld, MANAGER);
-        Volontario volontarioCreato = null;
+        Volontario volontarioNew = null;
         List<UtenteAmb> listaUtenti = UtenteAmb.getList(MANAGER);
 
         if (listaVolontari != null && listaVolontari.size() > 0) {
-            for (VolontarioAmb vol : listaVolontari) {
-                volontarioCreato = creaSingoloVolontario(companyNew, listaUtenti, vol, listaWrapFunzioniAll);
-                listaVolontariNuovi.add(volontarioCreato);
+            for (VolontarioAmb volontarioOld : listaVolontari) {
+                volontarioNew = creaSingoloVolontario(companyNew, listaUtenti, volontarioOld, listaWrapFunzioniAll);
+                listaWrapVolontari.add(new WrapVolontario(volontarioOld, volontarioNew));
             }// end of for cycle
         }// end of if cycle
 
-        return listaVolontariNuovi;
+        return listaWrapVolontari;
     }// end of method
 
     /**
@@ -516,6 +521,129 @@ public class Migration {
         return listaFunzioniNew;
     }// end of method
 
+    private List<Turno> importaTurni(CroceAmb companyOld, WamCompany companyNew, List<WrapServizio> listaWrapServizi, List<WrapVolontario> listaWrapVolontari) {
+        List<TurnoAmb> listaTurniOld = TurnoAmb.findAll(companyOld, MANAGER);
+        List<Turno> listaTurniNew = new ArrayList<>();
+        Turno turnoNew;
+
+        if (listaTurniOld != null && listaTurniOld.size() > 0) {
+            for (TurnoAmb turnoOld : listaTurniOld) {
+                turnoNew = creaSingoloTurno(companyNew, turnoOld, listaWrapServizi, listaWrapVolontari);
+                listaTurniNew.add(turnoNew);
+            }// end of for cycle
+        }// end of if cycle
+
+        return listaTurniNew;
+    }// end of method
+
+    private Turno creaSingoloTurno(WamCompany companyNew, TurnoAmb turnoOld, List<WrapServizio> listaWrapServizi, List<WrapVolontario> listaWrapVolontari) {
+        Turno turnoNew = null;
+        Servizio servizio = recuperaServizio(turnoOld, listaWrapServizi);
+        Date inizio = turnoOld.getInizio();
+        Date fine = turnoOld.getFine();
+        List<Iscrizione> iscrizioni = null;
+        String titoloExtra = turnoOld.getTitolo_extra();
+        String localitaExtra = turnoOld.getLocalità_extra();
+        String note = turnoOld.getNote();
+
+        turnoNew = Turno.crea(companyNew, servizio, inizio, fine, MANAGER);
+        turnoNew.setIscrizioni(recuperaIscrizioni(turnoOld, turnoNew, listaWrapVolontari));
+        turnoNew.setTitoloExtra(titoloExtra);
+        turnoNew.setLocalitaExtra(localitaExtra);
+        turnoNew.setNote(note);
+        turnoNew.save(MANAGER);
+
+        return turnoNew;
+    }// end of method
+
+    private Servizio recuperaServizio(TurnoAmb turnoOld, List<WrapServizio> listaWrapServizi) {
+        Servizio servizioNew = null;
+        ServizioAmb servizioOld = null;
+
+        if (turnoOld != null) {
+            servizioOld = turnoOld.getTipo_turno();
+            servizioNew = recuperaServizioNew(listaWrapServizi, servizioOld);
+        }// end of if cycle
+
+        return servizioNew;
+    }// end of method
+
+
+    private Servizio recuperaServizioNew(List<WrapServizio> listaWrapServizi, ServizioAmb servizioOld) {
+        Servizio servizioNew = null;
+
+        if (listaWrapServizi != null && servizioOld != null) {
+            for (WrapServizio wrap : listaWrapServizi) {
+                if (wrap.getServizioOld().equals(servizioOld)) {
+                    servizioNew = wrap.getServizioNew();
+                    break;
+                }// end of if cycle
+            }// end of for cycle
+        }// end of if cycle
+
+        return servizioNew;
+    }// end of method
+
+    private List<Iscrizione> recuperaIscrizioni(TurnoAmb turnoOld, Turno turnoNew, List<WrapVolontario> listaWrapVolontari) {
+        List<Iscrizione> iscrizioni = new ArrayList<>();
+        Iscrizione iscrizione;
+        VolontarioAmb volontarioOld;
+        Volontario volontarioNew;
+        ServizioFunzione serFunz = null;
+
+        iscrizione = recuperaIscrizione1(turnoOld, turnoNew, listaWrapVolontari);
+        if (iscrizione != null) {
+            iscrizioni.add(iscrizione);
+        }// end of if cycle
+
+        volontarioOld = turnoOld.getMilite_funzione1();
+//        if (volontarioOld != null) {
+//            isc = new Iscrizione();
+//            isc.setTurno(turnoNew);
+//            volontarioNew = null;
+//            isc.setVolontario(volontarioNew);
+//            isc.setServizioFunzione(serFunz);
+//        }// end of if cycle
+
+
+        return iscrizioni;
+    }// end of method
+
+
+    private Iscrizione recuperaIscrizione1(TurnoAmb turnoOld, Turno turnoNew, List<WrapVolontario> listaWrapVolontari) {
+        Iscrizione iscrizione = null;
+        VolontarioAmb volontarioOld;
+        Volontario volontarioNew;
+        ServizioFunzione serFunz = null;
+
+        volontarioOld = turnoOld.getMilite_funzione1();
+        if (volontarioOld != null) {
+            volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
+            iscrizione = new Iscrizione();
+            iscrizione.setTurno(turnoNew);
+            iscrizione.setVolontario(volontarioNew);
+            iscrizione.setServizioFunzione(serFunz);
+            iscrizione.save(MANAGER);
+        }// end of if cycle
+
+
+        return iscrizione;
+    }// end of method
+
+    private Volontario recuperaVolontarioNew(List<WrapVolontario> listaWrapVolontari, VolontarioAmb volontarioOld) {
+        Volontario volontarioNew = null;
+
+        if (volontarioNew != null) {
+            for (WrapVolontario wrap : listaWrapVolontari) {
+                if (wrap.getVolontarioOld().equals(volontarioOld)) {
+                    volontarioNew = wrap.getVolontarioNew();
+                    break;
+                }// end of if cycle
+            }// end of for cycle
+        }// end of if cycle
+
+        return volontarioNew;
+    }// end of method
 
     private class WrapFunzione {
         FunzioneAmb funzioneOld;
@@ -540,6 +668,58 @@ public class Migration {
 
         public void setFunzioneNew(Funzione funzioneNew) {
             this.funzioneNew = funzioneNew;
+        }//end of setter method
+    }// end of internal class
+
+    private class WrapServizio {
+        ServizioAmb servizioOld;
+        Servizio servizioNew;
+
+        public WrapServizio(ServizioAmb servizioOld, Servizio servizioNew) {
+            this.setServizioOld(servizioOld);
+            this.setServizioNew(servizioNew);
+        }// end of constructor
+
+        public ServizioAmb getServizioOld() {
+            return servizioOld;
+        }// end of getter method
+
+        public void setServizioOld(ServizioAmb servizioOld) {
+            this.servizioOld = servizioOld;
+        }//end of setter method
+
+        public Servizio getServizioNew() {
+            return servizioNew;
+        }// end of getter method
+
+        public void setServizioNew(Servizio servizioNew) {
+            this.servizioNew = servizioNew;
+        }//end of setter method
+    }// end of internal class
+
+    private class WrapVolontario {
+        VolontarioAmb volontarioOld;
+        Volontario volontarioNew;
+
+        public WrapVolontario(VolontarioAmb volontarioOld, Volontario volontarioNew) {
+            this.setVolontarioOld(volontarioOld);
+            this.setVolontarioNew(volontarioNew);
+        }// end of constructor
+
+        public VolontarioAmb getVolontarioOld() {
+            return volontarioOld;
+        }// end of getter method
+
+        public void setVolontarioOld(VolontarioAmb volontarioOld) {
+            this.volontarioOld = volontarioOld;
+        }//end of setter method
+
+        public Volontario getVolontarioNew() {
+            return volontarioNew;
+        }// end of getter method
+
+        public void setVolontarioNew(Volontario volontarioNew) {
+            this.volontarioNew = volontarioNew;
         }//end of setter method
     }// end of internal class
 

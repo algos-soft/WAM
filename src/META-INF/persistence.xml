@@ -72,6 +72,7 @@
         <class>it.algos.wam.migration.UtenteAmb</class>
         <class>it.algos.wam.migration.UtenteRuoloAmb</class>
         <class>it.algos.wam.migration.MiliteFunzioneAmb</class>
+        <class>it.algos.wam.migration.TurnoAmb</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

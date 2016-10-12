@@ -41,7 +41,7 @@ public class Turno extends WamCompanyEntity {
 
     // servizio di riferimento
     @ManyToOne
-    private Servizio servizio;
+    private Servizio servizio = null;
 
     // iscrizioni dei volontari a questo turno
     @OneToMany(mappedBy = "turno", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -65,11 +65,11 @@ public class Turno extends WamCompanyEntity {
     private Date fine;
 
     //--motivazione del turno extra
-    private String titoloExtra;
+    private String titoloExtra = "";
     //--nome evidenziato della località per turni extra
-    private String localitaExtra;
+    private String localitaExtra = "";
     //--descrizione dei viaggi extra
-    private String note;
+    private String note = "";
 
     //--turno previsto (vuoto) oppure assegnato (militi inseriti)
     private boolean assegnato = false;
@@ -101,7 +101,6 @@ public class Turno extends WamCompanyEntity {
      * Recupera una istanza di Turno usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
-     *
      * @return istanza di Turno, null se non trovata
      */
     public static Turno find(long id) {
@@ -121,7 +120,6 @@ public class Turno extends WamCompanyEntity {
      * Recupera una lista di Turni usando la chiave specifica
      *
      * @param chiave indicizzata per query più veloci e 'mirate' (obbligatoria)
-     *
      * @return lista di Turni, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -151,7 +149,6 @@ public class Turno extends WamCompanyEntity {
      *
      * @param servizio tipologia di servizio (obbligatoria)
      * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
-     *
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -175,7 +172,6 @@ public class Turno extends WamCompanyEntity {
      * @param company  croce di appartenenza
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
-     *
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -188,7 +184,6 @@ public class Turno extends WamCompanyEntity {
      *
      * @param company croce di appartenenza
      * @param chiave  indicizzata per query più veloci e 'mirate' (obbligatoria)
-     *
      * @return istanza di Turno, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -210,7 +205,6 @@ public class Turno extends WamCompanyEntity {
      *
      * @param servizio tipologia di servizio (obbligatoria)
      * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
-     *
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -247,7 +241,6 @@ public class Turno extends WamCompanyEntity {
      *
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
-     *
      * @return istanza di Servizio, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -289,11 +282,18 @@ public class Turno extends WamCompanyEntity {
      * @param manager  the EntityManager to use
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
-     *
      * @return istanza di turno
      */
     public static Turno crea(WamCompany company, EntityManager manager, Servizio servizio, Date inizio) {
         return crea(company, manager, servizio, inizio, null, false);
+    }// end of static method
+
+    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine) {
+        return crea(company, (EntityManager) null, servizio, inizio, fine, false);
+    }// end of static method
+
+    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, EntityManager manager) {
+        return crea(company, manager, servizio, inizio, fine, false);
     }// end of static method
 
     /**
@@ -306,7 +306,6 @@ public class Turno extends WamCompanyEntity {
      * @param inizio    giorno, ora e minuto di inizio turno
      * @param fine      giorno, ora e minuto di fine turno
      * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
-     *
      * @return istanza di turno
      */
     public static Turno crea(WamCompany company, EntityManager manager, Servizio servizio, Date inizio, Date fine, boolean assegnato) {
@@ -323,7 +322,7 @@ public class Turno extends WamCompanyEntity {
         }// end of if cycle
 
         if (turno == null) {
-            if (servizio != null && servizio.isOrario()) {
+            if (fine == null && servizio.isOrario()) {
                 fine = inizio;
             }// end of if cycle
 
@@ -389,9 +388,9 @@ public class Turno extends WamCompanyEntity {
         this.inizio = inizio;
 
         // regola la chiave (campo calcolato)
-        if(inizio!=null){
+        if (inizio != null) {
             fixChiave();
-        }else{
+        } else {
             setChiave(0);
         }
 
@@ -415,11 +414,11 @@ public class Turno extends WamCompanyEntity {
      */
     public LocalDateTime getStartTime() {
         Timestamp timestamp = Timestamp.valueOf(getData1().atStartOfDay());
-        LocalDateTime ldt=timestamp.toLocalDateTime();
+        LocalDateTime ldt = timestamp.toLocalDateTime();
         int hours = getServizio().getOraInizio();
-        ldt=ldt.plusHours(hours);
+        ldt = ldt.plusHours(hours);
         int mins = getServizio().getMinutiInizio();
-        ldt=ldt.plusMinutes(mins);
+        ldt = ldt.plusMinutes(mins);
         return ldt;
     }
 
@@ -524,13 +523,12 @@ public class Turno extends WamCompanyEntity {
      * Recupera la eventuale iscrizione a una data funzione.
      *
      * @param sf il ServizioFunzione
-     *
      * @return l'iscrizione
      */
     public Iscrizione getIscrizione(ServizioFunzione sf) {
         Iscrizione iscrizione = null;
         for (Iscrizione i : getIscrizioni()) {
-            if(i!=null){
+            if (i != null) {
                 ServizioFunzione s = i.getServizioFunzione();
                 if (s != null) {
                     if (s.equals(sf)) {

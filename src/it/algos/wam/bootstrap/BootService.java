@@ -83,6 +83,7 @@ public abstract class BootService {
 
         creaPreferenze(company);
         listaFunzioni = creaFunzioni(company, manager);
+//        creaFunzioniDipendenti(listaFunzioni);
         listaServizi = creaServizi(company, manager, listaFunzioni);
         listaVolontari = creaVolontari(company, manager, listaFunzioni);
 
@@ -219,6 +220,36 @@ public abstract class BootService {
             FontAwesome glyph) {
 
         return Funzione.crea(company, code, sigla, descrizione, glyph, manager);
+    }// end of static method
+
+
+    private static void creaFunzioniDipendenti(ArrayList<Funzione> listaFunzioni) {
+        String companyCode;
+        ArrayList<Funzione> listaFunzioniDerivate;
+        Funzione funzDer;
+
+        for (Funzione funz : listaFunzioni) {
+            companyCode = funz.getCompany().getCompanyCode();
+            listaFunzioniDerivate = new ArrayList<>();
+
+            switch (companyCode) {
+                case WAMApp.DEMO_COMPANY_CODE:
+                    break;
+                case WAMApp.TEST_COMPANY_CODE:
+                    break;
+                default: // caso non definito
+                    if (funz.getCode().equals("autmsa")) {
+                        funzDer = listaFunzioni.get(3);
+//                        funzDer.setFunzione(funz);
+                        listaFunzioniDerivate.add(listaFunzioni.get(3));
+//                        funz.setFunzioneFunzioni(listaFunzioniDerivate);
+                        funzDer.save();
+                        funz.save();
+                    }// end of if cycle
+                    break;
+            } // fine del blocco switch
+        }// end of for cycle
+
     }// end of static method
 
     /**

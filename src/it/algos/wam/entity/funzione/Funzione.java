@@ -103,6 +103,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList<>();
 
+//    @OneToMany(mappedBy = "funzione")
+//    @CascadeOnDelete
+//    private List<Funzione> funzioneFunzioni = new ArrayList<>();
+//
+//    @ManyToOne
+//    private Funzione funzione = null;
 
     //------------------------------------------------------------------------------------------------------------------------
     // Constructors
@@ -335,6 +341,32 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return (Funzione) CompanyQuery.getEntity(Funzione.class, Funzione_.code, code, company, manager);
     }// end of static method
 
+    /**
+     * Controlla che esista una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
+     * @param manager the EntityManager to use
+     * @return vero se esiste Entity, false se non trovata
+     */
+    public static boolean isEntityByCompanyAndCode(WamCompany company, String code, EntityManager manager) {
+        return getEntityByCompanyAndCode(company, code, manager) != null;
+    }// end of static method
+
+    /**
+     * Controlla che non esista una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla azienda passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
+     * @param manager the EntityManager to use
+     * @return vero se esiste Entity, false se non trovata
+     */
+    public static boolean isNotEntityByCompanyAndCode(WamCompany company, String code, EntityManager manager) {
+        return !isEntityByCompanyAndCode(company, code, manager);
+    }// end of static method
+
 
     //------------------------------------------------------------------------------------------------------------------------
     // Get entities (list)
@@ -548,14 +580,13 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             int ordine,
             FontAwesome glyph,
             EntityManager manager) {
-        Funzione funzione = Funzione.getEntityByCompanyAndCode(company, code, manager);
+        Funzione funzione = null;
 
-        if (funzione == null) {
+        if (isNotEntityByCompanyAndCode(company, code, manager)) {
             try { // prova ad eseguire il codice
                 funzione = new Funzione(company, code, sigla, descrizione, ordine, glyph);
                 funzione = funzione.save(company, manager);
             } catch (Exception unErrore) { // intercetta l'errore
-                funzione = null;
             }// fine del blocco try-catch
         }// end of if cycle
 
@@ -682,6 +713,21 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         this.volontarioFunzioni = volontarioFunzioni;
     }//end of setter method
 
+//    public List<Funzione> getFunzioneFunzioni() {
+//        return funzioneFunzioni;
+//    }// end of getter method
+//
+//    public void setFunzioneFunzioni(List<Funzione> funzioneFunzioni) {
+//        this.funzioneFunzioni = funzioneFunzioni;
+//    }//end of setter method
+//
+//    public Funzione getFunzione() {
+//        return funzione;
+//    }// end of getter method
+//
+//    public void setFunzione(Funzione funzione) {
+//        this.funzione = funzione;
+//    }//end of setter method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Save
