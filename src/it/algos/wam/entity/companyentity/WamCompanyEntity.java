@@ -4,6 +4,8 @@ import com.vaadin.ui.Notification;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity;
+import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.lib.LibSession;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -53,12 +55,13 @@ public abstract class WamCompanyEntity extends CompanyEntity {
      * @return true se esiste, false se non esiste
      */
     protected boolean checkCompany() {
+
         String caption = "La funzione non può essere accettata, perché manca la company che è obbligatoria";
 
         if (getCompany() != null) {
             return true;
         } else {
-            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+//            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
             return false;
         }// end of if/else cycle
     } // end of method

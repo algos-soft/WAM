@@ -1,39 +1,47 @@
 package it.algos.wam.bootstrap;
 
 import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
-import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.query.AQuery;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by gac on 19 mag 2016.
  * <p>
  * Run test di alcune funzionalità del database
+ * Soprattutto l'uso in automatico della company corrente
+ * Nei test normali non ho la Sessione
  */
+public class TestService {
 
-public abstract class TestService {
+    private WamCompany companyDemo = WamCompany.findByCode("demo");
+    private WamCompany companyTest = WamCompany.findByCode("test");
+    private WamCompany companyCorrente;
 
-    public static void runTest() {
+    /**
+     * Costruttore
+     */
+    public TestService() {
         System.out.println("Run test: ");
 
         testCompany();
-        testFunzione();
+        testFunzioneNew();
+        testFunzioneCrea();
         testVolontario();
         testServizio();
-    }// end of method
+    }// end of constructor
 
 
     /**
      * Company
      */
-    private static void testCompany() {
+    private void testCompany() {
         int numCompany = WamCompany.count();
         List<WamCompany> listaCompany = WamCompany.findAll();
         print("Numero di croci (count)", numCompany);
@@ -55,66 +63,140 @@ public abstract class TestService {
 
     /**
      * Funzione
+     * Controllla i metodi New
+     * Con e senza company selezionata
      */
-    private static void testFunzione() {
+    private void testFunzioneNew() {
         int numFunzioniTotali = Funzione.countByAllCompanies();
-        List<Funzione> listaFunzioniTotali = Funzione.getListByAllCompanies();
-        print("Numero di funzioni totali (count)", numFunzioniTotali);
-        print("Numero di funzioni totali (lista)", listaFunzioniTotali.size());
+        int numFunzioni;
+        long key1;
+        long key2;
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        Funzione funz = null;
 
-        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        int numFunzioniCorrenti = Funzione.countByCurrentCompany();
-        List<Funzione> listaFunzioniCorrenti = Funzione.getListByCurrentCompany();
-        print("Numero di funzioni con company selezionata (count)", numFunzioniCorrenti);
-        print("Numero di funzioni con company selezionata (lista)", listaFunzioniCorrenti.size());
+        //--nessuna company corrente e nessuna company passata come pareametro
+        //--non registra
+        if (companyCorrente == null) {
+            funz = new Funzione("alfa", "beta", "gamma");
+            funz = (Funzione) funz.save();
+            assertNull(funz);
+            CompanySessionLib.setCompany(companyDemo);
+            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        }// end of if cycle
 
-        int numFunzioniCorrenti2 = Funzione.countByCurrentCompany();
-        List<Funzione> listaFunzioniCorrenti2 = Funzione.getListByCurrentCompany();
-        print("Numero di funzioni con company corrente (count)-2", numFunzioniCorrenti2);
-        print("Numero di funzioni con company corrente (lista)-2", listaFunzioniCorrenti2.size());
+        //--company corrente presa in automatico
+        //--registra
+        funz = new Funzione("alfa", "beta", "gamma");
+        funz = (Funzione) funz.save();
+        assertNotNull(funz);
+        key1 = funz.getId();
+        assertEquals(funz.getCompany(), companyDemo);
+        assertEquals(funz.getCompany(), companyCorrente);
+
+        //--company passata come parametro
+        //--registra
+        funz = new Funzione(companyTest, "alfa", "beta", "gamma");
+        funz = (Funzione) funz.save();
+        assertNotNull(funz);
+        key2 = funz.getId();
+        assertEquals(funz.getCompany(), companyTest);
+        assertNotSame(funz.getCompany(), companyCorrente);
+
+        //--valore già esistente (controlla codeCompanyUnico)
+        //--non registra
+        funz = new Funzione(companyDemo, "alfa", "beta", "gamma");
+        funz = (Funzione) funz.save();
+        assertNull(funz);
+
+        //--cancella le 2 (due) funzioni create per prova
+        Funzione.find(key1).delete();
+        Funzione.find(key2).delete();
+
+        //--controlla che ci siano le stesse funzioni che c'erano all'inizio
+        numFunzioni = Funzione.countByAllCompanies();
+        assertEquals(numFunzioni, numFunzioniTotali);
 
         CompanySessionLib.setCompany(null);
-        int numFunzioniCorrenti3 = Funzione.countByCurrentCompany();
-        List<Funzione> listaFunzioniCorrenti3 = Funzione.getListByCurrentCompany();
-        print("Numero di funzioni con company nulla (count)", numFunzioniCorrenti3);
-        print("Numero di funzioni con company nulla (lista)", listaFunzioniCorrenti3.size());
-        CompanySessionLib.setCompany(companyCorrente);
+    }// end of method
 
-//        Funzione funz1= Funzione.getEntityByCode("Cen");
-//        Funzione funz2= Funzione.getEntityByCode("Bar");
 
-        BaseEntity funz4= AQuery.findOne(Funzione.class, Funzione_.sigla, "Bar");
-        BaseEntity funz3= AQuery.findOne(Funzione.class, Funzione_.sigla, "Cen");
+    /**
+     * Funzione
+     * Controllla i metodi Crea
+     * Con e senza company selezionata
+     */
+    private void testFunzioneCrea() {
+        int numFunzioniTotali = Funzione.countByAllCompanies();
+        int numFunzioni;
+        long key1;
+        long key2;
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        Funzione funz = null;
 
-        BaseEntity funz5= AQuery.findFirst(Funzione.class, Funzione_.sigla, "Bar");
-        BaseEntity funz6= AQuery.findFirst(Funzione.class, Funzione_.sigla, "Cen");
+        //--nessuna company corrente e nessuna company passata come pareametro
+        //--non registra
+        if (companyCorrente == null) {
+            funz = Funzione.crea("alfa", "beta", "gamma");
+            assertNull(funz);
+            CompanySessionLib.setCompany(companyDemo);
+            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        }// end of if cycle
 
-        riTestCompany();
+        //--company corrente presa in automatico
+        //--registra
+        funz = Funzione.crea("alfa", "beta", "gamma");
+        assertNotNull(funz);
+        key1 = funz.getId();
+        assertEquals(funz.getCompany(), companyDemo);
+        assertEquals(funz.getCompany(), companyCorrente);
+
+        //--company passata come parametro
+        //--registra
+        funz = Funzione.crea(companyTest, "alfa", "beta", "gamma");
+        assertNotNull(funz);
+        key2 = funz.getId();
+        assertEquals(funz.getCompany(), companyTest);
+        assertNotSame(funz.getCompany(), companyCorrente);
+
+        //--valore già esistente (controlla codeCompanyUnico)
+        //--non registra
+        funz = Funzione.crea(companyDemo, "alfa", "beta", "gamma");
+        assertNull(funz);
+
+        //--cancella le 2 (due) funzioni create per prova
+        Funzione.find(key1).delete();
+        Funzione.find(key2).delete();
+
+        //--controlla che ci siano le stesse funzioni che c'erano all'inizio
+        numFunzioni = Funzione.countByAllCompanies();
+        assertEquals(numFunzioni, numFunzioniTotali);
+
+        CompanySessionLib.setCompany(null);
     }// end of method
 
 
     /**
      * Funzione
      */
-    private static void testVolontario() {
-        int numVolontariTotali = Volontario.countAll();
+    private void testVolontario() {
+        int numVolontariTotali = Volontario.countByAllCompanies();
         ArrayList<Volontario> listaVolontariTotali = Volontario.findAllAll();
         print("Numero di volontari totali (count)", numVolontariTotali);
         print("Numero di volontari totali (lista)", listaVolontariTotali.size());
 
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        int numVolontariCorrenti = Volontario.count(companyCorrente);
+        int numVolontariCorrenti = Volontario.countByCompany(companyCorrente);
         ArrayList<Volontario> listaVolontariCorrenti = Volontario.findAll(companyCorrente);
         print("Numero di volontari con company selezionata (count)", numVolontariCorrenti);
         print("Numero di volontari con company selezionata (lista)", listaVolontariCorrenti.size());
 
-        int numVolontariCorrenti2 = Volontario.count();
+        int numVolontariCorrenti2 = Volontario.countByAllCompanies();
         ArrayList<Volontario> listaVolontariCorrenti2 = Volontario.findAll();
         print("Numero di volontari con company corrente (count)-2", numVolontariCorrenti2);
         print("Numero di volontari con company corrente (lista)-2", listaVolontariCorrenti2.size());
 
         CompanySessionLib.setCompany(null);
-        int numVolontariCorrenti3 = Volontario.count();
+        int numVolontariCorrenti3 = Volontario.countByAllCompanies();
         ArrayList<Volontario> listaVolontariCorrenti3 = Volontario.findAll();
         print("Numero di volontari con company nulla (count)", numVolontariCorrenti3);
         print("Numero di volontari con company nulla (lista)", listaVolontariCorrenti3.size());
@@ -126,7 +208,7 @@ public abstract class TestService {
     /**
      * Funzione
      */
-    private static void testServizio() {
+    private void testServizio() {
         int numServiziTotali = Servizio.countByAllCompanies();
         List<Servizio> listaServiziTotali = Servizio.getListByAllCompanies();
         print("Numero di servizi totali (count)", numServiziTotali);
@@ -156,7 +238,7 @@ public abstract class TestService {
     /**
      * Company
      */
-    private static void riTestCompany() {
+    private void riTestCompany() {
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         if (companyCorrente != null) {
             print("ri-selezionata", companyCorrente.getCompanyCode());
@@ -170,7 +252,7 @@ public abstract class TestService {
     /**
      * Visualizza i risultati
      */
-    private static void print(String sigla, Object valore) {
+    private void print(String sigla, Object valore) {
         System.out.println(sigla + " = " + valore);
     }// end of method
 

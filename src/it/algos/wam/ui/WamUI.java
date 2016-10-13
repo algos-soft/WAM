@@ -11,6 +11,7 @@ import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.*;
+import it.algos.wam.bootstrap.TestService;
 import it.algos.wam.entity.companyentity.CompanyListener;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
@@ -36,7 +37,6 @@ import it.algos.webbase.domain.utente.UtenteModulo;
 import it.algos.webbase.domain.vers.VersMod;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
-import it.algos.webbase.web.AlgosApp;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
 import it.algos.webbase.web.menu.AMenuBar;
@@ -188,9 +188,9 @@ public class WamUI extends UI {
         String password = request.getParameter("password");
         if (utente != null && !utente.equals("")) {
 
-            Volontario vol = Volontario.findByCognomeAndPassword(utente, password);
+//            Volontario vol = Volontario.findByCognomeAndPassword(utente, password);
 
-            List<Volontario> militiPerCognome = (List<Volontario>) CompanyQuery.queryList(Volontario.class, Volontario_.cognome, utente);
+            List<Volontario> militiPerCognome = (List<Volontario>) CompanyQuery.getList(Volontario.class, Volontario_.cognome, utente);
 //           Object alfa= CompanyQuery.queryOne(Volontario.class,Volontario_.cognome,utente);
             if (militiPerCognome != null && militiPerCognome.size() > 0) {
                 Volontario volontario = militiPerCognome.get(0);
@@ -212,8 +212,6 @@ public class WamUI extends UI {
                 }
             }
         }
-
-//        TestService.runTest();
 
         // Se la company prevede tabellone pubblico, mostra il tabellone prima del login
         // (se non viene dal goHome() del tabellone stesso)
@@ -246,6 +244,7 @@ public class WamUI extends UI {
      */
     private void developerInit() {
         fixCompanySession();
+        new TestService();
         UI.getCurrent().setContent(getMainComponent());
     }
 

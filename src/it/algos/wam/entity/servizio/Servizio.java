@@ -35,6 +35,7 @@ import java.util.List;
  * Estende la Entity astratta WamCompany che contiene la property wamcompany
  * La property wamcompany può essere nulla nella superclasse, ma NON in questa classe dove è obbligatoria
  * <p>
+ * Classe di tipo JavaBean
  * 1) la classe deve avere un costruttore senza argomenti
  * 2) le proprietà devono essere private e accessibili solo con get, set e is (usato per i boolena al posto di get)
  * 3) la classe deve implementare l'interfaccia Serializable (la fa nella superclasse)
@@ -136,6 +137,20 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
+     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
+     * L'ordine di presentazione nel tabellone viene inserito in automatico prima del persist
+     *
+     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
+     * @param descrizione per il tabellone (obbligatoria)
+     */
+    public Servizio(String sigla, String descrizione) {
+        this((WamCompany) null, sigla, descrizione);
+    }// end of constructor
+
+    /**
+     * Costruttore minimo con tutte le properties obbligatorie
+     * Filtrato sulla azienda passata come parametro.
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      * L'ordine di presentazione nel tabellone viene inserito in automatico prima del persist
      *
@@ -150,6 +165,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Costruttore ridotto
+     * Filtrato sulla azienda passata come parametro.
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
@@ -165,6 +181,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Costruttore completo
+     * Filtrato sulla azienda passata come parametro.
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)

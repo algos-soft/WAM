@@ -27,19 +27,31 @@ import java.util.List;
 
 /**
  * Entity che descrive un Turno
+ * Estende la Entity astratta WamCompany che contiene la property wamcompany
+ * La property wamcompany può essere nulla nella superclasse, ma NON in questa classe dove è obbligatoria
  * <p>
+ * Classe di tipo JavaBean
  * 1) la classe deve avere un costruttore senza argomenti
  * 2) le proprietà devono essere private e accessibili solo con get, set e is (usato per i boolena al posto di get)
  * 3) la classe deve implementare l'interfaccia Serializable (la fa nella superclasse)
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
+ * <p>
  */
 @Entity
 public class Turno extends WamCompanyEntity {
 
+    //------------------------------------------------------------------------------------------------------------------------
+    // Properties
+    //------------------------------------------------------------------------------------------------------------------------
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
+    //--company di riferimento (facoltativa nella superclasse)
+    //--company di riferimento (obbligatoria in questa classe)
+    //--private BaseCompany company;
+
     // servizio di riferimento
+    @NotNull
     @ManyToOne
     private Servizio servizio = null;
 
@@ -74,28 +86,69 @@ public class Turno extends WamCompanyEntity {
     //--turno previsto (vuoto) oppure assegnato (militi inseriti)
     private boolean assegnato = false;
 
+    //------------------------------------------------------------------------------------------------------------------------
+    // Constructors
+    //------------------------------------------------------------------------------------------------------------------------
+
     /**
-     * Costruttore minimo con tutte le properties obbligatorie
+     * Costruttore senza argomenti
+     * Obbligatorio per le specifiche JavaBean
      */
     public Turno() {
-        this(null, null, null, false);
     }// end of constructor
 
     /**
-     * Costruttore completo
+     * Costruttore minimo con tutte le properties obbligatorie
+     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * La chiave (obbligatoria) viene calcolata in automatico prima del persist
      *
-     * @param servizio  tipologia di servizio (obbligatoria)
-     * @param inizio    giorno, ora e minuto di inizio turno
-     * @param fine      giorno, ora e minuto di fine turno
-     * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
+     * @param servizio tipologia di servizio (obbligatoria)
+     * @param inizio   giorno, ora e minuto di inizio turno
+     * @param fine     giorno, ora e minuto di fine turno
      */
-    public Turno(Servizio servizio, Date inizio, Date fine, boolean assegnato) {
-        super();
-        setServizio(servizio);
-        setInizio(inizio);
-        setFine(fine);
-        setAssegnato(assegnato);
+    public Turno(Servizio servizio, Date inizio, Date fine) {
+        this((WamCompany) null, servizio, inizio, fine);
     }// end of constructor
+
+    /**
+     * Costruttore minimo con tutte le properties obbligatorie
+     * Filtrato sulla azienda passata come parametro.
+     * La chiave (obbligatoria) viene calcolata in automatico prima del persist
+     *
+     * @param company  di appartenenza (property della superclasse)
+     * @param servizio tipologia di servizio (obbligatoria)
+     * @param inizio   giorno, ora e minuto di inizio turno
+     * @param fine     giorno, ora e minuto di fine turno
+     */
+    public Turno(WamCompany company, Servizio servizio, Date inizio, Date fine) {
+        this(company, servizio, inizio, fine, (List<Iscrizione>) null);
+    }// end of constructor
+
+    /**
+     * Costruttore minimo con tutte le properties obbligatorie
+     * Filtrato sulla azienda passata come parametro.
+     * La chiave (obbligatoria) viene calcolata in automatico prima del persist
+     *
+     * @param company    di appartenenza (property della superclasse)
+     * @param servizio   tipologia di servizio (obbligatoria)
+     * @param inizio     giorno, ora e minuto di inizio turno
+     * @param fine       giorno, ora e minuto di fine turno
+     * @param iscrizioni dei volontari a questo turno
+     */
+    public Turno(WamCompany company, Servizio servizio, Date inizio, Date fine, List<Iscrizione> iscrizioni) {
+        super();
+        this.setCompany(company);
+        this.setServizio(servizio);
+        this.setInizio(inizio);
+        this.setFine(fine);
+        this.setIscrizioni(iscrizioni);
+        this.setAssegnato(iscrizioni != null);
+    }// end of constructor
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Count records
+    //------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Recupera una istanza di Turno usando la query standard della Primary Key
@@ -326,9 +379,9 @@ public class Turno extends WamCompanyEntity {
                 fine = inizio;
             }// end of if cycle
 
-            turno = new Turno(servizio, inizio, fine, assegnato);
-            turno.setCompany(company);
+            turno = new Turno(company,servizio, inizio, fine);
             turno.fixChiave();
+            turno.setAssegnato(assegnato);
             turno.save(manager);
         }// end of if cycle
 

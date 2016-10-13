@@ -1,6 +1,8 @@
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import org.junit.*;
 
@@ -86,6 +88,21 @@ public class FunzioneTest extends WamTest {
      * Creo alcuni nuovi records nel DB alternativo (WAMTEST)
      */
     protected void creaRecords() {
+        //--nessuna company corrente
+        //--non registra
+        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        if (companyCorrente == null) {
+            funz = new Funzione(code1, sigla1, desc1);
+            funz = (Funzione) funz.save();
+            assertNull(funz);
+        }// end of if cycle
+
+        //--nessuna company passata come pareametro
+        //--non registra
+        funz = new Funzione(null, code1, sigla1, desc1);
+        funz = (Funzione) funz.save();
+        assertNull(funz);
+
         //--prima company
         funz = new Funzione(companyUno, code1, sigla1, desc1);
         singoloRecordPrimaCompany(funz);
@@ -483,6 +500,19 @@ public class FunzioneTest extends WamTest {
         //-cancello i records per riprovare qui
         cancellaRecords();
 
+        //--nessuna company corrente
+        //--non registra
+        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        if (companyCorrente == null) {
+            funz = Funzione.crea(code1, sigla1, desc1);
+            assertNull(funz);
+        }// end of if cycle
+
+        //--nessuna company passata come pareametro
+        //--non registra
+        funz = Funzione.crea(null, code1, sigla1, desc1);
+        assertNull(funz);
+
         //--prima company
         numPrevisto = Funzione.countByCompany(companyUno, MANAGER);
 
@@ -645,8 +675,7 @@ public class FunzioneTest extends WamTest {
             funz = funz.saveSafe(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(funz);
-        assertNull(funz.getId());
+        assertNull(funz);
 
         //--ci sono i parametri obbligatori
         numPrevisto = 1;
