@@ -137,7 +137,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
-     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      * L'ordine di presentazione nel tabellone viene inserito in automatico prima del persist
      *
@@ -150,7 +150,8 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
+     * Se il valore della company è nullo, utilizza la company corrente, regolata nella superclasse
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      * L'ordine di presentazione nel tabellone viene inserito in automatico prima del persist
      *
@@ -165,7 +166,8 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Costruttore ridotto
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
+     * Se il valore della company è nullo, utilizza la company corrente, regolata nella superclasse
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
@@ -181,7 +183,8 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Costruttore completo
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
+     * Se il valore della company è nullo, utilizza la company corrente, regolata nella superclasse
      * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
@@ -195,7 +198,9 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      */
     public Servizio(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine) {
         super();
-        this.setCompany(company);
+        if (company != null) {
+            this.setCompany(company);
+        }// end of if cycle
         this.setSigla(sigla);
         this.setDescrizione(descrizione);
         this.setOrdine(ordine);
@@ -350,6 +355,16 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         return getEntityByCodeCompanyUnico(codeCompanyUnico, (EntityManager) null);
     }// end of static method
 
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Nessun filtro sulla company, perché la property è unica
+     *
+     * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
+     * @return vero se esiste Entity, false se non trovata
+     */
+    public static boolean isEntityByCodeCompanyUnico(String codeCompanyUnico) {
+        return getEntityByCodeCompanyUnico(codeCompanyUnico) != null;
+    }// end of static method
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
@@ -583,69 +598,23 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     //------------------------------------------------------------------------------------------------------------------------
 
 
-    /**
-     * Creazione iniziale di una istanza della Entity
-     * La crea SOLO se non esiste già
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @return istanza della Entity
-     */
+
+    public static Servizio crea(String sigla, String descrizione) {
+        return crea(WamCompany.getCurrent(), sigla, descrizione);
+    }// end of static method
+
     public static Servizio crea(WamCompany company, String sigla, String descrizione) {
         return crea(company, sigla, descrizione, (EntityManager) null);
     }// end of static method
 
-
-    /**
-     * Creazione iniziale di una istanza della Entity
-     * La crea SOLO se non esiste già
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @param manager     the EntityManager to use
-     * @return istanza della Entity
-     */
     public static Servizio crea(WamCompany company, String sigla, String descrizione, EntityManager manager) {
         return crea(company, sigla, descrizione, 0, 0, false, 0, 0, manager);
     }// end of static method
 
-
-    /**
-     * Creazione iniziale di una istanza della Entity
-     * La crea SOLO se non esiste già
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
-     * @param colore      del gruppo (facoltativo)
-     * @param orario      servizio ad orario prefissato e fisso ogni giorno (facoltativo)
-     * @param oraInizio   del servizio (facoltativo, obbligatorio se orario è true)
-     * @param oraFine     del servizio (facoltativo, obbligatorio se orario è true)
-     * @return istanza della Entity
-     */
     public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine) {
         return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine, (EntityManager) null);
     }// end of static method
 
-
-    /**
-     * Creazione iniziale di una istanza della Entity
-     * La crea SOLO se non esiste già
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
-     * @param colore      del gruppo (facoltativo)
-     * @param orario      servizio ad orario prefissato e fisso ogni giorno (facoltativo)
-     * @param oraInizio   del servizio (facoltativo, obbligatorio se orario è true)
-     * @param oraFine     del servizio (facoltativo, obbligatorio se orario è true)
-     * @param manager     the EntityManager to use
-     * @return istanza della Entity
-     */
     public static Servizio crea(WamCompany company, String sigla, String descrizione, int ordine, int colore, boolean orario, int oraInizio, int oraFine, EntityManager manager) {
         return crea(company, sigla, descrizione, ordine, colore, orario, oraInizio, 0, oraFine, 0, manager, (ArrayList<Funzione>) null);
     }// end of static method
@@ -988,7 +957,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         this.visibile = visibile;
     }//end of setter method
 
-//------------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------------
     // Save
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -1131,6 +1100,10 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
             valido = true;
         }// end of if/else cycle
 
+        if (Servizio.isEntityByCodeCompanyUnico(codeCompanyUnico)) {
+            valido = false;
+        }// end of if cycle
+
         return valido;
     } // end of method
 
@@ -1164,14 +1137,6 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         return lista;
     }// end of method
 
-
-//    @PrePersist
-//    protected void prePersist() {
-//        if (getOrdine() == 0) {
-//            int max = WamQuery.queryMaxOrdineServizio(null);
-//            setOrdine(max + 1);
-//        }
-//    }
 
     /**
      * Ritorna l'elenco delle funzioni obbligatorie previste per questo servizio
@@ -1363,6 +1328,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         Integer ordAltro = other.getOrdine();
         return ordQuesto.compareTo(ordAltro);
     }// end of method
+
     //------------------------------------------------------------------------------------------------------------------------
     // Clone
     //------------------------------------------------------------------------------------------------------------------------

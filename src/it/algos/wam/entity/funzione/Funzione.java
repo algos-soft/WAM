@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Entity per una funzione
+ * Entity che descrive una Funzione
  * Estende la Entity astratta WamCompany che contiene la property wamcompany
  * La property wamcompany può essere nulla nella superclasse, ma NON in questa classe dove è obbligatoria
  * <p>
@@ -321,6 +321,17 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return getEntityByCodeCompanyUnico(codeCompanyUnico, (EntityManager) null);
     }// end of static method
 
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Nessun filtro sulla company, perché la property è unica
+     *
+     * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
+     * @return vero se esiste Entity, false se non trovata
+     */
+    public static boolean isEntityByCodeCompanyUnico(String codeCompanyUnico) {
+        return getEntityByCodeCompanyUnico(codeCompanyUnico) != null;
+    }// end of static method
+
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
@@ -372,6 +383,15 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return (Funzione) CompanyQuery.getEntity(Funzione.class, Funzione_.code, code, company, manager);
     }// end of static method
 
+
+    public static boolean isEntityByCode(String code) {
+        return getEntityByCode(code) != null;
+    }// end of static method
+
+    public static boolean isNotEntityByCode(String code) {
+        return !isEntityByCode(code);
+    }// end of static method
+
     /**
      * Controlla che esista una istanza della Entity usando la query di una property specifica
      * Filtrato sulla azienda passata come parametro.
@@ -384,6 +404,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     public static boolean isEntityByCompanyAndCode(WamCompany company, String code, EntityManager manager) {
         return getEntityByCompanyAndCode(company, code, manager) != null;
     }// end of static method
+
 
     /**
      * Controlla che non esista una istanza della Entity usando la query di una property specifica
@@ -866,7 +887,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             valido = true;
         }// end of if/else cycle
 
-        if (Funzione.getEntityByCodeCompanyUnico(codeCompanyUnico) != null) {
+        if (Funzione.isEntityByCodeCompanyUnico(codeCompanyUnico)) {
             valido = false;
         }// end of if cycle
 

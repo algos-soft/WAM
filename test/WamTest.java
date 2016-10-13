@@ -55,7 +55,7 @@ public abstract class WamTest {
     protected ArrayList<Long> chiaviDue = new ArrayList<>();
     protected List<String> listStr = new ArrayList<>();
 
-    protected ArrayList<String> codeCompanyUnico = new ArrayList<>();
+    protected ArrayList<String> listaCodeCompanyUnici = new ArrayList<>();
 
     /**
      * SetUp iniziale eseguito solo una volta alla creazione della sottoclasse
@@ -190,6 +190,8 @@ public abstract class WamTest {
      */
     protected void reset() {
         chiavi = new ArrayList<>();
+        chiaviUno = new ArrayList<>();
+        chiaviDue = new ArrayList<>();
     }// end of method
 
     protected void creaRecords() {

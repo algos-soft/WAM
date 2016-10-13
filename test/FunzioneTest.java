@@ -69,8 +69,6 @@ public class FunzioneTest extends WamTest {
      */
     protected void reset() {
         funz = null;
-        chiaviUno = new ArrayList<>();
-        chiaviDue = new ArrayList<>();
         super.reset();
     }// end of method
 
@@ -137,7 +135,7 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Costruttore minimo con tutte le properties obbligatorie
-     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
+     * Il listaCodeCompanyUnici (obbligatorio) viene calcolato in automatico prima del persist
      * Se manca l'ordine di presentazione o è uguale a zero, viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
@@ -210,7 +208,7 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Costruttore completo
-     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
+     * Il listaCodeCompanyUnici (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
      * @param code        di riferimento interna (obbligatoria)
@@ -352,7 +350,7 @@ public class FunzioneTest extends WamTest {
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
      *
-     * @param codeCompanyUnico di riferimento interna (obbligatoria e unica)
+     * @param listaCodeCompanyUnici di riferimento interna (obbligatoria e unica)
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
@@ -361,19 +359,19 @@ public class FunzioneTest extends WamTest {
         String key;
 
         pos = 2;
-        key = codeCompanyUnico.get(pos);
+        key = listaCodeCompanyUnici.get(pos);
         funz = Funzione.getEntityByCodeCompanyUnico(key, MANAGER);
         assertNotNull(funz);
         assertEquals(funz, lista.get(pos));
 
         pos = 7;
-        key = codeCompanyUnico.get(pos);
+        key = listaCodeCompanyUnici.get(pos);
         funz = Funzione.getEntityByCodeCompanyUnico(key, MANAGER);
         assertNotNull(funz);
         assertEquals(funz, lista.get(pos));
 
-        //--volutamente sbagliato il codeCompanyUnico
-        key = "codeCompanyUnico";
+        //--volutamente sbagliato il listaCodeCompanyUnici
+        key = "listaCodeCompanyUnici";
         funz = Funzione.getEntityByCodeCompanyUnico(key, MANAGER);
         assertNull(funz);
     }// end of single test
@@ -767,7 +765,7 @@ public class FunzioneTest extends WamTest {
         funz.save(MANAGER);
         chiavi.add(funz.getId());
         lista.add(funz);
-        codeCompanyUnico.add(funz.getCodeCompanyUnico());
+        listaCodeCompanyUnici.add(funz.getCodeCompanyUnico());
     }// end of method
 
     private void costruttoreNullo(Funzione funz) {

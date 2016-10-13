@@ -1,5 +1,7 @@
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.servizio.Servizio_;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import org.junit.*;
 
@@ -64,8 +66,6 @@ public class ServizioTest extends WamTest {
      */
     protected void reset() {
         serv = null;
-        chiaviUno = new ArrayList<>();
-        chiaviDue = new ArrayList<>();
         super.reset();
     }// end of method
 
@@ -83,6 +83,21 @@ public class ServizioTest extends WamTest {
      * Creo alcuni nuovi records nel DB alternativo (WAMTEST)
      */
     protected void creaRecords() {
+        //--nessuna company corrente
+        //--non registra
+        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        if (companyCorrente == null) {
+            serv = new Servizio(sigla1, desc1);
+            serv = (Servizio) serv.save();
+            assertNull(serv);
+        }// end of if cycle
+
+        //--nessuna company passata come pareametro
+        //--non registra
+        serv = new Servizio(null, sigla1, desc1);
+        serv = (Servizio) serv.save();
+        assertNull(serv);
+
         //--prima company
         serv = new Servizio(companyUno, sigla1, desc1);
         singoloRecordPrimaCompany(serv);
@@ -115,7 +130,7 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Costruttore minimo con tutte le properties obbligatorie
-     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
+     * Il listaCodeCompanyUnici (obbligatorio) viene calcolato in automatico prima del persist
      * Se manca l'ordine di presentazione o è uguale a zero, viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
@@ -184,7 +199,7 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Costruttore completo
-     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
+     * Il listaCodeCompanyUnici (obbligatorio) viene calcolato in automatico prima del persist
      *
      * @param company     di appartenenza (property della superclasse)
      * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
@@ -320,7 +335,7 @@ public class ServizioTest extends WamTest {
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
      *
-     * @param codeCompanyUnico di riferimento interna (obbligatoria e unica)
+     * @param listaCodeCompanyUnici di riferimento interna (obbligatoria e unica)
      * @param manager the EntityManager to use
      * @return istanza della Entity, null se non trovata
      */
@@ -329,19 +344,19 @@ public class ServizioTest extends WamTest {
         String key;
 
         pos = 2;
-        key = codeCompanyUnico.get(pos);
+        key = listaCodeCompanyUnici.get(pos);
         serv = Servizio.getEntityByCodeCompanyUnico(key, MANAGER);
         assertNotNull(serv);
         assertEquals(serv, lista.get(pos));
 
         pos = 7;
-        key = codeCompanyUnico.get(pos);
+        key = listaCodeCompanyUnici.get(pos);
         serv = Servizio.getEntityByCodeCompanyUnico(key, MANAGER);
         assertNotNull(serv);
         assertEquals(serv, lista.get(pos));
 
-        //--volutamente sbagliato il codeCompanyUnico
-        key = "codeCompanyUnico";
+        //--volutamente sbagliato il listaCodeCompanyUnici
+        key = "listaCodeCompanyUnici";
         serv = Servizio.getEntityByCodeCompanyUnico(key, MANAGER);
         assertNull(serv);
     }// end of single test
@@ -468,6 +483,19 @@ public class ServizioTest extends WamTest {
     public void crea() {
         //-cancello i records per riprovare qui
         cancellaRecords();
+
+        //--nessuna company corrente
+        //--non registra
+        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        if (companyCorrente == null) {
+            serv = Servizio.crea(sigla1, desc1);
+            assertNull(serv);
+        }// end of if cycle
+
+        //--nessuna company passata come pareametro
+        //--non registra
+        serv = Servizio.crea(null, sigla1, desc1);
+        assertNull(serv);
 
         //--prima company
         numPrevisto = Servizio.countByCompany(companyUno, MANAGER);
@@ -627,8 +655,7 @@ public class ServizioTest extends WamTest {
             serv = serv.saveSafe(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(serv);
-        assertNull(serv.getId());
+        assertNull(serv);
 
         //--ci sono i parametri obbligatori
         numPrevisto = 1;
@@ -719,7 +746,7 @@ public class ServizioTest extends WamTest {
         serv.save(MANAGER);
         chiavi.add(serv.getId());
         lista.add(serv);
-        codeCompanyUnico.add(serv.getCodeCompanyUnico());
+        listaCodeCompanyUnici.add(serv.getCodeCompanyUnico());
     }// end of method
 
     private void costruttoreNullo(Servizio serv) {

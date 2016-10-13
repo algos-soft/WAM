@@ -24,6 +24,15 @@ public class TestService {
     private WamCompany companyTest = WamCompany.findByCode("test");
     private WamCompany companyCorrente;
 
+    private Funzione funz = null;
+    private Servizio serv = null;
+
+    private long key1;
+    private long key2;
+
+    private int numRecTotali;
+    private int numRec;
+
     /**
      * Costruttore
      */
@@ -33,8 +42,8 @@ public class TestService {
         testCompany();
         testFunzioneNew();
         testFunzioneCrea();
+        testServizioNew();
         testVolontario();
-        testServizio();
     }// end of constructor
 
 
@@ -67,17 +76,13 @@ public class TestService {
      * Con e senza company selezionata
      */
     private void testFunzioneNew() {
-        int numFunzioniTotali = Funzione.countByAllCompanies();
-        int numFunzioni;
-        long key1;
-        long key2;
+        numRecTotali = Funzione.countByAllCompanies();
         companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        Funzione funz = null;
 
         //--nessuna company corrente e nessuna company passata come pareametro
         //--non registra
         if (companyCorrente == null) {
-            funz = new Funzione("alfa", "beta", "gamma");
+            funz = new Funzione("code", "sigla", "descrizione");
             funz = (Funzione) funz.save();
             assertNull(funz);
             CompanySessionLib.setCompany(companyDemo);
@@ -86,7 +91,7 @@ public class TestService {
 
         //--company corrente presa in automatico
         //--registra
-        funz = new Funzione("alfa", "beta", "gamma");
+        funz = new Funzione("code", "sigla", "descrizione");
         funz = (Funzione) funz.save();
         assertNotNull(funz);
         key1 = funz.getId();
@@ -95,7 +100,7 @@ public class TestService {
 
         //--company passata come parametro
         //--registra
-        funz = new Funzione(companyTest, "alfa", "beta", "gamma");
+        funz = new Funzione(companyTest, "code", "sigla", "descrizione");
         funz = (Funzione) funz.save();
         assertNotNull(funz);
         key2 = funz.getId();
@@ -104,17 +109,17 @@ public class TestService {
 
         //--valore già esistente (controlla codeCompanyUnico)
         //--non registra
-        funz = new Funzione(companyDemo, "alfa", "beta", "gamma");
+        funz = new Funzione(companyDemo, "code", "sigla", "descrizione");
         funz = (Funzione) funz.save();
         assertNull(funz);
 
-        //--cancella le 2 (due) funzioni create per prova
+        //--cancella le 2 (due) entity create per prova
         Funzione.find(key1).delete();
         Funzione.find(key2).delete();
 
-        //--controlla che ci siano le stesse funzioni che c'erano all'inizio
-        numFunzioni = Funzione.countByAllCompanies();
-        assertEquals(numFunzioni, numFunzioniTotali);
+        //--controlla che ci siano le stesse entities che c'erano all'inizio
+        numRec = Funzione.countByAllCompanies();
+        assertEquals(numRec, numRecTotali);
 
         CompanySessionLib.setCompany(null);
     }// end of method
@@ -126,17 +131,13 @@ public class TestService {
      * Con e senza company selezionata
      */
     private void testFunzioneCrea() {
-        int numFunzioniTotali = Funzione.countByAllCompanies();
-        int numFunzioni;
-        long key1;
-        long key2;
+        numRecTotali = Funzione.countByAllCompanies();
         companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        Funzione funz = null;
 
         //--nessuna company corrente e nessuna company passata come pareametro
         //--non registra
         if (companyCorrente == null) {
-            funz = Funzione.crea("alfa", "beta", "gamma");
+            funz = Funzione.crea("code", "sigla", "descrizione");
             assertNull(funz);
             CompanySessionLib.setCompany(companyDemo);
             companyCorrente = (WamCompany) CompanySessionLib.getCompany();
@@ -144,7 +145,7 @@ public class TestService {
 
         //--company corrente presa in automatico
         //--registra
-        funz = Funzione.crea("alfa", "beta", "gamma");
+        funz = Funzione.crea("code", "sigla", "descrizione");
         assertNotNull(funz);
         key1 = funz.getId();
         assertEquals(funz.getCompany(), companyDemo);
@@ -152,7 +153,7 @@ public class TestService {
 
         //--company passata come parametro
         //--registra
-        funz = Funzione.crea(companyTest, "alfa", "beta", "gamma");
+        funz = Funzione.crea(companyTest, "code", "sigla", "descrizione");
         assertNotNull(funz);
         key2 = funz.getId();
         assertEquals(funz.getCompany(), companyTest);
@@ -160,23 +161,127 @@ public class TestService {
 
         //--valore già esistente (controlla codeCompanyUnico)
         //--non registra
-        funz = Funzione.crea(companyDemo, "alfa", "beta", "gamma");
+        funz = Funzione.crea(companyDemo, "code", "sigla", "descrizione");
         assertNull(funz);
 
-        //--cancella le 2 (due) funzioni create per prova
+        //--cancella le 2 (due) entity create per prova
         Funzione.find(key1).delete();
         Funzione.find(key2).delete();
 
-        //--controlla che ci siano le stesse funzioni che c'erano all'inizio
-        numFunzioni = Funzione.countByAllCompanies();
-        assertEquals(numFunzioni, numFunzioniTotali);
+        //--controlla che ci siano le stesse entities che c'erano all'inizio
+        numRec = Funzione.countByAllCompanies();
+        assertEquals(numRec, numRecTotali);
 
         CompanySessionLib.setCompany(null);
     }// end of method
 
 
     /**
-     * Funzione
+     * Servizio
+     * Controllla i metodi New
+     * Con e senza company selezionata
+     */
+    private void testServizioNew() {
+        numRecTotali = Servizio.countByAllCompanies();
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+
+        //--nessuna company corrente e nessuna company passata come pareametro
+        //--non registra
+        if (companyCorrente == null) {
+            serv = new Servizio("sigla", "descrizione");
+            serv = (Servizio) serv.save();
+            assertNull(serv);
+            CompanySessionLib.setCompany(companyDemo);
+            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        }// end of if cycle
+
+        //--company corrente presa in automatico
+        //--registra
+        serv = new Servizio("sigla", "descrizione");
+        serv = (Servizio) serv.save();
+        assertNotNull(serv);
+        key1 = serv.getId();
+        assertEquals(serv.getCompany(), companyDemo);
+        assertEquals(serv.getCompany(), companyCorrente);
+
+        //--company passata come parametro
+        //--registra
+        serv = new Servizio(companyTest, "sigla", "descrizione");
+        serv = (Servizio) serv.save();
+        assertNotNull(serv);
+        key2 = serv.getId();
+        assertEquals(serv.getCompany(), companyTest);
+        assertNotSame(serv.getCompany(), companyCorrente);
+
+        //--valore già esistente (controlla codeCompanyUnico)
+        //--non registra
+        serv = new Servizio(companyDemo, "sigla", "descrizione");
+        serv = (Servizio) serv.save();
+        assertNull(serv);
+
+        //--cancella le 2 (due) entity create per prova
+        Servizio.find(key1).delete();
+        Servizio.find(key2).delete();
+
+        //--controlla che ci siano le stesse entities che c'erano all'inizio
+        numRec = Servizio.countByAllCompanies();
+        assertEquals(numRec, numRecTotali);
+
+        CompanySessionLib.setCompany(null);
+    }// end of method
+
+    /**
+     * Servizio
+     * Controllla i metodi Crea
+     * Con e senza company selezionata
+     */
+    private void testServizioCrea() {
+        numRecTotali = Servizio.countByAllCompanies();
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+
+        //--nessuna company corrente e nessuna company passata come pareametro
+        //--non registra
+        if (companyCorrente == null) {
+            serv = Servizio.crea("sigla", "descrizione");
+            assertNull(serv);
+            CompanySessionLib.setCompany(companyDemo);
+            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        }// end of if cycle
+
+        //--company corrente presa in automatico
+        //--registra
+        serv = Servizio.crea("sigla", "descrizione");
+        assertNotNull(serv);
+        key1 = serv.getId();
+        assertEquals(serv.getCompany(), companyDemo);
+        assertEquals(serv.getCompany(), companyCorrente);
+
+        //--company passata come parametro
+        //--registra
+        serv = Servizio.crea(companyTest, "sigla", "descrizione");
+        assertNotNull(serv);
+        key2 = serv.getId();
+        assertEquals(serv.getCompany(), companyTest);
+        assertNotSame(serv.getCompany(), companyCorrente);
+
+        //--valore già esistente (controlla codeCompanyUnico)
+        //--non registra
+        serv = Servizio.crea(companyDemo, "sigla", "descrizione");
+        assertNull(serv);
+
+        //--cancella le 2 (due) entity create per prova
+        Servizio.find(key1).delete();
+        Servizio.find(key2).delete();
+
+        //--controlla che ci siano le stesse entities che c'erano all'inizio
+        numRec = Servizio.countByAllCompanies();
+        assertEquals(numRec, numRecTotali);
+
+        CompanySessionLib.setCompany(null);
+    }// end of method
+
+    /**
+     * Volontario
      */
     private void testVolontario() {
         int numVolontariTotali = Volontario.countByAllCompanies();
@@ -200,36 +305,6 @@ public class TestService {
         ArrayList<Volontario> listaVolontariCorrenti3 = Volontario.findAll();
         print("Numero di volontari con company nulla (count)", numVolontariCorrenti3);
         print("Numero di volontari con company nulla (lista)", listaVolontariCorrenti3.size());
-        CompanySessionLib.setCompany(companyCorrente);
-
-        riTestCompany();
-    }// end of method
-
-    /**
-     * Funzione
-     */
-    private void testServizio() {
-        int numServiziTotali = Servizio.countByAllCompanies();
-        List<Servizio> listaServiziTotali = Servizio.getListByAllCompanies();
-        print("Numero di servizi totali (count)", numServiziTotali);
-        print("Numero di servizi totali (lista)", listaServiziTotali.size());
-
-        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        int numServiziCorrenti = Servizio.countByCompany(companyCorrente);
-        List<Servizio> listaServiziCorrenti = Servizio.getListBySingleCompany(companyCorrente);
-        print("Numero di servizi con company selezionata (count)", numServiziCorrenti);
-        print("Numero di servizi con company selezionata (lista)", listaServiziCorrenti.size());
-
-        int numServiziCorrenti2 = Servizio.countByAllCompanies();
-        List<Servizio> listaServiziCorrenti2 = Servizio.getListByCurrentCompany();
-        print("Numero di servizi con company corrente (count)-2", numServiziCorrenti2);
-        print("Numero di servizi con company corrente (lista)-2", listaServiziCorrenti2.size());
-
-        CompanySessionLib.setCompany(null);
-        int numServiziCorrenti3 = Servizio.countByAllCompanies();
-        List<Servizio> listaServiziCorrenti3 = Servizio.getListByCurrentCompany();
-        print("Numero di servizi con company nulla (count)-2", numServiziCorrenti3);
-        print("Numero di servizi con company nulla (lista)-2", listaServiziCorrenti3.size());
         CompanySessionLib.setCompany(companyCorrente);
 
         riTestCompany();
