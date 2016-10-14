@@ -8,10 +8,11 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.LibCrypto;
@@ -192,7 +193,9 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      */
     public Volontario(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
         super();
-        this.setCompany(company);
+        if (company != null) {
+            this.setCompany(company);
+        }// end of if cycle
         this.setNome(nome);
         this.setCognome(cognome);
         this.setDataNascita(dataNascita);
@@ -453,10 +456,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     }// end of static method
 
 
-    //------------------------------------------------------------------------------------------------------------------------
-    // Get entities (list)
-    //------------------------------------------------------------------------------------------------------------------------
-
     /**
      * Recupera un volontario della company corrente per nick
      *
@@ -466,36 +465,19 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     @SuppressWarnings("unchecked")
     public static Volontario queryByNick(String nick) {
         Volontario found = null;
-        List<Volontario> list = (List<Volontario>) CompanyQuery.getList(Volontario.class);
-        for (Volontario v : list) {
-            if (v.getNickname().equals(nick)) {
-                found = v;
-                break;
 
+        for (Volontario vol : getListByCurrentCompany()) {
+            if (vol.getNickname().equals(nick)) {
+                found = vol;
+                break;
             }
         }
+
         return found;
-    }
-
-//    /**
-//     * Recupera una istanza della Entity usando la query di una property specifica
-//     * Filtrato sulla azienda corrente.
-//     *
-//     * @param cognome  del volontario/milite (obbligatorio)
-//     * @param password del volontario/milite
-//     * @return istanza della Entity, null se non trovata
-//     */
-//    public static Volontario findByCognomeAndPassword(String cognome, String password) {
-//
-//        Container.Filter filterCognome = new Compare.Equal(Volontario_.cognome.getName(), cognome);
-//        Container.Filter filterPassword = new Compare.Equal(Volontario_.password.getName(), password);
-//
-//        BaseEntity entity = CompanyQuery.getEntity(Volontario.class, filterCognome, filterPassword);
-//        return check(entity);
-//    }// end of static method
+    }// end of static method
 
     //------------------------------------------------------------------------------------------------------------------------
-    // Find entities (list)
+    // Get entities (list)
     //------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -504,42 +486,46 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @return lista di tutte le entities
      */
-    public static List<Volontario> findByAllCompanies() {
-        return findByAllCompanies(null);
+    public static List<Volontario> getListByAllCompanies() {
+        return getListByAllCompanies((EntityManager) null);
     }// end of static method
+
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Senza filtri.
+     * (non va usata CompanyQuery, altrimenti arriverebbe solo la lista della company corrente)
      *
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static List<Volontario> findByAllCompanies(EntityManager manager) {
-        return (List<Volontario>) AQuery.findAll(Funzione.class, manager);
+    public static List<Volontario> getListByAllCompanies(EntityManager manager) {
+        return (List<Volontario>) AQuery.getList(Volontario.class, manager);
     }// end of static method
+
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla company corrente.
+     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @return lista di tutte le entities
      */
-    public static List<Volontario> findByCurrentCompany() {
-        return findByCurrentCompany(null);
+    public static List<Volontario> getListByCurrentCompany() {
+        return getListByCurrentCompany((EntityManager) null);
     }// end of static method
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla company corrente.
+     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
      */
-    public static List<Volontario> findByCurrentCompany(EntityManager manager) {
-        return findBySingleCompany(WamCompany.getCurrent(), manager);
+    public static List<Volontario> getListByCurrentCompany(EntityManager manager) {
+        return getListByCompany(WamCompany.getCurrent(), manager);
     }// end of static method
+
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
@@ -549,313 +535,105 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param company di appartenenza (property della superclasse)
      * @return lista di tutte le entities
      */
-    public static List<Volontario> findBySingleCompany(WamCompany company) {
-        return findBySingleCompany(company, null);
+    public static List<Volontario> getListByCompany(WamCompany company) {
+        return getListByCompany(company, (EntityManager) null);
     }// end of static method
+
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
      * Filtrato sulla company passata come parametro.
-     * Se si arriva qui con una company null, vuol dire che non esiste la company corrente
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static List<Volontario> findBySingleCompany(WamCompany company, EntityManager manager) {
+    public static List<Volontario> getListByCompany(WamCompany company, EntityManager manager) {
         if (company != null) {
-            return (List<Volontario>) AQuery.findAll(Volontario.class, CompanyEntity_.company, company, manager);
+            return (List<Volontario>) CompanyQuery.getList(Volontario.class, CompanyEntity_.company, company, manager);
         } else {
             return new ArrayList<>();
         }// end of if/else cycle
     }// end of static method
 
 
-    /**
-     * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla azienda corrente.
-     *
-     * @return lista di tutte le istanze di Funzione
-     * @deprecated
-     */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Volontario> findAll() {
-        return (ArrayList<Volontario>) CompanyQuery.getListOld(Volontario.class);
-    }// end of method
+    //------------------------------------------------------------------------------------------------------------------------
+    // Get properties (list)
+    //------------------------------------------------------------------------------------------------------------------------
+    public static List<String> getListStrForCodeCompanyUnico() {
+        return getListStrForCodeCompanyUnico((EntityManager) null);
+    }// end of static method
+
+    public static List<String> getListStrForCodeCompanyUnico(EntityManager manager) {
+        return CompanyQuery.getListStr(Volontario.class, Volontario_.codeCompanyUnico, null, manager);
+    }// end of static method
+
+    public static List<String> getListStrForNickname() {
+        return getListStrForNicknameByCompany((WamCompany) null, (EntityManager) null);
+    }// end of static method
 
     /**
-     * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla azienda passata come parametro.
+     * Search for the values of a given property of the given Entity class
+     * Filtrato sulla company passata come parametro.
+     * Ordinate sul valore della property indicata
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
      *
-     * @param company croce di appartenenza
-     * @return lista di tutte le istanze di Funzione
-     * @deprecated
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
      */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Volontario> findAll(WamCompany company) {
-        ArrayList<Volontario> lista = null;
-        ArrayList<Volontario> listaTmp;
+    public static List<String> getListStrForNicknameByCompany(WamCompany company, EntityManager manager) {
+        List<String> lista = new ArrayList<>();
 
-//        Container.Filter filter = new Compare.Equal(CompanyEntity_.company, company);
-        listaTmp = (ArrayList<Volontario>) AQuery.getLista(Volontario.class);
-
-        if (company == null) {
-            return listaTmp;
-        }// end of if cycle
-
-        if (listaTmp != null && listaTmp.size() > 0) {
-            lista = new ArrayList<>();
-            for (Volontario vol : listaTmp) {
-                if (vol.getCompany().getId() == company.getId()) {
-                    lista.add(vol);
-                }// end of if cycle
-            }// end of for cycle
-        }// end of if cycle
+        for (Volontario vol : getListByCurrentCompany()) {
+            lista.add(vol.toString());
+        }// end of for cycle
 
         return lista;
-    }// end of method
-
-    /**
-     * Recupera una lista (array) di tutti i records della Entity
-     * Senza filtri.
-     *
-     * @return lista di tutte le istanze di Funzione
-     * @deprecated
-     */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Volontario> findAllAll() {
-        return (ArrayList<Volontario>) AQuery.getLista(Volontario.class);
-    }// end of method
-
-    /**
-     * Recupera una istanza di Volontario usando la query di tutte e sole le property obbligatorie
-     *
-     * @param company valore della property Company
-     * @param nome    valore della property Nome
-     * @param cognome valore della property Cognome
-     * @return istanza di Volontario, null se non trovata
-     * @deprecated
-     */
-    @SuppressWarnings("unchecked")
-    public static Volontario find(WamCompany company, String nome, String cognome) {
-        Volontario instance = null;
-
-        //@todo questo non funziona - si blocca
-//        Container.Filter f1 = new Compare.Equal(Company_.companyCode.getName(), wamcompany.getCompanyCode());
-//        Container.Filter f2 = new Compare.Equal(Milite_.nome.getName(), nome);
-//        Container.Filter f3 = new Compare.Equal(Milite_.cognome.getName(), cognome);
-//        Container.Filter filter = new And(f1, f2, f3);
-//        ArrayList<BaseEntity> militi = AQuery.getList(Milite.class, filter);
-//
-//        if (militi != null && militi.size() > 0) {
-//            instance = (Milite) militi.get(0);
-//        }// end of if cycle
-
-//        ArrayList<Volontario> militiPerCognome = (ArrayList<Milite>) AQuery.queryList(Volontario.class, Milite_.cognome, cognome);
-        //@todo da migliorare
-        List<Volontario> militiPerCognome = (List<Volontario>) AQuery.queryList(Volontario.class, Volontario_.cognome, cognome);
-        if (militiPerCognome != null && militiPerCognome.size() > 0) {
-            for (Volontario milite : militiPerCognome) {
-                if (milite.getNome().equals(nome) && milite.getCompany().getId().equals(company.getId())) {
-                    instance = milite;
-                }// end of if cycle
-            }// end of for cycle
-        }// end of if cycle
-
-        return instance;
-    }// end of method
+    }// end of static method
 
     //------------------------------------------------------------------------------------------------------------------------
     // New and save
     //------------------------------------------------------------------------------------------------------------------------
 
-//    /**
-//     * Creazione iniziale di una istanza della Entity
-//     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
-//     * La crea SOLO se non esiste già
-//     *
-//     * @param company di appartenenza (property della superclasse)
-//     * @param nome    del volontario/milite (obbligatorio)
-//     * @param cognome del volontario/milite (obbligatorio)
-//     * @return istanza della Entity
-//     */
-//    public static Volontario crea(WamCompany company, String nome, String cognome) {
-//        return crea(company, nome, cognome, (EntityManager) null);
-//    }// end of static method
 
+    public static Volontario crea(String nome, String cognome) {
+        return crea(null, nome, cognome);
+    }// end of static method
 
-//    /**
-//     * Creazione iniziale di una istanza della Entity
-//     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
-//     * La crea SOLO se non esiste già
-//     *
-//     * @param company di appartenenza (property della superclasse)
-//     * @param nome    del volontario/milite (obbligatorio)
-//     * @param cognome del volontario/milite (obbligatorio)
-//     * @param manager the EntityManager to use
-//     * @return istanza della Entity
-//     */
-//    public static Volontario crea(WamCompany company, String nome, String cognome, EntityManager manager) {
-//        return crea(company, nome, cognome, (Date) null, "", false, manager);
-//    }// end of static method
+    public static Volontario crea(WamCompany company, String nome, String cognome) {
+        return crea(company, (EntityManager) null, nome, cognome, "");
+    }// end of static method
 
-//    /**
-//     * Creazione iniziale di una istanza della Entity
-//     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
-//     * La crea SOLO se non esiste già
-//     *
-//     * @param company     di appartenenza (property della superclasse)
-//     * @param nome        del volontario/milite (obbligatorio)
-//     * @param cognome     del volontario/milite (obbligatorio)
-//     * @param dataNascita del volontario/milite (facoltativo)
-//     * @param cellulare   del volontario/milite (facoltativo)
-//     * @param dipendente  dell'associazione NON volontario
-//     * @return istanza della Entity
-//     */
-//    public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente) {
-//        return crea(company, nome, cognome, dataNascita, cellulare, dipendente, (EntityManager) null);
-//    }// end of static method
-
-//    /**
-//     * Creazione iniziale di una istanza della Entity
-//     * Il codeCompanyUnico (obbligatorio) viene calcolato in automatico prima del persist
-//     * La crea SOLO se non esiste già
-//     *
-//     * @param company     di appartenenza (property della superclasse)
-//     * @param nome        del volontario/milite (obbligatorio)
-//     * @param cognome     del volontario/milite (obbligatorio)
-//     * @param dataNascita del volontario/milite (facoltativo)
-//     * @param cellulare   del volontario/milite (facoltativo)
-//     * @param dipendente  dell'associazione NON volontario
-//     * @param manager     the EntityManager to use
-//     * @return istanza della Entity
-//     */
-//    public static Volontario crea(WamCompany company, String nome, String cognome, Date dataNascita, String cellulare, boolean dipendente, EntityManager manager) {
-//        Volontario volontario = Volontario.findByCompanyAndNomeAndCognome(company, nome, cognome, manager);
-//
-//        if (volontario == null) {
-//            volontario = new Volontario(company, nome, cognome, dataNascita, cellulare, dipendente);
-//            volontario.save(company, manager);
-//        }// end of if cycle
-//
-//        return volontario;
-//    }// end of static method
-
-
-    /**
-     * Creazione iniziale di un volontario
-     * Lo crea SOLO se non esiste già
-     *
-     * @param company croce di appartenenza
-     * @param nome    del volontario/milite (obbligatorio)
-     * @param cognome del volontario/milite (obbligatorio)
-     * @return istanza di Volontario
-     */
     public static Volontario crea(WamCompany company, String nome, String cognome, String email) {
         return crea(company, null, nome, cognome, email, new ArrayList<Funzione>());
     }// end of static method
 
-    /**
-     * Creazione iniziale di un volontario
-     * Lo crea SOLO se non esiste già
-     *
-     * @param company croce di appartenenza
-     * @param manager the EntityManager to use
-     * @param nome    del volontario/milite (obbligatorio)
-     * @param cognome del volontario/milite (obbligatorio)
-     * @return istanza di Volontario
-     */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email) {
         return crea(company, manager, nome, cognome, email, new ArrayList<Funzione>());
     }// end of static method
 
-    /**
-     * Creazione iniziale di un volontario
-     * Lo crea SOLO se non esiste già
-     *
-     * @param company   croce di appartenenza
-     * @param manager   the EntityManager to use
-     * @param nome      del volontario/milite (obbligatorio)
-     * @param cognome   del volontario/milite (obbligatorio)
-     * @param listaFunz lista delle funzioni (facoltativa)
-     * @return istanza di Volontario
-     */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, ArrayList<Funzione> listaFunz) {
         return crea(company, manager, nome, cognome, email, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
 
-    /**
-     * Creazione iniziale di un volontario
-     * Lo crea SOLO se non esiste già
-     *
-     * @param company  croce di appartenenza
-     * @param manager  the EntityManager to use
-     * @param nome     del volontario/milite (obbligatorio)
-     * @param cognome  del volontario/milite (obbligatorio)
-     * @param funzioni lista delle funzioni (facoltativa)
-     * @return istanza di Volontario
-     */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, Funzione... funzioni) {
         return crea(company, manager, nome, cognome, "", email, "", false, null, null, null, funzioni);
     }// end of static method
 
-    /**
-     * Creazione iniziale di un volontario
-     * Lo crea SOLO se non esiste già
-     *
-     * @param company   croce di appartenenza
-     * @param manager   the EntityManager to use
-     * @param nome      del volontario/milite (obbligatorio)
-     * @param cognome   del volontario/milite (obbligatorio)
-     * @param cellulare del volontario/milite (facoltativo)
-     * @param email     del volontario/milite
-     * @param password  del volontario/milite (facoltativa)
-     * @param listaFunz lista delle funzioni (facoltativa)
-     * @return istanza di Volontario
-     */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, List<Funzione> listaFunz) {
         return crea(company, manager, nome, cognome, cellulare, email, password, false, null, null, null, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
 
-
-    /**
-     * Creazione iniziale di un volontario
-     * Lo crea SOLO se non esiste già
-     *
-     * @param company   croce di appartenenza
-     * @param manager   the EntityManager to use
-     * @param nome      del volontario/milite (obbligatorio)
-     * @param cognome   del volontario/milite (obbligatorio)
-     * @param cellulare del volontario/milite (facoltativo)
-     * @param email     del volontario/milite
-     * @param password  del volontario/milite (facoltativa)
-     * @param admin     flag per il ruolo (facoltativa)
-     * @param listaFunz lista delle funzioni (facoltativa)
-     * @return istanza di Volontario
-     */
     public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, boolean admin, List<Funzione> listaFunz) {
         return crea(company, manager, nome, cognome, cellulare, email, password, admin, null, null, null, listaFunz.toArray(new Funzione[listaFunz.size()]));
     }// end of static method
 
-    /**
-     * Creazione iniziale di un volontario
-     * Lo crea SOLO se non esiste già
-     *
-     * @param company   croce di appartenenza
-     * @param manager   the EntityManager to use
-     * @param nome      del volontario/milite (obbligatorio)
-     * @param cognome   del volontario/milite (obbligatorio)
-     * @param cellulare del volontario/milite (facoltativo)
-     * @param email     del volontario/milite
-     * @param password  del volontario/milite (facoltativa)
-     * @param admin     flag per il ruolo (facoltativa)
-     * @param sBLSD     del brevetto (facoltativa)
-     * @param sPNT      del brevetto (facoltativa)
-     * @param sBPHTP    del brevetto (facoltativa)
-     * @param listaFunz lista delle funzioni (facoltativa)
-     * @return istanza di Volontario
-     */
     public static Volontario crea(
             WamCompany company,
             EntityManager manager,
@@ -903,9 +681,9 @@ public class Volontario extends WamCompanyEntity implements UserIF {
             Date scadenzaPNT,
             Date scadenzaBPHTP,
             Funzione... funzioni) {
-        Volontario vol = Volontario.find(company, nome, cognome);
+        Volontario vol = null;
 
-        if (vol == null) {
+        if (isNotEntityByCompanyAndNomeAndCognome(company, nome, cognome, manager)) {
             vol = new Volontario(company, nome, cognome);
             vol.setCellulare(cellulare);
             vol.setEmail(email);
@@ -934,24 +712,26 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     // Delete
     //------------------------------------------------------------------------------------------------------------------------
 
-    /**
-     * Delete all the records for the domain class
-     * Bulk delete records with CriteriaDelete
-     */
-    public static void deleteAll() {
-        EntityManager manager = EM.createEntityManager();
-        deleteAll(manager);
-        manager.close();
+    public static int deleteAll() {
+        return deleteAll(CompanySessionLib.getCompany(), (EntityManager) null);
+    }// end of static method
+
+    public static int deleteAll(BaseCompany company) {
+        return deleteAll(company, (EntityManager) null);
+    }// end of static method
+
+    public static int deleteAll(EntityManager manager) {
+        return deleteAll(CompanySessionLib.getCompany(), manager);
     }// end of static method
 
     /**
-     * Delete all the records for the domain class
+     * Delete all the records for the Entity class
      * Bulk delete records with CriteriaDelete
      *
      * @param manager the EntityManager to use
      */
-    public static void deleteAll(EntityManager manager) {
-        AQuery.delete(Volontario.class, manager);
+    public static int deleteAll(BaseCompany company, EntityManager manager) {
+        return CompanyQuery.delete(Volontario.class, company, manager);
     }// end of static method
 
 
@@ -1118,16 +898,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         this.oreExtra = oreExtra;
     }//end of setter method
 
-    /**
-     * Saves this entity to the database using a local EntityManager
-     * <p>
-     *
-     * @return the merged Entity (new entity, unmanaged, has the id)
-     */
-    @Override
-    public BaseEntity save() {
-        return this.save(null);
-    }// end of method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Save
@@ -1135,7 +905,16 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
     /**
      * Saves this entity to the database using a local EntityManager
-     * <p>
+     *
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    @Override
+    public BaseEntity save() {
+        return this.save((EntityManager) null);
+    }// end of method
+
+    /**
+     * Saves this entity to the database using a local EntityManager
      *
      * @param manager the entity manager to use (if null, a new one is created on the fly)
      * @return the merged Entity (new entity, unmanaged, has the id)
@@ -1177,6 +956,34 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
     }// end of method
 
+
+    /**
+     * Saves this entity to the database.
+     * Usa l'EntityManager di default
+     *
+     * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
+     */
+    public Volontario saveSafe() {
+        return saveSafe((EntityManager) null);
+    }// end of method
+
+    /**
+     * Saves this entity to the database.
+     * <p>
+     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
+     * Otherwise, a new transaction is used to save this single entity.
+     *
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
+     */
+    public Volontario saveSafe(EntityManager manager) {
+        return (Volontario) this.save(manager);
+    }// end of method
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Utilities
+    //------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Implementa come business logic, la obbligatorietà del nome
      * <p>
@@ -1194,9 +1001,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         }// end of if/else cycle
     } // end of method
 
-    //------------------------------------------------------------------------------------------------------------------------
-    // Utilities
-    //------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Implementa come business logic, la obbligatorietà del cognome
@@ -1233,6 +1037,10 @@ public class Volontario extends WamCompanyEntity implements UserIF {
             codeCompanyUnico += getCognome().toLowerCase() + getNome().toLowerCase();
             valido = true;
         }// end of if/else cycle
+
+        if (Volontario.isEntityByCodeCompanyUnico(codeCompanyUnico)) {
+            valido = false;
+        }// end of if cycle
 
         return valido;
     } // end of method

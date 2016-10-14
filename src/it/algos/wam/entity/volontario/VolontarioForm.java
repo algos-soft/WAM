@@ -429,7 +429,7 @@ public class VolontarioForm extends ModuleForm {
         grid.setSpacing(true);
         grid.setColumns(5);
 
-        List<Funzione> funzioni = Funzione.getListBySingleCompany(getCompany());
+        List<Funzione> funzioni = Funzione.getListByCompany(getCompany());
         for (Funzione funz : funzioni) {
             grid.addComponent(new CheckBoxFunzione(funz));
         }// end of for cycle

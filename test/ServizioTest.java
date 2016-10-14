@@ -1,3 +1,4 @@
+import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.servizio.Servizio_;
 import it.algos.wam.entity.wamcompany.WamCompany;
@@ -83,20 +84,6 @@ public class ServizioTest extends WamTest {
      * Creo alcuni nuovi records nel DB alternativo (WAMTEST)
      */
     protected void creaRecords() {
-        //--nessuna company corrente
-        //--non registra
-        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        if (companyCorrente == null) {
-            serv = new Servizio(sigla1, desc1);
-            serv = (Servizio) serv.save();
-            assertNull(serv);
-        }// end of if cycle
-
-        //--nessuna company passata come pareametro
-        //--non registra
-        serv = new Servizio(null, sigla1, desc1);
-        serv = (Servizio) serv.save();
-        assertNull(serv);
 
         //--prima company
         serv = new Servizio(companyUno, sigla1, desc1);
@@ -141,6 +128,29 @@ public class ServizioTest extends WamTest {
     public void costruttoreMinimo() {
         //-cancello i records per riprovare qui
         cancellaRecords();
+
+        //--nessuna company corrente
+        //--crea l'istanza ma non la registra
+        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        if (companyCorrente == null) {
+            serv = new Servizio(sigla1, desc1);
+            assertNotNull(serv);
+            serv = (Servizio) serv.save();
+            assertNull(serv);
+        }// end of if cycle
+
+        //--costruttore senza argomenti
+        //--crea l'istanza ma non la registra
+        serv = new Servizio();
+        assertNotNull(serv);
+        serv = (Servizio) serv.save();
+        assertNull(serv);
+
+        //--nessuna company passata come pareametro
+        //--crea l'istanza ma non la registra
+        serv = new Servizio(null, sigla1, desc1);
+        serv = (Servizio) serv.save();
+        assertNull(serv);
 
         //--prima company
         numPrevisto = Servizio.countByCompany(companyUno, MANAGER);
@@ -421,12 +431,12 @@ public class ServizioTest extends WamTest {
      */
     public void getListBySingleCompany() {
 
-        listaTre = Servizio.getListBySingleCompany(companyUno, MANAGER);
+        listaTre = Servizio.getListByCompany(companyUno, MANAGER);
         assertNotNull(listaTre);
         assertEquals(listaTre, listaUno);
         assertListeUguali(listaTre, listaUno);
 
-        listaTre = Servizio.getListBySingleCompany(companyDue, MANAGER);
+        listaTre = Servizio.getListByCompany(companyDue, MANAGER);
         assertNotNull(listaTre);
         assertEquals(listaTre, listaDue);
         assertListeUguali(listaTre, listaDue);
@@ -443,7 +453,7 @@ public class ServizioTest extends WamTest {
      * @param manager the EntityManager to use
      */
     public void getListStrByCodeCompanyUnico() {
-        listStr = Servizio.getListStrByCodeCompanyUnico(MANAGER);
+        listStr = Servizio.getListStrForCodeCompanyUnico(MANAGER);
         assertEquals(listStr.size(), lista.size());
     }// end of single test
 
@@ -461,10 +471,10 @@ public class ServizioTest extends WamTest {
      * @param manager the EntityManager to use
      */
     public void getListStrByCompanyAndSigla() {
-        listStr = Servizio.getListStrByCompanyAndSigla(companyUno, MANAGER);
+        listStr = Servizio.getListStrForSiglaByCompany(companyUno, MANAGER);
         assertEquals(listStr.size(), listaUno.size());
 
-        listStr = Servizio.getListStrByCompanyAndSigla(companyDue, MANAGER);
+        listStr = Servizio.getListStrForSiglaByCompany(companyDue, MANAGER);
         assertEquals(listStr.size(), listaDue.size());
     }// end of single test
 

@@ -381,6 +381,17 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     *
+     * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
+     * @return istanza della Entity, null se non trovata
+     */
+    public static Servizio getEntityBySigla( String sigla) {
+        return getEntityByCompanyAndSigla((WamCompany) null, sigla, null);
+    }// end of static method
+
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
      * Filtrato sulla azienda passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
@@ -416,6 +427,14 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      */
     public static boolean isEntityByCompanyAndSigla(WamCompany company, String sigla, EntityManager manager) {
         return getEntityByCompanyAndSigla(company, sigla, manager) != null;
+    }// end of static method
+
+    public static boolean isEntityBySigla(String sigla) {
+        return getEntityBySigla(sigla) != null;
+    }// end of static method
+
+    public static boolean isNotEntityBySigla(String sigla) {
+        return !isEntityBySigla(sigla);
     }// end of static method
 
     /**
@@ -463,7 +482,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla company corrente.
+     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @return lista di tutte le entities
      */
@@ -474,13 +493,13 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla company corrente.
+     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
      */
     public static List<Servizio> getListByCurrentCompany(EntityManager manager) {
-        return getListBySingleCompany(WamCompany.getCurrent(), manager);
+        return getListByCompany(WamCompany.getCurrent(), manager);
     }// end of static method
 
 
@@ -492,8 +511,8 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @param company di appartenenza (property della superclasse)
      * @return lista di tutte le entities
      */
-    public static List<Servizio> getListBySingleCompany(WamCompany company) {
-        return getListBySingleCompany(company, (EntityManager) null);
+    public static List<Servizio> getListByCompany(WamCompany company) {
+        return getListByCompany(company, (EntityManager) null);
     }// end of static method
 
 
@@ -509,7 +528,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static List<Servizio> getListBySingleCompany(WamCompany company, EntityManager manager) {
+    public static List<Servizio> getListByCompany(WamCompany company, EntityManager manager) {
         if (company != null) {
             return (List<Servizio>) CompanyQuery.getList(Servizio.class, CompanyEntity_.company, company, manager);
         } else {
@@ -557,8 +576,8 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     // Get properties (list)
     //------------------------------------------------------------------------------------------------------------------------
 
-    public static List<String> getListStrByCodeCompanyUnico() {
-        return getListStrByCodeCompanyUnico((EntityManager) null);
+    public static List<String> getListStrForCodeCompanyUnico() {
+        return getListStrForCodeCompanyUnico((EntityManager) null);
     }// end of static method
 
     /**
@@ -570,12 +589,17 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      *
      * @param manager the EntityManager to use
      */
-    public static List<String> getListStrByCodeCompanyUnico(EntityManager manager) {
+    public static List<String> getListStrForCodeCompanyUnico(EntityManager manager) {
         return CompanyQuery.getListStr(Servizio.class, Servizio_.codeCompanyUnico, null, manager);
     }// end of static method
 
-    public static List<String> getListStrByCompanyAndSigla(WamCompany company) {
-        return getListStrByCompanyAndSigla(company, (EntityManager) null);
+
+    public static List<String> getListStrForSiglaByCompany() {
+        return getListStrForSiglaByCompany(WamCompany.getCurrent());
+    }// end of static method
+
+    public static List<String> getListStrForSiglaByCompany(WamCompany company) {
+        return getListStrForSiglaByCompany(company, (EntityManager) null);
     }// end of static method
 
     /**
@@ -589,7 +613,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
      */
-    public static List<String> getListStrByCompanyAndSigla(WamCompany company, EntityManager manager) {
+    public static List<String> getListStrForSiglaByCompany(WamCompany company, EntityManager manager) {
         return CompanyQuery.getListStr(Servizio.class, Servizio_.sigla, company, manager);
     }// end of static method
 

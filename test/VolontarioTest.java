@@ -1,13 +1,10 @@
-import com.vaadin.data.Container;
-import com.vaadin.data.util.filter.Compare;
+import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontario.Volontario;
-import it.algos.wam.entity.volontario.Volontario_;
-import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.query.AQuery;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import org.junit.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -20,15 +17,10 @@ public class VolontarioTest extends WamTest {
 
     private Volontario vol;
 
-    Volontario volontarioUno;
-    Volontario volontarioDue;
-    Volontario volontarioTre;
-    Volontario volontarioQuattro;
-    Volontario volontarioCinque;
-
-    List<Volontario> listaUno;
-    List<Volontario> listaDue;
-    List<Volontario> listaTre;
+    private List<Volontario> lista = new ArrayList<>();
+    private List<Volontario> listaUno = new ArrayList<>();
+    private List<Volontario> listaDue = new ArrayList<>();
+    private List<Volontario> listaTre = new ArrayList<>();
 
 
     /**
@@ -71,8 +63,6 @@ public class VolontarioTest extends WamTest {
      */
     protected void reset() {
         vol = null;
-        chiaviUno = new ArrayList<>();
-        chiaviDue = new ArrayList<>();
         super.reset();
     }// end of method
 
@@ -85,126 +75,107 @@ public class VolontarioTest extends WamTest {
     }// end of method
 
 
-    @Test
-    // Constructors
-    // Count records
     /**
-     * Crea un volontario
-     * Controlla che ci siano i parametri obbligatori
+     * Crea alcuni records temporanei per effettuare le prove delle query
+     * Uso la Entity
+     * Creo alcuni nuovi records nel DB alternativo (WAMTEST)
      */
-    public void nuovaVolontario() {
-        resetVolontari();
-        int numRecTotaliOld = Volontario.countByAllCompanies(MANAGER);
-        int numRetTotaliNew;
-        int numRecUnoOld = Volontario.countByCompany(companyUno, MANAGER);
-        int numRecUnoNew;
-        int numRecDueOld = Volontario.countByCompany(companyDue, MANAGER);
-        int numRecDueNew;
-        int ordine;
+    protected void creaRecords() {
+
+        //--prima company
+        vol = new Volontario(companyUno, nome1, cognome1);
+        singoloRecordPrimaCompany(vol);
+
+        vol = new Volontario(companyUno, nome2, cognome2);
+        singoloRecordPrimaCompany(vol);
+
+        vol = new Volontario(companyUno, nome3, cognome3);
+        singoloRecordPrimaCompany(vol);
+
+        vol = new Volontario(companyUno, nome1, cognome4);
+        singoloRecordPrimaCompany(vol);
+
+        //--seconda company
+        vol = new Volontario(companyDue, nome1, cognome1);
+        singoloRecordSecondaCompany(vol);
+
+        vol = new Volontario(companyDue, nome2, cognome1);
+        singoloRecordSecondaCompany(vol);
+
+        vol = new Volontario(companyDue, nome3, cognome2);
+        singoloRecordSecondaCompany(vol);
+
+        vol = new Volontario(companyDue, nome4, cognome3);
+        singoloRecordSecondaCompany(vol);
+
+    }// end of single test
+
+    @Test
+    public void costruttoreMinimo() {
+        //-cancello i records per riprovare qui
+        cancellaRecords();
+
+        //--nessuna company corrente
+        //--crea l'istanza ma non la registra
+        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        if (companyCorrente == null) {
+            vol = new Volontario(nome1, cognome1);
+            assertNotNull(vol);
+            vol = (Volontario) vol.save();
+            assertNull(vol);
+        }// end of if cycle
+
+        //--costruttore senza argomenti
+        //--crea l'istanza ma non la registra
+        vol = new Volontario();
+        assertNotNull(vol);
+        vol = (Volontario) vol.save();
+        assertNull(vol);
+
+        //--nessuna company passata come pareametro
+        //--crea l'istanza ma non la registra
+        vol = new Volontario(null, nome1, cognome1);
+        assertNotNull(vol);
+        vol = (Volontario) vol.save();
+        assertNull(vol);
+
+        //--prima company
+        numPrevisto = Volontario.countByCompany(companyUno, MANAGER);
 
         // senza nessun parametro
-        volontarioUno = new Volontario();
-        try { // prova ad eseguire il codice
-            volontarioUno.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNotNull(volontarioUno);
-        assertNull(volontarioUno.getId());
-        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
-
-        // senza un parametro obbligatorio
-        volontarioUno = new Volontario(null, NOME_UNO, COGNOME_UNO);
-        try { // prova ad eseguire il codice
-            volontarioUno.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNotNull(volontarioUno);
-        assertNull(volontarioUno.getId());
-        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
+        vol = new Volontario();
+        costruttoreNullo(vol);
 
         // parametro obbligatorio vuoto
-        volontarioUno = new Volontario(companyUno, "", COGNOME_UNO);
-        try { // prova ad eseguire il codice
-            volontarioUno.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNotNull(volontarioUno);
-        assertNull(volontarioUno.getId());
-        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
+        vol = new Volontario(null, nome1, cognome1);
+        costruttoreNullo(vol);
 
         // parametro obbligatorio vuoto
-        volontarioUno = new Volontario(companyUno, NOME_UNO, "");
-        try { // prova ad eseguire il codice
-            volontarioUno.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNotNull(volontarioUno);
-        assertNull(volontarioUno.getId());
-        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
+        vol = new Volontario(companyUno, "", cognome1);
+        costruttoreNullo(vol);
 
         // parametro obbligatorio vuoto
-        volontarioUno = new Volontario(companyUno, "", "");
-        try { // prova ad eseguire il codice
-            volontarioUno.save(MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-        }// fine del blocco try-catch
-        assertNotNull(volontarioUno);
-        assertNull(volontarioUno.getId());
-        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld);
+        vol = new Volontario(companyUno, nome1, "");
+        costruttoreNullo(vol);
+
+        // parametro obbligatorio vuoto
+        vol = new Volontario(null, "", "");
+        costruttoreNullo(vol);
 
         // parametri obbligatori
-        volontarioUno = new Volontario(companyUno, NOME_UNO, COGNOME_UNO);
-        volontarioUno.save(companyUno, MANAGER);
-        assertNotNull(volontarioUno);
-        assertNotNull(volontarioUno.getId());
-        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld + 1);
+        numPrevisto = numPrevisto + 1;
+        vol = new Volontario(companyUno, nome1, cognome1);
+        costruttoreValidoPrimaCompany(vol, numPrevisto);
 
         // parametri obbligatori
-        volontarioDue = new Volontario(companyUno, NOME_DUE, COGNOME_DUE);
-        volontarioDue.save(companyUno, MANAGER);
-        assertNotNull(volontarioDue);
-        assertNotNull(volontarioDue.getId());
-        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecUnoNew, numRecUnoOld + 2);
-
-        // tutti i parametri previsti
-        volontarioTre = new Volontario(companyDue, NOME_UNO, COGNOME_UNO, new Date(), "", false);
-        volontarioTre.save(companyDue, MANAGER);
-        assertNotNull(volontarioTre);
-        assertNotNull(volontarioTre.getId());
-        numRecUnoNew = Volontario.countByCompany(companyDue, MANAGER);
-        assertEquals(numRecUnoNew, numRecDueOld + 1);
-
-        // parametri obbligatori
-        volontarioQuattro = new Volontario(companyDue, NOME_DUE, COGNOME_DUE);
-        volontarioQuattro.save(companyDue, MANAGER);
-        assertNotNull(volontarioQuattro);
-        assertNotNull(volontarioQuattro.getId());
-        numRecDueNew = Volontario.countByCompany(companyDue, MANAGER);
-        assertEquals(numRecDueNew, numRecDueOld + 2);
+        numPrevisto = numPrevisto + 1;
+        vol = new Volontario(companyUno, nome2, cognome2);
+        costruttoreValidoPrimaCompany(vol, numPrevisto);
 
         // campo unico, doppio
-        volontarioCinque = new Volontario(companyUno, NOME_UNO, COGNOME_UNO);
-        try { // prova ad eseguire il codice
-            volontarioCinque.save(companyUno, MANAGER);
-        } catch (Exception unErrore) { // intercetta l'errore
-            System.out.println(unErrore.toString());
-        }// fine del blocco try-catch
-        assertNotNull(volontarioCinque);
-        assertNull(volontarioCinque.getId());
-        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-        assertEquals(numRecDueNew, numRecDueOld + 2);
+        vol = new Volontario(companyUno, nome1, cognome1);
+        costruttoreNullo(vol);
 
-        assertEquals(Volontario.countByCompany(companyUno, MANAGER), numRecUnoOld + 2);
-        assertEquals(Volontario.countByCompany(companyDue, MANAGER), numRecDueOld + 2);
-        numRetTotaliNew = Volontario.countByAllCompanies(MANAGER);
-        assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
     }// end of single test
 
 //    @Test
@@ -260,15 +231,15 @@ public class VolontarioTest extends WamTest {
             return;
         }// end of if cycle
 
-        listaUno = Volontario.findByAllCompanies(MANAGER);
-        assertNotNull(listaUno);
-        assertEquals(listaUno.size(), numRecords);
-
-        listaDue = Volontario.findBySingleCompany(companyUno, MANAGER);
-        assertNotNull(listaDue);
-
-        listaTre = Volontario.findBySingleCompany(companyDue, MANAGER);
-        assertNotNull(listaTre);
+//        listaUno = Volontario.findByAllCompanies(MANAGER);
+//        assertNotNull(listaUno);
+//        assertEquals(listaUno.size(), numRecords);
+//
+//        listaDue = Volontario.findBySingleCompany(companyUno, MANAGER);
+//        assertNotNull(listaDue);
+//
+//        listaTre = Volontario.findBySingleCompany(companyDue, MANAGER);
+//        assertNotNull(listaTre);
     }// end of single test
 
 
@@ -333,15 +304,71 @@ public class VolontarioTest extends WamTest {
 //    }// end of single test
 
 
+    private void singoloRecordPrimaCompany(Volontario vol) {
+        singoloRecord(vol);
+        chiaviUno.add(vol.getId());
+        listaUno.add(vol);
+    }// end of method
+
+    private void singoloRecordSecondaCompany(Volontario vol) {
+        singoloRecord(vol);
+        chiaviDue.add(vol.getId());
+        listaDue.add(vol);
+    }// end of method
+
+    private void singoloRecord(Volontario vol) {
+        vol.save(MANAGER);
+        chiavi.add(vol.getId());
+        lista.add(vol);
+        listaCodeCompanyUnici.add(vol.getCodeCompanyUnico());
+    }// end of method
+
+    private void costruttoreNullo(Volontario vol) {
+        costruttoreNullo(vol, 0);
+    }// end of method
+
+    private void costruttoreNullo(Volontario vol, int numPrevisto) {
+        try { // prova ad eseguire il codice
+            vol.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(vol);
+        assertNull(vol.getId());
+        numOttenuto = Volontario.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of method
+
+    private void costruttoreValidoPrimaCompany(Volontario vol, int numPrevisto) {
+        costruttoreValido(vol);
+        numOttenuto = Volontario.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of method
+
+    private void costruttoreValidoSecondaCompany(Volontario vol, int numPrevisto) {
+        costruttoreValido(vol);
+        numOttenuto = Volontario.countByCompany(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of method
+
+    private void costruttoreValido(Volontario vol) {
+        try { // prova ad eseguire il codice
+            vol.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+
+        assertNotNull(vol);
+        assertNotNull(vol.getId());
+    }// end of method
+
     /**
      * Annulla le variabili d'istanza
      */
     private void resetVolontari() {
-        volontarioUno = null;
-        volontarioDue = null;
-        volontarioTre = null;
-        volontarioQuattro = null;
-        volontarioCinque = null;
+//        volontarioUno = null;
+//        volontarioDue = null;
+//        volontarioTre = null;
+//        volontarioQuattro = null;
+//        volontarioCinque = null;
     } // end of cleaup finale
 
 

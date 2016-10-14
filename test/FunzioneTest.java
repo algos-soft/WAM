@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
  */
 public class FunzioneTest extends WamTest {
 
-
     private Funzione funz;
 
     private List<Funzione> lista = new ArrayList<>();
@@ -86,20 +85,6 @@ public class FunzioneTest extends WamTest {
      * Creo alcuni nuovi records nel DB alternativo (WAMTEST)
      */
     protected void creaRecords() {
-        //--nessuna company corrente
-        //--non registra
-        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        if (companyCorrente == null) {
-            funz = new Funzione(code1, sigla1, desc1);
-            funz = (Funzione) funz.save();
-            assertNull(funz);
-        }// end of if cycle
-
-        //--nessuna company passata come pareametro
-        //--non registra
-        funz = new Funzione(null, code1, sigla1, desc1);
-        funz = (Funzione) funz.save();
-        assertNull(funz);
 
         //--prima company
         funz = new Funzione(companyUno, code1, sigla1, desc1);
@@ -146,6 +131,30 @@ public class FunzioneTest extends WamTest {
     public void costruttoreMinimo() {
         //-cancello i records per riprovare qui
         cancellaRecords();
+
+        //--nessuna company corrente
+        //--crea l'istanza ma non la registra
+        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        if (companyCorrente == null) {
+            funz = new Funzione(code1, sigla1, desc1);
+            assertNotNull(funz);
+            funz = (Funzione) funz.save();
+            assertNull(funz);
+        }// end of if cycle
+
+        //--costruttore senza argomenti
+        //--crea l'istanza ma non la registra
+        funz = new Funzione();
+        assertNotNull(funz);
+        funz = (Funzione) funz.save();
+        assertNull(funz);
+
+        //--nessuna company passata come pareametro
+        //--crea l'istanza ma non la registra
+        funz = new Funzione(null, code1, sigla1, desc1);
+        assertNotNull(funz);
+        funz = (Funzione) funz.save();
+        assertNull(funz);
 
         //--prima company
         numPrevisto = Funzione.countByCompany(companyUno, MANAGER);
@@ -436,12 +445,12 @@ public class FunzioneTest extends WamTest {
      */
     public void getListBySingleCompany() {
 
-        listaTre = Funzione.getListBySingleCompany(companyUno, MANAGER);
+        listaTre = Funzione.getListByCompany(companyUno, MANAGER);
         assertNotNull(listaTre);
         assertEquals(listaTre, listaUno);
         assertListeUguali(listaTre, listaUno);
 
-        listaTre = Funzione.getListBySingleCompany(companyDue, MANAGER);
+        listaTre = Funzione.getListByCompany(companyDue, MANAGER);
         assertNotNull(listaTre);
         assertEquals(listaTre, listaDue);
         assertListeUguali(listaTre, listaDue);
@@ -458,7 +467,7 @@ public class FunzioneTest extends WamTest {
      * @param manager the EntityManager to use
      */
     public void getListStrByCodeCompanyUnico() {
-        listStr = Funzione.getListStrByCodeCompanyUnico(MANAGER);
+        listStr = Funzione.getListStrForCodeCompanyUnico(MANAGER);
         assertEquals(listStr.size(), lista.size());
     }// end of single test
 
@@ -475,10 +484,10 @@ public class FunzioneTest extends WamTest {
      * @param manager the EntityManager to use
      */
     public void getListStrByCompanyAndCode() {
-        listStr = Funzione.getListStrByCompanyAndCode(companyUno, MANAGER);
+        listStr = Funzione.getListStrForCodeByCompany(companyUno, MANAGER);
         assertEquals(listStr.size(), listaUno.size());
 
-        listStr = Funzione.getListStrByCompanyAndCode(companyDue, MANAGER);
+        listStr = Funzione.getListStrForCodeByCompany(companyDue, MANAGER);
         assertEquals(listStr.size(), listaDue.size());
     }// end of single test
 
@@ -762,7 +771,7 @@ public class FunzioneTest extends WamTest {
     }// end of method
 
     private void singoloRecord(Funzione funz) {
-        funz.save(MANAGER);
+        funz = funz.saveSafe(MANAGER);
         chiavi.add(funz.getId());
         lista.add(funz);
         listaCodeCompanyUnici.add(funz.getCodeCompanyUnico());
@@ -774,11 +783,10 @@ public class FunzioneTest extends WamTest {
 
     private void costruttoreNullo(Funzione funz, int numPrevisto) {
         try { // prova ad eseguire il codice
-            funz.save(MANAGER);
+            funz = funz.saveSafe(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(funz);
-        assertNull(funz.getId());
+        assertNull(funz);
         numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of method
@@ -797,7 +805,7 @@ public class FunzioneTest extends WamTest {
 
     private void costruttoreValido(Funzione funz, int ordinePrevisto) {
         try { // prova ad eseguire il codice
-            funz.save(MANAGER);
+            funz = funz.saveSafe(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
 

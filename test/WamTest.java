@@ -1,6 +1,4 @@
 import it.algos.wam.entity.wamcompany.WamCompany;
-import org.junit.After;
-import org.junit.Before;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -14,39 +12,35 @@ import java.util.List;
  */
 public abstract class WamTest {
 
-    protected static EntityManager MANAGER;
-
     protected final static String COMPANY_UNO = "Alfa";
     protected final static String COMPANY_DUE = "Beta";
-
-    protected  String code1 = "uno";
-    protected  String code2 = "due";
-    protected  String code3 = "tre";
-    protected  String code4 = "quattro";
-
-    protected  String sigla1 = "Prima";
-    protected  String sigla2 = "Seconda";
-    protected  String sigla3 = "Terza";
-    protected  String sigla4 = "Quarta";
-    protected  String desc1 = "Prima descrizione";
-    protected  String desc2 = "Seconda descrizione";
-    protected  String desc3 = "Terza descrizione";
-
-    protected final static String NOME_UNO = "Mario";
-    protected final static String NOME_DUE = "Ilaria";
-    protected final static String COGNOME_UNO = "Bramieri";
-    protected final static String COGNOME_DUE = "Torricelli";
-
-    protected int numSorgente = 0;
-    protected int numPrevisto = 0;
-    protected int numOttenuto = 0;
-
-    protected int ordine;
-
+    protected static EntityManager MANAGER;
     // alcuni parametri utilizzati
     protected static WamCompany companyUno;
     protected static WamCompany companyDue;
-
+    protected String code1 = "uno";
+    protected String code2 = "due";
+    protected String code3 = "tre";
+    protected String code4 = "quattro";
+    protected String sigla1 = "Prima";
+    protected String sigla2 = "Seconda";
+    protected String sigla3 = "Terza";
+    protected String sigla4 = "Quarta";
+    protected String desc1 = "Prima descrizione";
+    protected String desc2 = "Seconda descrizione";
+    protected String desc3 = "Terza descrizione";
+    protected String nome1 = "Mario";
+    protected String nome2 = "Ilaria";
+    protected String nome3 = "Giovanni";
+    protected String nome4 = "Roberto";
+    protected String cognome1 = "Bramieri";
+    protected String cognome2 = "Torricelli";
+    protected String cognome3 = "Rossi";
+    protected String cognome4 = "Mazzacurati";
+    protected int numSorgente = 0;
+    protected int numPrevisto = 0;
+    protected int numOttenuto = 0;
+    protected int ordine;
     protected String previsto = "";
     protected String ottenuto = "";
 

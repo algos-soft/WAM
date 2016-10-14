@@ -26,6 +26,7 @@ public class TestService {
 
     private Funzione funz = null;
     private Servizio serv = null;
+    private Volontario vol = null;
 
     private long key1;
     private long key2;
@@ -43,7 +44,9 @@ public class TestService {
         testFunzioneNew();
         testFunzioneCrea();
         testServizioNew();
-        testVolontario();
+        testServizioCrea();
+        testVolontarioNew();
+        testVolontarioCrea();
     }// end of constructor
 
 
@@ -282,32 +285,106 @@ public class TestService {
 
     /**
      * Volontario
+     * Controllla i metodi New
+     * Con e senza company selezionata
      */
-    private void testVolontario() {
-        int numVolontariTotali = Volontario.countByAllCompanies();
-        ArrayList<Volontario> listaVolontariTotali = Volontario.findAllAll();
-        print("Numero di volontari totali (count)", numVolontariTotali);
-        print("Numero di volontari totali (lista)", listaVolontariTotali.size());
+    private void testVolontarioNew() {
+        numRecTotali = Volontario.countByAllCompanies();
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
 
-        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        int numVolontariCorrenti = Volontario.countByCompany(companyCorrente);
-        ArrayList<Volontario> listaVolontariCorrenti = Volontario.findAll(companyCorrente);
-        print("Numero di volontari con company selezionata (count)", numVolontariCorrenti);
-        print("Numero di volontari con company selezionata (lista)", listaVolontariCorrenti.size());
+        //--nessuna company corrente e nessuna company passata come pareametro
+        //--non registra
+        if (companyCorrente == null) {
+            vol = new Volontario("nome", "cognome");
+            vol = (Volontario) vol.save();
+            assertNull(vol);
+            CompanySessionLib.setCompany(companyDemo);
+            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        }// end of if cycle
 
-        int numVolontariCorrenti2 = Volontario.countByAllCompanies();
-        ArrayList<Volontario> listaVolontariCorrenti2 = Volontario.findAll();
-        print("Numero di volontari con company corrente (count)-2", numVolontariCorrenti2);
-        print("Numero di volontari con company corrente (lista)-2", listaVolontariCorrenti2.size());
+        //--company corrente presa in automatico
+        //--registra
+        vol = new Volontario("nome", "cognome");
+        vol = (Volontario) vol.save();
+        assertNotNull(vol);
+        key1 = vol.getId();
+        assertEquals(vol.getCompany(), companyDemo);
+        assertEquals(vol.getCompany(), companyCorrente);
+
+        //--company passata come parametro
+        //--registra
+        vol = new Volontario(companyTest,"nome", "cognome");
+        vol = (Volontario) vol.save();
+        assertNotNull(vol);
+        key2 = vol.getId();
+        assertEquals(vol.getCompany(), companyTest);
+        assertNotSame(vol.getCompany(), companyCorrente);
+
+        //--valore già esistente (controlla codeCompanyUnico)
+        //--non registra
+        vol = new Volontario(companyDemo,"nome", "cognome");
+        vol = (Volontario) vol.save();
+        assertNull(vol);
+
+        //--cancella le 2 (due) entity create per prova
+        Volontario.find(key1).delete();
+        Volontario.find(key2).delete();
+
+        //--controlla che ci siano le stesse entities che c'erano all'inizio
+        numRec = Volontario.countByAllCompanies();
+        assertEquals(numRec, numRecTotali);
 
         CompanySessionLib.setCompany(null);
-        int numVolontariCorrenti3 = Volontario.countByAllCompanies();
-        ArrayList<Volontario> listaVolontariCorrenti3 = Volontario.findAll();
-        print("Numero di volontari con company nulla (count)", numVolontariCorrenti3);
-        print("Numero di volontari con company nulla (lista)", listaVolontariCorrenti3.size());
-        CompanySessionLib.setCompany(companyCorrente);
+    }// end of method
 
-        riTestCompany();
+    /**
+     * Volontario
+     * Controllla i metodi Crea
+     * Con e senza company selezionata
+     */
+    private void testVolontarioCrea() {
+        numRecTotali = Volontario.countByAllCompanies();
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+
+        //--nessuna company corrente e nessuna company passata come pareametro
+        //--non registra
+        if (companyCorrente == null) {
+            vol = Volontario.crea("nome", "cognome");
+            assertNull(vol);
+            CompanySessionLib.setCompany(companyDemo);
+            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        }// end of if cycle
+
+        //--company corrente presa in automatico
+        //--registra
+        vol = Volontario.crea("nome", "cognome");
+        assertNotNull(vol);
+        key1 = vol.getId();
+        assertEquals(vol.getCompany(), companyDemo);
+        assertEquals(vol.getCompany(), companyCorrente);
+
+        //--company passata come parametro
+        //--registra
+        vol = Volontario.crea(companyTest,"nome", "cognome");
+        assertNotNull(vol);
+        key2 = vol.getId();
+        assertEquals(vol.getCompany(), companyTest);
+        assertNotSame(vol.getCompany(), companyCorrente);
+
+        //--valore già esistente (controlla codeCompanyUnico)
+        //--non registra
+        vol = Volontario.crea(companyDemo,"nome", "cognome");
+        assertNull(vol);
+
+        //--cancella le 2 (due) entity create per prova
+        Volontario.find(key1).delete();
+        Volontario.find(key2).delete();
+
+        //--controlla che ci siano le stesse entities che c'erano all'inizio
+        numRec = Volontario.countByAllCompanies();
+        assertEquals(numRec, numRecTotali);
+
+        CompanySessionLib.setCompany(null);
     }// end of method
 
     /**

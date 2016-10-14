@@ -1,7 +1,6 @@
 package it.algos.wam.entity.funzione;
 
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.Notification;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
@@ -345,6 +344,16 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return (Funzione) AQuery.getEntity(Funzione.class, Funzione_.codeCompanyUnico, codeCompanyUnico, manager);
     }// end of static method
 
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Nessun filtro sulla company, perché la property è unica
+     *
+     * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
+     * @return vero se esiste Entity, false se non trovata
+     */
+    public static boolean isEntityByCodeCompanyUnico(String codeCompanyUnico, EntityManager manager) {
+        return getEntityByCodeCompanyUnico(codeCompanyUnico, manager) != null;
+    }// end of static method
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
@@ -467,7 +476,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return lista di tutte le entities
      */
     public static List<Funzione> getListByCurrentCompany(EntityManager manager) {
-        return getListBySingleCompany(WamCompany.getCurrent(), manager);
+        return getListByCompany(WamCompany.getCurrent(), manager);
     }// end of static method
 
 
@@ -479,8 +488,8 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company di appartenenza (property della superclasse)
      * @return lista di tutte le entities
      */
-    public static List<Funzione> getListBySingleCompany(WamCompany company) {
-        return getListBySingleCompany(company, (EntityManager) null);
+    public static List<Funzione> getListByCompany(WamCompany company) {
+        return getListByCompany(company, (EntityManager) null);
     }// end of static method
 
 
@@ -496,7 +505,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static List<Funzione> getListBySingleCompany(WamCompany company, EntityManager manager) {
+    public static List<Funzione> getListByCompany(WamCompany company, EntityManager manager) {
         if (company != null) {
             return (List<Funzione>) CompanyQuery.getList(Funzione.class, CompanyEntity_.company, company, manager);
         } else {
@@ -508,22 +517,22 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     // Get properties (list)
     //------------------------------------------------------------------------------------------------------------------------
 
-    public static List<String> getListStrByCodeCompanyUnico() {
-        return getListStrByCodeCompanyUnico((EntityManager) null);
+    public static List<String> getListStrForCodeCompanyUnico() {
+        return getListStrForCodeCompanyUnico((EntityManager) null);
     }// end of static method
 
-    public static List<String> getListStrByCodeCompanyUnico(EntityManager manager) {
+    public static List<String> getListStrForCodeCompanyUnico(EntityManager manager) {
         return CompanyQuery.getListStr(Funzione.class, Funzione_.codeCompanyUnico, null, manager);
     }// end of static method
 
 
-    public static List<String> getListStrByCompanyAndCode() {
-        return getListStrByCompanyAndCode(WamCompany.getCurrent());
+    public static List<String> getListStrForCodeByCompany() {
+        return getListStrForCodeByCompany();
     }// end of static method
 
 
-    public static List<String> getListStrByCompanyAndCode(WamCompany company) {
-        return getListStrByCompanyAndCode(company, (EntityManager) null);
+    public static List<String> getListStrForCodeByCompany(WamCompany company) {
+        return getListStrForCodeByCompany(company, (EntityManager) null);
     }// end of static method
 
     /**
@@ -537,7 +546,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
      */
-    public static List<String> getListStrByCompanyAndCode(WamCompany company, EntityManager manager) {
+    public static List<String> getListStrForCodeByCompany(WamCompany company, EntityManager manager) {
         return CompanyQuery.getListStr(Funzione.class, Funzione_.code, company, manager);
     }// end of static method
 
@@ -729,7 +738,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Saves this entity to the database using a local EntityManager
-     * <p>
      *
      * @return the merged Entity (new entity, unmanaged, has the id)
      */
@@ -740,7 +748,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Saves this entity to the database using a local EntityManager
-     * <p>
      *
      * @param manager the entity manager to use (if null, a new one is created on the fly)
      * @return the merged Entity (new entity, unmanaged, has the id)
@@ -774,7 +781,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             valido = this.checkDescrizione();
         }// end of if cycle
         if (valido) {
-            valido = this.checkChiave(company);
+            valido = this.checkChiave(company, manager);
         }// end of if cycle
         if (valido) {
             this.checkOrdine(company, manager);
@@ -790,7 +797,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Saves this entity to the database.
-     * <p>
      * Usa l'EntityManager di default
      *
      * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
@@ -828,7 +834,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         if (getCode() != null && !getCode().equals("")) {
             return true;
         } else {
-            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+//            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
             return false;
         }// end of if/else cycle
     } // end of method
@@ -845,7 +851,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         if (getSigla() != null && !getSigla().equals("")) {
             return true;
         } else {
-            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+//            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
             return false;
         }// end of if/else cycle
     } // end of method
@@ -862,7 +868,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         if (getDescrizione() != null && !getDescrizione().equals("")) {
             return true;
         } else {
-            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+//            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
             return false;
         }// end of if/else cycle
     } // end of method
@@ -874,7 +880,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @param company azienda da filtrare
      */
-    private boolean checkChiave(WamCompany company) {
+    private boolean checkChiave(WamCompany company, EntityManager manager) {
         boolean valido = false;
 
         if (getCode() == null || getCode().equals("")) {
@@ -887,7 +893,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             valido = true;
         }// end of if/else cycle
 
-        if (Funzione.isEntityByCodeCompanyUnico(codeCompanyUnico)) {
+        if (Funzione.isEntityByCodeCompanyUnico(codeCompanyUnico, manager)) {
             valido = false;
         }// end of if cycle
 
