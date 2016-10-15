@@ -1,6 +1,9 @@
 package it.algos.wam.login;
 
+import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.data.Container;
 import com.vaadin.data.Property;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.ui.Component;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.Volontario_;
@@ -20,14 +23,20 @@ public class WamLoginForm extends DefaultLoginForm {
     @Override
     public Component createUsernameComponent() {
         userCombo = new ERelatedComboField(Volontario.class, "Utente");
-        int alfa= userCombo.size();
         userCombo.sort(Volontario_.cognome, Volontario_.nome);
+
+        //--filtro. Solo quelli attivi
+        Container.Filter filter = new Compare.Equal(Volontario_.attivo.getName(), true);
+        JPAContainer filterableContainer = (JPAContainer) userCombo.getContainerDataSource();
+        filterableContainer.addContainerFilter(filter);
+
         userCombo.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 getPassField().clear();
             }
         });
+
         return userCombo;
     }
 

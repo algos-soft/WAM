@@ -74,6 +74,7 @@ public class VolontarioTable extends WamTable {
             lista.add(Volontario_.codeCompanyUnico);
         }// end of if cycle
 
+        lista.add(Volontario_.attivo);
         lista.add(Volontario_.admin);
         lista.add(Volontario_.cognome);
         lista.add(Volontario_.nome);
@@ -118,6 +119,7 @@ public class VolontarioTable extends WamTable {
     private void fixColumn() {
         List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
 
+        setColumnHeader(Volontario_.attivo, "ok");
         setColumnHeader(Volontario_.admin, "Admin");
         setColumnHeader(Volontario_.cognome, "Cognome");
         setColumnHeader(Volontario_.nome, "Nome");
@@ -126,6 +128,7 @@ public class VolontarioTable extends WamTable {
         setColumnHeader(Volontario_.scadenzaTrauma, "BPHT");
         setColumnHeader(Volontario_.scadenzaNonTrauma, "PNT");
 
+        setColumnWidth(Volontario_.attivo, 70);
         setColumnWidth(Volontario_.admin, 70);
         setColumnWidth(Volontario_.cognome, 190);
         setColumnWidth(Volontario_.nome, 130);
@@ -134,6 +137,7 @@ public class VolontarioTable extends WamTable {
         setColumnWidth(Volontario_.scadenzaTrauma, LAR_SCADENZE);
         setColumnWidth(Volontario_.scadenzaNonTrauma, LAR_SCADENZE);
 
+        setColumnAlignment(Volontario_.attivo, Align.CENTER);
         setColumnAlignment(Volontario_.admin, Align.CENTER);
         setColumnAlignment(Volontario_.scadenzaBLSD, Align.CENTER);
         setColumnAlignment(Volontario_.scadenzaTrauma, Align.CENTER);

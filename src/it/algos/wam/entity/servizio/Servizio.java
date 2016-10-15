@@ -130,6 +130,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     /**
      * Costruttore senza argomenti
      * Obbligatorio per le specifiche JavaBean
+     * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Servizio() {
     }// end of constructor
@@ -242,7 +243,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera il numero di records della Entity
-     * Filtrato sulla azienda corrente.
+     * Filtrato sulla company corrente.
      *
      * @return il numero filtrato di records nella Entity
      */
@@ -253,7 +254,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera il numero di records della Entity
-     * Filtrato sulla azienda corrente.
+     * Filtrato sulla company corrente.
      * Usa l'EntityManager passato come parametro
      * Se il manager è nullo, costruisce al volo un manager standard (and close it)
      * Se il manager è valido, lo usa (must be close by caller method)
@@ -267,7 +268,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera il numero di records della Entity
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
      * @return il numero filtrato di records nella Entity
@@ -278,7 +279,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera il numero di records della Entity
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      * Usa l'EntityManager passato come parametro
      * Se il manager è nullo, costruisce al volo un manager standard (and close it)
      * Se il manager è valido, lo usa (must be close by caller method)
@@ -293,7 +294,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera il numero di records della Entity, filtrato sul valore della property indicata
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      * Usa l'EntityManager passato come parametro
      * Se il manager è nullo, costruisce al volo un manager standard (and close it)
      * Se il manager è valido, lo usa (must be close by caller method)
@@ -336,7 +337,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @return istanza della Entity, null se non trovata
      */
     public static Servizio find(long id, EntityManager manager) {
-        return (Servizio) CompanyQuery.find(Servizio.class, id, manager);
+        return (Servizio) AQuery.find(Servizio.class, id, manager);
     }// end of static method
 
 
@@ -378,10 +379,20 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         return (Servizio) AQuery.getEntity(Servizio.class, Servizio_.codeCompanyUnico, codeCompanyUnico, manager);
     }// end of static method
 
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Nessun filtro sulla company, perché la property è unica
+     *
+     * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
+     * @return vero se esiste Entity, false se non trovata
+     */
+    public static boolean isEntityByCodeCompanyUnico(String codeCompanyUnico, EntityManager manager) {
+        return getEntityByCodeCompanyUnico(codeCompanyUnico, manager) != null;
+    }// end of static method
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
      * @return istanza della Entity, null se non trovata
@@ -392,7 +403,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
      * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
@@ -405,7 +416,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
      * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
@@ -418,7 +429,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Controlla che esista una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
      * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
@@ -439,7 +450,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Controlla che non esista una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
      * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
@@ -482,7 +493,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @return lista di tutte le entities
      */
@@ -493,7 +504,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
@@ -864,7 +875,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     /**
      * Numero massimo conenuto nella property
      *
-     * @param company azienda da filtrare
+     * @param company  da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
      * @return massimo valore
      */
@@ -1014,7 +1025,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
      * Otherwise, a new transaction is used to save this single entity.
      *
-     * @param company azienda da filtrare
+     * @param company azinda da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
      * @return the merged Entity (new entity, unmanaged, has the id)
      */
@@ -1029,7 +1040,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
             valido = this.checkDescrizione();
         }// end of if cycle
         if (valido) {
-            valido = this.checkChiave(company);
+            valido = this.checkChiave(company,manager);
         }// end of if cycle
         if (valido) {
             this.checkOrdine(company, manager);
@@ -1083,7 +1094,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         if (getSigla() != null && !getSigla().equals("")) {
             return true;
         } else {
-            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+//            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
             return false;
         }// end of if/else cycle
     } // end of method
@@ -1100,7 +1111,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         if (getDescrizione() != null && !getDescrizione().equals("")) {
             return true;
         } else {
-            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+//            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
             return false;
         }// end of if/else cycle
     } // end of method
@@ -1109,9 +1120,9 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Controlla l'esistenza della chiave univoca, PRIMA di salvare il valore nel DB
      * La crea se non esiste già
      *
-     * @param company azienda da filtrare
+     * @param company  da filtrare
      */
-    private boolean checkChiave(WamCompany company) {
+    private boolean checkChiave(WamCompany company,EntityManager manager) {
         boolean valido = false;
 
         if (getSigla() == null || getSigla().equals("")) {
@@ -1124,11 +1135,15 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
             valido = true;
         }// end of if/else cycle
 
-        if (Servizio.isEntityByCodeCompanyUnico(codeCompanyUnico)) {
+        if (isEsistente(codeCompanyUnico, manager)) {
             valido = false;
         }// end of if cycle
 
         return valido;
+    } // end of method
+
+    public boolean isEsistente(String codeCompanyUnico, EntityManager manager) {
+        return this.getId() == null && Servizio.isEntityByCodeCompanyUnico(codeCompanyUnico, manager);
     } // end of method
 
     /**
@@ -1136,7 +1151,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Elimino l'annotazione ed uso una chiamata dal metodo save(),
      * perché altrimenti non riuscirei a passare il parametro manager
      *
-     * @param company azienda da filtrare
+     * @param company  da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
      *                //@PrePersist
      */

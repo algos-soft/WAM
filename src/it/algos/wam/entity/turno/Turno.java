@@ -7,6 +7,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
 import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -17,6 +18,7 @@ import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
 
 import javax.persistence.*;
+import javax.persistence.metamodel.SingularAttribute;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -62,6 +64,7 @@ public class Turno extends WamCompanyEntity {
 
     //--chiave indicizzata per query più veloci e 'mirate' (obbligatoria)
     //--annoX1000 + giorno nell'anno
+    //--individua tutti i turni di una company per un giorno
     @NotNull
     @Index
     private long chiave;
@@ -93,40 +96,40 @@ public class Turno extends WamCompanyEntity {
     /**
      * Costruttore senza argomenti
      * Obbligatorio per le specifiche JavaBean
+     * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Turno() {
     }// end of constructor
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
-     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      * La chiave (obbligatoria) viene calcolata in automatico prima del persist
      *
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
-     * @param fine     giorno, ora e minuto di fine turno
      */
-    public Turno(Servizio servizio, Date inizio, Date fine) {
-        this((WamCompany) null, servizio, inizio, fine);
+    public Turno(Servizio servizio, Date inizio) {
+        this((WamCompany) null, servizio, inizio);
     }// end of constructor
+
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      * La chiave (obbligatoria) viene calcolata in automatico prima del persist
      *
      * @param company  di appartenenza (property della superclasse)
      * @param servizio tipologia di servizio (obbligatoria)
      * @param inizio   giorno, ora e minuto di inizio turno
-     * @param fine     giorno, ora e minuto di fine turno
      */
-    public Turno(WamCompany company, Servizio servizio, Date inizio, Date fine) {
-        this(company, servizio, inizio, fine, (List<Iscrizione>) null);
+    public Turno(WamCompany company, Servizio servizio, Date inizio) {
+        this(company, servizio, inizio, (Date) null, (List<Iscrizione>) null);
     }// end of constructor
 
     /**
-     * Costruttore minimo con tutte le properties obbligatorie
-     * Filtrato sulla azienda passata come parametro.
+     * Costruttore completo
+     * Filtrato sulla company passata come parametro.
      * La chiave (obbligatoria) viene calcolata in automatico prima del persist
      *
      * @param company    di appartenenza (property della superclasse)
@@ -137,7 +140,9 @@ public class Turno extends WamCompanyEntity {
      */
     public Turno(WamCompany company, Servizio servizio, Date inizio, Date fine, List<Iscrizione> iscrizioni) {
         super();
-        this.setCompany(company);
+        if (company != null) {
+            this.setCompany(company);
+        }// end of if cycle
         this.setServizio(servizio);
         this.setInizio(inizio);
         this.setFine(fine);
@@ -150,24 +155,396 @@ public class Turno extends WamCompanyEntity {
     // Count records
     //------------------------------------------------------------------------------------------------------------------------
 
+
     /**
-     * Recupera una istanza di Turno usando la query standard della Primary Key
+     * Recupera il numero totale di records della Entity
+     * Senza filtri.
      *
-     * @param id valore della Primary Key
-     * @return istanza di Turno, null se non trovata
+     * @return il numero totale di records nella Entity
+     */
+    public static int countByAllCompanies() {
+        return countByAllCompanies((EntityManager) null);
+    }// end of static method
+
+    /**
+     * Recupera il numero totale di records della Entity
+     * Senza filtri.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param manager the EntityManager to use
+     * @return il numero totale di records nella Entity
+     */
+    public static int countByAllCompanies(EntityManager manager) {
+        return AQuery.count(Turno.class, manager);
+    }// end of static method
+
+    /**
+     * Recupera il numero di records della Entity
+     * Filtrato sulla company corrente.
+     *
+     * @return il numero filtrato di records nella Entity
+     */
+    public static int countByCurrentCompany() {
+        return countByCurrentCompany((EntityManager) null);
+    }// end of static method
+
+    /**
+     * Recupera il numero di records della Entity
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param manager the EntityManager to use
+     * @return il numero filtrato di records nella Entity
+     */
+    public static int countByCurrentCompany(EntityManager manager) {
+        return countByCompany(WamCompany.getCurrent(), manager);
+    }// end of static method
+
+
+    /**
+     * Recupera il numero di records della Entity
+     * Filtrato sulla company passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @return il numero filtrato di records nella Entity
+     */
+    public static int countByCompany(WamCompany company) {
+        return countByCompany(company, (EntityManager) null);
+    }// end of static method
+
+    /**
+     * Recupera il numero di records della Entity
+     * Filtrato sulla company passata come parametro.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     * @return il numero filtrato di records nella Entity
+     */
+    public static int countByCompany(WamCompany company, EntityManager manager) {
+        return CompanyQuery.count(Turno.class, company, manager);
+    }// end of static method
+
+    /**
+     * Recupera il numero di records della Entity, filtrato sul valore della property indicata
+     * Filtrato sulla company passata come parametro.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param attr    the searched attribute
+     * @param value   the value to search for
+     * @param manager the EntityManager to use
+     * @return il numero filtrato di records nella Entity
+     */
+    public static int countByCompanyAndProperty(WamCompany company, SingularAttribute attr, Object value, EntityManager manager) {
+        return CompanyQuery.count(Turno.class, attr, value, company, manager);
+    }// end of static method
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Find entity by primary key
+    //------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Recupera una istanza della Entity usando la query standard della Primary Key
+     * Nessun filtro sulla company, perché la primary key è unica
+     *
+     * @param id valore (unico) della Primary Key
+     * @return istanza della Entity, null se non trovata
      */
     public static Turno find(long id) {
-        Turno instance = null;
-        BaseEntity entity = AQuery.find(Turno.class, id);
+        return find(id, (EntityManager) null);
+    }// end of static method
 
-        if (entity != null) {
-            if (entity instanceof Turno) {
-                instance = (Turno) entity;
-            }// end of if cycle
+
+    /**
+     * Recupera una istanza della Entity usando la query standard della Primary Key
+     * Nessun filtro sulla company, perché la primary key è unica
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param id      valore (unico) della Primary Key
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    public static Turno find(long id, EntityManager manager) {
+        return (Turno) AQuery.find(Turno.class, id, manager);
+    }// end of static method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Get single entity by SingularAttribute
+    //------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla company corrente
+     *
+     * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
+     * @param servizio tipologia di servizio (obbligatoria)
+     * @return istanza della Entity, null se non trovata
+     */
+    public static Turno getEntityByChiaveAndServizio(long chiave, Servizio servizio) {
+        return getEntityByCompanyAndChiaveAndServizio(WamCompany.getCurrent(), chiave, servizio, (EntityManager) null);
+    }// end of static method
+
+    /**
+     * Controlla che esista una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla company corrente
+     *
+     * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
+     * @param servizio tipologia di servizio (obbligatoria)
+     * @return vero se esiste Entity, false se non trovata
+     */
+    public static boolean isEntityByChiaveAndServizio(long chiave, Servizio servizio) {
+        return getEntityByChiaveAndServizio(chiave, servizio) != null;
+    }// end of static method
+
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla company passata come parametro.
+     * I servizi orari sono uno per giorno e quindi trova la entity
+     * I servizi non orari possono essere più di uno per giorno e quindi (se sono più di uno) non trova la entity
+     *
+     * @param company  di appartenenza (property della superclasse)
+     * @param chiave   indicizzata per query più veloci e 'mirate' (obbligatoria)
+     * @param servizio tipologia di servizio (obbligatoria)
+     * @param manager  the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    public static Turno getEntityByCompanyAndChiaveAndServizio(WamCompany company, long chiave, Servizio servizio, EntityManager manager) {
+        return (Turno) CompanyQuery.getEntity(Turno.class, Turno_.chiave, chiave, Turno_.servizio, servizio, company, manager);
+    }// end of static method
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Get entities (list)
+    //------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Senza filtri.
+     *
+     * @return lista di tutte le entities
+     */
+    public static List<Turno> getListByAllCompanies() {
+        return getListByAllCompanies((EntityManager) null);
+    }// end of static method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Senza filtri.
+     * (non va usata CompanyQuery, altrimenti arriverebbe solo la lista della company corrente)
+     *
+     * @param manager the EntityManager to use
+     * @return lista di tutte le entities
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Turno> getListByAllCompanies(EntityManager manager) {
+        return (List<Turno>) AQuery.getList(Turno.class, manager);
+    }// end of static method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
+     *
+     * @return lista di tutte le entities
+     */
+    public static List<Turno> getListByCurrentCompany() {
+        return getListByCurrentCompany((EntityManager) null);
+    }// end of static method
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
+     *
+     * @param manager the EntityManager to use
+     * @return lista di tutte le entities
+     */
+    public static List<Turno> getListByCurrentCompany(EntityManager manager) {
+        return getListByCompany(WamCompany.getCurrent(), manager);
+    }// end of static method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla company passata come parametro.
+     * Se si arriva qui con una company null, vuol dire che non esiste la company corrente
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @return lista di tutte le entities
+     */
+    public static List<Turno> getListByCompany(WamCompany company) {
+        return getListByCompany(company, (EntityManager) null);
+    }// end of static method
+
+
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     * Filtrato sulla company passata come parametro.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     * @return lista di tutte le entities
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Turno> getListByCompany(WamCompany company, EntityManager manager) {
+        if (company != null) {
+            return (List<Turno>) CompanyQuery.getList(Turno.class, CompanyEntity_.company, company, manager);
+        } else {
+            return new ArrayList<>();
+        }// end of if/else cycle
+    }// end of static method
+
+
+    /**
+     * Recupera una lista (array) di entities usando la query di una property specifica
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param inizio data di svolgimento (inizio) del servizio (obbligatoria)
+     * @return lista delle entities filtrate
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Turno> getListByDate(Date inizio) {
+        return getListByCompanyAndDate((WamCompany) CompanySessionLib.getCompany(), inizio, (EntityManager) null);
+    }// end of static method
+
+    /**
+     * Recupera una lista (array) di entities usando la query di una property specifica
+     * Filtrato sulla company passata come parametro.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param inizio  data di svolgimento (inizio) del servizio (obbligatoria)
+     * @param manager the EntityManager to use
+     * @return lista delle entities filtrate
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Turno> getListByCompanyAndDate(WamCompany company, Date inizio, EntityManager manager) {
+        return (List<Turno>) CompanyQuery.getList(Turno.class, Turno_.inizio, company, manager);
+    }// end of static method
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // New and save
+    //------------------------------------------------------------------------------------------------------------------------
+
+    public static Turno crea(Servizio servizio, Date inizio) {
+        return crea((WamCompany) CompanySessionLib.getCompany(), servizio, inizio, (Date) null);
+    }// end of static method
+
+    public static Turno crea(WamCompany company, Servizio servizio, Date inizio) {
+        return crea(company, servizio, inizio, (Date) null);
+    }// end of static method
+
+    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine) {
+        return crea(company, servizio, inizio, fine, (EntityManager) null);
+    }// end of static method
+
+    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, EntityManager manager) {
+        return crea(company, servizio, inizio, fine, false, manager);
+    }// end of static method
+
+    /**
+     * Creazione iniziale di un turno
+     * Lo crea SOLO se non esiste (nel casi di servizi ad orario)
+     * Lo crea anche se esiste già (nel caso di servizi ripetitivi nello stesso giorno)
+     *
+     * @param company   croce di appartenenza
+     * @param manager   the EntityManager to use
+     * @param servizio  tipologia di servizio (obbligatoria)
+     * @param inizio    giorno, ora e minuto di inizio turno
+     * @param fine      giorno, ora e minuto di fine turno
+     * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
+     * @return istanza di turno
+     */
+    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, boolean assegnato, EntityManager manager) {
+        Turno turno = null;
+        int chiave = LibWam.creaChiave(inizio);
+
+        if (servizio == null || inizio == null) {
+            return null;
         }// end of if cycle
 
-        return instance;
-    }// end of method
+        if (servizio.isOrario()) {
+//            turno = Turno.find(servizio, inizio);
+//            turno = Turno.find(servizio, chiave);
+            turno = getEntityByChiaveAndServizio(chiave, servizio);
+//            if (isEntityByChiaveAndServizio(chiave,servizio)) {
+//                codice
+//            }// end of if cycle
+
+        }// end of if cycle
+
+        if (turno == null) {
+            if (fine == null && servizio.isOrario()) {
+                fine = inizio;
+            }// end of if cycle
+
+            turno = new Turno(company, servizio, inizio);
+            turno.setFine(fine);
+            turno.setAssegnato(assegnato);
+            turno = turno.save(company, manager);
+        }// end of if cycle
+
+        return turno;
+    }// end of static method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Delete
+    //------------------------------------------------------------------------------------------------------------------------
+    public static int deleteAll() {
+        return deleteAll((WamCompany) CompanySessionLib.getCompany(), (EntityManager) null);
+    }// end of static method
+
+    public static int deleteAll(WamCompany company) {
+        return deleteAll(company, (EntityManager) null);
+    }// end of static method
+
+    public static int deleteAll(EntityManager manager) {
+        return deleteAll((WamCompany) CompanySessionLib.getCompany(), manager);
+    }// end of static method
+
+    /**
+     * Delete all the records for the Entity class
+     * Bulk delete records with CriteriaDelete
+     *
+     * @param manager the EntityManager to use
+     */
+    public static int deleteAll(WamCompany company, EntityManager manager) {
+        return CompanyQuery.delete(Turno.class, company, manager);
+    }// end of static method
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // utilities
+    //------------------------------------------------------------------------------------------------------------------------
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Getter and setter
+    //------------------------------------------------------------------------------------------------------------------------
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // Save
+    //------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Recupera una lista di Turni usando la chiave specifica
@@ -287,6 +664,10 @@ public class Turno extends WamCompanyEntity {
         return instance;
     }// end of method
 
+    //------------------------------------------------------------------------------------------------------------------------
+    // Utilities
+    //------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Recupera una istanza di Turno usando la query di tutte e sole le property obbligatorie
      * Se il servizio NON è multiplo, ce ne deve essere SOLO UNO al giorno (per wamcompany)
@@ -302,22 +683,6 @@ public class Turno extends WamCompanyEntity {
     }// end of method
 
     /**
-     * Recupera il valore del numero totale di records della della Entity
-     *
-     * @return numero totale di records della tavola
-     */
-    public static int count() {
-        int totRec = 0;
-        long totTmp = CompanyQuery.getCount(Turno.class);
-
-        if (totTmp > 0) {
-            totRec = (int) totTmp;
-        }// fine del blocco if
-
-        return totRec;
-    }// end of method
-
-    /**
      * Recupera una lista (array) di tutti i records della Entity
      *
      * @return lista di tutte le istanze di Turno
@@ -327,66 +692,154 @@ public class Turno extends WamCompanyEntity {
         return (ArrayList<Turno>) CompanyQuery.getList(Turno.class);
     }// end of method
 
-    /**
-     * Creazione iniziale di un turno
-     * Lo crea SOLO se non esiste
-     *
-     * @param company  croce di appartenenza
-     * @param manager  the EntityManager to use
-     * @param servizio tipologia di servizio (obbligatoria)
-     * @param inizio   giorno, ora e minuto di inizio turno
-     * @return istanza di turno
-     */
-    public static Turno crea(WamCompany company, EntityManager manager, Servizio servizio, Date inizio) {
-        return crea(company, manager, servizio, inizio, null, false);
-    }// end of static method
-
-    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine) {
-        return crea(company, (EntityManager) null, servizio, inizio, fine, false);
-    }// end of static method
-
-    public static Turno crea(WamCompany company, Servizio servizio, Date inizio, Date fine, EntityManager manager) {
-        return crea(company, manager, servizio, inizio, fine, false);
-    }// end of static method
+    //------------------------------------------------------------------------------------------------------------------------
+    // Save
+    //------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Creazione iniziale di un turno
-     * Lo crea SOLO se non esiste
+     * Saves this entity to the database using a local EntityManager
      *
-     * @param company   croce di appartenenza
-     * @param manager   the EntityManager to use
-     * @param servizio  tipologia di servizio (obbligatoria)
-     * @param inizio    giorno, ora e minuto di inizio turno
-     * @param fine      giorno, ora e minuto di fine turno
-     * @param assegnato turno previsto (vuoto) oppure assegnato (militi inseriti)
-     * @return istanza di turno
+     * @return the merged Entity (new entity, unmanaged, has the id)
      */
-    public static Turno crea(WamCompany company, EntityManager manager, Servizio servizio, Date inizio, Date fine, boolean assegnato) {
-        Turno turno = null;
-        int chiave = LibWam.creaChiave(inizio);
+    @Override
+    public BaseEntity save() {
+        return this.save((EntityManager) null);
+    }// end of method
 
-        if (servizio == null || inizio == null) {
-            return null;
+
+    /**
+     * Saves this entity to the database using a local EntityManager
+     *
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    @Override
+    public BaseEntity save(EntityManager manager) {
+        return this.save(getWamCompany(), manager);
+    }// end of method
+
+    /**
+     * Saves this entity to the database.
+     * <p>
+     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
+     * Otherwise, a new transaction is used to save this single entity.
+     *
+     * @param company da filtrare
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id)
+     */
+    public Turno save(WamCompany company, EntityManager manager) {
+        boolean valido;
+
+        valido = super.checkCompany();
+        if (valido) {
+            valido = this.checkServizio();
         }// end of if cycle
+        if (valido) {
+            valido = this.checkInizio();
+        }// end of if cycle
+        if (valido) {
+            valido = this.checkChiave();
+        }// end of if cycle
+
+        if (valido) {
+            return (Turno) super.save(manager);
+        } else {
+            return null;
+        }// end of if/else cycle
+
+    }// end of method
+
+    /**
+     * Saves this entity to the database.
+     * Usa l'EntityManager di default
+     *
+     * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
+     */
+    public Turno saveSafe() {
+        return saveSafe((EntityManager) null);
+    }// end of method
+
+    /**
+     * Saves this entity to the database.
+     * <p>
+     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
+     * Otherwise, a new transaction is used to save this single entity.
+     *
+     * @param manager the entity manager to use (if null, a new one is created on the fly)
+     * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
+     */
+    public Turno saveSafe(EntityManager manager) {
+        return (Turno) this.save(manager);
+    }// end of method
+
+    /**
+     * Implementa come business logic, la obbligatorietà del servizio
+     * <p>
+     *
+     * @return true se esiste, false se non esiste
+     */
+    private boolean checkServizio() {
+        String caption = "La funzione non può essere accettata, perché manca la sigla che è obbligatoria";
+
+        if (getServizio() != null && getServizio() != null) {
+            return true;
+        } else {
+//            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
+    } // end of method
+
+    /**
+     * Implementa come business logic, la obbligatorietà della data di inizio turno
+     * <p>
+     *
+     * @return true se esiste, false se non esiste
+     */
+    private boolean checkInizio() {
+        String caption = "La funzione non può essere accettata, perché manca la descrizione che è obbligatoria";
+
+        if (getInizio() != null && getInizio() != null) {
+            return true;
+        } else {
+//            Notification.show(caption, Notification.Type.WARNING_MESSAGE);
+            return false;
+        }// end of if/else cycle
+    } // end of method
+
+//    /**
+//     * Recupera il valore del numero totale di records della della Entity
+//     *
+//     * @return numero totale di records della tavola
+//     */
+//    public static int count() {
+//        int totRec = 0;
+//        long totTmp = CompanyQuery.count(Turno.class);
+//
+//        if (totTmp > 0) {
+//            totRec = (int) totTmp;
+//        }// fine del blocco if
+//
+//        return totRec;
+//    }// end of method
+
+    /**
+     * Costruisce (od aggiorna) la chiave di ricerca indicizzata
+     * Se il servizio è orario, deve essere l'unico nella giornata (per la stessa company, ovviamente)
+     * Se il servizio non è orario, nessun controllo
+     */
+    public boolean checkChiave() {
+        boolean valido = true;
+        chiave = LibWam.creaChiave(inizio);
 
         if (servizio.isOrario()) {
-            turno = Turno.find(servizio, inizio);
-            turno = Turno.find(servizio, chiave);
+//            turno = Turno.find(servizio, inizio);
+//            turno = Turno.find(servizio, chiave);
+
         }// end of if cycle
 
-        if (turno == null) {
-            if (fine == null && servizio.isOrario()) {
-                fine = inizio;
-            }// end of if cycle
-
-            turno = new Turno(company,servizio, inizio, fine);
-            turno.fixChiave();
-            turno.setAssegnato(assegnato);
-            turno.save(manager);
-        }// end of if cycle
-
-        return turno;
-    }// end of static method
+        return valido;
+    }// end of method
 
     public void add(Iscrizione iscrizione) {
 //        TurnoIscrizione tunIsc = null;
@@ -404,13 +857,6 @@ public class Turno extends WamCompanyEntity {
 
     }// end of method
 
-    /**
-     * Costruisce (od aggiorna) la chiave di ricerca indicizzata
-     */
-    @PrePersist
-    public void fixChiave() {
-        chiave = LibWam.creaChiave(inizio);
-    }// end of method
 
     @Override
     public String toString() {
@@ -439,14 +885,6 @@ public class Turno extends WamCompanyEntity {
 
     public void setInizio(Date inizio) {
         this.inizio = inizio;
-
-        // regola la chiave (campo calcolato)
-        if (inizio != null) {
-            fixChiave();
-        } else {
-            setChiave(0);
-        }
-
     }//end of setter method
 
     /**

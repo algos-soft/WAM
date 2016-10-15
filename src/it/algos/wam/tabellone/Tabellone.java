@@ -199,9 +199,9 @@ public class Tabellone extends VerticalLayout implements View {
                     InfoNewTurnoWrap wrapper = (InfoNewTurnoWrap) cellObject;
                     LocalDate dInizio = wrapper.getData();
                     Servizio serv = wrapper.getServizio();
-                    turno = new Turno();
-                    turno.setInizio(DateConvertUtils.asUtilDate(dInizio));
-                    turno.setServizio(serv);
+                    turno = new Turno(serv,DateConvertUtils.asUtilDate(dInizio));
+//                    turno.setInizio(DateConvertUtils.asUtilDate(dInizio));
+//                    turno.setServizio(serv);
                     editCellTurno(turno, col, row);
                     break;
                 case SERVIZIO:

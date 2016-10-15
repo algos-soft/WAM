@@ -2,11 +2,12 @@ package it.algos.wam.bootstrap;
 
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -27,9 +28,11 @@ public class TestService {
     private Funzione funz = null;
     private Servizio serv = null;
     private Volontario vol = null;
+    private Turno turno = null;
 
     private long key1;
     private long key2;
+    private long key3;
 
     private int numRecTotali;
     private int numRec;
@@ -47,6 +50,7 @@ public class TestService {
         testServizioCrea();
         testVolontarioNew();
         testVolontarioCrea();
+        testTurnoNew();
     }// end of constructor
 
 
@@ -88,9 +92,9 @@ public class TestService {
             funz = new Funzione("code", "sigla", "descrizione");
             funz = (Funzione) funz.save();
             assertNull(funz);
-            CompanySessionLib.setCompany(companyDemo);
-            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         }// end of if cycle
+        CompanySessionLib.setCompany(companyDemo);
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
 
         //--company corrente presa in automatico
         //--registra
@@ -142,9 +146,9 @@ public class TestService {
         if (companyCorrente == null) {
             funz = Funzione.crea("code", "sigla", "descrizione");
             assertNull(funz);
-            CompanySessionLib.setCompany(companyDemo);
-            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         }// end of if cycle
+        CompanySessionLib.setCompany(companyDemo);
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
 
         //--company corrente presa in automatico
         //--registra
@@ -194,9 +198,9 @@ public class TestService {
             serv = new Servizio("sigla", "descrizione");
             serv = (Servizio) serv.save();
             assertNull(serv);
-            CompanySessionLib.setCompany(companyDemo);
-            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         }// end of if cycle
+        CompanySessionLib.setCompany(companyDemo);
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
 
         //--company corrente presa in automatico
         //--registra
@@ -247,9 +251,9 @@ public class TestService {
         if (companyCorrente == null) {
             serv = Servizio.crea("sigla", "descrizione");
             assertNull(serv);
-            CompanySessionLib.setCompany(companyDemo);
-            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         }// end of if cycle
+        CompanySessionLib.setCompany(companyDemo);
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
 
         //--company corrente presa in automatico
         //--registra
@@ -298,9 +302,9 @@ public class TestService {
             vol = new Volontario("nome", "cognome");
             vol = (Volontario) vol.save();
             assertNull(vol);
-            CompanySessionLib.setCompany(companyDemo);
-            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         }// end of if cycle
+        CompanySessionLib.setCompany(companyDemo);
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
 
         //--company corrente presa in automatico
         //--registra
@@ -313,7 +317,7 @@ public class TestService {
 
         //--company passata come parametro
         //--registra
-        vol = new Volontario(companyTest,"nome", "cognome");
+        vol = new Volontario(companyTest, "nome", "cognome");
         vol = (Volontario) vol.save();
         assertNotNull(vol);
         key2 = vol.getId();
@@ -322,7 +326,7 @@ public class TestService {
 
         //--valore già esistente (controlla codeCompanyUnico)
         //--non registra
-        vol = new Volontario(companyDemo,"nome", "cognome");
+        vol = new Volontario(companyDemo, "nome", "cognome");
         vol = (Volontario) vol.save();
         assertNull(vol);
 
@@ -351,9 +355,9 @@ public class TestService {
         if (companyCorrente == null) {
             vol = Volontario.crea("nome", "cognome");
             assertNull(vol);
-            CompanySessionLib.setCompany(companyDemo);
-            companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         }// end of if cycle
+        CompanySessionLib.setCompany(companyDemo);
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
 
         //--company corrente presa in automatico
         //--registra
@@ -365,7 +369,7 @@ public class TestService {
 
         //--company passata come parametro
         //--registra
-        vol = Volontario.crea(companyTest,"nome", "cognome");
+        vol = Volontario.crea(companyTest, "nome", "cognome");
         assertNotNull(vol);
         key2 = vol.getId();
         assertEquals(vol.getCompany(), companyTest);
@@ -373,7 +377,7 @@ public class TestService {
 
         //--valore già esistente (controlla codeCompanyUnico)
         //--non registra
-        vol = Volontario.crea(companyDemo,"nome", "cognome");
+        vol = Volontario.crea(companyDemo, "nome", "cognome");
         assertNull(vol);
 
         //--cancella le 2 (due) entity create per prova
@@ -382,6 +386,68 @@ public class TestService {
 
         //--controlla che ci siano le stesse entities che c'erano all'inizio
         numRec = Volontario.countByAllCompanies();
+        assertEquals(numRec, numRecTotali);
+
+        CompanySessionLib.setCompany(null);
+    }// end of method
+
+
+    /**
+     * Volontario
+     * Controllla i metodi New
+     * Con e senza company selezionata
+     */
+    private void testTurnoNew() {
+        numRecTotali = Turno.countByAllCompanies();
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+
+        //--crea un servizio di appoggio
+        serv = new Servizio(companyDemo, "sigla", "descrizione");
+        serv = (Servizio) serv.save();
+        assertNotNull(serv);
+        key3 = serv.getId();
+
+        //--nessuna company corrente e nessuna company passata come pareametro
+        //--non registra
+        if (companyCorrente == null) {
+            turno = new Turno(serv, new Date());
+            turno = (Turno) turno.save();
+            assertNull(vol);
+        }// end of if cycle
+        CompanySessionLib.setCompany(companyDemo);
+        companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+
+        //--company corrente presa in automatico
+        //--registra
+        turno = new Turno(serv, new Date());
+        turno = (Turno) turno.save();
+        assertNotNull(turno);
+        key1 = turno.getId();
+        assertEquals(turno.getCompany(), companyDemo);
+        assertEquals(turno.getCompany(), companyCorrente);
+
+        //--company passata come parametro
+        //--registra
+        turno = new Turno(companyTest, serv, new Date());
+        turno = (Turno) turno.save();
+        assertNotNull(turno);
+        key2 = turno.getId();
+        assertEquals(turno.getCompany(), companyTest);
+        assertNotSame(turno.getCompany(), companyCorrente);
+
+        //--valore già esistente (controlla servizio (solo quelli ad orario) e data di inizio )
+        //--non registra
+        turno = new Turno(companyTest, serv, new Date());
+        turno = (Turno) turno.save();
+//        assertNull(turno);
+
+        //--cancella le 2 (due) entity create per prova
+        Turno.find(key1).delete();
+        Turno.find(key2).delete();
+        Servizio.find(key3).delete();
+
+        //--controlla che ci siano le stesse entities che c'erano all'inizio
+        numRec = Turno.countByAllCompanies();
         assertEquals(numRec, numRecTotali);
 
         CompanySessionLib.setCompany(null);

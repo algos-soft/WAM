@@ -160,13 +160,26 @@ public class Migration {
 
         companyNew = new WamCompany();
         companyNew.setCompanyCode(siglaCompanyNew);
-        companyNew.setOrganizzazione(Organizzazione.get(companyOld.getOrganizzazione()));
+        companyNew.setOrganizzazione(recuperaOrganizzazione(companyOld));
         companyNew.setName(companyOld.getDescrizione());
         companyNew.setAddress1(companyOld.getIndirizzo());
         companyNew.setPresidente(companyOld.getPresidente());
         companyNew.save();
 
         return companyNew;
+    }// end of method
+
+    /**
+     * Patch per carenza di informazioni nella vecchia croce
+     */
+    private Organizzazione recuperaOrganizzazione(CroceAmb companyOld) {
+        Organizzazione organizzazioneNew = Organizzazione.get(companyOld.getOrganizzazione());
+
+        if (companyOld.getSigla().equals("GAPS")) {
+            organizzazioneNew = Organizzazione.csv;
+        }// end of if cycle
+
+        return organizzazioneNew;
     }// end of method
 
     /**
@@ -382,18 +395,24 @@ public class Migration {
         List<Funzione> funzioni = recuperaFunzioni(listaWrapFunzioniAll, volontarioOld);
 
         volontario = Volontario.crea(companyNew, null, nome, cognome, cellulare, email, "", false, funzioni);
-        volontario.setTelefono(telefono);
-        volontario.setDataNascita(dataNascita);
-        volontario.setNote(note);
-        volontario.setDipendente(dipendente);
-        volontario.setAttivo(attivo);
-        volontario.setOreAnno(oreAnno);
-        volontario.setTurniAnno(turniAnno);
-        volontario.setOreExtra(oreExtra);
-        volontario.setAdmin(admin);
-        volontario.setPassword(password);
+        if (volontario != null) {
+            volontario.setTelefono(telefono);
+            volontario.setDataNascita(dataNascita);
+            volontario.setNote(note);
+            volontario.setDipendente(dipendente);
+            volontario.setAttivo(attivo);
+            volontario.setOreAnno(oreAnno);
+            volontario.setTurniAnno(turniAnno);
+            volontario.setOreExtra(oreExtra);
+            volontario.setAdmin(admin);
+            volontario.setPassword(password);
+            if (password.equals("")) {
+                volontario.setAttivo(false);
+            }// end of if cycle
 
-        volontario = (Volontario) volontario.save();
+            volontario = (Volontario) volontario.save();
+        }// end of if cycle
+
         return volontario;
     }// end of method
 
@@ -546,12 +565,12 @@ public class Migration {
         String localitaExtra = turnoOld.getLocalità_extra();
         String note = turnoOld.getNote();
 
-        turnoNew = Turno.crea(companyNew, servizio, inizio, fine, MANAGER);
-        turnoNew.setIscrizioni(recuperaIscrizioni(turnoOld, turnoNew, listaWrapVolontari));
-        turnoNew.setTitoloExtra(titoloExtra);
-        turnoNew.setLocalitaExtra(localitaExtra);
-        turnoNew.setNote(note);
-        turnoNew.save(MANAGER);
+//        turnoNew = Turno.crea(companyNew, servizio, inizio, fine, MANAGER);
+//        turnoNew.setIscrizioni(recuperaIscrizioni(turnoOld, turnoNew, listaWrapVolontari));
+//        turnoNew.setTitoloExtra(titoloExtra);
+//        turnoNew.setLocalitaExtra(localitaExtra);
+//        turnoNew.setNote(note);
+//        turnoNew.save(MANAGER);
 
         return turnoNew;
     }// end of method

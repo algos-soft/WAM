@@ -244,7 +244,11 @@ public class WamUI extends UI {
      */
     private void developerInit() {
         fixCompanySession();
+
+        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
         new TestService();
+        CompanySessionLib.setCompany(companyCorrente);
+
         UI.getCurrent().setContent(getMainComponent());
     }
 

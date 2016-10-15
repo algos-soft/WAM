@@ -1,4 +1,3 @@
-import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.servizio.Servizio_;
 import it.algos.wam.entity.wamcompany.WamCompany;
@@ -117,13 +116,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Costruttore minimo con tutte le properties obbligatorie
-     * Il listaCodeCompanyUnici (obbligatorio) viene calcolato in automatico prima del persist
-     * Se manca l'ordine di presentazione o è uguale a zero, viene calcolato in automatico prima del persist
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
-     * @param sigla       di visibile nel tabellone (obbligatoria)
-     * @param descrizione (obbligatoria)
      */
     public void costruttoreMinimo() {
         //-cancello i records per riprovare qui
@@ -157,19 +149,19 @@ public class ServizioTest extends WamTest {
 
         // senza nessun parametro
         serv = new Servizio();
-        costruttoreNullo(serv);
+        costruttoreNulloPrimaCompany(serv, numPrevisto);
 
         // parametro obbligatorio vuoto
         serv = new Servizio(null, sigla1, desc1);
-        costruttoreNullo(serv);
+        costruttoreNulloPrimaCompany(serv, numPrevisto);
 
         // parametro obbligatorio vuoto
         serv = new Servizio(companyUno, "", desc1);
-        costruttoreNullo(serv);
+        costruttoreNulloPrimaCompany(serv, numPrevisto);
 
         // parametro obbligatorio vuoto
         serv = new Servizio(companyUno, "", "");
-        costruttoreNullo(serv);
+        costruttoreNulloPrimaCompany(serv, numPrevisto);
 
         // parametri obbligatori
         numPrevisto = numPrevisto + 1;
@@ -181,6 +173,10 @@ public class ServizioTest extends WamTest {
         serv = new Servizio(companyUno, sigla2, desc3);
         costruttoreValidoPrimaCompany(serv, 2, numPrevisto);
 
+        // campo unico, doppio
+        serv = new Servizio(companyUno, sigla1, desc1);
+        costruttoreNulloPrimaCompany(serv, numPrevisto);
+
         //--seconda company
         numPrevisto = Servizio.countByCompany(companyDue, MANAGER);
 
@@ -188,10 +184,6 @@ public class ServizioTest extends WamTest {
         numPrevisto = numPrevisto + 1;
         serv = new Servizio(companyDue, sigla2, desc2);
         costruttoreValidoSecondaCompany(serv, 1, numPrevisto);
-
-        // campo unico, doppio
-        serv = new Servizio(companyUno, sigla1, desc1);
-        costruttoreNullo(serv, 2);
 
         numPrevisto = 2;
         numOttenuto = Servizio.countByCompany(companyUno, MANAGER);
@@ -209,16 +201,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Costruttore completo
-     * Il listaCodeCompanyUnici (obbligatorio) viene calcolato in automatico prima del persist
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param sigla       di riferimento interna (obbligatoria, unica all'interno della company)
-     * @param descrizione per il tabellone (obbligatoria)
-     * @param ordine      di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
-     * @param colore      del gruppo (facoltativo)
-     * @param orario      servizio ad orario prefissato e fisso ogni giorno (facoltativo)
-     * @param oraInizio   del servizio (facoltativo, obbligatorio se orario è true)
-     * @param oraFine     del servizio (facoltativo, obbligatorio se orario è true)
      */
     public void costruttoreCompleto() {
         //-cancello i records per riprovare qui
@@ -237,13 +219,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Recupera il numero totale di records della Entity
-     * Senza filtri.
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param manager the EntityManager to use
-     * @return il numero totale di records nella Entity
      */
     public void countByAllCompanies() {
         numPrevisto = chiavi.size();
@@ -255,14 +230,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Recupera il numero di records della Entity
-     * Filtrato sulla azienda passata come parametro.
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param manager the EntityManager to use
-     * @return il numero filtrato di records nella Entity
      */
     public void countByCompany() {
         numPrevisto = chiaviUno.size();
@@ -282,16 +249,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Recupera il numero di records della Entity, filtrato sul valore della property indicata
-     * Filtrato sulla azienda passata come parametro.
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param attr    the searched attribute
-     * @param value   the value to search for
-     * @param manager the EntityManager to use
-     * @return il numero filtrato di records nella Entity
      */
     public void countByCompanyAndProperty() {
         numPrevisto = 1;
@@ -311,11 +268,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Recupera una istanza della Entity usando la query standard della Primary Key
-     * Nessun filtro sulla company, perché la primary key è unica
-     *
-     * @param id      valore (unico) della Primary Key
-     * @param manager the EntityManager to use
-     * @return istanza della Entity, null se non trovata
      */
     public void find() {
         int pos;
@@ -344,10 +296,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     *
-     * @param listaCodeCompanyUnici di riferimento interna (obbligatoria e unica)
-     * @param manager the EntityManager to use
-     * @return istanza della Entity, null se non trovata
      */
     public void getEntityByCodeCompanyUnico() {
         int pos;
@@ -374,14 +322,8 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
-     * @param manager the EntityManager to use
-     * @return istanza della Entity, null se non trovata
      */
-    public void getEntityByCompanyAndCode() {
+    public void getEntityByCompanyAndSigla() {
         int pos;
 
         serv = Servizio.getEntityByCompanyAndSigla(null, sigla1, MANAGER);
@@ -404,11 +346,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Senza filtri.
-     * (non va usata CompanyQuery, altrimenti arriverebbe solo la lista della company corrente)
-     *
-     * @param manager the EntityManager to use
-     * @return lista di tutte le entities
      */
     public void getListByAllCompanies() {
 
@@ -422,14 +359,8 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla company passata come parametro.
-     * Se si arriva qui con una company null, vuol dire che non esiste la company corrente
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param manager the EntityManager to use
-     * @return lista di tutte le entities
      */
-    public void getListBySingleCompany() {
+    public void getListByCompany() {
 
         listaTre = Servizio.getListByCompany(companyUno, MANAGER);
         assertNotNull(listaTre);
@@ -445,14 +376,8 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Search for the values of a given property of the given Entity class
-     * Ordinate sul valore della property indicata
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param manager the EntityManager to use
      */
-    public void getListStrByCodeCompanyUnico() {
+    public void getListStrForCodeCompanyUnico() {
         listStr = Servizio.getListStrForCodeCompanyUnico(MANAGER);
         assertEquals(listStr.size(), lista.size());
     }// end of single test
@@ -461,16 +386,8 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Search for the values of a given property of the given Entity class
-     * Filtrato sulla company passata come parametro.
-     * Ordinate sul valore della property indicata
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param manager the EntityManager to use
      */
-    public void getListStrByCompanyAndSigla() {
+    public void getListStrForSiglaByCompany() {
         listStr = Servizio.getListStrForSiglaByCompany(companyUno, MANAGER);
         assertEquals(listStr.size(), listaUno.size());
 
@@ -481,14 +398,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Creazione iniziale di una istanza della Entity
-     * La crea SOLO se non esiste già
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
-     * @param sigla       di visibile nel tabellone (obbligatoria)
-     * @param descrizione (obbligatoria)
-     * @param manager     the EntityManager to use
-     * @return istanza della Entity
      */
     public void crea() {
         //-cancello i records per riprovare qui
@@ -571,13 +480,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Saves this entity to the database.
-     * <p>
-     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
-     * Otherwise, a new transaction is used to save this single entity.
-     *
-     * @param company azienda da filtrare
-     * @param manager the entity manager to use (if null, a new one is created on the fly)
-     * @return the merged Entity (new entity, unmanaged, has the id)
      */
     public void save() {
         BaseEntity entity = null;
@@ -645,12 +547,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Saves this entity to the database.
-     * <p>
-     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
-     * Otherwise, a new transaction is used to save this single entity.
-     *
-     * @param manager the entity manager to use (if null, a new one is created on the fly)
-     * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
      */
     public void saveSafe() {
         //--cancello i records per riprovare qui
@@ -683,10 +579,6 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Numero massimo conenuto nella property
-     *
-     * @param company azienda da filtrare
-     * @param manager the entity manager to use (if null, a new one is created on the fly)
-     * @return massimo valore
      */
     public void maxOrdine() {
         //--prima company
@@ -706,39 +598,25 @@ public class ServizioTest extends WamTest {
     @Test
     /**
      * Clone di questa istanza
-     * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)
-     * È obbligatorio invocare questo metodo all'interno di un codice try/catch
-     *
-     * @return nuova istanza di Funzione con gli stessi valori dei parametri di questa istanza
-     */
+6     */
     public void cloneTest() {
-        Servizio funzClonata = null;
+        Servizio servClonato = null;
 
         serv = Servizio.find(chiavi.get(0), MANAGER);
         assertNotNull(serv);
 
         try { // prova ad eseguire il codice
-            funzClonata = serv.clone();
+            servClonato = serv.clone();
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(funzClonata);
-        assertFunzioniUguali(funzClonata, serv);
+        assertNotNull(servClonato);
+        assertServiziUguali(servClonato, serv);
     }// end of single test
 
+    //------------------------------------------------------------------------------------------------------------------------
+    // Utilities
+    //------------------------------------------------------------------------------------------------------------------------
 
-    private void assertListeUguali(List<Servizio> lista1, List<Servizio> lista2) {
-        for (int k = 0; k < lista1.size(); k++) {
-            assertFunzioniUguali(lista1.get(k), lista2.get(k));
-        }// end of for cycle
-    }// end of method
-
-
-    private void assertFunzioniUguali(Servizio serv1, Servizio serv2) {
-        assertEquals(serv1.getId(), serv2.getId());
-        assertEquals(serv1.getCodeCompanyUnico(), serv2.getCodeCompanyUnico());
-        assertEquals(serv1.getSigla(), serv2.getSigla());
-        assertEquals(serv1.getDescrizione(), serv2.getDescrizione());
-    }// end of method
 
     private void singoloRecordPrimaCompany(Servizio serv) {
         singoloRecord(serv);
@@ -753,24 +631,30 @@ public class ServizioTest extends WamTest {
     }// end of method
 
     private void singoloRecord(Servizio serv) {
-        serv.save(MANAGER);
+        serv = serv.saveSafe(MANAGER);
         chiavi.add(serv.getId());
         lista.add(serv);
         listaCodeCompanyUnici.add(serv.getCodeCompanyUnico());
     }// end of method
 
-    private void costruttoreNullo(Servizio serv) {
-        costruttoreNullo(serv, 0);
-    }// end of method
 
-    private void costruttoreNullo(Servizio serv, int numPrevisto) {
+    private void costruttoreNullo(Servizio serv) {
         try { // prova ad eseguire il codice
-            serv.save(MANAGER);
+            serv = serv.saveSafe(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(serv);
-        assertNull(serv.getId());
+        assertNull(serv);
+    }// end of method
+
+    private void costruttoreNulloPrimaCompany(Servizio serv, int numPrevisto) {
+        costruttoreNullo(serv);
         numOttenuto = Servizio.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of method
+
+    private void costruttoreNulloSecondaCompany(Servizio serv, int numPrevisto) {
+        costruttoreNullo(serv);
+        numOttenuto = Servizio.countByCompany(companyDue, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of method
 
@@ -788,7 +672,7 @@ public class ServizioTest extends WamTest {
 
     private void costruttoreValido(Servizio serv, int ordinePrevisto) {
         try { // prova ad eseguire il codice
-            serv.save(MANAGER);
+            serv = serv.saveSafe(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
 
@@ -796,6 +680,20 @@ public class ServizioTest extends WamTest {
         assertNotNull(serv.getId());
         ordine = serv.getOrdine();
         assertEquals(ordine, ordinePrevisto);
+    }// end of method
+
+    private void assertListeUguali(List<Servizio> lista1, List<Servizio> lista2) {
+        for (int k = 0; k < lista1.size(); k++) {
+            assertServiziUguali(lista1.get(k), lista2.get(k));
+        }// end of for cycle
+    }// end of method
+
+
+    private void assertServiziUguali(Servizio serv1, Servizio serv2) {
+        assertEquals(serv1.getId(), serv2.getId());
+        assertEquals(serv1.getCodeCompanyUnico(), serv2.getCodeCompanyUnico());
+        assertEquals(serv1.getSigla(), serv2.getSigla());
+        assertEquals(serv1.getDescrizione(), serv2.getDescrizione());
     }// end of method
 
 }// end of test class

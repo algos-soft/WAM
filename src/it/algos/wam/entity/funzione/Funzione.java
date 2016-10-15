@@ -5,7 +5,6 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -116,6 +115,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Costruttore senza argomenti
      * Obbligatorio per le specifiche JavaBean
+     * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Funzione() {
     }// end of constructor
@@ -206,7 +206,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera il numero di records della Entity
-     * Filtrato sulla azienda corrente.
+     * Filtrato sulla company corrente.
      *
      * @return il numero filtrato di records nella Entity
      */
@@ -216,7 +216,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera il numero di records della Entity
-     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      * Usa l'EntityManager passato come parametro
      * Se il manager è nullo, costruisce al volo un manager standard (and close it)
      * Se il manager è valido, lo usa (must be close by caller method)
@@ -231,7 +231,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera il numero di records della Entity
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
      * @return il numero filtrato di records nella Entity
@@ -242,7 +242,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera il numero di records della Entity
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      * Usa l'EntityManager passato come parametro
      * Se il manager è nullo, costruisce al volo un manager standard (and close it)
      * Se il manager è valido, lo usa (must be close by caller method)
@@ -257,7 +257,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera il numero di records della Entity, filtrato sul valore della property indicata
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      * Usa l'EntityManager passato come parametro
      * Se il manager è nullo, costruisce al volo un manager standard (and close it)
      * Se il manager è valido, lo usa (must be close by caller method)
@@ -301,7 +301,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione find(long id, EntityManager manager) {
-        return (Funzione) CompanyQuery.find(Funzione.class, id, manager);
+        return (Funzione) AQuery.find(Funzione.class, id, manager);
     }// end of static method
 
 
@@ -357,7 +357,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @param code sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @return istanza della Entity, null se non trovata
@@ -368,7 +368,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
      * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
@@ -381,7 +381,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
      * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
@@ -403,7 +403,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Controlla che esista una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
      * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
@@ -417,7 +417,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Controlla che non esista una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
+     * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
      * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
@@ -460,7 +460,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @return lista di tutte le entities
      */
@@ -470,7 +470,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla azienda corrente (che viene regolata nella superclasse CompanyEntity)
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
@@ -617,15 +617,15 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //------------------------------------------------------------------------------------------------------------------------
 
     public static int deleteAll() {
-        return deleteAll(CompanySessionLib.getCompany(), (EntityManager) null);
+        return deleteAll((WamCompany) CompanySessionLib.getCompany(), (EntityManager) null);
     }// end of static method
 
-    public static int deleteAll(BaseCompany company) {
+    public static int deleteAll(WamCompany company) {
         return deleteAll(company, (EntityManager) null);
     }// end of static method
 
     public static int deleteAll(EntityManager manager) {
-        return deleteAll(CompanySessionLib.getCompany(), manager);
+        return deleteAll((WamCompany) CompanySessionLib.getCompany(), manager);
     }// end of static method
 
     /**
@@ -634,7 +634,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @param manager the EntityManager to use
      */
-    public static int deleteAll(BaseCompany company, EntityManager manager) {
+    public static int deleteAll(WamCompany company, EntityManager manager) {
         return CompanyQuery.delete(Funzione.class, company, manager);
     }// end of static method
 
@@ -646,7 +646,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Numero massimo conenuto nella property
      *
-     * @param company azienda da filtrare
+     * @param company da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
      * @return massimo valore
      */
@@ -763,7 +763,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
      * Otherwise, a new transaction is used to save this single entity.
      *
-     * @param company azienda da filtrare
+     * @param company da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
      * @return the merged Entity (new entity, unmanaged, has the id)
      */
@@ -878,7 +878,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Controlla l'esistenza della chiave univoca, PRIMA di salvare il valore nel DB
      * La crea se non esiste già
      *
-     * @param company azienda da filtrare
+     * @param company da filtrare
      */
     private boolean checkChiave(WamCompany company, EntityManager manager) {
         boolean valido = false;
@@ -893,11 +893,15 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             valido = true;
         }// end of if/else cycle
 
-        if (Funzione.isEntityByCodeCompanyUnico(codeCompanyUnico, manager)) {
+        if (isEsistente(codeCompanyUnico, manager)) {
             valido = false;
         }// end of if cycle
 
         return valido;
+    } // end of method
+
+    public boolean isEsistente(String codeCompanyUnico, EntityManager manager) {
+        return this.getId() == null && Funzione.isEntityByCodeCompanyUnico(codeCompanyUnico, manager);
     } // end of method
 
     /**
@@ -905,7 +909,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Elimino l'annotazione ed uso una chiamata dal metodo save(),
      * perché altrimenti non riuscirei a passare il parametro manager
      *
-     * @param company azienda da filtrare
+     * @param company da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
      */
     private void checkOrdine(WamCompany company, EntityManager manager) {

@@ -1,10 +1,12 @@
-import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.entity.BaseEntity;
 import org.junit.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -108,9 +110,15 @@ public class VolontarioTest extends WamTest {
         vol = new Volontario(companyDue, nome4, cognome3);
         singoloRecordSecondaCompany(vol);
 
+        numPrevisto = chiaviUno.size() + chiaviDue.size();
+        numOttenuto = chiavi.size();
+        assertEquals(numOttenuto, numPrevisto);
     }// end of single test
 
     @Test
+    /**
+     * Costruttore minimo con tutte le properties obbligatorie
+     */
     public void costruttoreMinimo() {
         //-cancello i records per riprovare qui
         cancellaRecords();
@@ -144,23 +152,23 @@ public class VolontarioTest extends WamTest {
 
         // senza nessun parametro
         vol = new Volontario();
-        costruttoreNullo(vol);
+        costruttoreNulloPrimaCompany(vol, numPrevisto);
 
         // parametro obbligatorio vuoto
         vol = new Volontario(null, nome1, cognome1);
-        costruttoreNullo(vol);
+        costruttoreNulloPrimaCompany(vol, numPrevisto);
 
         // parametro obbligatorio vuoto
         vol = new Volontario(companyUno, "", cognome1);
-        costruttoreNullo(vol);
+        costruttoreNulloPrimaCompany(vol, numPrevisto);
 
         // parametro obbligatorio vuoto
         vol = new Volontario(companyUno, nome1, "");
-        costruttoreNullo(vol);
+        costruttoreNulloPrimaCompany(vol, numPrevisto);
 
         // parametro obbligatorio vuoto
         vol = new Volontario(null, "", "");
-        costruttoreNullo(vol);
+        costruttoreNulloPrimaCompany(vol, numPrevisto);
 
         // parametri obbligatori
         numPrevisto = numPrevisto + 1;
@@ -174,135 +182,417 @@ public class VolontarioTest extends WamTest {
 
         // campo unico, doppio
         vol = new Volontario(companyUno, nome1, cognome1);
-        costruttoreNullo(vol);
+        costruttoreNulloPrimaCompany(vol, numPrevisto);
+
+        //--seconda company
+        numPrevisto = Volontario.countByCompany(companyDue, MANAGER);
+
+        // parametro obbligatorio vuoto
+        vol = new Volontario(companyDue, "", cognome1);
+        costruttoreNulloSecondaCompany(vol, numPrevisto);
+
+        // parametri obbligatori
+        numPrevisto = numPrevisto + 1;
+        vol = new Volontario(companyDue, nome1, cognome1);
+        costruttoreValidoSecondaCompany(vol, numPrevisto);
+
+        // parametri obbligatori
+        numPrevisto = numPrevisto + 1;
+        vol = new Volontario(companyDue, nome2, cognome1);
+        costruttoreValidoSecondaCompany(vol, numPrevisto);
+
+        // campo unico, doppio
+        vol = new Volontario(companyDue, nome2, cognome1);
+        costruttoreNulloSecondaCompany(vol, numPrevisto);
 
     }// end of single test
 
-//    @Test
-    // Find entity
 
+    @Test
     /**
-     * Ricerca una funzione
+     * Costruttore completo
      */
-//    public void cercaVolontario() {
-//        resetVolontari();
-//        long key;
-//        int numRecords = Volontario.countByAllCompanies(MANAGER);
-//        if (numRecords < 1) {
-//            return;
-//        }// end of if cycle
-//
-//        Container.Filter filterCompany = new Compare.Equal(Volontario_.company.getName(), companyUno);
-//        Container.Filter filterNome = new Compare.Equal(Volontario_.nome.getName(), NOME_UNO);
-//        Container.Filter filterCognome = new Compare.Equal(Volontario_.cognome.getName(), COGNOME_UNO);
-//        List<? extends BaseEntity> listaBE = AQuery.getList(Volontario.class, MANAGER,filterCompany);
-//        List<? extends BaseEntity> listaBEw = AQuery.getList(Volontario.class, MANAGER,filterNome);
-//        List<? extends BaseEntity> listaBEr = AQuery.getList(Volontario.class, MANAGER,filterCognome);
-//        List<? extends BaseEntity> pippoz = AQuery.getList(Volontario.class, MANAGER,filterCompany,filterCognome);
-//
-//        volontarioUno = Volontario.findByCompanyAndNomeAndCognome(companyUno, NOME_UNO, COGNOME_UNO, MANAGER);
-//        assertNotNull(volontarioUno);
-//
-//        volontarioDue = Volontario.findByCompanyAndNomeAndCognome(companyDue, NOME_DUE, COGNOME_DUE, MANAGER);
-//        assertNotNull(volontarioDue);
-//        assertNotSame(volontarioDue, volontarioUno);
-//        key = volontarioDue.getId();
-//
-//        volontarioTre = Volontario.findByCompanyAndNomeAndCognome(companyUno, NOME_DUE, COGNOME_DUE, MANAGER);
-//        assertNotNull(volontarioTre);
-//        assertNotSame(volontarioTre, volontarioDue);
-//
-//        volontarioQuattro = Volontario.find(key, MANAGER);
-//        assertNotNull(volontarioQuattro);
-//        assertNotSame(volontarioQuattro, volontarioTre);
-//        assertEquals(volontarioQuattro, volontarioDue);
-//    }// end of single test
+    public void costruttoreCompleto() {
+        //-cancello i records per riprovare qui
+        cancellaRecords();
 
-//    @Test
-    // Find list
+        //--prima company
+        numPrevisto = Volontario.countByCompany(companyDue, MANAGER);
 
+        // tutti i parametri previsti
+        numPrevisto = numPrevisto + 1;
+        vol = new Volontario(companyDue, nome1, cognome1, new Date(), "337 451288", false);
+        costruttoreValidoSecondaCompany(vol, numPrevisto);
+    }// end of single test
+
+    @Test
     /**
-     * Ricerca una lista
+     * Recupera il numero totale di records della Entity
      */
-    public void cercaLista() {
-        resetVolontari();
-        int numRecords = Volontario.countByAllCompanies(MANAGER);
-        if (numRecords < 1) {
-            return;
+    public void countByAllCompanies() {
+        numPrevisto = chiavi.size();
+        numOttenuto = Volontario.countByAllCompanies(MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+
+    @Test
+    /**
+     * Recupera il numero di records della Entity
+     */
+    public void countByCompany() {
+        numPrevisto = chiaviUno.size();
+        numOttenuto = Volontario.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = chiaviDue.size();
+        numOttenuto = Volontario.countByCompany(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = chiaviUno.size() + chiaviDue.size();
+        numOttenuto = Volontario.countByAllCompanies(MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+    @Test
+    /**
+     * Recupera il numero di records della Entity, filtrato sul valore della property indicata
+     */
+    public void countByCompanyAndProperty() {
+        numPrevisto = 2;
+        numOttenuto = Volontario.countByCompanyAndProperty(companyUno, Volontario_.nome, nome1, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = 1;
+        numOttenuto = Volontario.countByCompanyAndProperty(companyUno, Volontario_.nome, nome2, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = 0;
+        numOttenuto = Volontario.countByCompanyAndProperty(companyDue, Volontario_.cognome, cognome4, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+
+    @Test
+    /**
+     * Recupera una istanza della Entity usando la query standard della Primary Key
+     */
+    public void find() {
+        int pos;
+
+        pos = 3;
+        vol = Volontario.find(chiavi.get(pos), MANAGER);
+        assertEquals(vol, lista.get(pos));
+
+        //--volutamente sbagliato il long
+        vol = Volontario.find(1, MANAGER);
+        assertNull(vol);
+
+        pos = 7;
+        vol = Volontario.find(chiavi.get(pos), MANAGER);
+        assertEquals(vol, lista.get(pos));
+
+        pos = 3;
+        vol = Volontario.find(chiaviUno.get(pos), MANAGER);
+        assertEquals(vol, listaUno.get(pos));
+
+        pos = 3;
+        vol = Volontario.find(chiaviDue.get(pos), MANAGER);
+        assertEquals(vol, listaDue.get(pos));
+    }// end of single test
+
+
+    @Test
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     */
+    public void getEntityByCodeCompanyUnico() {
+        int pos;
+        String key;
+
+        pos = 2;
+        key = listaCodeCompanyUnici.get(pos);
+        vol = Volontario.getEntityByCodeCompanyUnico(key, MANAGER);
+        assertNotNull(vol);
+        assertEquals(vol, lista.get(pos));
+
+        pos = 7;
+        key = listaCodeCompanyUnici.get(pos);
+        vol = Volontario.getEntityByCodeCompanyUnico(key, MANAGER);
+        assertNotNull(vol);
+        assertEquals(vol, lista.get(pos));
+
+        //--volutamente sbagliato il listaCodeCompanyUnici
+        key = "listaCodeCompanyUnici";
+        vol = Volontario.getEntityByCodeCompanyUnico(key, MANAGER);
+        assertNull(vol);
+    }// end of single test
+
+
+    @Test
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     */
+    public void getEntityByCompanyAndNomeAndCognome() {
+        int pos;
+
+        vol = Volontario.getEntityByCompanyAndNomeAndCognome(null, nome1, cognome1, MANAGER);
+        assertNull(vol);
+
+        vol = Volontario.getEntityByCompanyAndNomeAndCognome(companyUno, "sbagliato", cognome1, MANAGER);
+        assertNull(vol);
+
+        pos = 0;
+        vol = Volontario.getEntityByCompanyAndNomeAndCognome(companyUno, nome1, cognome1, MANAGER);
+        assertNotNull(vol);
+        assertEquals(vol.getId(), lista.get(pos).getId());
+
+        pos = 4;
+        vol = Volontario.getEntityByCompanyAndNomeAndCognome(companyDue, nome1, cognome1, MANAGER);
+        assertNotNull(vol);
+        assertEquals(vol.getId(), lista.get(pos).getId());
+    }// end of single test
+
+    @Test
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     */
+    public void getListByAllCompanies() {
+
+        listaTre = Volontario.getListByAllCompanies(MANAGER);
+        assertNotNull(listaTre);
+        assertEquals(listaTre, lista);
+        assertListeUguali(listaTre, lista);
+    }// end of single test
+
+
+    @Test
+    /**
+     * Recupera una lista (array) di tutti i records della Entity
+     */
+    public void getListByCompany() {
+
+        listaTre = Volontario.getListByCompany(companyUno, MANAGER);
+        assertNotNull(listaTre);
+        assertEquals(listaTre, listaUno);
+        assertListeUguali(listaTre, listaUno);
+
+        listaTre = Volontario.getListByCompany(companyDue, MANAGER);
+        assertNotNull(listaTre);
+        assertEquals(listaTre, listaDue);
+        assertListeUguali(listaTre, listaDue);
+    }// end of single test
+
+    @Test
+    /**
+     * Search for the values of a given property of the given Entity class
+     */
+    public void getListStrForCodeCompanyUnico() {
+        listStr = Volontario.getListStrForCodeCompanyUnico(MANAGER);
+        assertEquals(listStr.size(), lista.size());
+    }// end of single test
+
+
+    @Test
+    /**
+     * Search for the values of a given property of the given Entity class
+     */
+    public void getListStrForNicknameByCompany() {
+        listStr = Volontario.getListStrForNicknameByCompany(companyUno, MANAGER);
+        assertEquals(listStr.size(), listaUno.size());
+
+        listStr = Volontario.getListStrForNicknameByCompany(companyDue, MANAGER);
+        assertEquals(listStr.size(), listaDue.size());
+    }// end of single test
+
+
+    @Test
+    /**
+     * Creazione iniziale di una istanza della Entity
+     */
+    public void crea() {
+        //-cancello i records per riprovare qui
+        cancellaRecords();
+
+        //--nessuna company corrente
+        //--non registra
+        WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
+        if (companyCorrente == null) {
+            vol = Volontario.crea(nome1,cognome1);
+            assertNull(vol);
         }// end of if cycle
 
-//        listaUno = Volontario.findByAllCompanies(MANAGER);
-//        assertNotNull(listaUno);
-//        assertEquals(listaUno.size(), numRecords);
-//
-//        listaDue = Volontario.findBySingleCompany(companyUno, MANAGER);
-//        assertNotNull(listaDue);
-//
-//        listaTre = Volontario.findBySingleCompany(companyDue, MANAGER);
-//        assertNotNull(listaTre);
+        //--nessuna company passata come pareametro
+        //--non registra
+        vol = Volontario.crea(null, nome1, cognome1);
+        assertNull(vol);
+
+        //--prima company
+        numPrevisto = Volontario.countByCompany(companyUno, MANAGER);
+
+        // senza tutti i parametri obbligatori
+        vol = Volontario.crea(null, nome1, cognome1, MANAGER);
+        assertNull(vol);
+        vol = Volontario.crea(companyUno, "", cognome1, MANAGER);
+        assertNull(vol);
+        vol = Volontario.crea(companyDue, nome1, "", MANAGER);
+        assertNull(vol);
+
+        //--con i parametri obbligatori
+        numPrevisto = 1;
+        vol = Volontario.crea(companyUno, nome1, cognome1, MANAGER);
+        assertNotNull(vol);
+        assertNotNull(vol.getId());
+        numOttenuto = Volontario.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
     }// end of single test
 
 
-//    @Test
-    // New and save
+    @Test
+    /**
+     * Delete all the records for the Entity class
+     * Bulk delete records with CriteriaDelete
+     *
+     * @param manager the EntityManager to use
+     */
+    public void delete() {
+        numPrevisto = chiavi.size();
+        numOttenuto = Volontario.deleteAll(MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
 
-//    public void creaVolontario() {
-//        resetVolontari();
-//        int numRecTotaliOld = Volontario.countByAllCompanies(MANAGER);
-//        int numRetTotaliNew;
-//        int numRecUnoOld = Volontario.countByCompany(companyUno, MANAGER);
-//        int numRecUnoNew;
-//        int numRecDueOld = Volontario.countByCompany(companyDue, MANAGER);
-//        int numRecDueNew;
-//        int ordine;
-//
-//        // senza un parametro obbligatorio
-//        try { // prova ad eseguire il codice
-//            volontarioUno = Volontario.crea(null, sigla1, desc1, MANAGER);
-//            volontarioUno.save(MANAGER);
-//        } catch (Exception unErrore) { // intercetta l'errore
-//        }// fine del blocco try-catch
-//        assertNull(volontarioUno);
-//        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-//        assertEquals(numRecUnoNew, numRecUnoOld);
-//
-//        // parametri obbligatori
-//        volontarioUno = Volontario.crea(companyUno, sigla1, desc1, MANAGER);
-//        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-//        assertEquals(numRecUnoNew, numRecUnoOld + 1);
-//
-//        // parametri obbligatori
-//        volontarioDue = Volontario.crea(companyUno, sigla2, desc2, MANAGER);
-//        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-//        assertEquals(numRecUnoNew, numRecUnoOld + 2);
-//
-////         tutti i parametri previsti
-////        volontarioTre = Volontario.crea(companyDue, SIGLA_UNO, DESCRIZIONE_UNO, 6, FontAwesome.USER, MANAGER);
-////        numRecUnoNew = Volontario.countBySingleCompany(companyDue, MANAGER);
-////        assertEquals(numRecUnoNew, numRecDueOld + 1);
-//
-//        // parametri obbligatori
-//        volontarioQuattro = Volontario.crea(companyDue, sigla2, desc2, MANAGER);
-//        numRecDueNew = Volontario.countByCompany(companyDue, MANAGER);
-//        assertEquals(numRecDueNew, numRecDueOld + 2);
-//
-//        // campo unico, doppio
-//        volontarioCinque = Volontario.crea(companyUno, sigla1, desc1, MANAGER);
-//        try { // prova ad eseguire il codice
-//            volontarioCinque.save(companyUno, MANAGER);
-//        } catch (Exception unErrore) { // intercetta l'errore
-//            System.out.println(unErrore.toString());
-//        }// fine del blocco try-catch
-//        assertNotNull(volontarioCinque);
-//        assertNotNull(volontarioCinque.getId());
-//        numRecUnoNew = Volontario.countByCompany(companyUno, MANAGER);
-//
-//        assertEquals(Volontario.countByCompany(companyUno, MANAGER), numRecUnoOld + 2);
-//        assertEquals(Volontario.countByCompany(companyDue, MANAGER), numRecDueOld + 2);
-//        numRetTotaliNew = Volontario.countByAllCompanies(MANAGER);
-//        assertEquals(numRetTotaliNew, numRecTotaliOld + 4);
-//    }// end of single test
+        //--cancello e ricreo i records per riprovare qui
+        cancellaRecords();
+        reset();
+        creaRecords();
 
+        numPrevisto = chiaviUno.size();
+        numOttenuto = Volontario.deleteAll(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+
+        numPrevisto = chiaviDue.size();
+        numOttenuto = Volontario.deleteAll(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+    @Test
+    /**
+     * Saves this entity to the database.
+     */
+    public void save() {
+        BaseEntity entity = null;
+
+        //--cancello i records per riprovare qui
+        cancellaRecords();
+        reset();
+
+        //--prima company
+        //-mancano le properties obbligatorie - NON registra
+        vol = new Volontario();
+        assertNotNull(vol);
+        try { // prova ad eseguire il codice
+            entity = vol.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNull(entity);
+        assertNull(vol.getId());
+
+        //-mancano le properties obbligatorie - NON registra
+        vol = new Volontario(null, nome1,cognome1);
+        assertNotNull(vol);
+        try { // prova ad eseguire il codice
+            entity = vol.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNull(entity);
+        assertNull(vol.getId());
+
+        //-mancano le properties obbligatorie - NON registra
+        vol = new Volontario(companyUno, "",cognome1);
+        assertNotNull(vol);
+        try { // prova ad eseguire il codice
+            entity = vol.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNull(entity);
+        assertNull(vol.getId());
+
+        //--mancano le properties obbligatorie - NON registra
+        vol = new Volontario(companyUno, nome1,"");
+        assertNotNull(vol);
+        try { // prova ad eseguire il codice
+            entity = vol.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNull(entity);
+        assertNull(vol.getId());
+
+        //--ci sono i parametri obbligatori
+        numPrevisto = 1;
+        vol = new Volontario(companyUno, nome1,cognome1);
+        assertNotNull(vol);
+        entity = vol.save(companyUno, MANAGER);
+        assertNotNull(entity);
+        assertTrue(entity instanceof Volontario);
+        assertNotNull(vol);
+        assertNotNull(vol.getId());
+        numOttenuto = Volontario.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+
+
+    @Test
+    /**
+     * Saves this entity to the database.
+     */
+    public void saveSafe() {
+        //--cancello i records per riprovare qui
+        cancellaRecords();
+        reset();
+
+        //--prima company
+        //--mancano le properties obbligatorie - NON registra
+        vol = new Volontario();
+        assertNotNull(vol);
+        try { // prova ad eseguire il codice
+            vol = vol.saveSafe(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNull(vol);
+
+        //--ci sono i parametri obbligatori
+        numPrevisto = 1;
+        vol = new Volontario(companyUno, nome1,cognome1);
+        assertNotNull(vol);
+        vol = vol.save(companyUno, MANAGER);
+        assertNotNull(vol);
+        assertNotNull(vol.getId());
+        numOttenuto = Volontario.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of single test
+
+
+
+    @Test
+    /**
+     * Clone di questa istanza
+     */
+    public void cloneTest() {
+        Volontario volClonato = null;
+
+        vol = Volontario.find(chiavi.get(0), MANAGER);
+        assertNotNull(vol);
+
+        try { // prova ad eseguire il codice
+            volClonato = vol.clone();
+        } catch (Exception unErrore) { // intercetta l'errore
+        }// fine del blocco try-catch
+        assertNotNull(volClonato);
+        assertVolontariUguali(volClonato, vol);
+    }// end of single test
+    //------------------------------------------------------------------------------------------------------------------------
+    // Utilities
+    //------------------------------------------------------------------------------------------------------------------------
 
     private void singoloRecordPrimaCompany(Volontario vol) {
         singoloRecord(vol);
@@ -317,24 +607,29 @@ public class VolontarioTest extends WamTest {
     }// end of method
 
     private void singoloRecord(Volontario vol) {
-        vol.save(MANAGER);
+        vol = vol.saveSafe(MANAGER);
         chiavi.add(vol.getId());
         lista.add(vol);
         listaCodeCompanyUnici.add(vol.getCodeCompanyUnico());
     }// end of method
 
     private void costruttoreNullo(Volontario vol) {
-        costruttoreNullo(vol, 0);
-    }// end of method
-
-    private void costruttoreNullo(Volontario vol, int numPrevisto) {
         try { // prova ad eseguire il codice
-            vol.save(MANAGER);
+            vol = vol.saveSafe(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
-        assertNotNull(vol);
-        assertNull(vol.getId());
+        assertNull(vol);
+    }// end of method
+
+    private void costruttoreNulloPrimaCompany(Volontario vol, int numPrevisto) {
+        costruttoreNullo(vol);
         numOttenuto = Volontario.countByCompany(companyUno, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of method
+
+    private void costruttoreNulloSecondaCompany(Volontario vol, int numPrevisto) {
+        costruttoreNullo(vol);
+        numOttenuto = Volontario.countByCompany(companyDue, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of method
 
@@ -352,7 +647,7 @@ public class VolontarioTest extends WamTest {
 
     private void costruttoreValido(Volontario vol) {
         try { // prova ad eseguire il codice
-            vol.save(MANAGER);
+            vol = vol.saveSafe(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
 
@@ -360,16 +655,19 @@ public class VolontarioTest extends WamTest {
         assertNotNull(vol.getId());
     }// end of method
 
-    /**
-     * Annulla le variabili d'istanza
-     */
-    private void resetVolontari() {
-//        volontarioUno = null;
-//        volontarioDue = null;
-//        volontarioTre = null;
-//        volontarioQuattro = null;
-//        volontarioCinque = null;
-    } // end of cleaup finale
+    private void assertListeUguali(List<Volontario> lista1, List<Volontario> lista2) {
+        for (int k = 0; k < lista1.size(); k++) {
+            assertVolontariUguali(lista1.get(k), lista2.get(k));
+        }// end of for cycle
+    }// end of method
+
+    private void assertVolontariUguali(Volontario vol1, Volontario vol2) {
+        assertEquals(vol1.getId(), vol2.getId());
+        assertEquals(vol1.getCodeCompanyUnico(), vol2.getCodeCompanyUnico());
+        assertEquals(vol1.getNome(), vol2.getNome());
+        assertEquals(vol1.getCognome(), vol2.getCognome());
+        assertEquals(vol1.getNickname(), vol2.getNickname());
+    }// end of method
 
 
 }// end of test class

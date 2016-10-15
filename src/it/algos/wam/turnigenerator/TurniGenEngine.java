@@ -10,9 +10,7 @@ import it.algos.webbase.web.lib.DateConvertUtils;
 import javax.persistence.EntityManager;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -132,9 +130,9 @@ public class TurniGenEngine {
                 // crea il turno solo se non esiste già
                 turno = WamQuery.queryTurnoServizioGiorno(em, serv, giorno);
                 if (turno == null) {
-                    turno = new Turno();
-                    turno.setServizio(serv);
-                    turno.setInizio(DateConvertUtils.asUtilDate(giorno));
+                    turno = new Turno(serv, DateConvertUtils.asUtilDate(giorno));
+//                    turno.setServizio(serv);
+//                    turno.setInizio(DateConvertUtils.asUtilDate(giorno));
                     em.persist(turno);
                 }
                 break;
@@ -184,15 +182,6 @@ public class TurniGenEngine {
         giornoProgressListeners.add(l);
     }
 
-    public interface GiornoProgressListener {
-        /**
-         * Invocato ogni volta che un giorno è fatto
-         *
-         * @param progress il numero di giorni fatti in totale
-         */
-        void progressUpdate(int progress);
-    }
-
     /**
      * @param success = true se il lavoro dell'engine è terminato
      *                correttamente e la transazione è stata conclusa
@@ -203,9 +192,18 @@ public class TurniGenEngine {
         }
     }
 
-
     public void addEngineDoneListener(EngineDoneListener l) {
         engineDoneListeners.add(l);
+    }
+
+
+    public interface GiornoProgressListener {
+        /**
+         * Invocato ogni volta che un giorno è fatto
+         *
+         * @param progress il numero di giorni fatti in totale
+         */
+        void progressUpdate(int progress);
     }
 
 

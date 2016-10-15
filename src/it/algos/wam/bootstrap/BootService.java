@@ -591,7 +591,7 @@ public abstract class BootService {
 
         for (int k = 0; k < 30; k++) {
             for (Servizio servizio : servizi) {
-                turno = Turno.crea(company, manager, servizio, LibDate.add(oggi, k));
+                turno = Turno.crea(company, servizio, LibDate.add(oggi, k), null, manager);
                 listaTurni.add(turno);
             }// end of for cycle
         }// end of for cycle

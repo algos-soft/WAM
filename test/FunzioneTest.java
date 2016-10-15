@@ -120,13 +120,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Costruttore minimo con tutte le properties obbligatorie
-     * Il listaCodeCompanyUnici (obbligatorio) viene calcolato in automatico prima del persist
-     * Se manca l'ordine di presentazione o è uguale a zero, viene calcolato in automatico prima del persist
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
-     * @param sigla       di visibile nel tabellone (obbligatoria)
-     * @param descrizione (obbligatoria)
      */
     public void costruttoreMinimo() {
         //-cancello i records per riprovare qui
@@ -161,23 +154,23 @@ public class FunzioneTest extends WamTest {
 
         // senza nessun parametro
         funz = new Funzione();
-        costruttoreNullo(funz);
+        costruttoreNulloPrimaCompany(funz, numPrevisto);
 
         // parametro obbligatorio vuoto
         funz = new Funzione(null, code1, sigla1, desc1);
-        costruttoreNullo(funz);
+        costruttoreNulloPrimaCompany(funz, numPrevisto);
 
         // parametro obbligatorio vuoto
         funz = new Funzione(companyUno, code1, "", desc1);
-        costruttoreNullo(funz);
+        costruttoreNulloPrimaCompany(funz, numPrevisto);
 
         // parametro obbligatorio vuoto
         funz = new Funzione(companyUno, code1, sigla1, "");
-        costruttoreNullo(funz);
+        costruttoreNulloPrimaCompany(funz, numPrevisto);
 
         // parametro obbligatorio vuoto
         funz = new Funzione(companyUno, "", "", "");
-        costruttoreNullo(funz);
+        costruttoreNulloPrimaCompany(funz, numPrevisto);
 
         // parametri obbligatori
         numPrevisto = numPrevisto + 1;
@@ -199,7 +192,7 @@ public class FunzioneTest extends WamTest {
 
         // campo unico, doppio
         funz = new Funzione(companyUno, code1, sigla1, desc1);
-        costruttoreNullo(funz, 2);
+        costruttoreNulloSecondaCompany(funz, numPrevisto);
 
         numPrevisto = 2;
         numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
@@ -217,14 +210,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Costruttore completo
-     * Il listaCodeCompanyUnici (obbligatorio) viene calcolato in automatico prima del persist
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
-     * @param sigla       di visibile nel tabellone (obbligatoria)
-     * @param descrizione (obbligatoria)
-     * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
-     * @param glyph       icona di FontAwesome (facoltative)
      */
     public void costruttoreCompleto() {
         //-cancello i records per riprovare qui
@@ -243,13 +228,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Recupera il numero totale di records della Entity
-     * Senza filtri.
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param manager the EntityManager to use
-     * @return il numero totale di records nella Entity
      */
     public void countByAllCompanies() {
         numPrevisto = chiavi.size();
@@ -261,14 +239,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Recupera il numero di records della Entity
-     * Filtrato sulla azienda passata come parametro.
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param manager the EntityManager to use
-     * @return il numero filtrato di records nella Entity
      */
     public void countByCompany() {
         numPrevisto = chiaviUno.size();
@@ -288,16 +258,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Recupera il numero di records della Entity, filtrato sul valore della property indicata
-     * Filtrato sulla azienda passata come parametro.
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param attr    the searched attribute
-     * @param value   the value to search for
-     * @param manager the EntityManager to use
-     * @return il numero filtrato di records nella Entity
      */
     public void countByCompanyAndProperty() {
         numPrevisto = 3;
@@ -324,11 +284,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Recupera una istanza della Entity usando la query standard della Primary Key
-     * Nessun filtro sulla company, perché la primary key è unica
-     *
-     * @param id      valore (unico) della Primary Key
-     * @param manager the EntityManager to use
-     * @return istanza della Entity, null se non trovata
      */
     public void find() {
         int pos;
@@ -358,10 +313,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     *
-     * @param listaCodeCompanyUnici di riferimento interna (obbligatoria e unica)
-     * @param manager the EntityManager to use
-     * @return istanza della Entity, null se non trovata
      */
     public void getEntityByCodeCompanyUnico() {
         int pos;
@@ -388,12 +339,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Recupera una istanza della Entity usando la query di una property specifica
-     * Filtrato sulla azienda passata come parametro.
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param code    di riferimento interna (obbligatorio, non unico in generale ma unico all'interno della company)
-     * @param manager the EntityManager to use
-     * @return istanza della Entity, null se non trovata
      */
     public void getEntityByCompanyAndCode() {
         int pos;
@@ -419,11 +364,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Senza filtri.
-     * (non va usata CompanyQuery, altrimenti arriverebbe solo la lista della company corrente)
-     *
-     * @param manager the EntityManager to use
-     * @return lista di tutte le entities
      */
     public void getListByAllCompanies() {
 
@@ -436,14 +376,8 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla company passata come parametro.
-     * Se si arriva qui con una company null, vuol dire che non esiste la company corrente
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param manager the EntityManager to use
-     * @return lista di tutte le entities
      */
-    public void getListBySingleCompany() {
+    public void getListByCompany() {
 
         listaTre = Funzione.getListByCompany(companyUno, MANAGER);
         assertNotNull(listaTre);
@@ -459,14 +393,8 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Search for the values of a given property of the given Entity class
-     * Ordinate sul valore della property indicata
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param manager the EntityManager to use
      */
-    public void getListStrByCodeCompanyUnico() {
+    public void getListStrForCodeCompanyUnico() {
         listStr = Funzione.getListStrForCodeCompanyUnico(MANAGER);
         assertEquals(listStr.size(), lista.size());
     }// end of single test
@@ -474,16 +402,8 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Search for the values of a given property of the given Entity class
-     * Filtrato sulla company passata come parametro.
-     * Ordinate sul valore della property indicata
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param manager the EntityManager to use
      */
-    public void getListStrByCompanyAndCode() {
+    public void getListStrForCodeByCompany() {
         listStr = Funzione.getListStrForCodeByCompany(companyUno, MANAGER);
         assertEquals(listStr.size(), listaUno.size());
 
@@ -494,14 +414,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Creazione iniziale di una istanza della Entity
-     * La crea SOLO se non esiste già
-     *
-     * @param company     di appartenenza (property della superclasse)
-     * @param code        di riferimento interna (obbligatoria)
-     * @param sigla       di visibile nel tabellone (obbligatoria)
-     * @param descrizione (obbligatoria)
-     * @param manager     the EntityManager to use
-     * @return istanza della Entity
      */
     public void crea() {
         //-cancello i records per riprovare qui
@@ -588,13 +500,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Saves this entity to the database.
-     * <p>
-     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
-     * Otherwise, a new transaction is used to save this single entity.
-     *
-     * @param company azienda da filtrare
-     * @param manager the entity manager to use (if null, a new one is created on the fly)
-     * @return the merged Entity (new entity, unmanaged, has the id)
      */
     public void save() {
         BaseEntity entity = null;
@@ -662,12 +567,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Saves this entity to the database.
-     * <p>
-     * If the provided EntityManager has an active transaction, the operation is performed inside the transaction.<br>
-     * Otherwise, a new transaction is used to save this single entity.
-     *
-     * @param manager the entity manager to use (if null, a new one is created on the fly)
-     * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
      */
     public void saveSafe() {
         //--cancello i records per riprovare qui
@@ -700,10 +599,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Numero massimo conenuto nella property
-     *
-     * @param company azienda da filtrare
-     * @param manager the entity manager to use (if null, a new one is created on the fly)
-     * @return massimo valore
      */
     public void maxOrdine() {
         //--prima company
@@ -723,10 +618,6 @@ public class FunzioneTest extends WamTest {
     @Test
     /**
      * Clone di questa istanza
-     * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)
-     * È obbligatorio invocare questo metodo all'interno di un codice try/catch
-     *
-     * @return nuova istanza di Funzione con gli stessi valori dei parametri di questa istanza
      */
     public void cloneTest() {
         Funzione funzClonata = null;
@@ -742,21 +633,10 @@ public class FunzioneTest extends WamTest {
         assertFunzioniUguali(funzClonata, funz);
     }// end of single test
 
+    //------------------------------------------------------------------------------------------------------------------------
+    // Utilities
+    //------------------------------------------------------------------------------------------------------------------------
 
-    private void assertListeUguali(List<Funzione> lista1, List<Funzione> lista2) {
-        for (int k = 0; k < lista1.size(); k++) {
-            assertFunzioniUguali(lista1.get(k), lista2.get(k));
-        }// end of for cycle
-    }// end of method
-
-
-    private void assertFunzioniUguali(Funzione funz1, Funzione funz2) {
-        assertEquals(funz1.getId(), funz2.getId());
-        assertEquals(funz1.getCodeCompanyUnico(), funz2.getCodeCompanyUnico());
-        assertEquals(funz1.getCode(), funz2.getCode());
-        assertEquals(funz1.getSigla(), funz2.getSigla());
-        assertEquals(funz1.getDescrizione(), funz2.getDescrizione());
-    }// end of method
 
     private void singoloRecordPrimaCompany(Funzione funz) {
         singoloRecord(funz);
@@ -778,18 +658,25 @@ public class FunzioneTest extends WamTest {
     }// end of method
 
     private void costruttoreNullo(Funzione funz) {
-        costruttoreNullo(funz, 0);
-    }// end of method
-
-    private void costruttoreNullo(Funzione funz, int numPrevisto) {
         try { // prova ad eseguire il codice
             funz = funz.saveSafe(MANAGER);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
         assertNull(funz);
+    }// end of method
+
+    private void costruttoreNulloPrimaCompany(Funzione funz, int numPrevisto) {
+        costruttoreNullo(funz);
         numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of method
+
+    private void costruttoreNulloSecondaCompany(Funzione funz, int numPrevisto) {
+        costruttoreNullo(funz);
+        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        assertEquals(numOttenuto, numPrevisto);
+    }// end of method
+
 
     private void costruttoreValidoPrimaCompany(Funzione funz, int ordinePrevisto, int numPrevisto) {
         costruttoreValido(funz, ordinePrevisto);
@@ -813,6 +700,21 @@ public class FunzioneTest extends WamTest {
         assertNotNull(funz.getId());
         ordine = funz.getOrdine();
         assertEquals(ordine, ordinePrevisto);
+    }// end of method
+
+    private void assertListeUguali(List<Funzione> lista1, List<Funzione> lista2) {
+        for (int k = 0; k < lista1.size(); k++) {
+            assertFunzioniUguali(lista1.get(k), lista2.get(k));
+        }// end of for cycle
+    }// end of method
+
+
+    private void assertFunzioniUguali(Funzione funz1, Funzione funz2) {
+        assertEquals(funz1.getId(), funz2.getId());
+        assertEquals(funz1.getCodeCompanyUnico(), funz2.getCodeCompanyUnico());
+        assertEquals(funz1.getCode(), funz2.getCode());
+        assertEquals(funz1.getSigla(), funz2.getSigla());
+        assertEquals(funz1.getDescrizione(), funz2.getDescrizione());
     }// end of method
 
 }// end of test class

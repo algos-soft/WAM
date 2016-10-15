@@ -89,7 +89,7 @@ public class ServizioMod extends WamModSposta {
                 Servizio serv = (Servizio) entity;
                 List<ServizioFunzione> sfs = serv.getServizioFunzioniOrdine();
                 for (ServizioFunzione sf : sfs) {
-                    List iscrizioni = CompanyQuery.queryList(Iscrizione.class, Iscrizione_.servizioFunzione, sf);
+                    List iscrizioni = CompanyQuery.getList(Iscrizione.class, Iscrizione_.servizioFunzione, sf);
                     if (iscrizioni.size() > 0) {
                         cont = false;
                         break;
