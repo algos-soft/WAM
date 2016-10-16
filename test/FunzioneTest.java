@@ -5,6 +5,7 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import org.junit.*;
+import test.BaseTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,33 +19,100 @@ import static org.junit.Assert.*;
  * I test vengono eseguiti su un DB di prova, usando un apposito EntityManager
  * La Entity usa la multiazienda (company) e quindi estende CompanyEntity e non BaseEntity
  */
-public class FunzioneTest extends WamTest {
+public class FunzioneTest extends BaseTest {
 
+    protected static WamCompany COMPANY_UNO;
+    protected static WamCompany COMPANY_DUE;
     private Funzione funz;
-
     private List<Funzione> lista = new ArrayList<>();
     private List<Funzione> listaUno = new ArrayList<>();
     private List<Funzione> listaDue = new ArrayList<>();
     private List<Funzione> listaTre = new ArrayList<>();
-
 
     /**
      * SetUp iniziale eseguito solo una volta alla creazione della classe
      */
     @BeforeClass
     public static void setUpInizialeStaticoEseguitoSoloUnaVoltaAllaCreazioneDellaClasse() {
-        WamTest.setUpClass();
+        BaseTest.setUpClass();
+        fixCompany();
     } // end of setup statico iniziale della classe
-
 
     /**
      * CleanUp finale eseguito solo una volta alla chiusura della classe
      */
     @AfterClass
     public static void cleanUpFinaleStaticoEseguitoSoloUnaVoltaAllaChiusuraDellaClasse() {
-        WamTest.cleanUpClass();
+        cancellaCompanies();
+        BaseTest.cleanUpClass();
     } // end of cleaup statico finale della classe
 
+    /**
+     * Nella superclasse sono già state create due company di tipo BaseCompany
+     * Le cancello, perché qui decvo usare il tipo WamCompany
+     * Npn posso sovrascivere i metod creaCompanyUno e creaCompanyDue, perché sono statici
+     */
+    protected static void fixCompany() {
+        BaseTest.cancellaCompanyUno();
+        BaseTest.cancellaCompanyDue();
+
+        creaCompanyUno();
+        creaCompanyDue();
+    }// end of method
+
+    /**
+     * Crea una prima company di prova per i test
+     */
+    protected static void creaCompanyUno() {
+        COMPANY_UNO = new WamCompany(COMPANY_UNO_CODE, "Company dimostrativa");
+        COMPANY_UNO.setEmail("info@crocedemo.it");
+        COMPANY_UNO.setContact("Mario Bianchi");
+        COMPANY_UNO.setAddress1("Via Turati, 12");
+        COMPANY_UNO.setAddress2("20199 Garbagnate Milanese");
+
+        try { // prova ad eseguire il codice
+            COMPANY_UNO.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+            System.out.println("Esisteva già companyUno");
+        }// fine del blocco try-catch
+    }// end of static method
+
+    /**
+     * Crea una seconda company di prova per i test
+     */
+    protected static void creaCompanyDue() {
+        COMPANY_DUE = new WamCompany(COMPANY_DUE_CODE, "Company dimostrativa");
+        COMPANY_DUE.setContact("Giovanni Rossi");
+        COMPANY_DUE.setEmail("info@crocetest.it");
+        COMPANY_DUE.setAddress1("Piazza Napoli, 51");
+        COMPANY_DUE.setAddress2("20100 Milano");
+
+        try { // prova ad eseguire il codice
+            COMPANY_DUE.save(MANAGER);
+        } catch (Exception unErrore) { // intercetta l'errore
+            System.out.println("Esisteva già companyDue");
+        }// fine del blocco try-catch
+    }// end of static method
+
+    /**
+     * Cancella la prima e la seconda company di prova per i test
+     */
+    protected static void cancellaCompanies() {
+        WamCompany company = (WamCompany.findByCode(COMPANY_UNO_CODE, MANAGER));
+        if (company != null) {
+            company.delete(MANAGER);
+        }// end of if cycle
+        company = (WamCompany.findByCode(COMPANY_DUE_CODE, MANAGER));
+        if (company != null) {
+            company.delete(MANAGER);
+        }// end of if cycle
+    }// end of static method
+
+    /**
+     * Cancella la seconda company di prova per i test
+     */
+    protected static void cancellaCompanyDue() {
+    }// end of static method
 
     /**
      * SetUp eseguito prima dell'esecuzione di ogni metodo
@@ -53,7 +121,6 @@ public class FunzioneTest extends WamTest {
     public void setUp() {
         super.setUp();
     } // end of setup prima di ogni metodo di test
-
 
     /**
      * CleanUp eseguito dopo l'esecuzione di ogni metodo
@@ -87,29 +154,29 @@ public class FunzioneTest extends WamTest {
     protected void creaRecords() {
 
         //--prima company
-        funz = new Funzione(companyUno, code1, sigla1, desc1);
+        funz = new Funzione(COMPANY_UNO, code1, sigla1, desc1);
         singoloRecordPrimaCompany(funz);
 
-        funz = new Funzione(companyUno, code2, sigla1, desc1);
+        funz = new Funzione(COMPANY_UNO, code2, sigla1, desc1);
         singoloRecordPrimaCompany(funz);
 
-        funz = new Funzione(companyUno, code3, sigla1, desc2);
+        funz = new Funzione(COMPANY_UNO, code3, sigla1, desc2);
         singoloRecordPrimaCompany(funz);
 
-        funz = new Funzione(companyUno, code4, sigla2, desc2);
+        funz = new Funzione(COMPANY_UNO, code4, sigla2, desc2);
         singoloRecordPrimaCompany(funz);
 
         //--seconda company
-        funz = new Funzione(companyDue, code1, sigla1, desc1);
+        funz = new Funzione(COMPANY_DUE, code1, sigla1, desc1);
         singoloRecordSecondaCompany(funz);
 
-        funz = new Funzione(companyDue, code2, sigla1, desc1);
+        funz = new Funzione(COMPANY_DUE, code2, sigla1, desc1);
         singoloRecordSecondaCompany(funz);
 
-        funz = new Funzione(companyDue, code3, sigla3, desc2);
+        funz = new Funzione(COMPANY_DUE, code3, sigla3, desc2);
         singoloRecordSecondaCompany(funz);
 
-        funz = new Funzione(companyDue, code4, sigla2, desc2);
+        funz = new Funzione(COMPANY_DUE, code4, sigla2, desc2);
         singoloRecordSecondaCompany(funz);
 
         numPrevisto = chiaviUno.size() + chiaviDue.size();
@@ -150,7 +217,7 @@ public class FunzioneTest extends WamTest {
         assertNull(funz);
 
         //--prima company
-        numPrevisto = Funzione.countByCompany(companyUno, MANAGER);
+        numPrevisto = Funzione.countByCompany(COMPANY_UNO, MANAGER);
 
         // senza nessun parametro
         funz = new Funzione();
@@ -161,45 +228,45 @@ public class FunzioneTest extends WamTest {
         costruttoreNulloPrimaCompany(funz, numPrevisto);
 
         // parametro obbligatorio vuoto
-        funz = new Funzione(companyUno, code1, "", desc1);
+        funz = new Funzione(COMPANY_UNO, code1, "", desc1);
         costruttoreNulloPrimaCompany(funz, numPrevisto);
 
         // parametro obbligatorio vuoto
-        funz = new Funzione(companyUno, code1, sigla1, "");
+        funz = new Funzione(COMPANY_UNO, code1, sigla1, "");
         costruttoreNulloPrimaCompany(funz, numPrevisto);
 
         // parametro obbligatorio vuoto
-        funz = new Funzione(companyUno, "", "", "");
+        funz = new Funzione(COMPANY_UNO, "", "", "");
         costruttoreNulloPrimaCompany(funz, numPrevisto);
 
         // parametri obbligatori
         numPrevisto = numPrevisto + 1;
-        funz = new Funzione(companyUno, code1, sigla1, desc1);
+        funz = new Funzione(COMPANY_UNO, code1, sigla1, desc1);
         costruttoreValidoPrimaCompany(funz, 1, numPrevisto);
 
         // parametri obbligatori
         numPrevisto = numPrevisto + 1;
-        funz = new Funzione(companyUno, code2, sigla2, desc2);
+        funz = new Funzione(COMPANY_UNO, code2, sigla2, desc2);
         costruttoreValidoPrimaCompany(funz, 2, numPrevisto);
 
         //--seconda company
-        numPrevisto = Funzione.countByCompany(companyDue, MANAGER);
+        numPrevisto = Funzione.countByCompany(COMPANY_DUE, MANAGER);
 
         // parametri obbligatori
         numPrevisto = numPrevisto + 1;
-        funz = new Funzione(companyDue, code2, sigla2, desc2);
+        funz = new Funzione(COMPANY_DUE, code2, sigla2, desc2);
         costruttoreValidoSecondaCompany(funz, 1, numPrevisto);
 
         // campo unico, doppio
-        funz = new Funzione(companyUno, code1, sigla1, desc1);
+        funz = new Funzione(COMPANY_UNO, code1, sigla1, desc1);
         costruttoreNulloSecondaCompany(funz, numPrevisto);
 
         numPrevisto = 2;
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_UNO, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         numPrevisto = 1;
-        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_DUE, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         numPrevisto = 3;
@@ -216,14 +283,13 @@ public class FunzioneTest extends WamTest {
         cancellaRecords();
 
         //--prima company
-        numPrevisto = Funzione.countByCompany(companyDue, MANAGER);
+        numPrevisto = Funzione.countByCompany(COMPANY_DUE, MANAGER);
 
         // tutti i parametri previsti
         numPrevisto = numPrevisto + 1;
-        funz = new Funzione(companyDue, code1, sigla1, desc1, 6, FontAwesome.USER);
+        funz = new Funzione(COMPANY_DUE, code1, sigla1, desc1, 6, FontAwesome.USER);
         costruttoreValidoSecondaCompany(funz, 6, numPrevisto);
     }// end of single test
-
 
     @Test
     /**
@@ -235,18 +301,17 @@ public class FunzioneTest extends WamTest {
         assertEquals(numOttenuto, numPrevisto);
     }// end of single test
 
-
     @Test
     /**
      * Recupera il numero di records della Entity
      */
     public void countByCompany() {
         numPrevisto = chiaviUno.size();
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_UNO, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         numPrevisto = chiaviDue.size();
-        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_DUE, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         numPrevisto = chiaviUno.size() + chiaviDue.size();
@@ -254,30 +319,29 @@ public class FunzioneTest extends WamTest {
         assertEquals(numOttenuto, numPrevisto);
     }// end of single test
 
-
     @Test
     /**
      * Recupera il numero di records della Entity, filtrato sul valore della property indicata
      */
     public void countByCompanyAndProperty() {
         numPrevisto = 3;
-        numOttenuto = Funzione.countByCompanyAndProperty(companyUno, Funzione_.sigla, sigla1, MANAGER);
+        numOttenuto = Funzione.countByCompanyAndProperty(COMPANY_UNO, Funzione_.sigla, sigla1, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         numPrevisto = 2;
-        numOttenuto = Funzione.countByCompanyAndProperty(companyDue, Funzione_.sigla, sigla1, MANAGER);
+        numOttenuto = Funzione.countByCompanyAndProperty(COMPANY_DUE, Funzione_.sigla, sigla1, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         numPrevisto = 1;
-        numOttenuto = Funzione.countByCompanyAndProperty(companyUno, Funzione_.code, code1, MANAGER);
+        numOttenuto = Funzione.countByCompanyAndProperty(COMPANY_UNO, Funzione_.code, code1, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         numPrevisto = 0;
-        numOttenuto = Funzione.countByCompanyAndProperty(companyUno, Funzione_.sigla, sigla3, MANAGER);
+        numOttenuto = Funzione.countByCompanyAndProperty(COMPANY_UNO, Funzione_.sigla, sigla3, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         numPrevisto = 1;
-        numOttenuto = Funzione.countByCompanyAndProperty(companyDue, Funzione_.sigla, sigla3, MANAGER);
+        numOttenuto = Funzione.countByCompanyAndProperty(COMPANY_DUE, Funzione_.sigla, sigla3, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of single test
 
@@ -308,7 +372,6 @@ public class FunzioneTest extends WamTest {
         funz = Funzione.find(chiaviDue.get(pos), MANAGER);
         assertEquals(funz, listaDue.get(pos));
     }// end of single test
-
 
     @Test
     /**
@@ -346,20 +409,19 @@ public class FunzioneTest extends WamTest {
         funz = Funzione.getEntityByCompanyAndCode(null, code1, MANAGER);
         assertNull(funz);
 
-        funz = Funzione.getEntityByCompanyAndCode(companyUno, "sbagliato", MANAGER);
+        funz = Funzione.getEntityByCompanyAndCode(COMPANY_UNO, "sbagliato", MANAGER);
         assertNull(funz);
 
         pos = 0;
-        funz = Funzione.getEntityByCompanyAndCode(companyUno, code1, MANAGER);
+        funz = Funzione.getEntityByCompanyAndCode(COMPANY_UNO, code1, MANAGER);
         assertNotNull(funz);
         assertEquals(funz.getId(), lista.get(pos).getId());
 
         pos = 6;
-        funz = Funzione.getEntityByCompanyAndCode(companyDue, code3, MANAGER);
+        funz = Funzione.getEntityByCompanyAndCode(COMPANY_DUE, code3, MANAGER);
         assertNotNull(funz);
         assertEquals(funz.getId(), lista.get(pos).getId());
     }// end of single test
-
 
     @Test
     /**
@@ -379,12 +441,12 @@ public class FunzioneTest extends WamTest {
      */
     public void getListByCompany() {
 
-        listaTre = Funzione.getListByCompany(companyUno, MANAGER);
+        listaTre = Funzione.getListByCompany(COMPANY_UNO, MANAGER);
         assertNotNull(listaTre);
         assertEquals(listaTre, listaUno);
         assertListeUguali(listaTre, listaUno);
 
-        listaTre = Funzione.getListByCompany(companyDue, MANAGER);
+        listaTre = Funzione.getListByCompany(COMPANY_DUE, MANAGER);
         assertNotNull(listaTre);
         assertEquals(listaTre, listaDue);
         assertListeUguali(listaTre, listaDue);
@@ -404,10 +466,10 @@ public class FunzioneTest extends WamTest {
      * Search for the values of a given property of the given Entity class
      */
     public void getListStrForCodeByCompany() {
-        listStr = Funzione.getListStrForCodeByCompany(companyUno, MANAGER);
+        listStr = Funzione.getListStrForCodeByCompany(COMPANY_UNO, MANAGER);
         assertEquals(listStr.size(), listaUno.size());
 
-        listStr = Funzione.getListStrForCodeByCompany(companyDue, MANAGER);
+        listStr = Funzione.getListStrForCodeByCompany(COMPANY_DUE, MANAGER);
         assertEquals(listStr.size(), listaDue.size());
     }// end of single test
 
@@ -433,42 +495,41 @@ public class FunzioneTest extends WamTest {
         assertNull(funz);
 
         //--prima company
-        numPrevisto = Funzione.countByCompany(companyUno, MANAGER);
+        numPrevisto = Funzione.countByCompany(COMPANY_UNO, MANAGER);
 
         // senza tutti i parametri obbligatori
         funz = Funzione.crea(null, code1, sigla1, desc1, MANAGER);
         assertNull(funz);
-        funz = Funzione.crea(companyUno, null, sigla1, desc1, MANAGER);
+        funz = Funzione.crea(COMPANY_UNO, null, sigla1, desc1, MANAGER);
         assertNull(funz);
-        funz = Funzione.crea(companyUno, code1, "", desc1, MANAGER);
+        funz = Funzione.crea(COMPANY_UNO, code1, "", desc1, MANAGER);
         assertNull(funz);
-        funz = Funzione.crea(companyDue, code1, sigla1, null, MANAGER);
+        funz = Funzione.crea(COMPANY_DUE, code1, sigla1, null, MANAGER);
         assertNull(funz);
 
         //--con i parametri obbligatori
         numPrevisto = 1;
-        funz = Funzione.crea(companyUno, code1, sigla1, desc1, MANAGER);
+        funz = Funzione.crea(COMPANY_UNO, code1, sigla1, desc1, MANAGER);
         assertNotNull(funz);
         assertNotNull(funz.getId());
         ordine = funz.getOrdine();
         assertEquals(ordine, 1);
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_UNO, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         //--seconda company
         //--tutti i parametri previsti
         numPrevisto = 1;
-        funz = Funzione.crea(companyDue, code1, sigla1, desc1, 6, FontAwesome.USER, MANAGER);
+        funz = Funzione.crea(COMPANY_DUE, code1, sigla1, desc1, 6, FontAwesome.USER, MANAGER);
         assertNotNull(funz);
         assertNotNull(funz.getId());
-        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_DUE, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
         assertEquals(funz.getCode(), code1);
         assertEquals(funz.getSigla(), sigla1);
         assertEquals(funz.getDescrizione(), desc1);
         assertEquals(funz.getOrdine(), 6);
     }// end of single test
-
 
     @Test
     /**
@@ -488,14 +549,13 @@ public class FunzioneTest extends WamTest {
         creaRecords();
 
         numPrevisto = chiaviUno.size();
-        numOttenuto = Funzione.deleteAll(companyUno, MANAGER);
+        numOttenuto = Funzione.deleteAll(COMPANY_UNO, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         numPrevisto = chiaviDue.size();
-        numOttenuto = Funzione.deleteAll(companyDue, MANAGER);
+        numOttenuto = Funzione.deleteAll(COMPANY_DUE, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of single test
-
 
     @Test
     /**
@@ -530,7 +590,7 @@ public class FunzioneTest extends WamTest {
         assertNull(funz.getId());
 
         //-mancano le properties obbligatorie - NON registra
-        funz = new Funzione(companyUno, "", sigla1, desc1);
+        funz = new Funzione(COMPANY_UNO, "", sigla1, desc1);
         assertNotNull(funz);
         try { // prova ad eseguire il codice
             entity = funz.save(MANAGER);
@@ -540,7 +600,7 @@ public class FunzioneTest extends WamTest {
         assertNull(funz.getId());
 
         //--mancano le properties obbligatorie - NON registra
-        funz = new Funzione(companyUno, code1, "", desc1);
+        funz = new Funzione(COMPANY_UNO, code1, "", desc1);
         assertNotNull(funz);
         try { // prova ad eseguire il codice
             entity = funz.save(MANAGER);
@@ -551,16 +611,16 @@ public class FunzioneTest extends WamTest {
 
         //--ci sono i parametri obbligatori
         numPrevisto = 1;
-        funz = new Funzione(companyUno, code1, sigla1, desc1);
+        funz = new Funzione(COMPANY_UNO, code1, sigla1, desc1);
         assertNotNull(funz);
-        entity = funz.save(companyUno, MANAGER);
+        entity = funz.save(COMPANY_UNO, MANAGER);
         assertNotNull(entity);
         assertTrue(entity instanceof Funzione);
         assertNotNull(funz);
         assertNotNull(funz.getId());
         ordine = funz.getOrdine();
         assertEquals(ordine, 1);
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_UNO, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of single test
 
@@ -585,14 +645,14 @@ public class FunzioneTest extends WamTest {
 
         //--ci sono i parametri obbligatori
         numPrevisto = 1;
-        funz = new Funzione(companyUno, code1, sigla1, desc1);
+        funz = new Funzione(COMPANY_UNO, code1, sigla1, desc1);
         assertNotNull(funz);
-        funz = funz.save(companyUno, MANAGER);
+        funz = funz.save(COMPANY_UNO, MANAGER);
         assertNotNull(funz);
         assertNotNull(funz.getId());
         ordine = funz.getOrdine();
         assertEquals(ordine, 1);
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_UNO, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of single test
 
@@ -604,16 +664,15 @@ public class FunzioneTest extends WamTest {
         //--prima company
         numPrevisto = listaUno.size();
 
-        numOttenuto = Funzione.maxOrdine(companyUno, MANAGER);
+        numOttenuto = Funzione.maxOrdine(COMPANY_UNO, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
 
         //--seconda company
         numPrevisto = listaDue.size();
 
-        numOttenuto = Funzione.maxOrdine(companyDue, MANAGER);
+        numOttenuto = Funzione.maxOrdine(COMPANY_DUE, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of single test
-
 
     @Test
     /**
@@ -636,7 +695,6 @@ public class FunzioneTest extends WamTest {
     //------------------------------------------------------------------------------------------------------------------------
     // Utilities
     //------------------------------------------------------------------------------------------------------------------------
-
 
     private void singoloRecordPrimaCompany(Funzione funz) {
         singoloRecord(funz);
@@ -667,26 +725,25 @@ public class FunzioneTest extends WamTest {
 
     private void costruttoreNulloPrimaCompany(Funzione funz, int numPrevisto) {
         costruttoreNullo(funz);
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_UNO, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of method
 
     private void costruttoreNulloSecondaCompany(Funzione funz, int numPrevisto) {
         costruttoreNullo(funz);
-        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_DUE, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of method
 
-
     private void costruttoreValidoPrimaCompany(Funzione funz, int ordinePrevisto, int numPrevisto) {
         costruttoreValido(funz, ordinePrevisto);
-        numOttenuto = Funzione.countByCompany(companyUno, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_UNO, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of method
 
     private void costruttoreValidoSecondaCompany(Funzione funz, int ordinePrevisto, int numPrevisto) {
         costruttoreValido(funz, ordinePrevisto);
-        numOttenuto = Funzione.countByCompany(companyDue, MANAGER);
+        numOttenuto = Funzione.countByCompany(COMPANY_DUE, MANAGER);
         assertEquals(numOttenuto, numPrevisto);
     }// end of method
 
@@ -707,7 +764,6 @@ public class FunzioneTest extends WamTest {
             assertFunzioniUguali(lista1.get(k), lista2.get(k));
         }// end of for cycle
     }// end of method
-
 
     private void assertFunzioniUguali(Funzione funz1, Funzione funz2) {
         assertEquals(funz1.getId(), funz2.getId());

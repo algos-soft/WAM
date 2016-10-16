@@ -99,7 +99,7 @@ public class Turno extends WamCompanyEntity {
      * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Turno() {
-    }// end of constructor
+    }// end of JavaBean constructor
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie

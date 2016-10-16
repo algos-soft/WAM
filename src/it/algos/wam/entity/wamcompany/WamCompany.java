@@ -18,7 +18,6 @@ import org.eclipse.persistence.annotations.CascadeOnDelete;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -53,10 +52,20 @@ public class WamCompany extends BaseCompany {
 
     /**
      * Costruttore senza argomenti
-     * Necessario per le specifiche JavaBean
+     * Obbligatorio per le specifiche JavaBean
+     * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public WamCompany() {
-        this("", "", "");
+    }// end of JavaBean constructor
+
+    /**
+     * Costruttore minimo con tutte le properties obbligatorie
+     *
+     * @param companyCode sigla di riferimento interna (obbligatoria)
+     * @param name        descrizione della company (obbligatoria)
+     */
+    public WamCompany(String companyCode, String name) {
+        this(companyCode, name, "");
     }// end of constructor
 
     /**
@@ -69,7 +78,6 @@ public class WamCompany extends BaseCompany {
     public WamCompany(String companyCode, String name, String email) {
         super(companyCode, name);
     }// end of constructor
-
 
     /**
      * Recupera il totale dei records della Entity
@@ -92,6 +100,7 @@ public class WamCompany extends BaseCompany {
      * Nessun filtro sulla azienda, perché la primary key è unica
      *
      * @param id valore (unico) della Primary Key
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany find(long id) {
@@ -121,6 +130,7 @@ public class WamCompany extends BaseCompany {
      * Recupera una istanza della Entity usando la query per una property specifica
      *
      * @param code valore della property code
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany findByCode(String code) {
@@ -138,6 +148,7 @@ public class WamCompany extends BaseCompany {
      *
      * @param code    valore della property code
      * @param manager the EntityManager to use
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany findByCode(String code, EntityManager manager) {
@@ -162,7 +173,6 @@ public class WamCompany extends BaseCompany {
         return findByCode(WAMApp.DEMO_COMPANY_CODE);
     }// end of method
 
-
     /**
      * Ritorna la Company corrente
      * (correntemente in sessione)
@@ -180,11 +190,11 @@ public class WamCompany extends BaseCompany {
         return wamCompany;
     }// end of method
 
-
     /**
      * Ritorna la Demo Company
      *
      * @return la Demo Company, null se non esiste
+     *
      * @deprecated
      */
     public static WamCompany getDemoCompanyOld() {
@@ -196,7 +206,6 @@ public class WamCompany extends BaseCompany {
         }
         return company;
     }// end of method
-
 
     @Override
     public String toString() {

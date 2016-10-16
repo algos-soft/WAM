@@ -38,7 +38,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //------------------------------------------------------------------------------------------------------------------------
     // Properties
     //------------------------------------------------------------------------------------------------------------------------
-    // versione della classe per la serializzazione
+    //--versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
     //--company di riferimento (facoltativa nella superclasse)
@@ -118,7 +118,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Funzione() {
-    }// end of constructor
+    }// end of JavaBean constructor
 
     /**
      * Costruttore minimo con tutte le properties obbligatorie
