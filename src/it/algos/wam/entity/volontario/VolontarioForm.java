@@ -195,7 +195,7 @@ public class VolontarioForm extends ModuleForm {
      */
     @Override
     @SuppressWarnings("all")
-    protected Field createField(Attribute attr) {
+    protected  Field createField(Attribute attr) {
         Field vaadinField = null;
         java.lang.reflect.Field javaField = null;
         Annotation annotation = null;

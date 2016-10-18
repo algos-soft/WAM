@@ -101,10 +101,9 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "funzione")
-//    @CascadeOnDelete
-//    private List<Funzione> funzioneFunzioni = new ArrayList<>();
-//
+    @OneToMany
+    private List<Funzione> funzioneFunzioni = new ArrayList<>();
+
 //    @ManyToOne
 //    private Funzione funzione = null;
 
@@ -731,8 +730,15 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         this.volontarioFunzioni = volontarioFunzioni;
     }//end of setter method
 
+    public List<Funzione> getFunzioneFunzioni() {
+        return funzioneFunzioni;
+    }// end of getter method
 
-    //------------------------------------------------------------------------------------------------------------------------
+    public void setFunzioneFunzioni(List<Funzione> funzioneFunzioni) {
+        this.funzioneFunzioni = funzioneFunzioni;
+    }//end of setter method
+
+//------------------------------------------------------------------------------------------------------------------------
     // Save
     //------------------------------------------------------------------------------------------------------------------------
 
@@ -893,7 +899,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             valido = true;
         }// end of if/else cycle
 
-        if (isEsistente(codeCompanyUnico, manager)) {
+        if (codeCompanyUnico == null || isEsistente(codeCompanyUnico, manager)) {
             valido = false;
         }// end of if cycle
 

@@ -43,8 +43,8 @@ public abstract class BootService {
      * La crea SOLO se non esiste già
      */
     public static void creaCompanyTest() {
-        WamCompany company = creaCroceTest();
-        initCompany(company, true, true);
+//        WamCompany company = creaCroceTest();
+//        initCompany(company, true, true);
     }// end of static method
 
     /**

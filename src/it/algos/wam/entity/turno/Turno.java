@@ -1018,17 +1018,20 @@ public class Turno extends WamCompanyEntity {
      */
     public Iscrizione getIscrizione(ServizioFunzione sf) {
         Iscrizione iscrizione = null;
-        for (Iscrizione i : getIscrizioni()) {
-            if (i != null) {
-                ServizioFunzione s = i.getServizioFunzione();
-                if (s != null) {
-                    if (s.equals(sf)) {
-                        iscrizione = i;
-                        break;
+        if (getIscrizioni()!=null) {
+            for (Iscrizione i : getIscrizioni()) {
+                if (i != null) {
+                    ServizioFunzione s = i.getServizioFunzione();
+                    if (s != null) {
+                        if (s.equals(sf)) {
+                            iscrizione = i;
+                            break;
+                        }
                     }
                 }
             }
-        }
+        }// end of if cycle
+
         return iscrizione;
     }
 
