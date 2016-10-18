@@ -120,6 +120,10 @@ public class EngineTab {
 
         List<Servizio> listaServizi;
 
+        // todo la lista dei servizi deve essere composta:
+        // todo sempre, da tutti i servizi abilitati
+        // todo se il tabellone contiene giorni passati, aggiunge anche i servizi che hanno dei turni associati
+
         // aggiunge una riga per ogni servizio con orario prestabilito
         listaServizi = Servizio.getListVisibiliConOrario(entityManager);
         if (listaServizi != null && listaServizi.size() > 0) {
