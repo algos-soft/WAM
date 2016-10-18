@@ -25,15 +25,14 @@ import java.util.List;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
+@IdClass(UtenteRuoloAmbId.class)
 @Table(name = "Utente_ruolo")
 @Access(AccessType.PROPERTY)
 @ReadOnly
-public class UtenteRuoloAmb extends BaseEntity {
-
+public class UtenteRuoloAmb  {
 
     private long ruolo_id = 0;
     private long utente_id = 0;
-
 
     /**
      * Costruttore senza argomenti
@@ -41,6 +40,7 @@ public class UtenteRuoloAmb extends BaseEntity {
      */
     public UtenteRuoloAmb() {
     }// end of constructor
+
 
     /**
      * Recupera una istanza della Entity usando la query per una property specifica
@@ -111,6 +111,7 @@ public class UtenteRuoloAmb extends BaseEntity {
         return container;
     }// end of static method
 
+    @Id
     public long getRuolo_id() {
         return ruolo_id;
     }// end of getter method
@@ -119,6 +120,7 @@ public class UtenteRuoloAmb extends BaseEntity {
         this.ruolo_id = ruolo_id;
     }//end of setter method
 
+    @Id
     public long getUtente_id() {
         return utente_id;
     }// end of getter method
@@ -128,3 +130,4 @@ public class UtenteRuoloAmb extends BaseEntity {
     }//end of setter method
 
 }// end of entity class
+

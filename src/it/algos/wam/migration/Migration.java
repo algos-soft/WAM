@@ -1,20 +1,34 @@
 package it.algos.wam.migration;
 
+import com.vaadin.addon.jpacontainer.EntityItem;
+import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.JPAContainerFactory;
+import com.vaadin.data.Container;
+import com.vaadin.data.Item;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.servizio.Servizio_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.Organizzazione;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.BaseEntity_;
+import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibArray;
+import it.algos.webbase.web.query.AQuery;
+import it.algos.webbase.web.query.SortProperty;
+import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -460,6 +474,33 @@ public class Migration {
         UtenteAmb utente = UtenteAmb.getEntityByVolontario(listaUtenti, volontarioOld);
 
         if (utente != null) {
+
+            EntityManager manager = getManager();
+            LazyEntityContainer<UtenteRuoloAmb> container = new LazyEntityContainer(manager, UtenteRuoloAmb.class, 1000, null, true, true, true);
+            container.addContainerProperty("ruolo_id", Long.class, 0L, true, true);
+            container.addContainerProperty("utente_id", Long.class, 0L, true, true);
+
+            // iterazione
+            Collection itemIds = container.getItemIds();
+            UtenteRuoloAmb ura;
+            for (Object id : itemIds) {
+                ura = container.getEntity(id);
+                int a = 87;
+            }
+
+            // filtro
+            Container.Filter filter = new Compare.Equal("ruolo_id", 4);
+            container.addContainerFilter(filter);
+            itemIds = container.getItemIds();
+            int size = container.size();
+            for (Object id : itemIds) {
+                ura = container.getEntity(id);
+                int a = 87;
+            }
+
+            manager.close();
+
+
 //            admin = UtenteRuoloAmb.isAdmin(utente, MANAGER);
         }// end of if cycle
 
