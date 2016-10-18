@@ -122,6 +122,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Funzione() {
+        this("","","");
     }// end of JavaBean constructor
 
     /**
