@@ -53,7 +53,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotEmpty
     @Column(length = 20)
     @Index
-    @AIField(type = AFType.text, required = true, width = "16em", caption = "code", prompt = "funz", help = "Inserire una sigla interna, non visibile. Obbligatorio")
+    @AIField(type = AFType.text, required = true, width = "16em", caption = "Code", prompt = "funz", help = "Codice unico interno, non visibile nel tabellone.", error = "Manca la sigla interna")
     private String code = "";
 
     //--sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
@@ -63,7 +63,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotNull
     @Column(length = 40, unique = true)
     @Index
-    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "Codice", help = "Codifica interna. Valore unico")
+    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "Unico", help = "Codifica interna. Valore unico")
     private String codeCompanyUnico = "";
 
     //--sigla di codifica visibile (obbligatoria, non unica)
@@ -72,17 +72,19 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotEmpty
     @Column(length = 20)
     @Index
-    @AIField(type = AFType.text, required = true, width = "16em", caption = "code", prompt = "funz", help = "Inserire una sigla visibile nel tabellone. Obbligatorio")
+    @AIField(type = AFType.text, required = true, width = "16em", caption = "Sigla", prompt = "funz", help = "Sigla visibile nel tabellone.", error = "Manca la sigla visibile")
     private String sigla = "";
 
     //--descrizione (obbligatoria, non unica)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
+    @AIField(type = AFType.text, width = "24em", caption = "Descrizione", prompt = "funzione", help = "Descrizione completa della funzione.", error = "Manca la descrizione")
     private String descrizione = "";
 
     //--ordine di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
     @NotNull
     @Index
+    @AIField(type = AFType.integer, enabled = false, width = "3em", caption = "Ordine", help = "Ordine di apparizione nei PopUp. Modificabile nella lista con i bottoni Sposta Sù e Giù")
     private int ordine = 0;
 
     //--codepoint dell'icona di FontAwesome (facoltativa)
@@ -121,7 +123,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Obbligatorio per le specifiche JavaBean
      */
     public Funzione() {
-        this("","","");
+        this("", "", "");
     }// end of JavaBean constructor
 
     /**

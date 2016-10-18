@@ -190,7 +190,7 @@ public class FunzioneForm extends ModuleForm {
 
         fCode.setWidth("8em");
         fCode.setRequired(true);
-        fCode.setRequiredError("Manca la sigla interna");
+//        fCode.setRequiredError("Manca la sigla interna");
 
         if (isNewRecord()) {
             if (LibSession.isDeveloper()) {
@@ -225,7 +225,7 @@ public class FunzioneForm extends ModuleForm {
 
         fSigla.setWidth("8em");
         fSigla.setRequired(true);
-        fSigla.setRequiredError("Manca la sigla visibile");
+//        fSigla.setRequiredError("Manca la sigla visibile");
 
         return fSigla;
     }// end of method
@@ -241,7 +241,7 @@ public class FunzioneForm extends ModuleForm {
 
         fDescrizione.setWidth("24em");
         fDescrizione.setRequired(true);
-        fDescrizione.setRequiredError("Manca la descrizione");
+//        fDescrizione.setRequiredError("Manca la descrizione");
 
         return fDescrizione;
     }// end of method
