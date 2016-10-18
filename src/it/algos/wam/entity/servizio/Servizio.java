@@ -133,6 +133,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Servizio() {
+        this("","");
     }// end of JavaBean constructor
 
 

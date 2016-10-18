@@ -187,86 +187,86 @@ public class VolontarioForm extends ModuleForm {
         });// end of anonymous inner class
     }// end of method
 
-    /**
-     * Create a single field.
-     * The field type is chosen according to the Java type.
-     *
-     * @param attr the metamodel Attribute
-     */
-    @Override
-    @SuppressWarnings("all")
-    protected  Field createField(Attribute attr) {
-        Field vaadinField = null;
-        java.lang.reflect.Field javaField = null;
-        Annotation annotation = null;
-        String fieldType = "";
-        AIField fieldAnnotation = null;
-
-        try { // prova ad eseguire il codice
-            javaField = Volontario.class.getDeclaredField(attr.getName());
-        } catch (Exception unErrore) { // intercetta l'errore
-            return super.createField(attr);
-        }// fine del blocco try-catch
-
-        if (javaField != null) {
-            annotation = javaField.getAnnotation(AIField.class);
-        } else {
-            return super.createField(attr);
-        }// end of if/else cycle
-
-        if (annotation != null && annotation instanceof AIField) {
-            fieldAnnotation = (AIField) annotation;
-        } else {
-            return super.createField(attr);
-        }// end of if/else cycle
-
-        if (fieldAnnotation != null) {
-            switch (fieldAnnotation.type()) {
-                case text:
-                    vaadinField = new TextField();
-                    ((TextField) vaadinField).setInputPrompt(fieldAnnotation.prompt());
-                    ((TextField) vaadinField).setDescription(fieldAnnotation.help());
-                    ((TextField) vaadinField).setEnabled(fieldAnnotation.enabled());
-                    break;
-                case email:
-                    vaadinField = new EmailField();
-                    ((EmailField) vaadinField).setInputPrompt(fieldAnnotation.prompt());
-                    ((EmailField) vaadinField).setDescription(fieldAnnotation.help());
-                    break;
-                case checkbox:
-                    vaadinField = new CheckBoxField();
-                    ((CheckBoxField) vaadinField).setDescription(fieldAnnotation.help());
-                    break;
-                case area:
-                    vaadinField = new TextArea();
-                    ((TextArea) vaadinField).setInputPrompt(fieldAnnotation.prompt());
-                    ((TextArea) vaadinField).setDescription(fieldAnnotation.help());
-                    break;
-                case date:
-                    vaadinField = new DateField();
-                    ((DateField) vaadinField).setDescription(fieldAnnotation.help());
-                    break;
-                case password:
-                    vaadinField = new PasswordField();
-                    ((PasswordField) vaadinField).setDescription(fieldAnnotation.help());
-                    ((PasswordField) vaadinField).setEnabled(fieldAnnotation.enabled());
-                    break;
-                default: // caso non definito
-                    vaadinField = new TextField();
-                    ((TextField) vaadinField).setInputPrompt(fieldAnnotation.prompt());
-                    ((TextField) vaadinField).setDescription(fieldAnnotation.help());
-                    ((TextField) vaadinField).setEnabled(fieldAnnotation.enabled());
-                    break;
-            } // fine del blocco switch
-            vaadinField.setRequired(fieldAnnotation.required());
-            vaadinField.setCaption(fieldAnnotation.caption());
-            vaadinField.setWidth(fieldAnnotation.width());
-
-            return vaadinField;
-        } else {
-            return super.createField(attr);
-        }// end of if/else cycle
-    }// end of method
+//    /**
+//     * Create a single field.
+//     * The field type is chosen according to the Java type.
+//     *
+//     * @param attr the metamodel Attribute
+//     */
+////    @Override
+//    @SuppressWarnings("all")
+//    protected  Field createField2(Attribute attr) {
+//        Field vaadinField = null;
+//        java.lang.reflect.Field javaField = null;
+//        Annotation annotation = null;
+//        String fieldType = "";
+//        AIField fieldAnnotation = null;
+//
+//        try { // prova ad eseguire il codice
+//            javaField=  attr.getJavaMember().getDeclaringClass().getDeclaredField(attr.getName());
+//        } catch (Exception unErrore) { // intercetta l'errore
+//            return super.createField(attr);
+//        }// fine del blocco try-catch
+//
+//        if (javaField != null) {
+//            annotation = javaField.getAnnotation(AIField.class);
+//        } else {
+//            return super.createField(attr);
+//        }// end of if/else cycle
+//
+//        if (annotation != null && annotation instanceof AIField) {
+//            fieldAnnotation = (AIField) annotation;
+//        } else {
+//            return super.createField(attr);
+//        }// end of if/else cycle
+//
+//        if (fieldAnnotation != null) {
+//            switch (fieldAnnotation.type()) {
+//                case text:
+//                    vaadinField = new TextField();
+//                    ((TextField) vaadinField).setInputPrompt(fieldAnnotation.prompt());
+//                    ((TextField) vaadinField).setDescription(fieldAnnotation.help());
+//                    ((TextField) vaadinField).setEnabled(fieldAnnotation.enabled());
+//                    break;
+//                case email:
+//                    vaadinField = new EmailField();
+//                    ((EmailField) vaadinField).setInputPrompt(fieldAnnotation.prompt());
+//                    ((EmailField) vaadinField).setDescription(fieldAnnotation.help());
+//                    break;
+//                case checkbox:
+//                    vaadinField = new CheckBoxField();
+//                    ((CheckBoxField) vaadinField).setDescription(fieldAnnotation.help());
+//                    break;
+//                case area:
+//                    vaadinField = new TextArea();
+//                    ((TextArea) vaadinField).setInputPrompt(fieldAnnotation.prompt());
+//                    ((TextArea) vaadinField).setDescription(fieldAnnotation.help());
+//                    break;
+//                case date:
+//                    vaadinField = new DateField();
+//                    ((DateField) vaadinField).setDescription(fieldAnnotation.help());
+//                    break;
+//                case password:
+//                    vaadinField = new PasswordField();
+//                    ((PasswordField) vaadinField).setDescription(fieldAnnotation.help());
+//                    ((PasswordField) vaadinField).setEnabled(fieldAnnotation.enabled());
+//                    break;
+//                default: // caso non definito
+//                    vaadinField = new TextField();
+//                    ((TextField) vaadinField).setInputPrompt(fieldAnnotation.prompt());
+//                    ((TextField) vaadinField).setDescription(fieldAnnotation.help());
+//                    ((TextField) vaadinField).setEnabled(fieldAnnotation.enabled());
+//                    break;
+//            } // fine del blocco switch
+//            vaadinField.setRequired(fieldAnnotation.required());
+//            vaadinField.setCaption(fieldAnnotation.caption());
+//            vaadinField.setWidth(fieldAnnotation.width());
+//
+//            return vaadinField;
+//        } else {
+//            return super.createField(attr);
+//        }// end of if/else cycle
+//    }// end of method
 
     /**
      * Crea un field di tipo Text invece che Password

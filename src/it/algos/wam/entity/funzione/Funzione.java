@@ -9,6 +9,8 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.field.AFType;
+import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -51,6 +53,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotEmpty
     @Column(length = 20)
     @Index
+    @AIField(type = AFType.text, required = true, width = "16em", caption = "code", prompt = "funz", help = "Inserire una sigla interna, non visibile. Obbligatorio")
     private String code = "";
 
     //--sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
@@ -60,6 +63,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotNull
     @Column(length = 40, unique = true)
     @Index
+    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "Codice", help = "Codifica interna. Valore unico")
     private String codeCompanyUnico = "";
 
     //--sigla di codifica visibile (obbligatoria, non unica)
@@ -68,6 +72,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotEmpty
     @Column(length = 20)
     @Index
+    @AIField(type = AFType.text, required = true, width = "16em", caption = "code", prompt = "funz", help = "Inserire una sigla visibile nel tabellone. Obbligatorio")
     private String sigla = "";
 
     //--descrizione (obbligatoria, non unica)

@@ -56,6 +56,7 @@ public class WamCompany extends BaseCompany {
      * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public WamCompany() {
+        this("","");
     }// end of JavaBean constructor
 
     /**

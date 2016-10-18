@@ -151,6 +151,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Volontario() {
+        this("","");
     }// end of JavaBean constructor
 
     /**
