@@ -246,7 +246,7 @@ public class WamUI extends UI {
         fixCompanySession();
 
         WamCompany companyCorrente = (WamCompany) CompanySessionLib.getCompany();
-        new TestService();
+//        new TestService();
         CompanySessionLib.setCompany(companyCorrente);
 
         UI.getCurrent().setContent(getMainComponent());

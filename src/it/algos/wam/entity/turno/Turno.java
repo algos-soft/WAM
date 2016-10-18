@@ -99,7 +99,7 @@ public class Turno extends WamCompanyEntity {
      * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Turno() {
-        this(null,null);
+        this(null,null, null, null);
     }// end of JavaBean constructor
 
     /**
@@ -111,22 +111,9 @@ public class Turno extends WamCompanyEntity {
      * @param inizio   giorno, ora e minuto di inizio turno
      */
     public Turno(Servizio servizio, Date inizio) {
-        this((WamCompany) null, servizio, inizio);
+        this((WamCompany) null, servizio, inizio, null);
     }// end of constructor
 
-
-    /**
-     * Costruttore minimo con tutte le properties obbligatorie
-     * Filtrato sulla company passata come parametro.
-     * La chiave (obbligatoria) viene calcolata in automatico prima del persist
-     *
-     * @param company  di appartenenza (property della superclasse)
-     * @param servizio tipologia di servizio (obbligatoria)
-     * @param inizio   giorno, ora e minuto di inizio turno
-     */
-    public Turno(WamCompany company, Servizio servizio, Date inizio) {
-        this(company, servizio, inizio, (Date) null, (List<Iscrizione>) null);
-    }// end of constructor
 
     /**
      * Costruttore completo
@@ -137,9 +124,8 @@ public class Turno extends WamCompanyEntity {
      * @param servizio   tipologia di servizio (obbligatoria)
      * @param inizio     giorno, ora e minuto di inizio turno
      * @param fine       giorno, ora e minuto di fine turno
-     * @param iscrizioni dei volontari a questo turno
      */
-    public Turno(WamCompany company, Servizio servizio, Date inizio, Date fine, List<Iscrizione> iscrizioni) {
+    public Turno(WamCompany company, Servizio servizio, Date inizio, Date fine) {
         super();
         if (company != null) {
             this.setCompany(company);
@@ -147,8 +133,6 @@ public class Turno extends WamCompanyEntity {
         this.setServizio(servizio);
         this.setInizio(inizio);
         this.setFine(fine);
-        this.setIscrizioni(iscrizioni);
-        this.setAssegnato(iscrizioni != null);
     }// end of constructor
 
 
@@ -498,8 +482,8 @@ public class Turno extends WamCompanyEntity {
                 fine = inizio;
             }// end of if cycle
 
-            turno = new Turno(company, servizio, inizio);
-            turno.setFine(fine);
+            turno = new Turno(company, servizio, inizio, fine);
+//            turno.setFine(fine);
             turno.setAssegnato(assegnato);
             turno = turno.save(company, manager);
         }// end of if cycle

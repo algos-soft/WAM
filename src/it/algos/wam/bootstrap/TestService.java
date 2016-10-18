@@ -426,20 +426,20 @@ public class TestService {
         assertEquals(turno.getCompany(), companyDemo);
         assertEquals(turno.getCompany(), companyCorrente);
 
-        //--company passata come parametro
-        //--registra
-        turno = new Turno(companyTest, serv, new Date());
-        turno = (Turno) turno.save();
-        assertNotNull(turno);
-        key2 = turno.getId();
-        assertEquals(turno.getCompany(), companyTest);
-        assertNotSame(turno.getCompany(), companyCorrente);
+//        //--company passata come parametro
+//        //--registra
+//        turno = new Turno(companyTest, serv, new Date());
+//        turno = (Turno) turno.save();
+//        assertNotNull(turno);
+//        key2 = turno.getId();
+//        assertEquals(turno.getCompany(), companyTest);
+//        assertNotSame(turno.getCompany(), companyCorrente);
 
-        //--valore già esistente (controlla servizio (solo quelli ad orario) e data di inizio )
-        //--non registra
-        turno = new Turno(companyTest, serv, new Date());
-        turno = (Turno) turno.save();
-//        assertNull(turno);
+//        //--valore già esistente (controlla servizio (solo quelli ad orario) e data di inizio )
+//        //--non registra
+//        turno = new Turno(companyTest, serv, new Date());
+//        turno = (Turno) turno.save();
+////        assertNull(turno);
 
         //--cancella le 2 (due) entity create per prova
         Turno.find(key1).delete();
