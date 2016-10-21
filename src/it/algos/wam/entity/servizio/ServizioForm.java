@@ -696,7 +696,6 @@ public class ServizioForm extends ModuleForm {
             setComponentAlignment(checkObbl, Alignment.MIDDLE_LEFT);
             setComponentAlignment(bElimina, Alignment.MIDDLE_LEFT);
 
-
         }
 
         public boolean isObbligatoria() {
