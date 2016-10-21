@@ -57,6 +57,7 @@ public class WamTablePortal extends TablePortal {
         boolean admin = LibSession.isAdmin();
         toolbar = super.createToolbar();
         toolbar.setCreate(true);
+        toolbar.setSelectButtonVisible(false);
 
         if (developer) {
             useAllCompany = true;
@@ -81,6 +82,7 @@ public class WamTablePortal extends TablePortal {
      * Da usare solo per il funzionamento di una singola company
      * L'utente normale lo vede sempre
      * Il developer lo può usare solo se ha filtrato la singola company
+     *
      */
     private void addMenuSpostaRecords() {
 
@@ -190,18 +192,12 @@ public class WamTablePortal extends TablePortal {
             if (isUsaBottoniSpostamento()) {
                 syncButtonsSpostamento(false);
             }// end of if cycle
-//            if (bCroci != null) {
-//                bCroci.setText(ITEM_ALL_CROCI);
-//            }// end of if cycle
         } else {
             useAllCompany = false;
             setFiltro(companyNew);
             if (isUsaBottoniSpostamento()) {
                 syncButtonsSpostamento(true);
             }// end of if cycle
-//            if (bCroci != null) {
-//                bCroci.setText(LibText.primaMaiuscola(companyNew.getCompanyCode()));
-//            }// end of if cycle
         }// end of if/else cycle
         CompanySessionLib.setCompany(companyNew);
     }// end of method
@@ -218,9 +214,6 @@ public class WamTablePortal extends TablePortal {
         syncBaseCompany(companyNew);
         table.deselectAll();
         table.refresh();
-//        this.removeAllComponents();
-//        this.table = getModule().createTable();
-//        super.init();
     }// end of method
 
     /**
@@ -244,7 +237,7 @@ public class WamTablePortal extends TablePortal {
     protected void syncButtons(boolean singleSelected, boolean multiSelected) {
         if (toolbar != null) {
             toolbar.syncButtons(singleSelected, multiSelected);
-        }
+        }// end of if cycle
 
         if (bMoveUp != null) {
             bMoveUp.setEnabled(singleSelected);
@@ -253,20 +246,9 @@ public class WamTablePortal extends TablePortal {
         if (bMoveDn != null) {
             bMoveDn.setEnabled(singleSelected);
         }// end of if cycle
+
     }// end of method
 
-//    /**
-//     * @deprecated
-//     */
-//    protected void fireCompanyChanged(WamCompany company) {
-//        UI ui = getUI();
-//        WamUI wamUI;
-//
-//        if (ui instanceof WamUI) {
-//            wamUI = (WamUI) ui;
-//            wamUI.fireCompanyChanged(company);
-//        }// fine del blocco if
-//    }// end of method
 
     protected boolean isUsaBottoniSpostamento() {
         return usaBottoniSpostamento;

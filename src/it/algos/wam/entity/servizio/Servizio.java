@@ -130,7 +130,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     /**
      * Costruttore senza argomenti
      * Obbligatorio per le specifiche JavaBean
-     * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
+     * Da non usare per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Servizio() {
         this("","");

@@ -12,8 +12,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
-import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
@@ -32,7 +30,7 @@ public class FunzioneTable extends WamTable {
 
 
     //--id della colonna generata "Altre funzioni"
-    protected static final String COL_FUNZIONI = "Funzioni automaticamente abilitate";
+    protected static final String COL_FUNZIONI = "Funzioni dipendenti";
 
 
     /**
@@ -196,7 +194,7 @@ public class FunzioneTable extends WamTable {
             }// end of if cycle
 
             return bIcon;
-        }// end of method
+        }// end of inner method
     }// end of inner class
 
     /**
@@ -210,35 +208,31 @@ public class FunzioneTable extends WamTable {
          * riga funziona anche cliccando sulla colonna custom.
          */
         public Component generateCell(Table table, Object itemId, Object columnId) {
-//            Item item = table.getItem(itemId);
-//            BeanItem bi = LibBean.fromItem(item);
-//            Funzione funz = (Funzione) bi.getBean();
+            String str = "";
+            Item item = table.getItem(itemId);
+            BeanItem bean = LibBean.fromItem(item);
+            Funzione funzione = (Funzione) bean.getBean();
 
-//            List<ServizioFunzione> lista = funz.getServizioFunzioniOrd();
-//            String str = "";
-//            for (int k = 0; k < lista.size(); k++) {
-//                ServizioFunzione sf = funz.getServizioFunzioniOrd().get(k);
-//                int codePoint = sf.getFunzione().getIconCodepoint();
-//                FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
-//                str += glyph.getHtml() + " ";
-//
-//                String sigla = sf.getFunzione().getSigla();
-//                str+="<strong>";
-//                if (sf.isObbligatoria()) {
-//                    str += "<font color=\"red\">" + sigla + "</font>";
-//                } else {
-//                    str += "<font color=\"green\">" + sigla + "</font>";
-//                }
-//                str+="</strong>";
-//
-//                if (k < lista.size() - 1) {
-//                    str += ", ";
-//                }
-//
-//            }
+            List<Funzione> lista = funzione.getFunzioniDipendenti();
+            for (int k = 0; k < lista.size(); k++) {
+                Funzione funz = lista.get(k);
+                int codePoint = funz.getIconCodepoint();
+                FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
+                str += glyph.getHtml() + " ";
 
-            return new Label("Nessuna");
-        }// end of method
+                String sigla = funz.getCode();
+                str += "<strong>";
+                str += "<font color=\"blue\">" + sigla + "</font>";
+                str += "</strong>";
+
+                if (k < lista.size() - 1) {
+                    str += ", ";
+                }
+
+            }
+
+            return new Label(str, ContentMode.HTML);
+        }// end of inner method
     }// end of inner class
 
 }// end of class

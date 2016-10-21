@@ -18,8 +18,7 @@ public class Funzione_ extends BaseEntity_ {
     public static volatile SingularAttribute<Funzione, Integer> iconCodepoint;
     public static volatile ListAttribute<Funzione, ServizioFunzione> servizioFunzioni;
     public static volatile ListAttribute<Funzione, VolontarioFunzione> volontarioFunzioni;
-//    public static volatile ListAttribute<Funzione, Funzione> funzioneFunzioni;
-//    public static volatile SingularAttribute<Funzione, Funzione> funzione;
+    public static volatile ListAttribute<Funzione, Funzione> funzioniDipendenti;
 }// end of entity class
 
 

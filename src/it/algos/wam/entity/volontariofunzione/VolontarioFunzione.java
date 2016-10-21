@@ -78,7 +78,7 @@ public class VolontarioFunzione extends WamCompanyEntity {
      */
     public static VolontarioFunzione find(long id) {
         VolontarioFunzione instance = null;
-        BaseEntity entity = AQuery.queryById(VolontarioFunzione.class, id);
+        BaseEntity entity = AQuery.find(VolontarioFunzione.class, id);
 
         if (entity != null) {
             if (entity instanceof VolontarioFunzione) {
@@ -102,7 +102,7 @@ public class VolontarioFunzione extends WamCompanyEntity {
         VolontarioFunzione instance = null;
 
         //@todo da migliorare
-        List<VolontarioFunzione> volontari = (List<VolontarioFunzione>) AQuery.queryList(VolontarioFunzione.class, VolontarioFunzione_.volontario, volontario);
+        List<VolontarioFunzione> volontari = (List<VolontarioFunzione>) AQuery.getList(VolontarioFunzione.class, VolontarioFunzione_.volontario, volontario);
         if (volontari != null && volontari.size() > 0) {
             for (VolontarioFunzione vol : volontari) {
                 if (vol.getFunzione().getId().equals(funzione.getId())) {
@@ -121,7 +121,7 @@ public class VolontarioFunzione extends WamCompanyEntity {
      */
     public static int count() {
         int totRec = 0;
-        long totTmp = AQuery.getCount(VolontarioFunzione.class);
+        long totTmp = AQuery.count(VolontarioFunzione.class);
 
         if (totTmp > 0) {
             totRec = (int) totTmp;
@@ -157,7 +157,7 @@ public class VolontarioFunzione extends WamCompanyEntity {
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<VolontarioFunzione> findAll() {
-        return (ArrayList<VolontarioFunzione>) AQuery.getLista(VolontarioFunzione.class);
+        return (ArrayList<VolontarioFunzione>) AQuery.getList(VolontarioFunzione.class);
     }// end of method
 
     public Volontario getVolontario() {

@@ -32,7 +32,7 @@ public class ServizioTable extends WamTable {
     protected static final String COL_DURATA = "Durata";
 
     // id della colonna generata "funzioni"
-    protected static final String COL_FUNZIONI = "Funzioni obbligatorie e facoltative";
+    protected static final String COL_FUNZIONI = "Funzioni previste";
 
     // id della colonna generata "colore"
     protected static final String COL_COLORE = ServizioMod.LABEL_COLOR;

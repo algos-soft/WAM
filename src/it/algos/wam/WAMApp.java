@@ -4,8 +4,9 @@ import it.algos.webbase.web.AlgosApp;
 
 /**
  * Contenitore di costanti della applicazione
+ * Regola alcuni flag di comportamento del framwork di base
  */
-public abstract class WAMApp extends AlgosApp {
+public class WAMApp extends AlgosApp {
 
 
     /**
@@ -19,8 +20,18 @@ public abstract class WAMApp extends AlgosApp {
 
     /**
      * Name of the local folder for images.<br>
+     * static initialisation block
      */
     public static final String IMG_FOLDER_NAME = "WEB-INF/data/img/";
 
+    /**
+     * Static initialisation block
+     *
+     * Sovrascrive una variabile statica della classe generale,
+     * per modificarne il comportamento solo in questa applicazione
+     */
+    static {
+        AlgosApp.DISPLAY_NEW_RECORD_ONLY = false;
+    }// end of static method
 
 }// end of abstract static class

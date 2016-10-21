@@ -1,11 +1,14 @@
 package it.algos.wam.lib;
 
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.ui.Component;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibDate;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 
 
@@ -66,5 +69,39 @@ public abstract class LibWam {
         return esisteSkip;
     }// end of method
 
+    /**
+     * Costruisce una codifica unica col codice della company seguito da uno o più campi chiave
+     */
+    public static String creaChiave(WamCompany company, String... chiavi) {
+        String chiaveUnica = company.getCompanyCode().toLowerCase();
+
+        for (String chiave : chiavi) {
+            chiaveUnica += chiave.toLowerCase();
+        }// end of for cycle
+
+        return chiaveUnica;
+    }// end of static method
+
+    /**
+     * Legge il valore di una funzione selezionata in un popup di funzioni
+     * Usato sia da FunzioneForm che da ServozioForm
+     */
+    public static Funzione getFunzione(Component.Event event) {
+        Funzione funz = null;
+        Object obj;
+        Object value;
+        RelatedComboField combo;
+
+        obj = event.getSource();
+        if (obj instanceof RelatedComboField) {
+            combo = (RelatedComboField) obj;
+            value = combo.getValue();
+            if (value instanceof Long) {
+                funz = Funzione.find((Long) value);
+            }// end of if cycle
+        }// end of if cycle
+
+        return funz;
+    }// end of static method
 
 }// end of abstract static class

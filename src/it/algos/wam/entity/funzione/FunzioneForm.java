@@ -3,26 +3,29 @@ package it.algos.wam.entity.funzione;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Field;
-import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.*;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.lib.LibWam;
 import it.algos.webbase.multiazienda.CompanyEntity_;
+import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.field.TextField;
+import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by alex on 18-04-2016.
  * Scheda personalizzata per la entity Funzione
  */
-public class FunzioneForm extends ModuleForm {
+public class FunzioneForm extends ModuleForm implements FunzioneListener {
 
     //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
     @SuppressWarnings("all")
@@ -34,12 +37,16 @@ public class FunzioneForm extends ModuleForm {
     private Button bIcona;
     @SuppressWarnings("all")
     private TextField fCode;
-    @SuppressWarnings("all")
+    //    @SuppressWarnings("all")
     private TextField fSigla;
     @SuppressWarnings("all")
     private TextField fDescrizione;
     @SuppressWarnings("all")
     private IntegerField fOrdine;
+    private VerticalLayout placeholderFunz;
+    @SuppressWarnings("all")
+    private Button bNuova;
+    private ArrayList<EditorFunz> fEditors;
 
 
     /**
@@ -56,28 +63,104 @@ public class FunzioneForm extends ModuleForm {
 
 
     /**
-     * Crea il componente che visualizza il dettaglio
-     * Retrieve the fields from the binder and place them in the UI.
+     * Create the detail component (the upper part containing the fields).
+     * <p>
+     * Usa il FormLayout che ha le label a sinistra dei campi (standard)
+     * Se si vogliono le label sopra i campi, sovrascivere questo metodo e usare un VerticalLayout
+     * <p>
+     * Costruisco 3 diversi layout, disposti in verticale:
+     * 1- layoutDeveloper con la selezione (eventuale) della company ed il codeCompanyUnico
+     * 2- layoutForm standard per i campi normali
+     * 3- layoutFunzioni per il placehorder delle funzioni dipendenti
      *
-     * @return il componente dettagli
+     * @return the detail component containing the fields
      */
     @Override
-    protected Component creaCompDetail(FormLayout layout) {
+    protected Component createComponent() {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(true);
+        layout.setSpacing(true);
 
-        // selezione della company (solo per developer)
+        //--crea prima tutti i fields
+        //--alcuni hanno delle particolarità aggiuntive
+        creaComponenti();
+
+        //--assembla i vari elementi grafici
         if (LibSession.isDeveloper()) {
-            layout.addComponent(this.creaCompany());
-            layout.addComponent(this.creaCodeCompany());
+            layout.addComponent(creaCompDeveloper());
         }// end of if cycle
+        layout.addComponent(creaCompStandard());
+        layout.addComponent(creaCompFunzioni());
 
-        layout.addComponent(this.creaBottoneIcona());
-        layout.addComponent(this.creaCode());
-        layout.addComponent(this.creaSigla());
-        layout.addComponent(this.creaDescrizione());
+        return layout;
+    }// end of method
+
+    /**
+     * Crea prima tutti i fields
+     * Alcuni hanno delle particolarità aggiuntive
+     */
+    private void creaComponenti() {
+        fEditors = new ArrayList<>();
+
+        this.creaCompany();
+        this.creaCodeCompany();
+        this.creaBottoneIcona();
+        this.creaCode();
+        this.creaSigla();
+        this.creaDescrizione();
+        this.creaOrdine();
+        this.creaBottoneNuova();
+        this.creaPlacehorderFunzioni();
+    }// end of method
+
+    /**
+     * Selezione della company (solo per developer)
+     * Prima parte in alto del Form
+     *
+     * @return the component
+     */
+    private Component creaCompDeveloper() {
+        VerticalLayout layout = new VerticalLayout();
+
+        if (isNewRecord()) {
+            layout.addComponent(new AHorizontalLayout(fCompanyCombo, fCodeCompanyUnico));
+        } else {
+            layout.addComponent(new AHorizontalLayout(fCompanyText, fCodeCompanyUnico));
+        }// end of if/else cycle
+
+        return layout;
+    }// end of method
+
+    /**
+     * Fields creati in maniera assolutamente automatica
+     * Parte centrale del Form
+     *
+     * @return the component
+     */
+    private Component creaCompStandard() {
+        FormLayout layout = new AFormLayout();
+
+        layout.addComponent(bIcona);
+        layout.addComponent(fCode);
+        layout.addComponent(fSigla);
+        layout.addComponent(fDescrizione);
 
         if (!isNewRecord() && LibSession.isAdmin()) {
-            layout.addComponent(this.creaOrdine());
+            layout.addComponent(fOrdine);
         }// end of if cycle
+
+        return layout;
+    }// end of method
+
+    /**
+     * Parte bassa del Form
+     *
+     * @return the component
+     */
+    private Component creaCompFunzioni() {
+        VerticalLayout layout = new VerticalLayout();
+
+        layout.addComponent(placeholderFunz);
 
         return layout;
     }// end of method
@@ -87,10 +170,8 @@ public class FunzioneForm extends ModuleForm {
      * Crea il campo company, obbligatorio
      * Nel nuovo record è un ComboBox di selezione
      * Nella modifica è un TextField
-     *
-     * @return il componente creato
      */
-    private Component creaCompany() {
+    private void creaCompany() {
         // popup di selezione (solo per nuovo record)
         if (isNewRecord()) {
             fCompanyCombo = (RelatedComboField) getField(CompanyEntity_.company);
@@ -98,11 +179,16 @@ public class FunzioneForm extends ModuleForm {
             fCompanyCombo.setRequired(true);
             fCompanyCombo.setRequiredError("Manca la company");
 
+            fCompanyCombo.addValueChangeListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                    syncPlaceholderFunz();
+                }// end of inner method
+            });// end of anonymous inner class
+
             if (LibSession.isDeveloper() && fCompanyCombo.getValue() == null) {
                 fCompanyCombo.focus();
             }// end of if cycle
-
-            return fCompanyCombo;
         } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
             fCompanyText = null;
             BaseEntity entity = getEntity();
@@ -116,8 +202,6 @@ public class FunzioneForm extends ModuleForm {
                 fCompanyText.setEnabled(false);
                 fCompanyText.setRequired(true);
             }// end of if cycle
-
-            return fCompanyText;
         }// end of if/else cycle
     }// end of method
 
@@ -129,11 +213,6 @@ public class FunzioneForm extends ModuleForm {
      */
     private TextField creaCodeCompany() {
         fCodeCompanyUnico = (TextField) getField(Funzione_.codeCompanyUnico);
-
-        fCodeCompanyUnico.setWidth("16em");
-        fCodeCompanyUnico.setEnabled(false);
-        fCodeCompanyUnico.setRequired(true);
-
         return fCodeCompanyUnico;
     }// end of method
 
@@ -147,6 +226,8 @@ public class FunzioneForm extends ModuleForm {
         bIcona = new Button("Icona");
         bIcona.setHtmlContentAllowed(true);
         bIcona.addStyleName("verde");
+        bIcona.setDescription("Icona grafica rappresentativa della funzione");
+
         bIcona.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
@@ -174,7 +255,6 @@ public class FunzioneForm extends ModuleForm {
             }// end of inner method
         });// end of anonymous inner class
 
-//        this.bIcona = bIcona;
         syncButton();
 
         return bIcona;
@@ -187,10 +267,6 @@ public class FunzioneForm extends ModuleForm {
      */
     private TextField creaCode() {
         fCode = (TextField) getField(Funzione_.code);
-
-        fCode.setWidth("8em");
-        fCode.setRequired(true);
-//        fCode.setRequiredError("Manca la sigla interna");
 
         if (isNewRecord()) {
             if (LibSession.isDeveloper()) {
@@ -222,11 +298,6 @@ public class FunzioneForm extends ModuleForm {
      */
     private TextField creaSigla() {
         fSigla = (TextField) getField(Funzione_.sigla);
-
-        fSigla.setWidth("8em");
-        fSigla.setRequired(true);
-//        fSigla.setRequiredError("Manca la sigla visibile");
-
         return fSigla;
     }// end of method
 
@@ -238,11 +309,6 @@ public class FunzioneForm extends ModuleForm {
      */
     private TextField creaDescrizione() {
         fDescrizione = (TextField) getField(Funzione_.descrizione);
-
-        fDescrizione.setWidth("24em");
-        fDescrizione.setRequired(true);
-//        fDescrizione.setRequiredError("Manca la descrizione");
-
         return fDescrizione;
     }// end of method
 
@@ -255,7 +321,6 @@ public class FunzioneForm extends ModuleForm {
     private IntegerField creaOrdine() {
         fOrdine = (IntegerField) getField(Funzione_.ordine);
 
-        fOrdine.setEnabled(false);
         if (!isNewRecord()) {
             fOrdine.setRequired(true);
         }// end of if cycle
@@ -316,28 +381,182 @@ public class FunzioneForm extends ModuleForm {
      * Sincronizza il codeCompanyUnico e suggerisce la sigla
      */
     private void syncCode() {
-        String codeCompany = getCodeCompany();
-        String code = fCode.getValue();
-        String codeCompanyUnico = codeCompany.toLowerCase() + code.toLowerCase();
+        String codeCompanyUnico = LibWam.creaChiave(getCompany(), fCode.getValue());
 
         fCodeCompanyUnico.setValue(codeCompanyUnico);
         if (isNewRecord()) {
-            fSigla.setValue(LibText.primaMaiuscola(code));
+            fSigla.setValue(LibText.primaMaiuscola(fCode.getValue()));
             fSigla.selectAll();
         }// end of if cycle
 
     }// end of method
 
+
     /**
-     * Restituisce il codice della company selezionata
+     * Restituisce la company di questo Form
      */
-    private String getCodeCompany() {
+    public WamCompany getCompany() {
+        WamCompany company = null;
+
         if (isNewRecord()) {
-            WamCompany company = WamCompany.find((long) fCompanyCombo.getValue());
-            return company.getCompanyCode();
+            Object obj = fCompanyCombo.getValue();
+            if (obj != null && obj instanceof Long) {
+                long companyID = (long) obj;
+                company = WamCompany.find(companyID);
+            }// end of if cycle
         } else {
-            return fCompanyText.getValue();
+            company = WamCompany.findByCode(fCompanyText.getValue());
         }// end of if/else cycle
+
+        return company;
+    }// end of method
+
+    /**
+     * Restituisce la funzione di questo Form
+     */
+    private Funzione getFunzione() {
+        return (Funzione) super.getEntity();
+    }// end of method
+
+    private void syncPlaceholderFunz() {
+        if (LibSession.isDeveloper()) {
+            placeholderFunz.setVisible(fCompanyCombo.getValue() != null);
+            bNuova.setVisible(fCompanyCombo.getValue() != null);
+        } else {
+            bNuova.setVisible(true);
+        }// end of if/else cycle
+    }// end of method
+
+    /**
+     * Crea il placeholder per le funzioni dipendenti
+     *
+     * @return il componente creato
+     */
+    private VerticalLayout creaPlacehorderFunzioni() {
+        placeholderFunz = new VerticalLayout();
+        placeholderFunz.setCaption("Funzioni dipendenti da questa");
+        placeholderFunz.setSpacing(true);
+        placeholderFunz.addComponent(bNuova);
+
+        if (isNewRecord()) {
+            placeholderFunz.setVisible(this.getCompany() != null);
+        }// end of if cycle
+
+        // aggiunge gli editor per le funzioni esistenti
+        if (!isNewRecord()) {
+            List<Funzione> listaFunzioniDipenenti = getFunzione().getFunzioniDipendenti();
+            for (Funzione funz  : listaFunzioniDipenenti) {
+                EditorFunz editor = new EditorFunz(this,funz,false);
+                placeholderFunz.addComponent(editor);
+                fEditors.add(editor);
+            }// end of for cycle
+        }// end of if cycle
+
+        return placeholderFunz;
+    }// end of method
+
+    /**
+     * Crea un bottone per creare nuove funzioni
+     *
+     * @return il componente creato
+     */
+    private Button creaBottoneNuova() {
+        bNuova = new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
+        FunzioneForm form = this;
+
+        bNuova.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                EditorFunz editor = new EditorFunz(form,null,false);
+                placeholderFunz.addComponent(editor);
+                fEditors.add(editor);
+            }// end of inner method
+        });// end of anonymous inner class
+
+        return bNuova;
+    }// end of method
+
+    @Override
+    public void doDelete(EditorFunz editor) {
+        placeholderFunz.removeComponent(editor);
+        fEditors.remove(editor);
+    }// end of method
+
+    private void regolaEditorFunz() {
+        Funzione  funzioneMadre = getFunzione();
+        Funzione funzFiglia;
+        List<Funzione> funzioniDipendenti = new ArrayList<>();
+
+        for (EditorFunz editor : fEditors) {
+            funzFiglia = editor.getFunzione();
+            funzioniDipendenti.add(funzFiglia);
+        }// end of for cycle
+
+        funzioneMadre.setFunzioniDipendenti(funzioniDipendenti);
+
+    }// end of method
+
+    /**
+     * Sincronizza le funzioni dipendenti esistenti: modifica quelle esistenti,
+     * cancella quelle inesistenti e crea quelle nuovi.
+     */
+    private void syncFunzioni() {
+        // modifica quelli esistenti e aggiunge i nuovi
+//        for (EditorFunz editor : fEditors) {
+//            Funzione funz = editor.getFunzione();
+//            // aggiorna l'entity dall'editor
+//            sf.setFunzione(editor.getFunzione());
+//            sf.setObbligatoria(editor.isObbligatoria());
+//
+//            // se nuovo, lo aggiunge al servizio
+//            if (sf.getId() == null) {
+//                getServizio().add(sf);
+//            }
+//        }
+
+//        // Solo se non sono nuovi:
+//        // cancella quelli inesistenti nell'editor (sono stati cancellati).
+//        // Dato che elimina elementi della stessa lista che viene iterata, esegue
+//        // l'iterazione partendo dal fondo
+//        List<ServizioFunzione> lista = getServizio().getServizioFunzioniOrd();
+//        int dim = lista.size();
+//        for (int i = dim - 1; i >= 0; i--) {
+//            ServizioFunzione sf = lista.get(i);
+//            if (sf.getId() != null) {   // non considera quelli senza id, sono i nuovi!
+//                boolean found = false;
+//
+//                for (EditorSF editor : sfEditors) {
+//                    if (editor.getServizioFunzione() != null) {
+//                        if (editor.getServizioFunzione().equals(sf)) {
+//                            found = true;
+//                            break;
+//                        }// end of if cycle
+//                    }// end of if cycle
+//                }// end of for cycle
+//
+//                if (!found) {
+//                    lista.remove(i);
+//                }// end of if cycle
+//            }// end of if cycle
+//            getServizio().setServizioFunzioni(lista);
+//        }// end of for cycle
+
+    }// end of method
+
+
+
+    @Override
+    protected boolean save() {
+        regolaEditorFunz();
+//        uiToServizio();
+        return super.save();
+    }// end of method
+
+    @Override
+    public void postCommit() {
+        //        regolaEditorFunz();
+//        regolaEditorFunz();
+        super.postCommit();
     }// end of method
 
 }// end of class

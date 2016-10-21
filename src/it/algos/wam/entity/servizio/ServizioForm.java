@@ -128,12 +128,11 @@ public class ServizioForm extends ModuleForm {
         layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
         layout.addComponent(creaChekVisibile());
         layout.addComponent(creaChekOrario());
-        layout.addComponent(creaPlaceorderOrario());
+        layout.addComponent(creaPlacehorderOrario());
 
         // aggiunge un po di spazio
         layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
-        layout.addComponent(creaPlaceorderFunzioni());
-        layout.addComponent(creaBottoneNuova());
+        layout.addComponent(creaPlacehorderFunzioni());
 
         //--stato iniziale
         if (isNewRecord()) {
@@ -281,7 +280,7 @@ public class ServizioForm extends ModuleForm {
      *
      * @return il componente creato
      */
-    private HorizontalLayout creaPlaceorderOrario() {
+    private HorizontalLayout creaPlacehorderOrario() {
         oraInizio = new OreMinuti("Ora inizio");
         oraFine = new OreMinuti("Ora fine");
 
@@ -327,10 +326,11 @@ public class ServizioForm extends ModuleForm {
      *
      * @return il componente creato
      */
-    private VerticalLayout creaPlaceorderFunzioni() {
+    private VerticalLayout creaPlacehorderFunzioni() {
         placeholderFunz = new VerticalLayout();
         placeholderFunz.setCaption("Funzioni previste");
         placeholderFunz.setSpacing(true);
+        placeholderFunz.addComponent(creaBottoneNuova());
 
         if (isNewRecord()) {
             placeholderFunz.setVisible(false);
@@ -763,7 +763,9 @@ public class ServizioForm extends ModuleForm {
         private void setIconButton(Funzione funz) {
             if (funz != null) {
                 iconButton.setCaption(funz.getIconHtml());
-            }// end of if cycle
+            } else {
+                iconButton.setCaption("");
+            }// end of if/else cycle
         }// end of inner method
 
     }// end of inner class

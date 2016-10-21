@@ -53,7 +53,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotEmpty
     @Column(length = 20)
     @Index
-    @AIField(type = AFType.text, required = true, width = "16em", caption = "Code", prompt = "funz", help = "Codice unico interno, non visibile nel tabellone.", error = "Manca la sigla interna")
+    @AIField(type = AFType.text, required = true, width = "8em", caption = "Code", prompt = "codice interno", help = "Codice interno unico, non visibile nel tabellone.", error = "Manca il codice interno")
     private String code = "";
 
     //--sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
@@ -63,7 +63,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotNull
     @Column(length = 40, unique = true)
     @Index
-    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "Unico", help = "Codifica interna. Valore unico")
+    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "CodiceUnico", help = "Codifica interna. Valore unico. Calcoala automaticamente")
     private String codeCompanyUnico = "";
 
     //--sigla di codifica visibile (obbligatoria, non unica)
@@ -72,19 +72,19 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotEmpty
     @Column(length = 20)
     @Index
-    @AIField(type = AFType.text, required = true, width = "16em", caption = "Sigla", prompt = "funz", help = "Sigla visibile nel tabellone.", error = "Manca la sigla visibile")
+    @AIField(type = AFType.text, required = true, width = "8em", caption = "Sigla", prompt = "sigla visibile", help = "Sigla visibile nel tabellone.", error = "Manca la sigla visibile")
     private String sigla = "";
 
     //--descrizione (obbligatoria, non unica)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
-    @AIField(type = AFType.text, width = "24em", caption = "Descrizione", prompt = "funzione", help = "Descrizione completa della funzione.", error = "Manca la descrizione")
+    @AIField(type = AFType.text, required = true,width = "24em", caption = "Descrizione", prompt = "descrizione completa", help = "Descrizione completa della funzione.", error = "Manca la descrizione")
     private String descrizione = "";
 
     //--ordine di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
     @NotNull
     @Index
-    @AIField(type = AFType.integer, enabled = false, width = "3em", caption = "Ordine", help = "Ordine di apparizione nei PopUp. Modificabile nella lista con i bottoni Sposta Sù e Giù")
+    @AIField(type = AFType.integer, enabled = false, width = "3em", caption = "Ordine", help = "Ordine di apparizione nei PopUp. Modificabile nella lista con i bottoni Sposta su e giu")
     private int ordine = 0;
 
     //--codepoint dell'icona di FontAwesome (facoltativa)
@@ -108,11 +108,10 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList<>();
 
+    //--funzioni che vengono automaticamente abilitate se questa funzione è abilitata
     @OneToMany
-    private List<Funzione> funzioneFunzioni = new ArrayList<>();
+    private List<Funzione> funzioniDipendenti = new ArrayList<>();
 
-//    @ManyToOne
-//    private Funzione funzione = null;
 
     //------------------------------------------------------------------------------------------------------------------------
     // Constructors
@@ -121,6 +120,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     /**
      * Costruttore senza argomenti
      * Obbligatorio per le specifiche JavaBean
+     * Da non usare per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Funzione() {
         this("", "", "");
@@ -737,12 +737,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         this.volontarioFunzioni = volontarioFunzioni;
     }//end of setter method
 
-    public List<Funzione> getFunzioneFunzioni() {
-        return funzioneFunzioni;
+    public List<Funzione> getFunzioniDipendenti() {
+        return funzioniDipendenti;
     }// end of getter method
 
-    public void setFunzioneFunzioni(List<Funzione> funzioneFunzioni) {
-        this.funzioneFunzioni = funzioneFunzioni;
+    public void setFunzioniDipendenti(List<Funzione> funzioniDipendenti) {
+        this.funzioniDipendenti = funzioniDipendenti;
     }//end of setter method
 
 //------------------------------------------------------------------------------------------------------------------------

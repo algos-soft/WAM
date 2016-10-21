@@ -163,7 +163,7 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
 
         Container.Filter filter = new Compare.Equal(ServizioFunzione_.servizio.getName(), servizio);
         Container.Filter filter2 = new Compare.Equal(ServizioFunzione_.funzione.getName(), funzione);
-        lista = (ArrayList<ServizioFunzione>) AQuery.getLista(ServizioFunzione.class, filter, filter2);
+        lista = (ArrayList<ServizioFunzione>) AQuery.getList(ServizioFunzione.class, filter, filter2);
 
         if (lista.size() == 1) {
             bean = lista.get(0);
@@ -183,7 +183,7 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
      */
     public static int count() {
         int totRec = 0;
-        long totTmp = AQuery.getCount(ServizioFunzione.class);
+        long totTmp = AQuery.count(ServizioFunzione.class);
 
         if (totTmp > 0) {
             totRec = (int) totTmp;
@@ -221,7 +221,7 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
      */
     @SuppressWarnings("unchecked")
     public static ArrayList<ServizioFunzione> findAll() {
-        return (ArrayList<ServizioFunzione>) AQuery.getLista(ServizioFunzione.class);
+        return (ArrayList<ServizioFunzione>) AQuery.getList(ServizioFunzione.class);
     }// end of method
 
     public static long getSerialVersionUID() {

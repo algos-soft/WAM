@@ -11,7 +11,7 @@ import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.*;
-import it.algos.wam.bootstrap.TestService;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.CompanyListener;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
@@ -71,6 +71,8 @@ public class WamUI extends UI {
      */
     @Override
     protected void init(VaadinRequest request) {
+        //--faccio partire una classe statica per eseguire uno 'static initialisation block'
+        new WAMApp();
 
         // controlla l'accesso come programmatore come parametro nell'url
         // attiva il flag developer nella sessione
