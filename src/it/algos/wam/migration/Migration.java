@@ -52,17 +52,25 @@ public class Migration {
     public Migration() {
         long inizio = System.currentTimeMillis();
         creaManagers();
+        CroceAmb crfOld= CroceAmb.findBySigla("crf",managerOld);
 
-        List<CroceAmb> listaVecchieCrociEsistenti = CroceAmb.findAll(managerOld);
-        List<CroceAmb> listaVecchieCrociDaImportare = selezionaCrodiDaImportare(listaVecchieCrociEsistenti);
-
-        if (listaVecchieCrociDaImportare != null) {
-            for (CroceAmb company : listaVecchieCrociDaImportare) {
-                inizio = System.currentTimeMillis();
-                inizia(company, company.getSigla().toLowerCase());
-                Log.debug("migration", "Croce " + company.getSigla() + " replicata in " + LibTime.difText(inizio));
-            }// end of for cycle
+        if (crfOld!=null) {
+            inizio = System.currentTimeMillis();
+            inizia(crfOld, crfOld.getSigla().toLowerCase());
+            Log.debug("migration", "Croce " + crfOld.getSigla() + " replicata in " + LibTime.difText(inizio));
         }// end of if cycle
+
+
+//        List<CroceAmb> listaVecchieCrociEsistenti = CroceAmb.findAll(managerOld);
+//        List<CroceAmb> listaVecchieCrociDaImportare = selezionaCrodiDaImportare(listaVecchieCrociEsistenti);
+//
+//        if (listaVecchieCrociDaImportare != null) {
+//            for (CroceAmb company : listaVecchieCrociDaImportare) {
+//                inizio = System.currentTimeMillis();
+//                inizia(company, company.getSigla().toLowerCase());
+//                Log.debug("migration", "Croce " + company.getSigla() + " replicata in " + LibTime.difText(inizio));
+//            }// end of for cycle
+//        }// end of if cycle
 
     }// end of constructor
 
@@ -156,7 +164,7 @@ public class Migration {
         }// fine del blocco if
 
         companyNew = importSingolaCroce(managerNew, companyOld, siglaCompanyNew);
-        listaWrapFunzioni = importFunzioni(companyOld, companyNew);
+        importFunzioni(companyOld, companyNew);
         listaWrapServizi = importServizi(companyOld, companyNew);
         listaWrapVolontari = importaVolontari(companyOld, companyNew);
 //        importaTurni(companyOld, companyNew, listaWrapServizi, listaWrapVolontari);
@@ -166,7 +174,6 @@ public class Migration {
 //        } catch (Exception unErrore) { // intercetta l'errore
 //            managerNew.getTransaction().rollback();
 //        }// fine del blocco try-catch
-
     }// end of method
 
     /**
@@ -216,7 +223,7 @@ public class Migration {
      * @param companyOld company usata in webambulanze
      * @param companyNew company usata in wam
      */
-    private List<WrapFunzione> importFunzioni(CroceAmb companyOld, WamCompany companyNew) {
+    private void importFunzioni(CroceAmb companyOld, WamCompany companyNew) {
         List<WrapFunzione> listaWrapFunzioni = new ArrayList<>();
         Funzione funzioneNew;
         List<FunzioneAmb> listaFunzioniOld = FunzioneAmb.findAll(companyOld, managerOld);
@@ -229,8 +236,6 @@ public class Migration {
         }// end of if cycle
 
         this.recuperaFunzioniDipendenti(listaWrapFunzioni);
-
-        return listaWrapFunzioni;
     }// end of method
 
     /**
@@ -476,16 +481,13 @@ public class Migration {
         long keyMiliteID = volontarioOld.getId();
         long keyFunzioneOld;
         Funzione funzNew;
-        FunzioneAmb funzOld;
-        String code;
 
         listaIncroci = MiliteFunzioneAmb.getListByMilite(keyMiliteID, managerOld);
-
         if (listaIncroci != null && listaIncroci.size() > 0) {
             for (MiliteFunzioneAmb incrocio : listaIncroci) {
                 keyFunzioneOld = incrocio.getFunzione_id();
-                funzOld = FunzioneAmb.find(keyFunzioneOld, managerOld);
-                code = funzOld.getSigla();
+                FunzioneAmb funzOld = FunzioneAmb.find(keyFunzioneOld, managerOld);
+                String code = funzOld.getSigla();
                 funzNew = Funzione.getEntityByCompanyAndCode(companyNew, code);
                 funzioniNew.add(funzNew);
             }// end of for cycle
