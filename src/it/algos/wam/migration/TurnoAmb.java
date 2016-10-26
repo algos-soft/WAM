@@ -108,13 +108,7 @@ public class TurnoAmb extends BaseEntity {
      */
     @SuppressWarnings("unchecked")
     public static List<TurnoAmb> findAll(CroceAmb company, EntityManager manager) {
-        List<TurnoAmb> lista = null;
-
-        if (manager != null) {
-            lista = (List<TurnoAmb>) AQuery.getList(TurnoAmb.class, TurnoAmb_.croce, company, manager);
-        }// end of if cycle
-
-        return lista;
+        return (List<TurnoAmb>) AQuery.getList(TurnoAmb.class, TurnoAmb_.croce, company, manager);
     }// end of method
 
     public CroceAmb getCroce() {

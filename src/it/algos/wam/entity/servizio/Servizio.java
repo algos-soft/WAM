@@ -15,6 +15,7 @@ import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.lib.LibArray;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.AQuery;
 import it.algos.webbase.web.query.SortProperty;
 import org.apache.commons.beanutils.BeanUtils;
@@ -1124,19 +1125,10 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @param company  da filtrare
      */
     private boolean checkChiave(WamCompany company,EntityManager manager) {
-        boolean valido = false;
+        boolean valido = true;
 
-        if (getSigla() == null || getSigla().equals("")) {
-            codeCompanyUnico = null;
-        } else {
-            if (company != null) {
-                codeCompanyUnico = company.getCompanyCode().toLowerCase();
-            }// end of if cycle
-            codeCompanyUnico += getSigla().toLowerCase();
-            valido = true;
-        }// end of if/else cycle
-
-        if (isEsistente(codeCompanyUnico, manager)) {
+        codeCompanyUnico = LibText.creaChiave(getCompany(), sigla);
+        if (codeCompanyUnico.equals("") || isEsistente(codeCompanyUnico, manager)) {
             valido = false;
         }// end of if cycle
 

@@ -55,6 +55,19 @@ public class VolontarioAmb extends BaseEntity {
     public VolontarioAmb() {
     }// end of constructor
 
+    /**
+     * Recupera una istanza della Entity usando la query standard della Primary Key
+     * Nessun filtro sulla company, perché la primary key è unica
+     *
+     * @param id valore (unico) della Primary Key
+     * @return istanza della Entity, null se non trovata
+     */
+    public static VolontarioAmb find(long id, EntityManager manager) {
+        if (manager != null) {
+            return (VolontarioAmb) AQuery.find(VolontarioAmb.class, id, manager);
+        }// end of if cycle
+        return null;
+    }// end of static method
 
     /**
      * Recupera una lista di tutti i records della Entity
@@ -64,14 +77,8 @@ public class VolontarioAmb extends BaseEntity {
      * @return lista delle istanze filtrate della Entity
      */
     @SuppressWarnings("unchecked")
-    public static List<VolontarioAmb> findAll(CroceAmb company, EntityManager manager) {
-        List<VolontarioAmb> lista = null;
-
-        if (manager != null) {
-            lista = (List<VolontarioAmb>) AQuery.getList(VolontarioAmb.class, VolontarioAmb_.croce, company, manager);
-        }// end of if cycle
-
-        return lista;
+    public static List<VolontarioAmb> getList(CroceAmb company, EntityManager manager) {
+        return (List<VolontarioAmb>) AQuery.getList(VolontarioAmb.class, VolontarioAmb_.croce, company, manager);
     }// end of method
 
     public CroceAmb getCroce() {

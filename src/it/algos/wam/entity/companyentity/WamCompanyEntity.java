@@ -6,8 +6,10 @@ import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.lib.LibText;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
@@ -19,13 +21,14 @@ import javax.validation.constraints.NotNull;
 @Entity
 public abstract class WamCompanyEntity extends CompanyEntity {
 
+
     /**
      * Costruttore senza argomenti
-     * Necessario per le specifiche JavaBean
+     * Obbligatorio per le specifiche JavaBean
+     * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public WamCompanyEntity() {
-    }// end of constructor
-
+    }// end of JavaBean constructor
 
     /**
      * Recupera la company specifica
@@ -47,6 +50,7 @@ public abstract class WamCompanyEntity extends CompanyEntity {
     //------------------------------------------------------------------------------------------------------------------------
     // Utilities
     //------------------------------------------------------------------------------------------------------------------------
+
 
     /**
      * Implementa come business logic, la obbligatorietà della company

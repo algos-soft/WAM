@@ -38,11 +38,12 @@ public class VolontarioFunzione extends WamCompanyEntity {
 
     /**
      * Costruttore senza argomenti
-     * Necessario per le specifiche JavaBean
+     * Obbligatorio per le specifiche JavaBean
+     * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public VolontarioFunzione() {
         this(null, null);
-    }// end of constructor
+    }// end of JavaBean constructor
 
     /**
      * Costruttore completo

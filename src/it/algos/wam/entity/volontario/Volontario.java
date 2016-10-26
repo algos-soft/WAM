@@ -15,6 +15,7 @@ import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.LibCrypto;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.login.UserIF;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -151,7 +152,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Volontario() {
-        this("","");
+        this("", "");
     }// end of JavaBean constructor
 
     /**
@@ -1041,19 +1042,10 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param company da filtrare
      */
     private boolean checkChiave(WamCompany company, EntityManager manager) {
-        boolean valido = false;
+        boolean valido = true;
 
-        if (getNome() == null || getNome().equals("") || getCognome() == null || getCognome().equals("")) {
-            codeCompanyUnico = null;
-        } else {
-            if (company != null) {
-                codeCompanyUnico = company.getCompanyCode().toLowerCase();
-            }// end of if cycle
-            codeCompanyUnico += getCognome().toLowerCase() + getNome().toLowerCase();
-            valido = true;
-        }// end of if/else cycle
-
-        if (isEsistente(codeCompanyUnico, manager)) {
+        codeCompanyUnico = LibText.creaChiave(getCompany(), cognome, nome);
+        if (codeCompanyUnico.equals("") || isEsistente(codeCompanyUnico, manager)) {
             valido = false;
         }// end of if cycle
 

@@ -7,6 +7,7 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibDate;
+import it.algos.webbase.web.lib.LibText;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -69,18 +70,6 @@ public abstract class LibWam {
         return esisteSkip;
     }// end of method
 
-    /**
-     * Costruisce una codifica unica col codice della company seguito da uno o più campi chiave
-     */
-    public static String creaChiave(WamCompany company, String... chiavi) {
-        String chiaveUnica = company.getCompanyCode().toLowerCase();
-
-        for (String chiave : chiavi) {
-            chiaveUnica += chiave.toLowerCase();
-        }// end of for cycle
-
-        return chiaveUnica;
-    }// end of static method
 
     /**
      * Legge il valore di una funzione selezionata in un popup di funzioni

@@ -5,9 +5,11 @@ import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.company.BaseCompany_;
+import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.DefaultSort;
@@ -56,7 +58,7 @@ public class WamCompany extends BaseCompany {
      * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public WamCompany() {
-        this("","");
+        this("", "");
     }// end of JavaBean constructor
 
     /**
@@ -101,7 +103,6 @@ public class WamCompany extends BaseCompany {
      * Nessun filtro sulla azienda, perché la primary key è unica
      *
      * @param id valore (unico) della Primary Key
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany find(long id) {
@@ -131,7 +132,6 @@ public class WamCompany extends BaseCompany {
      * Recupera una istanza della Entity usando la query per una property specifica
      *
      * @param code valore della property code
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany findByCode(String code) {
@@ -149,7 +149,6 @@ public class WamCompany extends BaseCompany {
      *
      * @param code    valore della property code
      * @param manager the EntityManager to use
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany findByCode(String code, EntityManager manager) {
@@ -195,7 +194,6 @@ public class WamCompany extends BaseCompany {
      * Ritorna la Demo Company
      *
      * @return la Demo Company, null se non esiste
-     *
      * @deprecated
      */
     public static WamCompany getDemoCompanyOld() {
@@ -229,31 +227,44 @@ public class WamCompany extends BaseCompany {
         this.organizzazione = organizzazione;
     }//end of setter method
 
-//    /**
-//     * Elimina l'azienda.
-//     */
-//    @Override
-//    public void delete() {
-//        deleteAllWamData();
-//        super.delete();
-//    }// end of method
 
-//    /**
-//     * Elimina tutti i dati di questa azienda.
-//     * <p>
-//     * L'ordine di cancellazione è critico per l'integrità referenziale
-//     */
-//    private void deleteAllWamData() {
-//
-//        // elimina le tabelle
-//        AQuery.delete(Volontario.class, CompanyEntity_.company, this);
-//        AQuery.delete(Funzione.class, CompanyEntity_.company, this);
-//        AQuery.delete(Servizio.class, CompanyEntity_.company, this);
-//
-//        // elimina i turni
-//        AQuery.delete(Turno.class, CompanyEntity_.company, this);
-//
-//    }// end of method
+    /**
+     * Elimina l'azienda.
+     */
+    @Override
+    public boolean delete() {
+        return delete((EntityManager) null);
+    }// end of method
+
+    /**
+     * Elimina l'azienda.
+     *
+     * @param manager the EntityManager to use
+     */
+    public boolean delete(EntityManager manager) {
+        deleteAllWamData(manager);
+        return super.delete(manager);
+    }// end of method
+
+
+    /**
+     * Elimina tutti i dati di questa azienda.
+     * <p>
+     * L'ordine di cancellazione è critico per l'integrità referenziale
+     *
+     * @param manager the EntityManager to use
+     */
+    private void deleteAllWamData(EntityManager manager) {
+
+        // elimina le tabelle
+        AQuery.delete(Volontario.class, CompanyEntity_.company, this, manager);
+        AQuery.delete(Funzione.class, CompanyEntity_.company, this, manager);
+        AQuery.delete(Servizio.class, CompanyEntity_.company, this, manager);
+
+        // elimina i turni
+        AQuery.delete(Turno.class, CompanyEntity_.company, this, manager);
+
+    }// end of method
 
 }// end of entity class
 

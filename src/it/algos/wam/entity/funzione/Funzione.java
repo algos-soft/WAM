@@ -11,6 +11,7 @@ import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -78,7 +79,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //--descrizione (obbligatoria, non unica)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
-    @AIField(type = AFType.text, required = true,width = "24em", caption = "Descrizione", prompt = "descrizione completa", help = "Descrizione completa della funzione.", error = "Manca la descrizione")
+    @AIField(type = AFType.text, required = true, width = "24em", caption = "Descrizione", prompt = "descrizione completa", help = "Descrizione completa della funzione.", error = "Manca la descrizione")
     private String descrizione = "";
 
     //--ordine di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
@@ -110,7 +111,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
     //--funzioni che vengono automaticamente abilitate se questa funzione è abilitata
     @OneToMany
-    private List<Funzione> funzioniDipendenti = new ArrayList<>();
+    public List<Funzione> funzioniDipendenti = new ArrayList<>();
 
 
     //------------------------------------------------------------------------------------------------------------------------
@@ -569,15 +570,15 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     }// end of static method
 
     public static Funzione crea(WamCompany company, String code, String sigla, String descrizione, EntityManager manager) {
-        return crea(company, code, sigla, descrizione, 0, (FontAwesome) null, manager);
+        return crea(company, code, sigla, descrizione, 0, (FontAwesome) null, manager, (List<Funzione>) null);
     }// end of static method
 
     public static Funzione crea(WamCompany company, String code, String sigla, String descrizione, int ordine, FontAwesome glyph) {
-        return crea(company, code, sigla, descrizione, ordine, glyph, (EntityManager) null);
+        return crea(company, code, sigla, descrizione, ordine, glyph, (EntityManager) null, (List<Funzione>) null);
     }// end of static method
 
     public static Funzione crea(WamCompany company, String code, String sigla, String descrizione, FontAwesome glyph, EntityManager manager) {
-        return crea(company, code, sigla, descrizione, 0, glyph, manager);
+        return crea(company, code, sigla, descrizione, 0, glyph, manager, (List<Funzione>) null);
     }// end of static method
 
 
@@ -586,13 +587,14 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla company passata come parametro.
      * La crea SOLO se non esiste già
      *
-     * @param company     di appartenenza (property della superclasse)
-     * @param code        sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
-     * @param sigla       visibile nel tabellone (obbligatoria, non unica)
-     * @param descrizione (obbligatoria)
-     * @param ordine      di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
-     * @param glyph       dell'icona (facoltativo)
-     * @param manager     the EntityManager to use
+     * @param company            di appartenenza (property della superclasse)
+     * @param code               sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
+     * @param sigla              visibile nel tabellone (obbligatoria, non unica)
+     * @param descrizione        (obbligatoria)
+     * @param ordine             di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
+     * @param glyph              dell'icona (facoltativo)
+     * @param manager            the EntityManager to use
+     * @param funzioniDipendenti lista delle funzioni dipendenti (facoltativa)
      * @return istanza della Entity
      */
     public static Funzione crea(
@@ -602,12 +604,20 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
             String descrizione,
             int ordine,
             FontAwesome glyph,
-            EntityManager manager) {
+            EntityManager manager,
+            List<Funzione> funzioniDipendenti) {
         Funzione funzione = null;
 
         if (isNotEntityByCompanyAndCode(company, code, manager)) {
             try { // prova ad eseguire il codice
                 funzione = new Funzione(company, code, sigla, descrizione, ordine, glyph);
+
+                if (funzioniDipendenti != null) {
+                    for (Funzione funz : funzioniDipendenti) {
+                        funzione.funzioniDipendenti.add(funz);
+                    }// end of for cycle
+                }// fine del blocco if
+
                 funzione = funzione.save(company, manager);
             } catch (Exception unErrore) { // intercetta l'errore
                 funzione = null;
@@ -894,19 +904,10 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company da filtrare
      */
     private boolean checkChiave(WamCompany company, EntityManager manager) {
-        boolean valido = false;
+        boolean valido = true;
 
-        if (getCode() == null || getCode().equals("")) {
-            codeCompanyUnico = null;
-        } else {
-            if (company != null) {
-                codeCompanyUnico = company.getCompanyCode().toLowerCase();
-            }// end of if cycle
-            codeCompanyUnico += getCode().toLowerCase();
-            valido = true;
-        }// end of if/else cycle
-
-        if (codeCompanyUnico == null || isEsistente(codeCompanyUnico, manager)) {
+        codeCompanyUnico = LibText.creaChiave(getCompany(), code);
+        if (codeCompanyUnico.equals("") || isEsistente(codeCompanyUnico, manager)) {
             valido = false;
         }// end of if cycle
 

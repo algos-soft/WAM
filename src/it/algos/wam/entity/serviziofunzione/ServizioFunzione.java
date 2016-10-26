@@ -47,11 +47,12 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
 
     /**
      * Costruttore senza argomenti
-     * Necessario per le specifiche JavaBean
+     * Obbligatorio per le specifiche JavaBean
+     * Da non usare per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public ServizioFunzione() {
         this(null, null);
-    }// end of constructor
+    }// end of JavaBean constructor
 
     /**
      * Costruttore completo

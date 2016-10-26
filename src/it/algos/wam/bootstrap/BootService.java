@@ -83,7 +83,7 @@ public abstract class BootService {
 
         creaPreferenze(company);
         listaFunzioni = creaFunzioni(company, manager);
-//        creaFunzioniDipendenti(listaFunzioni);
+        creaFunzioniDipendenti(company, manager);
         listaServizi = creaServizi(company, manager, listaFunzioni);
         listaVolontari = creaVolontari(company, manager, listaFunzioni);
 
@@ -100,16 +100,19 @@ public abstract class BootService {
     }// end of static method
 
     /**
-     * Creazione iniziale delle preferenze per ogni croce
-     * Le crea SOLO se non esistono già
+     * Creazione iniziale delle preferenze per una company
+     * Spazzola la Enumeration CompanyPrefs e crea tutte le preferenze previste, col valore di default
+     * Regolate sulla company passata come parametro.
+     * Se la preferenza esiste, la ricrea (non dovrebbero esserci, visto che si crea una nuova company)
+     * Inserimento del valore di default della preferenza (sovrascrivibile successivamente)
      */
     private static void creaPreferenze(WamCompany company) {
-        CompanyPrefs.tabellonePubblico.put(company, true);
+        for (CompanyPrefs pref : CompanyPrefs.values()) {
+            pref.put(company);
+        }// end of for cycle
+
+        //--modifica la mail (vuota) per costruirla col nome della company
         CompanyPrefs.senderAddress.put(company, company.getCompanyCode() + "@algos.it");
-        CompanyPrefs.sendMailToBackup.put(company, false);
-        CompanyPrefs.backupMailbox.put(company, "");
-        CompanyPrefs.inviaNotificaInizioTurno.put(company, true);
-        CompanyPrefs.quanteOrePrimaNotificaInizioTurno.put(company, 24);
     }// end of static method
 
     /**
@@ -126,6 +129,7 @@ public abstract class BootService {
             company.setContact("Mario Bianchi");
             company.save();
         }// end of if cycle
+
         return company;
     }// end of static method
 
@@ -143,6 +147,7 @@ public abstract class BootService {
             company.setContact("Giovanni Rossi");
             company.save();
         }// end of if cycle
+
         return company;
     }// end of static method
 
@@ -223,32 +228,43 @@ public abstract class BootService {
     }// end of static method
 
 
-    private static void creaFunzioniDipendenti(ArrayList<Funzione> listaFunzioni) {
-        String companyCode;
-        ArrayList<Funzione> listaFunzioniDerivate;
-        Funzione funzDer;
+    private static void creaFunzioniDipendenti(WamCompany company, EntityManager manager) {
+        String companyCode = company.getCompanyCode();
 
-        for (Funzione funz : listaFunzioni) {
-            companyCode = funz.getCompany().getCompanyCode();
-            listaFunzioniDerivate = new ArrayList<>();
+        switch (companyCode) {
+            case WAMApp.DEMO_COMPANY_CODE:
+                creaFunzioniDipendenti(company, manager, "autmsa", "autamb", "autord");
+                creaFunzioniDipendenti(company, manager, "autamb", "autord");
+                creaFunzioniDipendenti(company, manager, "1msa", "2msa", "1amb", "2amb", "bar", "bar2");
+                creaFunzioniDipendenti(company, manager, "1amb", "2amb", "bar", "bar2");
+                creaFunzioniDipendenti(company, manager, "dae", "bar", "bar2");
+                creaFunzioniDipendenti(company, manager, "bar", "bar2");
+                break;
+            case WAMApp.TEST_COMPANY_CODE:
+                break;
+            default: // caso non definito
+                creaFunzioniDipendenti(company, manager, "autmsa", "autamb");
+                creaFunzioniDipendenti(company, manager, "dae", "2msa", "1amb", "2amb", "bar");
+                creaFunzioniDipendenti(company, manager, "2msa", "2amb", "bar");
+                creaFunzioniDipendenti(company, manager, "1amb", "2amb", "bar");
+                creaFunzioniDipendenti(company, manager, "2amb", "bar");
+                break;
+        } // fine del blocco switch
 
-            switch (companyCode) {
-                case WAMApp.DEMO_COMPANY_CODE:
-                    break;
-                case WAMApp.TEST_COMPANY_CODE:
-                    break;
-                default: // caso non definito
-                    if (funz.getCode().equals("autmsa")) {
-                        funzDer = listaFunzioni.get(3);
-//                        funzDer.setFunzione(funz);
-                        listaFunzioniDerivate.add(listaFunzioni.get(3));
-//                        funz.setFunzioneFunzioni(listaFunzioniDerivate);
-                        funzDer.save();
-                        funz.save();
-                    }// end of if cycle
-                    break;
-            } // fine del blocco switch
+    }// end of static method
+
+    private static void creaFunzioniDipendenti(WamCompany company, EntityManager manager, String codeBase, String... codeDipendenti) {
+        ArrayList<Funzione> funzioniDipendenti = new ArrayList<>();
+        Funzione funzMadre;
+        Funzione funzDip;
+
+        funzMadre = Funzione.getEntityByCompanyAndCode(company, codeBase, manager);
+        for (String code : codeDipendenti) {
+            funzDip = Funzione.getEntityByCompanyAndCode(company, code, manager);
+            funzioniDipendenti.add(funzDip);
         }// end of for cycle
+        funzMadre.setFunzioniDipendenti(funzioniDipendenti);
+        funzMadre.save(manager);
 
     }// end of static method
 

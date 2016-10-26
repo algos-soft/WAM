@@ -2,6 +2,9 @@ package it.algos.wam.bootstrap;
 
 import it.algos.wam.WAMApp;
 import it.algos.wam.daemons.WamScheduler;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.migration.DaemonMigration;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.wam.settings.ManagerPrefs;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.web.AlgosApp;
@@ -47,15 +50,18 @@ public class WAMBootStrap extends ABootStrap {
 
         // Qui eventuali revisioni dei dati in funzione della versione
 
-        // Esegue dei controlli iniziali per ogni Company
-        List<BaseCompany> comps = BaseCompany.query.getList();
-        for (BaseCompany company : comps) {
+        //--Esegue dei controlli iniziali per ogni Company
+        List<WamCompany> comps = WamCompany.findAll();
+        for (WamCompany company : comps) {
             doForCompany(company);
-        }
+        }// end of for cycle
 
         // Avvia lo schedulatore che esegue i task periodici sul server
         if (ManagerPrefs.startDaemonAtStartup.getBool()) {
             WamScheduler.getInstance().start();
+
+            // avvia lo scheduler per la migrazione dei dati dalla vecchia versione webambulanze
+            DaemonMigration.getInstance().start();
         }
 
 //        EntityManagerFactory FACTORY = Persistence.createEntityManagerFactory("Webambulanze");
@@ -66,27 +72,29 @@ public class WAMBootStrap extends ABootStrap {
 //        manager.close();
     }
 
+
     /**
      * Esegue delle operazioni su una data company
      *
      * @param company la company
      */
-    private void doForCompany(BaseCompany company) {
+    private void doForCompany(WamCompany company) {
+        checkPreferenze(company);
+    }// end of method
 
-    }
+    /**
+     * Controllo iniziale delle preferenze per la singola company
+     * Spazzola la Enumeration CompanyPrefs e crea tutte le preferenze che mancano (nuove aggiunte alla Enumeration)
+     * Se la preferenza esisteva già, non fa nulla
+     * Se la preferenza non esiste, la crea col valore di default (sovrascrivibile successivamente)
+     * Regolata sulla company passata come parametro.
+     */
+    private void checkPreferenze(WamCompany company) {
+        for (CompanyPrefs pref : CompanyPrefs.values()) {
+            pref.crea(company);
+        }// end of for cycle
+    }// end of method
 
-
-//    private void creaDemoCompany() {
-//        Company wamcompany = new Company();
-//        wamcompany.setCompanyCode(WAMApp.DEMO_COMPANY_CODE);
-//        wamcompany.setName("Demo");
-//        wamcompany.setAddress1("Via Turati 12");
-//        wamcompany.setAddress1("20199 Garbagnate Milanese");
-//        wamcompany.setContact("Mario Bianchi");
-//        wamcompany.setEmail("info@crocedemo.it");
-//        wamcompany.save();
-//    }
-//
 
     /**
      * This method is invoked when the Servlet Context
@@ -98,6 +106,9 @@ public class WAMBootStrap extends ABootStrap {
 
         // arresta lo scheduler
         WamScheduler.getInstance().stop();
+
+        // arresta lo scheduler
+        DaemonMigration.getInstance().stop();
 
         super.contextDestroyed(servletContextEvent);
     }// end of method

@@ -49,6 +49,19 @@ public class UtenteAmb extends BaseEntity {
     public UtenteAmb() {
     }// end of constructor
 
+    /**
+     * Recupera una istanza della Entity usando la query standard della Primary Key
+     * Nessun filtro sulla company, perché la primary key è unica
+     *
+     * @param id valore (unico) della Primary Key
+     * @return istanza della Entity, null se non trovata
+     */
+    public static UtenteAmb find(long id, EntityManager manager) {
+        if (manager != null) {
+            return (UtenteAmb) AQuery.find(UtenteAmb.class, id, manager);
+        }// end of if cycle
+        return null;
+    }// end of static method
 
     /**
      * Recupera una istanza della Entity usando la query per una property specifica
@@ -56,14 +69,8 @@ public class UtenteAmb extends BaseEntity {
      * @return istanza della Entity, null se non trovata
      */
     @SuppressWarnings("unchecked")
-    public static List<UtenteAmb> getList( EntityManager manager) {
-        List<UtenteAmb> entities = null;
-
-        if (manager != null) {
-            entities = (List<UtenteAmb>) AQuery.getList(UtenteAmb.class, manager);
-        }// end of if cycle
-
-        return entities;
+    public static List<UtenteAmb> getList(CroceAmb company, EntityManager manager) {
+        return (List<UtenteAmb>) AQuery.getList(UtenteAmb.class, UtenteAmb_.croce, company, manager);
     }// end of method
 
     /**

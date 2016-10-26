@@ -381,7 +381,7 @@ public class FunzioneForm extends ModuleForm implements FunzioneListener {
      * Sincronizza il codeCompanyUnico e suggerisce la sigla
      */
     private void syncCode() {
-        String codeCompanyUnico = LibWam.creaChiave(getCompany(), fCode.getValue());
+        String codeCompanyUnico = LibText.creaChiave(getCompany(), fCode.getValue());
 
         fCodeCompanyUnico.setValue(codeCompanyUnico);
         if (isNewRecord()) {

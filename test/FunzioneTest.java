@@ -451,7 +451,7 @@ public class FunzioneTest extends WamTest {
         //--seconda company
         //--tutti i parametri previsti
         numPrevisto = 1;
-        funz = Funzione.crea(WamTest.COMPANY_DUE, code1, sigla1, desc1, 6, FontAwesome.USER, MANAGER);
+        funz = Funzione.crea(WamTest.COMPANY_DUE, code1, sigla1, desc1, 6, FontAwesome.USER, MANAGER,null);
         assertNotNull(funz);
         assertNotNull(funz.getId());
         numOttenuto = Funzione.countByCompany(WamTest.COMPANY_DUE, MANAGER);

@@ -20,11 +20,11 @@ public enum CompanyPrefs {
 
     tabellonePubblico("tabellonePubblico", PrefType.bool, true, "Se il tabellone è liberamente accessibile in visione senza login"),
 
-    senderAddress("senderAddress", PrefType.string, "", "Indirizzo email del mittente"),
+    senderAddress("senderAddress", PrefType.email, "", "Indirizzo email del mittente"),
 
     sendMailToBackup("sendMailToBackup", PrefType.bool, false, "Se invia ogni mail anche a una casella di backup"),
 
-    backupMailbox("backupMailbox", PrefType.string, "", "La casella di backup delle email"),
+    backupMailbox("backupMailbox", PrefType.email, "pinco.pallino@mail.com", "La casella di backup delle email"),
 
     inviaNotificaInizioTurno("inviaNotificaInizioTurno", PrefType.bool, true, "Se invia le notifiche di inizio turno"),
 
@@ -36,8 +36,7 @@ public enum CompanyPrefs {
     turnoAlertOrePrima("turnoAlertOrePrima", PrefType.integer, 24, "Quante ore prima dell'inizio un turno incompleto si colora di rosso"),
     turnoWarningOrePrima("turnoWarningOrePrima", PrefType.integer, 96, "Quante ore prima dell'inizio un turno incompleto si colora di giallo"),
 
-    ;
-
+    creazioneTurniExtra("creazioneTurniExtra", PrefType.bool, true, "Volontario può creare turni extra"),;
 
 
     private String code;
@@ -180,8 +179,17 @@ public enum CompanyPrefs {
 
 
     /**
+     * Writes the default value in the storage for this preference
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
+     * If the preference does not exist it is created now.
+     */
+    public void put() {
+        put(defaultValue);
+    }// end of method
+
+    /**
      * Writes a value in the storage for this preference
-     * <p>
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      * If the preference does not exist it is created now.
      *
      * @param value the value
@@ -191,8 +199,19 @@ public enum CompanyPrefs {
     }// end of method
 
     /**
+     * Writes the default value in the storage for this preference
+     * Filtrato sulla company passata come parametro.
+     * If the preference does not exist it is created now.
+     *
+     * @param company the company
+     */
+    public void put(WamCompany company) {
+        put(company, defaultValue);
+    }// end of method
+
+    /**
      * Writes a value in the storage for this preference
-     * <p>
+     * Filtrato sulla company passata come parametro.
      * If the preference does not exist it is created now.
      *
      * @param company the company
@@ -200,6 +219,50 @@ public enum CompanyPrefs {
      */
     public void put(WamCompany company, Object value) {
         Pref.put(code, company, type, value, descrizione);
+    }// end of method
+
+
+    /**
+     * Writes the default value in the storage for this preference
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
+     * La crea SOLO se non esiste già
+     */
+    public void crea() {
+        crea(defaultValue);
+    }// end of method
+
+    /**
+     * Writes a value in the storage for this preference
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
+     * La crea SOLO se non esiste già
+     *
+     * @param value the value
+     */
+    public void crea(Object value) {
+        Pref.crea(code, type, value);
+    }// end of method
+
+    /**
+     * Writes the default value in the storage for this preference
+     * Filtrato sulla company passata come parametro.
+     * La crea SOLO se non esiste già
+     *
+     * @param company the company
+     */
+    public void crea(WamCompany company) {
+        crea(company, defaultValue);
+    }// end of method
+
+    /**
+     * Writes a value in the storage for this preference
+     * Filtrato sulla company passata come parametro.
+     * La crea SOLO se non esiste già
+     *
+     * @param company the company
+     * @param value   the value
+     */
+    public void crea(WamCompany company, Object value) {
+        Pref.crea(code, company, type, descrizione, value);
     }// end of method
 
 

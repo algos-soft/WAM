@@ -59,6 +59,16 @@ public class FunzioneAmb extends BaseEntity {
         return null;
     }// end of static method
 
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
+     *
+     * @param sigla di riferimento interna (obbligatoria, unica all'interno della company)
+     * @return istanza della Entity, null se non trovata
+     */
+    public static FunzioneAmb findBySigla(String sigla, EntityManager manager) {
+        return (FunzioneAmb) AQuery.getEntity(FunzioneAmb.class, FunzioneAmb_.sigla, sigla, manager);
+    }// end of static method
 
     /**
      * Recupera una lista di tutti i records della Entity
