@@ -81,6 +81,8 @@
                       value="org.eclipse.persistence.platform.database.MySQLPlatform"/>
             <property name="javax.persistence.target-database" value="MySQL"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+
+            <!--<property name="javax.persistence.jdbc.url" value="jdbc:mysql://188.214.3.216:3306/amb?useUnicode=yes&amp;characterEncoding=UTF-8"/>-->
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/amb?useUnicode=yes&amp;characterEncoding=UTF-8"/>
 
             <property name="javax.persistence.jdbc.user" value="root"/>

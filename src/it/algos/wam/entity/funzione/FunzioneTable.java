@@ -78,6 +78,7 @@ public class FunzioneTable extends WamTable {
             };// end of array
         } else {
             return new Object[]{
+                    Funzione_.ordine,
                     COL_ICON,
                     Funzione_.sigla,
                     Funzione_.descrizione,
@@ -97,7 +98,7 @@ public class FunzioneTable extends WamTable {
         super.init();
 
         setColumnReorderingAllowed(true);
-        this.setColumnCollapsed(Funzione_.ordine.getName(), true);
+//        this.setColumnCollapsed(Funzione_.ordine.getName(), true);
 
         fixSort();
         fixColumn();

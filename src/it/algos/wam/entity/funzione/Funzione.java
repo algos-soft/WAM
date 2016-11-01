@@ -64,7 +64,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotNull
     @Column(length = 40, unique = true)
     @Index
-    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "CodiceUnico", help = "Codifica interna. Valore unico. Calcoala automaticamente")
+    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "CodiceUnico", help = "Codifica interna. Valore unico. Calcola automaticamente")
     private String codeCompanyUnico = "";
 
     //--sigla di codifica visibile (obbligatoria, non unica)

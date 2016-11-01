@@ -5,7 +5,6 @@ import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.lib.LibWam;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.entity.BaseEntity;
@@ -28,23 +27,15 @@ import java.util.List;
 public class FunzioneForm extends ModuleForm implements FunzioneListener {
 
     //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
-    @SuppressWarnings("all")
     private RelatedComboField fCompanyCombo;
-    @SuppressWarnings("all")
     private TextField fCompanyText;
-    @SuppressWarnings("all")
     private TextField fCodeCompanyUnico;
     private Button bIcona;
-    @SuppressWarnings("all")
     private TextField fCode;
-    //    @SuppressWarnings("all")
     private TextField fSigla;
-    @SuppressWarnings("all")
     private TextField fDescrizione;
-    @SuppressWarnings("all")
     private IntegerField fOrdine;
     private VerticalLayout placeholderFunz;
-    @SuppressWarnings("all")
     private Button bNuova;
     private ArrayList<EditorFunz> fEditors;
 
@@ -321,6 +312,10 @@ public class FunzioneForm extends ModuleForm implements FunzioneListener {
     private IntegerField creaOrdine() {
         fOrdine = (IntegerField) getField(Funzione_.ordine);
 
+        if (LibSession.isDeveloper()) {
+            fOrdine.setEnabled(true);
+        }// end of if cycle
+
         if (!isNewRecord()) {
             fOrdine.setRequired(true);
         }// end of if cycle
@@ -333,7 +328,7 @@ public class FunzioneForm extends ModuleForm implements FunzioneListener {
      */
     @SuppressWarnings("all")
     private FontAwesome getGlyph() {
-        FontAwesome fa = null;
+        FontAwesome font = null;
         Field field = getBinder().getField(Funzione_.iconCodepoint.getName());
         int codepoint = 0;
 
@@ -342,11 +337,11 @@ public class FunzioneForm extends ModuleForm implements FunzioneListener {
         }// fine del blocco if
 
         try { // prova ad eseguire il codice
-            fa = FontAwesome.fromCodepoint(codepoint);
+            font = FontAwesome.fromCodepoint(codepoint);
         } catch (Exception unErrore) { // intercetta l'errore
         }// fine del blocco try-catch
 
-        return fa;
+        return font;
     }// end of method
 
     /**
@@ -445,8 +440,8 @@ public class FunzioneForm extends ModuleForm implements FunzioneListener {
         // aggiunge gli editor per le funzioni esistenti
         if (!isNewRecord()) {
             List<Funzione> listaFunzioniDipenenti = getFunzione().getFunzioniDipendenti();
-            for (Funzione funz  : listaFunzioniDipenenti) {
-                EditorFunz editor = new EditorFunz(this,funz,false);
+            for (Funzione funz : listaFunzioniDipenenti) {
+                EditorFunz editor = new EditorFunz(this, funz, false);
                 placeholderFunz.addComponent(editor);
                 fEditors.add(editor);
             }// end of for cycle
@@ -461,13 +456,14 @@ public class FunzioneForm extends ModuleForm implements FunzioneListener {
      * @return il componente creato
      */
     private Button creaBottoneNuova() {
-        bNuova = new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
         FunzioneForm form = this;
+        bNuova = new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
+        bNuova.setDescription("Funzioni che vengono automaticamente abilitate per il volontario, oltre a questa");
 
         bNuova.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                EditorFunz editor = new EditorFunz(form,null,false);
+                EditorFunz editor = new EditorFunz(form, null, false);
                 placeholderFunz.addComponent(editor);
                 fEditors.add(editor);
             }// end of inner method
@@ -483,7 +479,7 @@ public class FunzioneForm extends ModuleForm implements FunzioneListener {
     }// end of method
 
     private void regolaEditorFunz() {
-        Funzione  funzioneMadre = getFunzione();
+        Funzione funzioneMadre = getFunzione();
         Funzione funzFiglia;
         List<Funzione> funzioniDipendenti = new ArrayList<>();
 
@@ -542,7 +538,6 @@ public class FunzioneForm extends ModuleForm implements FunzioneListener {
 //        }// end of for cycle
 
     }// end of method
-
 
 
     @Override

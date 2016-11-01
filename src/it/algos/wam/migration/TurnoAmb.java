@@ -1,6 +1,10 @@
 package it.algos.wam.migration;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.BaseEntity_;
+import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.query.AQuery;
 import org.eclipse.persistence.annotations.ReadOnly;
 
@@ -26,7 +30,6 @@ import java.util.List;
 @Access(AccessType.PROPERTY)
 @ReadOnly
 public class TurnoAmb extends BaseEntity {
-
     @ManyToOne
     private CroceAmb croce;
 
@@ -99,6 +102,13 @@ public class TurnoAmb extends BaseEntity {
     }// end of constructor
 
 
+    public static TurnoAmb find(long id, EntityManager manager) {
+        if (manager != null) {
+            return (TurnoAmb) AQuery.find(TurnoAmb.class, id, manager);
+        }// end of if cycle
+        return null;
+    }// end of static method
+
     /**
      * Recupera una lista di tutti i records della Entity
      * Filtrato sulla company passata come parametro.
@@ -109,6 +119,50 @@ public class TurnoAmb extends BaseEntity {
     @SuppressWarnings("unchecked")
     public static List<TurnoAmb> findAll(CroceAmb company, EntityManager manager) {
         return (List<TurnoAmb>) AQuery.getList(TurnoAmb.class, TurnoAmb_.croce, company, manager);
+    }// end of method
+
+    /**
+     * Recupera una lista di tutti i records della Entity
+     * Filtrato sulla company passata come parametro.
+     * <p>
+     * Recupera tutti i turni a partire da 7 (sette) giorni prima delkla data attuale
+     *
+     * @param company di appartenenza
+     * @return lista delle istanze filtrate della Entity
+     */
+    @SuppressWarnings("unchecked")
+    public static List<TurnoAmb> findAllRecenti(CroceAmb company, EntityManager manager) {
+        List lista;
+        int delta = 10;
+        Date oggi = new Date();
+        Date dataIniziale = LibDate.add(oggi, -delta);
+
+        Container.Filter filtroCroce = new Compare.Equal(TurnoAmb_.croce.getName(), company);
+        Container.Filter filtroData = new Compare.Greater(TurnoAmb_.giorno.getName(), dataIniziale);
+        lista = AQuery.getList(TurnoAmb.class, manager, filtroCroce, filtroData);
+
+        return lista;
+    }// end of method
+
+    @SuppressWarnings("unchecked")
+    public static List<TurnoAmb> findAllByDateEsatta(CroceAmb company, Date giornoIniziale, EntityManager manager) {
+        Container.Filter filtroCroce = new Compare.Equal(TurnoAmb_.croce.getName(), company);
+        Container.Filter filtroGiorno = new Compare.Equal(TurnoAmb_.giorno.getName(), giornoIniziale);
+        return (List<TurnoAmb>) AQuery.getList(TurnoAmb.class, manager, filtroCroce, filtroGiorno);
+    }// end of method
+
+    @SuppressWarnings("unchecked")
+    public static List<TurnoAmb> findAllByOre(CroceAmb company, int ore, EntityManager manager) {
+        Container.Filter filtroCroce = new Compare.Equal(TurnoAmb_.croce.getName(), company);
+        Container.Filter filtroOre = new Compare.Equal(TurnoAmb_.ore_milite1.getName(), ore);
+        return (List<TurnoAmb>) AQuery.getList(TurnoAmb.class, manager, filtroCroce, filtroOre);
+    }// end of method
+
+    @SuppressWarnings("unchecked")
+    public static List<TurnoAmb> findAllByGreaterID(CroceAmb company, long id, EntityManager manager) {
+        Container.Filter filtroCroce = new Compare.Equal(TurnoAmb_.croce.getName(), company);
+        Container.Filter filtroOre = new Compare.Greater(BaseEntity_.id.getName(), id);
+        return (List<TurnoAmb>) AQuery.getList(TurnoAmb.class, manager, filtroCroce, filtroOre);
     }// end of method
 
     public CroceAmb getCroce() {
@@ -332,6 +386,7 @@ public class TurnoAmb extends BaseEntity {
         return note;
     }// end of getter method
 
+
     public void setNote(String note) {
         this.note = note;
     }//end of setter method
@@ -343,4 +398,5 @@ public class TurnoAmb extends BaseEntity {
     public void setAssegnato(boolean assegnato) {
         this.assegnato = assegnato;
     }//end of setter method
+
 }// end of entity class

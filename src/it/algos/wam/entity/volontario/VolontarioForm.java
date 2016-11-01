@@ -48,6 +48,7 @@ public class VolontarioForm extends ModuleForm {
     private Field fEmail;
     @SuppressWarnings("all")
     private Field fPassword;
+    @SuppressWarnings("all")
     private  TextField fPasswordTextField = null;
     @SuppressWarnings("all")
     private Field fAdmin;

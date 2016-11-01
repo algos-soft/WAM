@@ -7,6 +7,7 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import it.algos.wam.lib.LibWam;
 import it.algos.webbase.multiazienda.ERelatedComboField;
+import it.algos.webbase.web.dialog.ConfirmDialog;
 
 /**
  * Created by gac on 19 ott 2016.
@@ -65,6 +66,7 @@ public class EditorFunz extends HorizontalLayout {
         bIcona.setHtmlContentAllowed(true);
         bIcona.addStyleName("blue");
         bIcona.setWidth("3em");
+        bIcona.setDescription("Icona grafica rappresentativa della funzione");
         setbIcona(funzione);
 
     }// end of method
@@ -77,6 +79,7 @@ public class EditorFunz extends HorizontalLayout {
 
         comboFunzioni.sort(Funzione_.sigla);
         comboFunzioni.setWidth("25em");
+        comboFunzioni.setDescription("Funzione dipendente che viene abilitata automaticamente per il volontario");
 
         if (funzione != null) {
             comboFunzioni.setValue(funzione.getId());
@@ -109,6 +112,8 @@ public class EditorFunz extends HorizontalLayout {
      */
     private void creaBottoneElimina() {
         bElimina = new Button("", FontAwesome.TRASH_O);
+        bElimina.setDescription("Elimina la funzione dipendente");
+
         bElimina.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {

@@ -42,7 +42,7 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
      */
     public WamMod(Class entity, String menuLabel, Resource menuIcon) {
         super(entity, menuLabel, menuIcon);
-        getTable().setRowHeaderMode(Table.RowHeaderMode.INDEX);
+//        getTable().setRowHeaderMode(Table.RowHeaderMode.INDEX);
     }// end of constructor
 
     /**

@@ -11,6 +11,8 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.field.AFType;
+import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -52,12 +54,12 @@ public class Turno extends WamCompanyEntity {
     //--company di riferimento (obbligatoria in questa classe)
     //--private BaseCompany company;
 
-    // servizio di riferimento
+    //--servizio di riferimento
     @NotNull
     @ManyToOne
     private Servizio servizio = null;
 
-    // iscrizioni dei volontari a questo turno
+    //--iscrizioni dei volontari a questo turno
     @OneToMany(mappedBy = "turno", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<Iscrizione> iscrizioni = new ArrayList<>();
@@ -67,23 +69,29 @@ public class Turno extends WamCompanyEntity {
     //--individua tutti i turni di una company per un giorno
     @NotNull
     @Index
+    @AIField(type = AFType.lungo, required = true, width = "8em", caption = "Chiave", help = "Chiave unica.", error = "Manca la chiave")
     private long chiave;
 
     //--giorno, ora e minuto di inizio turno
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
+    @AIField(type = AFType.date, caption = "Inizio", help = "Data di inizio turno")
     private Date inizio;
 
     //--giorno, ora e minuto di fine turno
     //--i servizi senza orario (fisso) vengono creati solo con la data di inizio; la data di fine viene aggiunta dopo
     @Temporal(TemporalType.TIMESTAMP)
+    @AIField(type = AFType.date, caption = "Fine", help = "Data di fine turno")
     private Date fine;
 
     //--motivazione del turno extra
+    @AIField(type = AFType.text, width = "18em", caption = "Titolo extra",  help = "Titolo del viaggio extra.")
     private String titoloExtra = "";
     //--nome evidenziato della località per turni extra
+    @AIField(type = AFType.text, width = "18em", caption = "Località extra",  help = "Località del viaggio extra.")
     private String localitaExtra = "";
     //--descrizione dei viaggi extra
+    @AIField(type = AFType.area, width = "24em", caption = "Note",  help = "Eventuali note aggiuntive.")
     private String note = "";
 
     //--turno previsto (vuoto) oppure assegnato (militi inseriti)

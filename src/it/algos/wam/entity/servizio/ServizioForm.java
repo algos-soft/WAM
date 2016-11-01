@@ -37,7 +37,6 @@ public class ServizioForm extends ModuleForm {
 
 
     //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
-    @SuppressWarnings("all")
     private RelatedComboField fCompanyCombo;
     @SuppressWarnings("all")
     private TextField fCompanyText;
@@ -313,6 +312,10 @@ public class ServizioForm extends ModuleForm {
         fOrdine.setEnabled(false);
 
         fOrdine.setEnabled(false);
+        if (LibSession.isDeveloper()) {
+            fOrdine.setEnabled(true);
+        }// end of if cycle
+
         if (!isNewRecord()) {
             fOrdine.setRequired(true);
         }// end of if cycle

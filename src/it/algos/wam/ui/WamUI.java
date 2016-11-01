@@ -17,6 +17,7 @@ import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.servizio.ServizioMod;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzioneMod;
+import it.algos.wam.entity.turno.TurnoMod;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.VolontarioMod;
 import it.algos.wam.entity.volontario.Volontario_;
@@ -398,6 +399,7 @@ public class WamUI extends UI {
             MenuBar.MenuItem menuTavole = menuBarDeveloper.addItem("Tavole", null, null);
             addMod(menuTavole, new ServizioFunzioneMod());
             addMod(menuTavole, new VolontarioFunzioneMod());
+            addMod(menuTavole, new TurnoMod());
 
             navComp.addMenu(menuBarDeveloper, "rosso");
         }// end of if cycle

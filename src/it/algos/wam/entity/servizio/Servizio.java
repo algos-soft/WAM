@@ -3,17 +3,18 @@ package it.algos.wam.entity.servizio;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.shared.ui.colorpicker.Color;
-import com.vaadin.ui.Notification;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.entity.turno.Turno_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibArray;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.AQuery;
@@ -26,10 +27,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Entity che descrive un Servizio (tipo di turno)
@@ -134,7 +133,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Da non usare per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Servizio() {
-        this("","");
+        this("", "");
     }// end of JavaBean constructor
 
 
@@ -396,10 +395,10 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Recupera una istanza della Entity usando la query di una property specifica
      * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      *
-     * @param sigla   di riferimento interna (obbligatoria, unica all'interno della company)
+     * @param sigla di riferimento interna (obbligatoria, unica all'interno della company)
      * @return istanza della Entity, null se non trovata
      */
-    public static Servizio getEntityBySigla( String sigla) {
+    public static Servizio getEntityBySigla(String sigla) {
         return getEntityByCompanyAndSigla((WamCompany) null, sigla, null);
     }// end of static method
 
@@ -549,19 +548,19 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         }// end of if/else cycle
     }// end of static method
 
-    public static List<Servizio> getListVisibiliConOrario(EntityManager manager) {
+    public static ArrayList<Servizio> getListVisibiliConOrario(EntityManager manager) {
         return getListVisibiliConOrario(WamCompany.getCurrent(), manager);
     }// end of static method
 
-    public static List<Servizio> getListVisibiliConOrario(WamCompany company, EntityManager manager) {
+    public static ArrayList<Servizio> getListVisibiliConOrario(WamCompany company, EntityManager manager) {
         return getListVisibili(company, manager, true);
     }// end of static method
 
-    public static List<Servizio> getListVisibiliSenzaOrario(EntityManager manager) {
+    public static ArrayList<Servizio> getListVisibiliSenzaOrario(EntityManager manager) {
         return getListVisibiliSenzaOrario(WamCompany.getCurrent(), manager);
     }// end of static method
 
-    public static List<Servizio> getListVisibiliSenzaOrario(WamCompany company, EntityManager manager) {
+    public static ArrayList<Servizio> getListVisibiliSenzaOrario(WamCompany company, EntityManager manager) {
         return getListVisibili(company, manager, false);
     }// end of static method
 
@@ -577,11 +576,54 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static List<Servizio> getListVisibili(WamCompany company, EntityManager manager, boolean orario) {
+    public static ArrayList<Servizio> getListVisibili(WamCompany company, EntityManager manager, boolean orario) {
         SortProperty sort = new SortProperty(Servizio_.ordine);
         Container.Filter filtroVisibile = new Compare.Equal(Servizio_.visibile.getName(), true);
         Container.Filter filtroOrario = new Compare.Equal(Servizio_.orario.getName(), orario);
-        return (List<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroVisibile, filtroOrario);
+
+        return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroVisibile, filtroOrario);
+    }// end of static method
+
+
+    /**
+     * Se il tabellone contiene giorni passati, recupera anche i servizi che hanno dei turni associati
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Servizio> getListPassati(EntityManager manager, LocalDate inizioPeriodo, LocalDate finePeriodo) {
+        ArrayList<Servizio> lista;
+        WamCompany company = WamCompany.getCurrent();
+
+        Date dataInizioPeriodo = DateConvertUtils.asUtilDate(inizioPeriodo);
+        Date dataFinePeriodo = DateConvertUtils.asUtilDate(finePeriodo);
+
+        Container.Filter filtroCompany = new Compare.Equal(CompanyEntity_.company.getName(), company);
+        Container.Filter filtroInizio = new Compare.GreaterOrEqual(Turno_.inizio.getName(), dataInizioPeriodo);
+        Container.Filter filtroFine = new Compare.LessOrEqual(Turno_.inizio.getName(), dataFinePeriodo);
+
+        lista = (ArrayList<Servizio>) AQuery.getListProperty(Turno.class, Turno_.servizio, manager, filtroCompany, filtroInizio, filtroFine);
+        lista = LibArray.valoriUnici(lista);
+
+        return lista;
+    }// end of static method
+
+    /**
+     * La lista dei servizi deve essere composta:
+     * Sempre, da tutti i servizi abilitati
+     * Se il tabellone contiene giorni passati, aggiunge anche i servizi che hanno dei turni associati
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Servizio> getListVisibiliConOrarioAndPassati(EntityManager manager, LocalDate inizioPeriodo, LocalDate finePeriodo) {
+        ArrayList<Servizio> lista;
+        ArrayList<Servizio> listaServiziPrevisti;
+        ArrayList<Servizio> listaServiziPassati;
+
+        listaServiziPrevisti = Servizio.getListVisibiliConOrario(manager);
+        listaServiziPassati = Servizio.getListPassati(manager, inizioPeriodo, finePeriodo);
+        lista = LibArray.somma(listaServiziPrevisti, listaServiziPassati);
+        lista = LibArray.valoriUnici(lista);
+        lista = LibArray.sort(lista);
+
+        return lista;
     }// end of static method
 
 
@@ -633,7 +675,6 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     //------------------------------------------------------------------------------------------------------------------------
     // New and save
     //------------------------------------------------------------------------------------------------------------------------
-
 
 
     public static Servizio crea(String sigla, String descrizione) {
@@ -877,7 +918,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     /**
      * Numero massimo conenuto nella property
      *
-     * @param company  da filtrare
+     * @param company da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
      * @return massimo valore
      */
@@ -1042,7 +1083,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
             valido = this.checkDescrizione();
         }// end of if cycle
         if (valido) {
-            valido = this.checkChiave(company,manager);
+            valido = this.checkChiave(company, manager);
         }// end of if cycle
         if (valido) {
             this.checkOrdine(company, manager);
@@ -1122,9 +1163,9 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Controlla l'esistenza della chiave univoca, PRIMA di salvare il valore nel DB
      * La crea se non esiste già
      *
-     * @param company  da filtrare
+     * @param company da filtrare
      */
-    private boolean checkChiave(WamCompany company,EntityManager manager) {
+    private boolean checkChiave(WamCompany company, EntityManager manager) {
         boolean valido = true;
 
         codeCompanyUnico = LibText.creaChiave(getCompany(), sigla);
@@ -1144,7 +1185,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Elimino l'annotazione ed uso una chiamata dal metodo save(),
      * perché altrimenti non riuscirei a passare il parametro manager
      *
-     * @param company  da filtrare
+     * @param company da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
      *                //@PrePersist
      */

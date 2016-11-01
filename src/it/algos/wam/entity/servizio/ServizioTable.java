@@ -81,6 +81,7 @@ public class ServizioTable extends WamTable {
             };// end of array
         } else {
             return new Object[]{
+                    Servizio_.ordine,
                     Servizio_.sigla,
                     Servizio_.visibile,
                     Servizio_.descrizione,
@@ -102,7 +103,7 @@ public class ServizioTable extends WamTable {
         super.init();
 
         setColumnReorderingAllowed(true);
-        this.setColumnCollapsed(Servizio_.ordine.getName(), true);
+//        this.setColumnCollapsed(Servizio_.ordine.getName(), true);
         fixSort();
         fixColumn();
 
