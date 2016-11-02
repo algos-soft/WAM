@@ -113,6 +113,7 @@ public abstract class BootService {
 
         //--modifica la mail (vuota) per costruirla col nome della company
         CompanyPrefs.senderAddress.put(company, company.getCompanyCode() + "@algos.it");
+        CompanyPrefs.senderAddress.put(company, company.getCompanyCode() + "@algos.it");
     }// end of static method
 
     /**
@@ -466,6 +467,7 @@ public abstract class BootService {
                 l.add(volub(c, m, funz, "Arturo", "Casaroli", "327 9931245", "arturo.casaroli@wamdemo.it", "cas", d3, d4, d1, 0, 1, 2, 3, 4, 5, 6));
                 l.add(volu(c, m, funz, "Flavia", "Robusti", "328 131476", "flavia.robusti@wamdemo.it", "rob", 2, 5));
                 l.add(volub(c, m, funz, "Marco", "Terzani", "339 397235", "marco.terzani@wamdemo.it", "ter", d1, d4, d5, 1, 2, 4, 5, 6));
+                l.add(volu(c, m, funz, "Ospite", "Ospite", "", "", "ospite"));
 
 //                lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it", "abb", false, funz.get(2)));
 //                lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it", "ber", true, funz.get(3)));
