@@ -191,6 +191,7 @@ public class FunzioneTable extends WamTable {
                     glyph = FontAwesome.fromCodepoint(codepoint);
                     bIcon.setCaption(glyph.getHtml());
                 } catch (Exception e) {
+                    int a=78;
                 }// fine del blocco try-catch
             }// end of if cycle
 
@@ -218,8 +219,10 @@ public class FunzioneTable extends WamTable {
             for (int k = 0; k < lista.size(); k++) {
                 Funzione funz = lista.get(k);
                 int codePoint = funz.getIconCodepoint();
-                FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
-                str += glyph.getHtml() + " ";
+                if (codePoint>0) {
+                    FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
+                    str += glyph.getHtml() + " ";
+                }// fine del blocco if
 
                 String sigla = funz.getCode();
                 str += "<strong>";

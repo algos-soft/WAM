@@ -244,8 +244,10 @@ public class ServizioTable extends WamTable {
             for (int k = 0; k < lista.size(); k++) {
                 ServizioFunzione sf = serv.getServizioFunzioniOrd().get(k);
                 int codePoint = sf.getFunzione().getIconCodepoint();
-                FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
-                str += glyph.getHtml() + " ";
+                if (codePoint>0) {
+                    FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
+                    str += glyph.getHtml() + " ";
+                }// fine del blocco if
 
                 String sigla = sf.getFunzione().getCode();
                 str+="<strong>";

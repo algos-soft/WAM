@@ -6,6 +6,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import it.algos.wam.entity.companyentity.WanForm;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.iscrizione.Iscrizione;
@@ -57,7 +58,7 @@ public class ServizioForm extends ModuleForm {
     private OreMinuti oraFine;
     private VerticalLayout placeholderFunz;
     @SuppressWarnings("all")
-    private Button bNuova;
+//    private Button bNuova;
     private ArrayList<EditorSF> sfEditors;
 
 
@@ -81,126 +82,126 @@ public class ServizioForm extends ModuleForm {
     }// end of method
 
 
-    /**
-     * Create the detail component (the upper part containing the fields).
-     * <p>
-     * Usa il FormLayout che ha le label a sinsitra dei campi (standard)
-     * Se si vogliono le label sopra i campi, sovrascivere questo metodo e usare un VerticalLayout
-     *
-     * @return the detail component containing the fields
-     */
-    @Override
-    protected Component createComponent() {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
-        layout.setSpacing(true);
-
-        picker = new ServizioColorPicker();
-        sfEditors = new ArrayList<>();
-
-        return creaCompDetail(layout);
-    }// end of method
-
-
-    /**
-     * Crea il componente che visualizza il dettaglio
-     * Retrieve the fields from the binder and place them in the UI.
-     *
-     * @param layout per visualizzare i componenti
-     * @return il componente dettagli
-     */
-    private Component creaCompDetail(VerticalLayout layout) {
-
-        // selezione della company (solo per developer)
-        if (LibSession.isDeveloper()) {
-            if (isNewRecord()) {
-                layout.addComponent(creaCompany());
-            } else {
-                layout.addComponent(new AHorizontalLayout(creaCompany(), creaCode()));
-            }// end of if/else cycle
-        }// end of if cycle
-
-        layout.addComponent(creaRigaPicker());
-        layout.addComponent(creaDescrizione());
-
-        // aggiunge un po di spazio
-        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
-        layout.addComponent(creaChekVisibile());
-        layout.addComponent(creaChekOrario());
-        layout.addComponent(creaPlacehorderOrario());
-
-        // aggiunge un po di spazio
-        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
-        layout.addComponent(creaPlacehorderFunzioni());
-
-        //--stato iniziale
-        if (isNewRecord()) {
-            syncPlaceholderFunz();
-        }// end of if cycle
-
-        return layout;
-    }// end of method
+//    /**
+//     * Create the detail component (the upper part containing the fields).
+//     * <p>
+//     * Usa il FormLayout che ha le label a sinsitra dei campi (standard)
+//     * Se si vogliono le label sopra i campi, sovrascivere questo metodo e usare un VerticalLayout
+//     *
+//     * @return the detail component containing the fields
+//     */
+//    @Override
+//    protected Component createComponent() {
+//        VerticalLayout layout = new VerticalLayout();
+//        layout.setMargin(true);
+//        layout.setSpacing(true);
+//
+//        picker = new ServizioColorPicker();
+//        sfEditors = new ArrayList<>();
+//
+//        return creaCompDetail(layout);
+//    }// end of method
 
 
-    /**
-     * Selezione della company (solo per developer)
-     * Crea il campo company, obbligatorio
-     * Nel nuovo record è un ComboBox di selezione
-     * Nella modifica è un TextField
-     *
-     * @return il componente creato
-     */
-    private Component creaCompany() {
-        // popup di selezione (solo per nuovo record)
-        if (isNewRecord()) {
-            fCompanyCombo = (RelatedComboField) getField(CompanyEntity_.company);
-            fCompanyCombo.setWidth("8em");
-            fCompanyCombo.setRequired(true);
-            fCompanyCombo.setRequiredError("Manca la company");
+//    /**
+//     * Crea il componente che visualizza il dettaglio
+//     * Retrieve the fields from the binder and place them in the UI.
+//     *
+//     * @param layout per visualizzare i componenti
+//     * @return il componente dettagli
+//     */
+//    private Component creaCompDetail(VerticalLayout layout) {
+//
+//        // selezione della company (solo per developer)
+//        if (LibSession.isDeveloper()) {
+//            if (isNewRecord()) {
+//                layout.addComponent(creaCompany());
+//            } else {
+//                layout.addComponent(new AHorizontalLayout(creaCompany(), creaCode()));
+//            }// end of if/else cycle
+//        }// end of if cycle
+//
+//        layout.addComponent(creaRigaPicker());
+//        layout.addComponent(creaDescrizione());
+//
+//        // aggiunge un po di spazio
+//        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+//        layout.addComponent(creaChekVisibile());
+//        layout.addComponent(creaChekOrario());
+//        layout.addComponent(creaPlacehorderOrario());
+//
+//        // aggiunge un po di spazio
+//        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+//        layout.addComponent(creaPlacehorderFunzioni());
+//
+//        //--stato iniziale
+//        if (isNewRecord()) {
+//            syncPlaceholderFunz();
+//        }// end of if cycle
+//
+//        return layout;
+//    }// end of method
 
-            fCompanyCombo.addValueChangeListener(new Property.ValueChangeListener() {
-                @Override
-                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                    syncPlaceholderFunz();
-                }// end of inner method
-            });// end of anonymous inner class
 
-            return fCompanyCombo;
-        } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
-            fCompanyText = null;
-            BaseEntity entity = getEntity();
-            WamCompany company = null;
-            Servizio serv = null;
-            if (entity != null && entity instanceof Servizio) {
-                serv = (Servizio) entity;
-                company = (WamCompany) serv.getCompany();
-                fCompanyText = new TextField("Company", company.getCompanyCode());
-                fCompanyText.setWidth("8em");
-                fCompanyText.setEnabled(false);
-                fCompanyText.setRequired(true);
-            }// end of if cycle
+//    /**
+//     * Selezione della company (solo per developer)
+//     * Crea il campo company, obbligatorio
+//     * Nel nuovo record è un ComboBox di selezione
+//     * Nella modifica è un TextField
+//     *
+//     * @return il componente creato
+//     */
+//    protected Component creaCompany() {
+//        // popup di selezione (solo per nuovo record)
+//        if (isNewRecord()) {
+//            fCompanyCombo = (RelatedComboField) getField(CompanyEntity_.company);
+//            fCompanyCombo.setWidth("8em");
+//            fCompanyCombo.setRequired(true);
+//            fCompanyCombo.setRequiredError("Manca la company");
+//
+//            fCompanyCombo.addValueChangeListener(new Property.ValueChangeListener() {
+//                @Override
+//                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+//                    syncPlaceholderFunz();
+//                }// end of inner method
+//            });// end of anonymous inner class
+//
+//            return fCompanyCombo;
+//        } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
+//            fCompanyText = null;
+//            BaseEntity entity = getEntity();
+//            WamCompany company = null;
+//            Servizio serv = null;
+//            if (entity != null && entity instanceof Servizio) {
+//                serv = (Servizio) entity;
+//                company = (WamCompany) serv.getCompany();
+//                fCompanyText = new TextField("Company", company.getCompanyCode());
+//                fCompanyText.setWidth("8em");
+//                fCompanyText.setEnabled(false);
+//                fCompanyText.setRequired(true);
+//            }// end of if cycle
+//
+//            return fCompanyText;
+//        }// end of if/else cycle
+//    }// end of method
 
-            return fCompanyText;
-        }// end of if/else cycle
-    }// end of method
-
-    /**
-     * Crea il campo codeCompanyUnico, obbligatorio e unico
-     * Viene inserito in automatico e NON dal form
-     *
-     * @return il componente creato
-     */
-    private TextField creaCode() {
-        fCodeCompanyUnico = (TextField) getField(Servizio_.codeCompanyUnico);
-
-        fCodeCompanyUnico.setWidth("14em");
-        fCodeCompanyUnico.setEnabled(false);
-        if (!isNewRecord()) {
-            fCodeCompanyUnico.setRequired(true);
-        }// end of if cycle
-
-        return fCodeCompanyUnico;
-    }// end of method
+//    /**
+//     * Crea il campo codeCompanyUnico, obbligatorio e unico
+//     * Viene inserito in automatico e NON dal form
+//     *
+//     * @return il componente creato
+//     */
+//    private TextField creaCode() {
+//        fCodeCompanyUnico = (TextField) getField(Servizio_.codeCompanyUnico);
+//
+//        fCodeCompanyUnico.setWidth("14em");
+//        fCodeCompanyUnico.setEnabled(false);
+//        if (!isNewRecord()) {
+//            fCodeCompanyUnico.setRequired(true);
+//        }// end of if cycle
+//
+//        return fCodeCompanyUnico;
+//    }// end of method
 
 
     /**
@@ -211,49 +212,50 @@ public class ServizioForm extends ModuleForm {
     private HorizontalLayout creaRigaPicker() {
         HorizontalLayout layout;
 
-        picker.setWidth("8em");
+//        picker.setWidth("8em");
+//
+//        layout = new HorizontalLayout(this.creaSigla(), picker);
+//        if (!isNewRecord()) {
+//            layout.addComponent(this.creaOrdine());
+//        }// end of if cycle
+//        layout.setComponentAlignment(picker, Alignment.BOTTOM_CENTER);
+//        layout.setSpacing(true);
 
-        layout = new HorizontalLayout(this.creaSigla(), picker);
-        if (!isNewRecord()) {
-            layout.addComponent(this.creaOrdine());
-        }// end of if cycle
-        layout.setComponentAlignment(picker, Alignment.BOTTOM_CENTER);
-        layout.setSpacing(true);
-
-        return layout;
+//        return layout;
+        return null;
     }// end of method
 
 
-    /**
-     * Crea il campo sigla, obbligatorio
-     *
-     * @return il componente creato
-     */
-    private TextField creaSigla() {
-        fSigla = (TextField) getField(Servizio_.sigla);
-        fSigla.setWidth("8em");
-        fSigla.setRequired(true);
-        fSigla.setRequiredError("Manca la sigla di codifica");
-        fSigla.focus();
+//    /**
+//     * Crea il campo sigla, obbligatorio
+//     *
+//     * @return il componente creato
+//     */
+//    protected TextField creaSigla() {
+//        fSigla = (TextField) getField(Servizio_.sigla);
+//        fSigla.setWidth("8em");
+//        fSigla.setRequired(true);
+//        fSigla.setRequiredError("Manca la sigla di codifica");
+//        fSigla.focus();
+//
+//        return fSigla;
+//    }// end of method
 
-        return fSigla;
-    }// end of method
 
-
-    /**
-     * Crea il campo descrizione, obbligatorio
-     *
-     * @return il componente creato
-     */
-    private TextField creaDescrizione() {
-        fDescrizione = (TextField) getField(Servizio_.descrizione);
-
-        fDescrizione.setWidth("22.5em");
-        fDescrizione.setRequired(true);
-        fDescrizione.setRequiredError("Manca la descrizione");
-
-        return fDescrizione;
-    }// end of method
+//    /**
+//     * Crea il campo descrizione, obbligatorio
+//     *
+//     * @return il componente creato
+//     */
+//    private TextField creaDescrizione() {
+//        fDescrizione = (TextField) getField(Servizio_.descrizione);
+//
+//        fDescrizione.setWidth("22.5em");
+//        fDescrizione.setRequired(true);
+//        fDescrizione.setRequiredError("Manca la descrizione");
+//
+//        return fDescrizione;
+//    }// end of method
 
     /**
      * Crea il chekbox orario
@@ -301,27 +303,27 @@ public class ServizioForm extends ModuleForm {
         return fVisibileTabellone;
     }// end of method
 
-    /**
-     * Crea il campo ordine, obbligatorio con inserimento automatico
-     * Viene inserito in automatico e NON dal form
-     *
-     * @return il componente creato
-     */
-    private IntegerField creaOrdine() {
-        fOrdine = (IntegerField) getField(Servizio_.ordine);
-        fOrdine.setEnabled(false);
-
-        fOrdine.setEnabled(false);
-        if (LibSession.isDeveloper()) {
-            fOrdine.setEnabled(true);
-        }// end of if cycle
-
-        if (!isNewRecord()) {
-            fOrdine.setRequired(true);
-        }// end of if cycle
-
-        return fOrdine;
-    }// end of method
+//    /**
+//     * Crea il campo ordine, obbligatorio con inserimento automatico
+//     * Viene inserito in automatico e NON dal form
+//     *
+//     * @return il componente creato
+//     */
+//    private IntegerField creaOrdine() {
+//        fOrdine = (IntegerField) getField(Servizio_.ordine);
+//        fOrdine.setEnabled(false);
+//
+//        fOrdine.setEnabled(false);
+//        if (LibSession.isDeveloper()) {
+//            fOrdine.setEnabled(true);
+//        }// end of if cycle
+//
+//        if (!isNewRecord()) {
+//            fOrdine.setRequired(true);
+//        }// end of if cycle
+//
+//        return fOrdine;
+//    }// end of method
 
 
     /**
@@ -333,7 +335,7 @@ public class ServizioForm extends ModuleForm {
         placeholderFunz = new VerticalLayout();
         placeholderFunz.setCaption("Funzioni previste");
         placeholderFunz.setSpacing(true);
-        placeholderFunz.addComponent(creaBottoneNuova());
+//        placeholderFunz.addComponent(creaBottoneNuova());
 
         if (isNewRecord()) {
             placeholderFunz.setVisible(false);
@@ -342,39 +344,39 @@ public class ServizioForm extends ModuleForm {
         return placeholderFunz;
     }// end of method
 
-    /**
-     * Crea un bottone per creare nuove funzioni
-     *
-     * @return il componente creato
-     */
-    private Button creaBottoneNuova() {
-        bNuova = new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
-
-        bNuova.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent clickEvent) {
-                EditorSF editor = new EditorSF(null);
-                placeholderFunz.addComponent(editor);
-                sfEditors.add(editor);
-            }// end of inner method
-        });// end of anonymous inner class
-
-        if (isNewRecord()) {
-            bNuova.setVisible(false);
-        }// end of if cycle
-
-        return bNuova;
-    }// end of method
-
-
-    private void syncPlaceholderFunz() {
-        if (LibSession.isDeveloper()) {
-            placeholderFunz.setVisible(fCompanyCombo.getValue() != null);
-            bNuova.setVisible(fCompanyCombo.getValue() != null);
-        } else {
-            bNuova.setVisible(true);
-        }// end of if/else cycle
-    }// end of method
+//    /**
+//     * Crea un bottone per creare nuove funzioni
+//     *
+//     * @return il componente creato
+//     */
+//    private Button creaBottoneNuova() {
+//        bNuova = new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
+//
+//        bNuova.addClickListener(new Button.ClickListener() {
+//            @Override
+//            public void buttonClick(Button.ClickEvent clickEvent) {
+//                EditorSF editor = new EditorSF(null);
+//                placeholderFunz.addComponent(editor);
+//                sfEditors.add(editor);
+//            }// end of inner method
+//        });// end of anonymous inner class
+//
+//        if (isNewRecord()) {
+//            bNuova.setVisible(false);
+//        }// end of if cycle
+//
+//        return bNuova;
+//    }// end of method
+//
+//
+//    private void syncPlaceholderFunz() {
+//        if (LibSession.isDeveloper()) {
+//            placeholderFunz.setVisible(fCompanyCombo.getValue() != null);
+//            bNuova.setVisible(fCompanyCombo.getValue() != null);
+//        } else {
+//            bNuova.setVisible(true);
+//        }// end of if/else cycle
+//    }// end of method
 
     private Servizio getServizio() {
         return (Servizio) getEntity();
