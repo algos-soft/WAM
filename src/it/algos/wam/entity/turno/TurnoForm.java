@@ -1,7 +1,6 @@
 package it.algos.wam.entity.turno;
 
 import com.vaadin.data.Item;
-import it.algos.wam.entity.funzione.FunzioneListener;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.module.ModulePop;
 

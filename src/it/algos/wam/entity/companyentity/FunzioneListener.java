@@ -1,4 +1,4 @@
-package it.algos.wam.entity.funzione;
+package it.algos.wam.entity.companyentity;
 
 import it.algos.wam.entity.wamcompany.WamCompany;
 
@@ -8,7 +8,10 @@ import it.algos.wam.entity.wamcompany.WamCompany;
  */
 public interface FunzioneListener {
 
-    void doDelete(EditorFunz editor);
+    void doDeleteFunz(EditorFunz editor);
+
+    void doDeleteServ(EditorServ editor);
+
     WamCompany getCompany();
 
 }// end of interface

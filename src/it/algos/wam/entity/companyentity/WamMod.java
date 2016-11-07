@@ -8,6 +8,7 @@ import it.algos.webbase.multiazienda.CompanyModule;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
@@ -66,6 +67,15 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
         return lista.toArray(new Attribute[lista.size()]);
     }// end of method
 
+    /**
+     * Crea una Table già filtrata sulla company corrente
+     * The concrete subclass must override for a specific Table.
+     * @return the Table
+     */
+    @Override
+    public ATable createTable() {
+        return new WamTable(this);
+    }// end of method
     /**
      * Create the Table Portal
      * <p>

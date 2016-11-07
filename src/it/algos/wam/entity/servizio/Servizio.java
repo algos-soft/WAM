@@ -14,6 +14,8 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.field.AFType;
+import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibArray;
 import it.algos.webbase.web.lib.LibText;
@@ -59,6 +61,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     @NotEmpty
     @Column(length = 20)
     @Index
+    @AIField(type = AFType.text, required = true, width = "8em", caption = "Sigla", prompt = "sigla visibile", help = "Sigla visibile nel tabellone.", error = "Manca la sigla di codifica")
     private String sigla = "";
 
     //--sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
@@ -67,25 +70,26 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     @NotNull
     @Column(length = 40, unique = true)
     @Index
+    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "CodiceUnico", help = "Codifica interna. Valore unico. Calcola automaticamente")
     private String codeCompanyUnico;
 
     //--descrizione per il tabellone (obbligatoria, non unica)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
+    @AIField(type = AFType.text, required = true, width = "24em", caption = "Descrizione", prompt = "descrizione completa", help = "Descrizione completa del servizio.", error = "Manca la descrizione")
     private String descrizione = "";
 
     //--ordine di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
     @NotNull
     @Index
+    @AIField(type = AFType.integer, enabled = false, width = "3em", caption = "Ordine", help = "Ordine di apparizione nei PopUp. Modificabile nella lista con i bottoni Sposta su e giu")
     private int ordine = 0;
-
-    // visibile nel tabellone (di default true)
-    private boolean visibile = true;
 
     // colore del servizio (facoltativo)
     private int colore = new Color(128, 128, 128).getRGB();
 
     //--orario predefinito (avis, centralino ed extra non ce l'hanno)
+    @AIField(type = AFType.checkbox, width = "12em", caption = "Orario predefinito", help = "Servizio ad orario fisso")
     private boolean orario = true;
 
     //--ora prevista di inizio turno (obbligatoria, se orario è true)
@@ -102,6 +106,9 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     //--nella GUI la scelta viene bloccata ai quarti d'ora
     private int minutiFine = 0;
 
+    // visibile nel tabellone (di default true)
+    @AIField(type = AFType.checkbox, width = "12em", caption = "Visibile nel tabellone", help = "Permette di modificare i servizi visibili nel tabellone")
+    private boolean visibile = true;
 
     //--tavola di incrocio
     // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
@@ -1088,9 +1095,9 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         if (valido) {
             this.checkOrdine(company, manager);
         }// end of if cycle
-
         if (valido) {
-            return (Servizio) super.save(manager);
+            this.checkOrario();
+        }// end of if cyreturn (Servizio) super.save(manager);
         } else {
             return null;
         }// end of if/else cycle
@@ -1192,6 +1199,19 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     private void checkOrdine(WamCompany company, EntityManager manager) {
         if (getOrdine() == 0) {
             setOrdine(maxOrdine(company, manager) + 1);
+        }// end of if cycle
+    }// end of method
+
+    /**
+     * Appena prima di persistere sul DB
+     * Se l'orario non è predefinito, annulla i valori di ore e minuti
+     */
+    private void checkOrario() {
+        if (!isOrario()) {
+            setOraInizio(0);
+            setOraFine(0);
+            setMinutiInizio(0);
+            setMinutiFine(0);
         }// end of if cycle
     }// end of method
 

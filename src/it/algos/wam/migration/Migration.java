@@ -549,7 +549,7 @@ public class Migration {
         List<Turno> listaTurniNew = new ArrayList<>();
         Turno turnoNew;
         int k = 0;
-        int delta = 100;
+        int delta = 150;
 
         if (listaTurniOld != null && listaTurniOld.size() > 0) {
             for (TurnoAmb turnoOld : listaTurniOld) {

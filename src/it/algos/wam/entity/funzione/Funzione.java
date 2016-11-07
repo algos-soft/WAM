@@ -1,5 +1,7 @@
 package it.algos.wam.entity.funzione;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -13,6 +15,7 @@ import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.AQuery;
+import it.algos.webbase.web.query.SortProperty;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
@@ -47,7 +50,9 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //--company di riferimento (facoltativa nella superclasse)
     //--company di riferimento (obbligatoria in questa classe)
     //--private BaseCompany company;
-
+    //--funzioni che vengono automaticamente abilitate se questa funzione è abilitata
+    @OneToMany
+    public List<Funzione> funzioniDipendenti = new ArrayList<>();
     //--sigla di codifica interna specifica per ogni company (obbligatoria, non unica in generale ma unica all'interno della company)
     //--visibile solo per admin e developer
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
@@ -56,7 +61,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @Index
     @AIField(type = AFType.text, required = true, width = "8em", caption = "Code", prompt = "codice interno", help = "Codice interno unico, non visibile nel tabellone.", error = "Manca il codice interno")
     private String code = "";
-
     //--sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
     //--calcolata -> codeCompanyUnico = company.companyCode + funzione.code (20+20=40);
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
@@ -66,7 +70,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @Index
     @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "CodiceUnico", help = "Codifica interna. Valore unico. Calcola automaticamente")
     private String codeCompanyUnico = "";
-
     //--sigla di codifica visibile (obbligatoria, non unica)
     //--visibile nel tabellone
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
@@ -75,22 +78,18 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @Index
     @AIField(type = AFType.text, required = true, width = "8em", caption = "Sigla", prompt = "sigla visibile", help = "Sigla visibile nel tabellone.", error = "Manca la sigla visibile")
     private String sigla = "";
-
     //--descrizione (obbligatoria, non unica)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
     @AIField(type = AFType.text, required = true, width = "24em", caption = "Descrizione", prompt = "descrizione completa", help = "Descrizione completa della funzione.", error = "Manca la descrizione")
     private String descrizione = "";
-
     //--ordine di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
     @NotNull
     @Index
     @AIField(type = AFType.integer, enabled = false, width = "3em", caption = "Ordine", help = "Ordine di apparizione nei PopUp. Modificabile nella lista con i bottoni Sposta su e giu")
     private int ordine = 0;
-
     //--codepoint dell'icona di FontAwesome (facoltativa)
     private int iconCodepoint;
-
     //--tavola di incrocio
     // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
     // alla lista e non ancora registrati (e così per tutte le operazioni dell'EntityManager)
@@ -99,7 +98,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @OneToMany(mappedBy = "funzione", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<ServizioFunzione> servizioFunzioni = new ArrayList<>();
-
     //--tavola di incrocio
     // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
     // alla lista e non ancora registrati (e così per tutte le operazioni dell'EntityManager)
@@ -108,10 +106,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @OneToMany(mappedBy = "funzione", cascade = CascadeType.ALL, orphanRemoval = true)
     @CascadeOnDelete
     private List<VolontarioFunzione> volontarioFunzioni = new ArrayList<>();
-
-    //--funzioni che vengono automaticamente abilitate se questa funzione è abilitata
-    @OneToMany
-    public List<Funzione> funzioniDipendenti = new ArrayList<>();
 
 
     //------------------------------------------------------------------------------------------------------------------------
@@ -654,11 +648,6 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return CompanyQuery.delete(Funzione.class, company, manager);
     }// end of static method
 
-
-    //------------------------------------------------------------------------------------------------------------------------
-    // utilities
-    //------------------------------------------------------------------------------------------------------------------------
-
     /**
      * Numero massimo conenuto nella property
      *
@@ -670,6 +659,10 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return CompanyQuery.maxInt(Funzione.class, Funzione_.ordine, company, manager);
     }// end of method
 
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // utilities
+    //------------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------------
     // Getter and setter
@@ -840,6 +833,23 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     public Funzione saveSafe(EntityManager manager) {
         return (Funzione) this.save(manager);
     }// end of method
+
+    public boolean delete() {
+        funzioniDipendenti = null;
+//        spostaInBasso();
+        return super.delete();
+    }// end of static method
+
+//    /**
+//     * Sposta in basso.
+//     * Cambia il valore del parametro 'ordine'', in modo che venga cancellato l'ultimo record
+//     */
+//    public void spostaInBasso() {
+//        SortProperty sort = new SortProperty(Funzione_.ordine);
+//        Container.Filter filtro = new Compare.GreaterOrEqual(Funzione_.ordine.getName(), this.getOrdine());
+//        List<Funzione> lista = (List<Funzione>) CompanyQuery.getList(Funzione.class,sort,filtro);
+//        int a=87;
+//    }// end of static method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Utilities

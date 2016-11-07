@@ -1,21 +1,30 @@
-package it.algos.wam.entity.funzione;
+package it.algos.wam.entity.companyentity;
 
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
+import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.lib.LibWam;
+import it.algos.webbase.multiazienda.CompanyEntity_;
+import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
-import it.algos.webbase.web.dialog.ConfirmDialog;
+import it.algos.webbase.web.entity.BaseEntity;
+
+import java.util.List;
 
 /**
  * Created by gac on 19 ott 2016.
- * Editor di una singola funzione
+ * Editor di una singola funzione dipendente della funzione
  * Layout orizzontale con:
  * - icona
  * - popup delle funzioni della company
- * - checkbox di obbligatorietà (facoltativo)
  * - bottone di cancellazione
  */
 public class EditorFunz extends HorizontalLayout {
@@ -27,6 +36,7 @@ public class EditorFunz extends HorizontalLayout {
     private Button bElimina;
     private boolean usaFieldObbligatorio;
     private FunzioneListener formChiamante;
+
 
     public EditorFunz(FunzioneListener formChiamante, Funzione funzione, boolean usaFieldObbligatorio) {
         this.formChiamante = formChiamante;
@@ -73,6 +83,7 @@ public class EditorFunz extends HorizontalLayout {
 
     /**
      * Crea il combo di selezione della funzione
+     * Elimina la funzione madre nel comboBox delle funzioni dipendenti
      */
     private void creaComboBox() {
         comboFunzioni = new ERelatedComboField(Funzione.class, formChiamante.getCompany());
@@ -139,7 +150,7 @@ public class EditorFunz extends HorizontalLayout {
      * La relativa ServizioFunzione, deve essere regolata in ServizioForm
      */
     private void doDelete() {
-        formChiamante.doDelete(this);
+        formChiamante.doDeleteFunz(this);
     }// end of method
 
 

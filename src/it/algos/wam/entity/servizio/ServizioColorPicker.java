@@ -15,5 +15,6 @@ public class ServizioColorPicker extends ColorPicker {
         setHSVVisibility(false);
         setCaptionAsHtml(true);
         setPosition(20, 20);
-    }
-}
+    }// end of constructor
+
+}// end of class

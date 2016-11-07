@@ -87,10 +87,10 @@ public abstract class BootService {
         listaServizi = creaServizi(company, manager, listaFunzioni);
         listaVolontari = creaVolontari(company, manager, listaFunzioni);
 
-//        if (creaTurni) {
-//            listaTurni = creaTurniVuoti(company, manager, listaServizi);
-//        }// end of if cycle
-//
+        if (creaTurni) {
+            listaTurni = creaTurniVuoti(company, manager, listaServizi);
+        }// end of if cycle
+
 //        if (creaIscrizioni) {
 //            riempieTurni(company, manager, listaTurni, listaVolontari);
 //        }// end of if cycle

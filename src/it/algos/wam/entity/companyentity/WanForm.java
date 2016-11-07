@@ -2,13 +2,10 @@ package it.algos.wam.entity.companyentity;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.VerticalLayout;
-import it.algos.wam.entity.funzione.EditorFunz;
-import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
@@ -20,19 +17,18 @@ import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibSession;
-import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Gac on 02 nov 2016.
- * Scheda personalizzata per le entity Funzione,Servizio, Volonario
+ * Scheda personalizzata per le entity Funzione, Servizio, Volonario
  */
-public abstract class WanForm extends ModuleForm {
+public abstract class WanForm extends ModuleForm implements FunzioneListener {
 
     protected ArrayList<EditorFunz> fEditors;
+    protected ArrayList<EditorServ> sfEditors;
 
     //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
     protected RelatedComboField fCompanyCombo;
@@ -91,6 +87,25 @@ public abstract class WanForm extends ModuleForm {
         return layoutAll;
     }// end of method
 
+
+    /**
+     * Crea prima tutti i fields (ed altri componenti)
+     * Alcuni hanno delle particolarità aggiuntive
+     * Vengono regolati i valori dal DB verso la UI
+     */
+    protected void creaFields() {
+        fEditors = new ArrayList<>();
+        sfEditors = new ArrayList<>();
+
+        this.creaCompany();
+        this.creaCodeCompany();
+        this.creaSigla();
+        this.creaDescrizione();
+        this.creaOrdine();
+        this.creaBottoneNuova();
+        this.creaPlacehorder();
+    }// end of method
+
     /**
      * Selezione della company (solo per developer)
      * Prima parte in alto del Form
@@ -140,21 +155,6 @@ public abstract class WanForm extends ModuleForm {
         return layout;
     }// end of method
 
-    /**
-     * Crea prima tutti i fields
-     * Alcuni hanno delle particolarità aggiuntive
-     */
-    protected void creaFields() {
-        fEditors = new ArrayList<>();
-
-        this.creaCompany();
-        this.creaCodeCompany();
-        this.creaSigla();
-        this.creaDescrizione();
-        this.creaOrdine();
-        this.creaBottoneNuova();
-        this.creaPlacehorder();
-    }// end of method
 
     /**
      * Selezione della company (solo per developer)
@@ -184,10 +184,10 @@ public abstract class WanForm extends ModuleForm {
             fCompanyText = null;
             BaseEntity entity = getEntity();
             WamCompany company = null;
-            Funzione funz = null;
-            if (entity != null && entity instanceof Funzione) {
-                funz = (Funzione) entity;
-                company = (WamCompany) funz.getCompany();
+            WamCompanyEntity wamEntity = null;
+            if (entity != null && entity instanceof WamCompanyEntity) {
+                wamEntity = (WamCompanyEntity) entity;
+                company = (WamCompany) wamEntity.getCompany();
                 fCompanyText = new TextField("Company", company.getCompanyCode());
                 fCompanyText.setWidth("8em");
                 fCompanyText.setEnabled(false);
@@ -200,41 +200,30 @@ public abstract class WanForm extends ModuleForm {
     /**
      * Crea il campo codeCompanyUnico, obbligatorio e unico
      * Viene inserito in automatico e NON dal form
-     *
-     * @return il componente creato
      */
-    protected TextField creaCodeCompany() {
+    protected void creaCodeCompany() {
         fCodeCompanyUnico = (TextField) getField(Funzione_.codeCompanyUnico);
-        return fCodeCompanyUnico;
     }// end of method
 
     /**
      * Crea il campo sigla visibile, obbligatorio
-     *
-     * @return il componente creato
      */
-    protected TextField creaSigla() {
+    protected void creaSigla() {
         fSigla = (TextField) getField(Funzione_.sigla);
-        return fSigla;
     }// end of method
 
     /**
      * Crea il campo descrizione, obbligatorio
-     *
-     * @return il componente creato
      */
-    protected TextField creaDescrizione() {
+    protected void creaDescrizione() {
         fDescrizione = (TextField) getField(Funzione_.descrizione);
-        return fDescrizione;
     }// end of method
 
     /**
      * Crea il campo ordine, obbligatorio con inserimento automatico
      * Viene inserito in automatico e NON dal form
-     *
-     * @return il componente creato
      */
-    protected IntegerField creaOrdine() {
+    protected void creaOrdine() {
         fOrdine = (IntegerField) getField(Funzione_.ordine);
 
         if (LibSession.isDeveloper()) {
@@ -244,8 +233,6 @@ public abstract class WanForm extends ModuleForm {
         if (!isNewRecord()) {
             fOrdine.setRequired(true);
         }// end of if cycle
-
-        return fOrdine;
     }// end of method
 
 
@@ -254,20 +241,7 @@ public abstract class WanForm extends ModuleForm {
      *
      * @return il componente creato
      */
-    private Button creaBottoneNuova() {
-        WanForm form = this;
-        bNuova = new Button("Aggiungi funzione", FontAwesome.PLUS_CIRCLE);
-        bNuova.setDescription("Funzioni che vengono automaticamente abilitate per il volontario, oltre a questa");
-
-        bNuova.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent clickEvent) {
-//                EditorFunz editor = new EditorFunz(form, null, false);
-//                placeholderFunz.addComponent(editor);
-//                fEditors.add(editor);
-            }// end of inner method
-        });// end of anonymous inner class
-
+    protected Button creaBottoneNuova() {
         return bNuova;
     }// end of method
 
@@ -277,28 +251,8 @@ public abstract class WanForm extends ModuleForm {
      * @return il componente creato
      */
     protected VerticalLayout creaPlacehorder() {
-        placeholderFunz = new VerticalLayout();
-        placeholderFunz.setCaption("Funzioni dipendenti da questa");
-        placeholderFunz.setSpacing(true);
-        placeholderFunz.addComponent(bNuova);
-
-        if (isNewRecord()) {
-            placeholderFunz.setVisible(this.getCompany() != null);
-        }// end of if cycle
-
-        // aggiunge gli editor per le funzioni esistenti
-        if (!isNewRecord()) {
-//            List<Funzione> listaFunzioniDipenenti = getFunzione().getFunzioniDipendenti();
-//            for (Funzione funz : listaFunzioniDipenenti) {
-//                EditorFunz editor = new EditorFunz(this, funz, false);
-//                placeholderFunz.addComponent(editor);
-//                fEditors.add(editor);
-//            }// end of for cycle
-        }// end of if cycle
-
         return placeholderFunz;
     }// end of method
-
 
 
     protected void syncPlaceholder() {
@@ -327,6 +281,36 @@ public abstract class WanForm extends ModuleForm {
         }// end of if/else cycle
 
         return company;
+    }// end of method
+
+    @Override
+    protected ArrayList<String> isValid() {
+        ArrayList<String> errs = super.isValid();
+
+        // controlla se l'istanza di questo form è registrabile
+        String err = checkRegistrabile();
+        if (!err.isEmpty()) {
+            errs.add(err);
+        }// end of if cycle
+
+        return errs;
+    }// end of method
+
+    /**
+     * Controlla se l'istanza di questo form è registrabile
+     *
+     * @return stringa vuota se registrabile, motivo se non registrabile
+     */
+    protected String checkRegistrabile() {
+        return "";
+    }// end of method
+
+    @Override
+    public void doDeleteFunz(EditorFunz editor) {
+    }// end of method
+
+    @Override
+    public void doDeleteServ(EditorServ editor) {
     }// end of method
 
 }// end of class
