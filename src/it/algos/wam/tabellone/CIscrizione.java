@@ -52,6 +52,7 @@ public class CIscrizione extends HorizontalLayout {
             rightIconLabel.setWidth("1em");
             rightIconLabel.setValue(rightIcon.getHtml());
             rightIconLabel.setDescription(rightIconTooltip);
+            rightIconLabel.addStyleName("red");
         }
 
 

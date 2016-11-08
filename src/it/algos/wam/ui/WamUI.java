@@ -34,10 +34,12 @@ import it.algos.wam.tabellone.Tabellone;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.log.LogMod;
 import it.algos.webbase.domain.pref.PrefMod;
+import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.domain.utente.UtenteModulo;
 import it.algos.webbase.domain.vers.VersMod;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
 import it.algos.webbase.web.menu.AMenuBar;
@@ -52,11 +54,12 @@ import java.util.List;
  * Questa classe DEVE estendere AlgosUI per evitare di duplicare tutti i metodi (utili) già esistenti nella superclasse gac/7-8-16
  */
 @Theme("wam")
-@Push(value = PushMode.AUTOMATIC, transport = Transport.WEBSOCKET_XHR)   // se non uso questo tipo di transport i cookies non funzionano
+@Push(value = PushMode.AUTOMATIC, transport = Transport.WEBSOCKET_XHR)
+// se non uso questo tipo di transport i cookies non funzionano
 public class WamUI extends UI {
 
     //--backdoor password
-    public static final String BACKDOOR = "gac";
+    public static final String BACKDOOR = "cervino63";
     public static final String KEY_TABELLONE = "tabellone";
     public static final String KEY_MAIN_COMP = "maincomp";
     public static final String KEY_TABVISIBLE = "tabvisible";
@@ -86,8 +89,6 @@ public class WamUI extends UI {
                 developerInit();
                 return;
             }// end of if cycle
-
-//            LibSession.setDeveloper(false);
         }// end of if/else cycle
 
         // da qui in poi non è programmatore
@@ -179,6 +180,7 @@ public class WamUI extends UI {
                 @Override
                 public void onUserLogout(LogoutEvent e) {
                     LibSession.setAttribute(KEY_TABELLONE, null); // annulla il tabellone di sessione per farlo ricreare
+                    LibSession.setDeveloper(false);
                     Page.getCurrent().reload();
                 }
             });
@@ -189,12 +191,11 @@ public class WamUI extends UI {
         //--controllo se l'url contiene un login valido
         String utente = request.getParameter("utente");
         String password = request.getParameter("password");
+
+
+        // registra l'oggetto UserIF nella Login
         if (utente != null && !utente.equals("")) {
-
-//            Volontario vol = Volontario.findByCognomeAndPassword(utente, password);
-
             List<Volontario> militiPerCognome = (List<Volontario>) CompanyQuery.getList(Volontario.class, Volontario_.cognome, utente);
-//           Object alfa= CompanyQuery.queryOne(Volontario.class,Volontario_.cognome,utente);
             if (militiPerCognome != null && militiPerCognome.size() > 0) {
                 Volontario volontario = militiPerCognome.get(0);
                 if (volontario.getPassword().equals(password)) {
@@ -202,6 +203,7 @@ public class WamUI extends UI {
                 }// end of if cycle
             }// end of if cycle
         }// end of if cycle
+
 
         // Se è loggato, la company dell'url
         // deve essere uguale alla company loggata

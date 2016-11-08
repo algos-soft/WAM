@@ -1,9 +1,11 @@
 package it.algos.wam.entity.companyentity;
 
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
+import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.filter.Compare;
+import com.vaadin.data.util.filter.Not;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
@@ -91,6 +93,12 @@ public class EditorFunz extends HorizontalLayout {
         comboFunzioni.sort(Funzione_.sigla);
         comboFunzioni.setWidth("25em");
         comboFunzioni.setDescription("Funzione dipendente che viene abilitata automaticamente per il volontario");
+
+        int a = comboFunzioni.size();
+        Container.Filter filter = new Compare.Equal(Funzione_.id.getName(), funzione.getId());
+        comboFunzioni.getFilterableContainer().addContainerFilter(new Not(filter));
+        a = comboFunzioni.size();
+
 
         if (funzione != null) {
             comboFunzioni.setValue(funzione.getId());

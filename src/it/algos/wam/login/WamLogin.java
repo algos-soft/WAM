@@ -7,7 +7,9 @@ import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.ui.WamLoginComponent;
 import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
 
 /**
@@ -77,4 +79,6 @@ public class WamLogin extends Login {
         super.logout();
         CompanySessionLib.setCompany(null);
     }
+
+
 }

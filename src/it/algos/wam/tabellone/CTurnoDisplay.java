@@ -210,6 +210,7 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
             } else {
                 ci = new CIscrizione("", icon, null, null);
             }
+
             // foreground dell'iscrizione
             if (bgStyle != null) {
                 ci.addStyleName(fgStyle);

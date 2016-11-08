@@ -213,7 +213,7 @@ public class FunzioneForm extends WanForm {
         bNuova.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                EditorFunz editor = new EditorFunz(form, null, false);
+                EditorFunz editor = new EditorFunz(form, getFunzione(), false);
                 placeholderFunz.addComponent(editor);
                 fEditors.add(editor);
             }// end of inner method
