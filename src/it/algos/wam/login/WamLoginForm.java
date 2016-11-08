@@ -8,8 +8,11 @@ import com.vaadin.ui.Component;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.ui.WamUI;
+import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.ERelatedComboField;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.DefaultLoginForm;
+import it.algos.webbase.web.login.Login;
 import it.algos.webbase.web.login.UserIF;
 
 /**
@@ -19,6 +22,7 @@ import it.algos.webbase.web.login.UserIF;
 public class WamLoginForm extends DefaultLoginForm {
 
     private ERelatedComboField userCombo;
+    private UserIF user;
 
     @Override
     public Component createUsernameComponent() {
@@ -57,10 +61,15 @@ public class WamLoginForm extends DefaultLoginForm {
      */
     public UserIF getSelectedUser() {
         UserIF user = null;
-        Object obj = userCombo.getSelectedBean();
-        if (obj != null) {
-            if (obj instanceof UserIF) {
-                user = (UserIF) obj;
+
+        if(this.user!=null){
+            user=this.user;
+        }else{
+            Object obj = userCombo.getSelectedBean();
+            if (obj != null) {
+                if (obj instanceof UserIF) {
+                    user = (UserIF) obj;
+                }
             }
         }
         return user;
@@ -72,13 +81,15 @@ public class WamLoginForm extends DefaultLoginForm {
      */
     @Override
     protected void onConfirm() {
-        UserIF user = getSelectedUser();
         String password = getPassField().getValue();
-        if (user == null && password.equals(WamUI.BACKDOOR)) {
-            utenteLoggato();
-        } else {
+        if(password.equals(WamUI.BACKDOOR)){
+            user = new Utente("developer", password);
+            LibSession.setDeveloper(true);
             super.onConfirm();
-        }// end of if/else cycle
+        }else{
+            LibSession.setDeveloper(false);
+            super.onConfirm();
+        }
     }// end of method
 
 }// end of class
