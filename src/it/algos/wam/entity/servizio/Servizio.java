@@ -1097,7 +1097,10 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         }// end of if cycle
         if (valido) {
             this.checkOrario();
-        }// end of if cyreturn (Servizio) super.save(manager);
+        }// end of if cy
+
+        if (valido) {
+            return (Servizio) super.save(manager);
         } else {
             return null;
         }// end of if/else cycle
