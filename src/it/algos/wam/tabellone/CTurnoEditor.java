@@ -47,7 +47,7 @@ import org.apache.commons.beanutils.BeanUtils;
  * In modalità iscrizione singola, un volontario può iscrivere solo se stesso
  * e l'iscrizione viene fatta solo premendo un bottone.
  * In modalità multi-iscrizione, un volontario può iscrivere anche gli altri e
- * l'iscrizione viene fatta selezionando i nomi dai dei popup.
+ * l'iscrizione viene fatta selezionando i nomi tramite dei popup.
  * <p>
  * Al momento, il volontario usa la modalità singola e l'admin la modalità multipla.
  * In futuro si potrebbe abilitare la modalità multipla anche per alcuni volontari non admin.
@@ -340,6 +340,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                     Log.info(LogType.iscrizione.getTag(), desc);
 
                 } else {
+                    iPrecedente.setNota(iNuova.getNota());
                     turno.add(iPrecedente);
                 }
 

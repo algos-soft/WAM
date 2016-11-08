@@ -20,35 +20,47 @@ public class CIscrizione extends HorizontalLayout {
      * @param nome il nome del volontario
      * @param leftIcon l'icona di sinistra
      * @param rightIcon l'icona di destra
-     *
-     * */
-    public CIscrizione(String nome, FontAwesome leftIcon, FontAwesome rightIcon) {
+     * @param rightIconTooltip il tooltip da visualizzare su hover dell'icona di destra
+     */
+    public CIscrizione(String nome, FontAwesome leftIcon, FontAwesome rightIcon, String rightIconTooltip) {
         super();
+
+        setWidth("100%");
 
         // impostazione del layout
         setHeight(GridTabellone.H_ISCRIZIONI);
         addStyleName("ciscrizione");
 
         // label per l'icona della funzione
-        Label iconLabel = new Label();
-        iconLabel.setContentMode(ContentMode.HTML);
-        iconLabel.setWidth("1em");
+        Label leftIconLabel = new Label();
+        leftIconLabel.setContentMode(ContentMode.HTML);
+        leftIconLabel.setWidth("1em");
         if (leftIcon != null) {
-            iconLabel.setValue(leftIcon.getHtml());
+            leftIconLabel.setValue(leftIcon.getHtml());
         }
 
         // label per il nome del volontario
         Label nameLabel = new Label();
         nameLabel.setContentMode(ContentMode.HTML);
         String text=nome;
-        if(rightIcon!=null){
-            text+=" "+rightIcon.getHtml();
-        }
         nameLabel.setValue(text);
 
+        // label per l'icona a destra
+        Label rightIconLabel = new Label();
+        if (rightIcon != null) {
+            rightIconLabel.setContentMode(ContentMode.HTML);
+            rightIconLabel.setWidth("1em");
+            rightIconLabel.setValue(rightIcon.getHtml());
+            rightIconLabel.setDescription(rightIconTooltip);
+        }
+
+
         // composizione grafica
-        addComponent(iconLabel);
+        addComponent(leftIconLabel);
         addComponent(nameLabel);
+        addComponent(rightIconLabel);
+
+        setExpandRatio(nameLabel, 1.0f);
 
     }
 
