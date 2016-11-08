@@ -339,7 +339,7 @@ public class Migration {
         if (listaServiziOld != null && listaServiziOld.size() > 0) {
             for (ServizioAmb servizioOld : listaServiziOld) {
                 creaSingoloServizio(servizioOld, companyNew);
-                int a=87;
+                int a = 87;
             }// end of for cycle
         }// end of if cycle
     }// end of method
@@ -656,6 +656,7 @@ public class Migration {
         VolontarioAmb volontarioOld;
         Volontario volontarioNew;
         ServizioFunzione serFunz = null;
+        boolean esisteProblema;
 
         funzioneOld = turnoOld.getFunzione1();
         if (funzioneOld != null) {
@@ -665,12 +666,14 @@ public class Migration {
         }// end of if cycle
 
         volontarioOld = turnoOld.getMilite_funzione1();
+        esisteProblema = turnoOld.isProblemi_funzione1();
 
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
 //            serFunz = new ServizioFunzione(company, serv, funzioneNew);
-            serFunz = ServizioFunzione.findByServFunz(company,serv,funzioneNew);
+            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew);
             iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
+            iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle
 
         return iscrizione;
@@ -685,6 +688,7 @@ public class Migration {
         VolontarioAmb volontarioOld;
         Volontario volontarioNew;
         ServizioFunzione serFunz = null;
+        boolean esisteProblema;
 
         funzioneOld = turnoOld.getFunzione2();
         if (funzioneOld != null) {
@@ -694,11 +698,13 @@ public class Migration {
         }// end of if cycle
 
         volontarioOld = turnoOld.getMilite_funzione2();
+        esisteProblema = turnoOld.isProblemi_funzione2();
 
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
-            serFunz = ServizioFunzione.findByServFunz(company,serv,funzioneNew);
+            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew);
             iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
+            iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle
 
         return iscrizione;
@@ -713,6 +719,7 @@ public class Migration {
         VolontarioAmb volontarioOld;
         Volontario volontarioNew;
         ServizioFunzione serFunz = null;
+        boolean esisteProblema;
 
         funzioneOld = turnoOld.getFunzione3();
         if (funzioneOld != null) {
@@ -722,11 +729,13 @@ public class Migration {
         }// end of if cycle
 
         volontarioOld = turnoOld.getMilite_funzione3();
+        esisteProblema = turnoOld.isProblemi_funzione3();
 
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
-            serFunz = ServizioFunzione.findByServFunz(company,serv,funzioneNew);
+            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew);
             iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
+            iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle
 
         return iscrizione;
@@ -741,6 +750,7 @@ public class Migration {
         VolontarioAmb volontarioOld;
         Volontario volontarioNew;
         ServizioFunzione serFunz = null;
+        boolean esisteProblema;
 
         funzioneOld = turnoOld.getFunzione4();
         if (funzioneOld != null) {
@@ -750,11 +760,13 @@ public class Migration {
         }// end of if cycle
 
         volontarioOld = turnoOld.getMilite_funzione4();
+        esisteProblema = turnoOld.isProblemi_funzione4();
 
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
-            serFunz = ServizioFunzione.findByServFunz(company,serv,funzioneNew);
+            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew);
             iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
+            iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle
 
         return iscrizione;
