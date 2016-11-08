@@ -6,6 +6,7 @@ import com.vaadin.server.SessionInitEvent;
 import it.algos.wam.bootstrap.TestService;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.web.servlet.AlgosServlet;
+import it.algos.webbase.web.toolbar.FormToolbar;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,10 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"/wam/*", "/VAADIN/*"}, asyncSupported = true, displayName = "Wam")
+@WebServlet(urlPatterns = {"/*", "/VAADIN/*"}, asyncSupported = true, displayName = "Wam")
 @VaadinServletConfiguration(productionMode = false, ui = WamUI.class)
 public class WamServlet extends AlgosServlet {
-
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.service(request, response);

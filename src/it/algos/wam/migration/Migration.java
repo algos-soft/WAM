@@ -55,29 +55,27 @@ public class Migration {
      * Costruttore
      */
     public Migration() {
-        long inizio = System.currentTimeMillis();
+        long inizio ;
         creaManagers();
 
-        //todo
         CroceAmb crfOld = CroceAmb.findBySigla("crf", managerOld);
         if (crfOld != null) {
             inizio = System.currentTimeMillis();
             inizia(crfOld, crfOld.getSigla().toLowerCase());
             Log.debug("migration", "Croce " + crfOld.getSigla() + " replicata in " + LibTime.difText(inizio));
         }// end of if cycle
-        //todo
 
 
-//        List<CroceAmb> listaVecchieCrociEsistenti = CroceAmb.findAll(managerOld);
-//        List<CroceAmb> listaVecchieCrociDaImportare = selezionaCrodiDaImportare(listaVecchieCrociEsistenti);
-//
-//        if (listaVecchieCrociDaImportare != null) {
-//            for (CroceAmb company : listaVecchieCrociDaImportare) {
-//                inizio = System.currentTimeMillis();
-//                inizia(company, company.getSigla().toLowerCase());
-//                Log.debug("migration", "Croce " + company.getSigla() + " replicata in " + LibTime.difText(inizio));
-//            }// end of for cycle
-//        }// end of if cycle
+        List<CroceAmb> listaVecchieCrociEsistenti = CroceAmb.findAll(managerOld);
+        List<CroceAmb> listaVecchieCrociDaImportare = selezionaCrodiDaImportare(listaVecchieCrociEsistenti);
+
+        if (listaVecchieCrociDaImportare != null) {
+            for (CroceAmb company : listaVecchieCrociDaImportare) {
+                inizio = System.currentTimeMillis();
+                inizia(company, company.getSigla().toLowerCase());
+                Log.debug("migration", "Croce " + company.getSigla() + " replicata in " + LibTime.difText(inizio));
+            }// end of for cycle
+        }// end of if cycle
 
     }// end of constructor
 

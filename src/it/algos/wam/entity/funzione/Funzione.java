@@ -834,13 +834,18 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
         return (Funzione) this.save(manager);
     }// end of method
 
+
     public boolean delete() {
         funzioniDipendenti = null;
 //        spostaInBasso();
         return super.delete();
-    }// end of static method
+    }// end of method
 
-//    /**
+       @PreRemove
+       public void delete2() {
+           int a=87;
+       }// end of  method
+
 //     * Sposta in basso.
 //     * Cambia il valore del parametro 'ordine'', in modo che venga cancellato l'ultimo record
 //     */
@@ -850,6 +855,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 //        List<Funzione> lista = (List<Funzione>) CompanyQuery.getList(Funzione.class,sort,filtro);
 //        int a=87;
 //    }// end of static method
+
 
     //------------------------------------------------------------------------------------------------------------------------
     // Utilities
