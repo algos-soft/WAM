@@ -42,7 +42,9 @@ public class CIscrizione extends HorizontalLayout {
         // label per il nome del volontario
         Label nameLabel = new Label();
         nameLabel.setContentMode(ContentMode.HTML);
+        nameLabel.setWidthUndefined();
         String text=nome;
+//        text="Nel mezzo del cammin di nostra vita";
         nameLabel.setValue(text);
 
         // label per l'icona a destra

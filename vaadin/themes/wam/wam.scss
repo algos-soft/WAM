@@ -230,16 +230,18 @@
     padding-left: 0.2em;
     padding-right: 0.2em;
     text-align: left;
-    font-weight: bold;
 
     // label nel componente iscrizione
     .v-label {
+      font-weight: bold;
       font-size: 0.9em;
     }
 
     // icona nel componente iscrizione
     .v-icon {
+      font-weight: normal;
       font-size: 0.7em;
+      color: red;
     }
   }
 

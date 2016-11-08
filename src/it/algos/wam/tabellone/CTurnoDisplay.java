@@ -180,7 +180,6 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime inizioTurno = turno.getStartTime();
                 long oreMancanti = ChronoUnit.HOURS.between(now,inizioTurno);
-//                long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
                 if (oreMancanti < CompanyPrefs.turnoWarningOrePrima.getInt()) {
                     String[] styles = coloraTurnoUrgenza(turno);
                     bgStyle = styles[0];
