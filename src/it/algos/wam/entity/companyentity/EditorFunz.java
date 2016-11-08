@@ -94,11 +94,9 @@ public class EditorFunz extends HorizontalLayout {
         comboFunzioni.setWidth("25em");
         comboFunzioni.setDescription("Funzione dipendente che viene abilitata automaticamente per il volontario");
 
-        int a = comboFunzioni.size();
+        // escludi la funzione corrente
         Container.Filter filter = new Compare.Equal(Funzione_.id.getName(), funzione.getId());
         comboFunzioni.getFilterableContainer().addContainerFilter(new Not(filter));
-        a = comboFunzioni.size();
-
 
         if (funzione != null) {
             comboFunzioni.setValue(funzione.getId());
