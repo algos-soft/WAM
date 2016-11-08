@@ -66,16 +66,16 @@ public class Migration {
         }// end of if cycle
 
 
-        List<CroceAmb> listaVecchieCrociEsistenti = CroceAmb.findAll(managerOld);
-        List<CroceAmb> listaVecchieCrociDaImportare = selezionaCrodiDaImportare(listaVecchieCrociEsistenti);
-
-        if (listaVecchieCrociDaImportare != null) {
-            for (CroceAmb company : listaVecchieCrociDaImportare) {
-                inizio = System.currentTimeMillis();
-                inizia(company, company.getSigla().toLowerCase());
-                Log.debug("migration", "Croce " + company.getSigla() + " replicata in " + LibTime.difText(inizio));
-            }// end of for cycle
-        }// end of if cycle
+//        List<CroceAmb> listaVecchieCrociEsistenti = CroceAmb.findAll(managerOld);
+//        List<CroceAmb> listaVecchieCrociDaImportare = selezionaCrodiDaImportare(listaVecchieCrociEsistenti);
+//
+//        if (listaVecchieCrociDaImportare != null) {
+//            for (CroceAmb company : listaVecchieCrociDaImportare) {
+//                inizio = System.currentTimeMillis();
+//                inizia(company, company.getSigla().toLowerCase());
+//                Log.debug("migration", "Croce " + company.getSigla() + " replicata in " + LibTime.difText(inizio));
+//            }// end of for cycle
+//        }// end of if cycle
 
     }// end of constructor
 

@@ -36,16 +36,6 @@ public abstract class BootService {
         initCompany(company, true, true);
     }// end of static method
 
-    /**
-     * Creazione iniziale di una croce test
-     * Visibile a tutti
-     * <p>
-     * La crea SOLO se non esiste già
-     */
-    public static void creaCompanyTest() {
-//        WamCompany company = creaCroceTest();
-//        initCompany(company, true, true);
-    }// end of static method
 
     /**
      * Inizializza una croce appena creata, con alcuni dati di esempio
@@ -91,9 +81,9 @@ public abstract class BootService {
             listaTurni = creaTurniVuoti(company, manager, listaServizi);
         }// end of if cycle
 
-//        if (creaIscrizioni) {
-//            riempieTurni(company, manager, listaTurni, listaVolontari);
-//        }// end of if cycle
+        if (creaIscrizioni) {
+            riempieTurni(company, manager, listaTurni, listaVolontari);
+        }// end of if cycle
 
         manager.getTransaction().commit();
         manager.close();
@@ -467,7 +457,8 @@ public abstract class BootService {
                 l.add(volub(c, m, funz, "Arturo", "Casaroli", "327 9931245", "arturo.casaroli@wamdemo.it", "cas", d3, d4, d1, 0, 1, 2, 3, 4, 5, 6));
                 l.add(volu(c, m, funz, "Flavia", "Robusti", "328 131476", "flavia.robusti@wamdemo.it", "rob", 2, 5));
                 l.add(volub(c, m, funz, "Marco", "Terzani", "339 397235", "marco.terzani@wamdemo.it", "ter", d1, d4, d5, 1, 2, 4, 5, 6));
-                l.add(volu(c, m, funz, "Ospite", "Ospite", "", "", "ospite"));
+                l.add(volu(c, m, funz, "Volontario", "Volontario", "", "", "volontario"));
+                l.add(vola(c, m, funz, "Admin", "Admin", "", "", "admin"));
 
 //                lista.add(Arrays.asList("Mario", "Abbati", "mario.abbati@wamdemo.it", "abb", false, funz.get(2)));
 //                lista.add(Arrays.asList("Diego", "Bertini", "diego.bertini@wamdemo.it", "ber", true, funz.get(3)));

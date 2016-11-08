@@ -5,14 +5,17 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.Volontario_;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.utente.Utente;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.DefaultLoginForm;
-import it.algos.webbase.web.login.Login;
 import it.algos.webbase.web.login.UserIF;
 
 /**
@@ -23,6 +26,17 @@ public class WamLoginForm extends DefaultLoginForm {
 
     private ERelatedComboField userCombo;
     private UserIF user;
+
+    @Override
+    protected void init() {
+        super.init();
+        WamCompany company = (WamCompany) CompanySessionLib.getCompany();
+        if (company != null) {
+            if (company.getCompanyCode().equals(WAMApp.DEMO_COMPANY_CODE)) {
+                addComponent(new Label("Password per Volontario = volontario"));
+            }// end of if cycle
+        }// end of if cycle
+    }
 
     @Override
     public Component createUsernameComponent() {
@@ -62,9 +76,9 @@ public class WamLoginForm extends DefaultLoginForm {
     public UserIF getSelectedUser() {
         UserIF user = null;
 
-        if(this.user!=null){
-            user=this.user;
-        }else{
+        if (this.user != null) {
+            user = this.user;
+        } else {
             Object obj = userCombo.getSelectedBean();
             if (obj != null) {
                 if (obj instanceof UserIF) {
@@ -82,11 +96,11 @@ public class WamLoginForm extends DefaultLoginForm {
     @Override
     protected void onConfirm() {
         String password = getPassField().getValue();
-        if(password.equals(WamUI.BACKDOOR)){
+        if (password.equals(WamUI.BACKDOOR)) {
             user = new Utente("developer", password);
             LibSession.setDeveloper(true);
             super.onConfirm();
-        }else{
+        } else {
             LibSession.setDeveloper(false);
             super.onConfirm();
         }
