@@ -204,11 +204,11 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
                 String nome = iscr.getVolontario().toString();
                 FontAwesome fa = null;
                 if(iscr.hasNota()){
-                    fa=FontAwesome.ASTERISK;
+                    fa=FontAwesome.EXCLAMATION_TRIANGLE;
                 }
-                ci = new CIscrizione(nome, icon, fa);
+                ci = new CIscrizione(nome, icon, fa, iscr.getNota());
             } else {
-                ci = new CIscrizione("", icon, null);
+                ci = new CIscrizione("", icon, null, null);
             }
             // foreground dell'iscrizione
             if (bgStyle != null) {
