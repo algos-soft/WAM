@@ -2,19 +2,18 @@ package it.algos.wam.entity.companyentity;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.*;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.field.IntegerField;
 import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.field.TextField;
-import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
@@ -69,9 +68,17 @@ public abstract class WanForm extends ModuleForm implements FunzioneListener {
     @Override
     protected Component createComponent() {
         VerticalLayout layoutAll = new VerticalLayout();
-        FormLayout layoutStandard = new AFormLayout();
         layoutAll.setMargin(true);
         layoutAll.setSpacing(true);
+        AbstractOrderedLayout layoutStandard;
+
+        if (Pref.getBool(WAMApp.USA_FORM_LAYOUT, null, false)) {
+            layoutStandard = new FormLayout();
+        } else {
+            layoutStandard = new VerticalLayout();
+            layoutStandard.setSpacing(true);
+            layoutStandard.setMargin(new MarginInfo(true, false, true, false));
+        }// end of if/else cycle
 
         //--crea prima tutti i fields
         //--alcuni hanno delle particolarità aggiuntive
@@ -130,12 +137,12 @@ public abstract class WanForm extends ModuleForm implements FunzioneListener {
      *
      * @return the component
      */
-    protected Component creaCompStandard(FormLayout layout) {
+    protected Component creaCompStandard(AbstractOrderedLayout layout) {
 
         layout.addComponent(fSigla);
         layout.addComponent(fDescrizione);
 
-        if (!isNewRecord() && LibSession.isAdmin()) {
+        if (!isNewRecord() && LibSession.isAdmin() && Pref.getBool(WAMApp.DISPLAY_FIELD_ORDINE, null, true)) {
             layout.addComponent(fOrdine);
         }// end of if cycle
 

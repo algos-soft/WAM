@@ -1,5 +1,6 @@
 package it.algos.wam;
 
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.AlgosApp;
 
 /**
@@ -18,6 +19,12 @@ public class WAMApp extends AlgosApp {
     public static final String DEMO_COMPANY_CODE = "demo";
     public static final String TEST_COMPANY_CODE = "test";
 
+    //--chiavi per preferenze
+    public final static String DISPLAY_FOOTER_INFO = "displayFooterInfo";
+    public final static String DISPLAY_TOOLTIPS = "displayTooltips";
+    public final static String DISPLAY_FIELD_ORDINE = "displayFieldOrdine";
+    public final static String USA_FORM_LAYOUT = "usaFormLayout";
+
     /**
      * Name of the local folder for images.<br>
      * static initialisation block
@@ -27,11 +34,12 @@ public class WAMApp extends AlgosApp {
     /**
      * Static initialisation block
      *
-     * Sovrascrive una variabile statica della classe generale,
+     * Sovrascrive alcune variabili statiche della classe generale,
      * per modificarne il comportamento solo in questa applicazione
      */
     static {
         AlgosApp.DISPLAY_NEW_RECORD_ONLY = false;
+        AlgosApp.DISPLAY_TOOLTIPS = Pref.getBool(DISPLAY_TOOLTIPS, null, true);
     }// end of static method
 
 }// end of abstract static class

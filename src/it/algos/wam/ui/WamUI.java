@@ -33,13 +33,12 @@ import it.algos.wam.settings.MgrConfigScreen;
 import it.algos.wam.tabellone.Tabellone;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.log.LogMod;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.domain.pref.PrefMod;
-import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.domain.utente.UtenteModulo;
 import it.algos.webbase.domain.vers.VersMod;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
-import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
 import it.algos.webbase.web.menu.AMenuBar;
@@ -416,7 +415,10 @@ public class WamUI extends UI {
         }// end of for cycle
 
         //--footer
-        navComp.setFooter(creaFooter());
+        if (Pref.getBool(WAMApp.DISPLAY_FOOTER_INFO, null, true)) {
+            navComp.setFooter(creaFooter());
+        }// end of if cycle
+
         return navComp;
     }// end of method
 
@@ -620,7 +622,10 @@ public class WamUI extends UI {
         for (CompanyListener listener : companyListeners) {
             listener.companyChanged(company);
         }// end of for cycle
-        navComp.setFooter(creaFooter());
+
+        if (Pref.getBool(WAMApp.DISPLAY_FOOTER_INFO, null, true)) {
+            navComp.setFooter(creaFooter());
+        }// end of if cycle
     }// end of method
 
     @Deprecated

@@ -9,11 +9,13 @@ import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.login.MenuBarWithLogin;
 import it.algos.wam.turnigenerator.CTurniGenerator;
 import it.algos.wam.ui.WamUI;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.field.DateField;
@@ -199,7 +201,7 @@ public class Tabellone extends VerticalLayout implements View {
                     InfoNewTurnoWrap wrapper = (InfoNewTurnoWrap) cellObject;
                     LocalDate dInizio = wrapper.getData();
                     Servizio serv = wrapper.getServizio();
-                    turno = new Turno(serv,DateConvertUtils.asUtilDate(dInizio));
+                    turno = new Turno(serv, DateConvertUtils.asUtilDate(dInizio));
 //                    turno.setInizio(DateConvertUtils.asUtilDate(dInizio));
 //                    turno.setServizio(serv);
                     editCellTurno(turno, col, row);
@@ -348,7 +350,10 @@ public class Tabellone extends VerticalLayout implements View {
 
             addComponent(menubar);
             addComponent(gridPlaceholder);
-            addComponent(creaFooter());
+            if (Pref.getBool(WAMApp.DISPLAY_FOOTER_INFO, null, true)) {
+                addComponent(creaFooter());
+            }// end of if cycle
+
         }
 
 

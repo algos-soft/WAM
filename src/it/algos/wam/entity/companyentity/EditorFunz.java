@@ -1,25 +1,17 @@
 package it.algos.wam.entity.companyentity;
 
-import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Container;
-import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.data.util.filter.Not;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.lib.LibWam;
-import it.algos.webbase.multiazienda.CompanyEntity_;
-import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.ERelatedComboField;
-import it.algos.webbase.web.entity.BaseEntity;
-
-import java.util.List;
 
 /**
  * Created by gac on 19 ott 2016.
@@ -93,9 +85,10 @@ public class EditorFunz extends HorizontalLayout {
         comboFunzioni.sort(Funzione_.sigla);
         comboFunzioni.setWidth("25em");
         comboFunzioni.setDescription("Funzione dipendente che viene abilitata automaticamente per il volontario");
+        comboFunzioni.setNullSelectionAllowed(false);
 
         // escludi la funzione corrente
-        Container.Filter filter = new Compare.Equal(Funzione_.id.getName(), funzione.getId());
+        Container.Filter filter = new Compare.Equal(Funzione_.id.getName(), formChiamante.getFunzione().getId());
         comboFunzioni.getFilterableContainer().addContainerFilter(new Not(filter));
 
         if (funzione != null) {

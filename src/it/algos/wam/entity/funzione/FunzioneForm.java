@@ -4,8 +4,11 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.EditorFunz;
 import it.algos.wam.entity.companyentity.WanForm;
+import it.algos.webbase.domain.pref.Pref;
+import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
@@ -59,12 +62,32 @@ public class FunzioneForm extends WanForm {
      * @return the component
      */
     @Override
-    protected Component creaCompStandard(FormLayout layout) {
+    protected Component creaCompStandard(AbstractOrderedLayout layout) {
 
-        layout.addComponent(bIcona);
-        layout.addComponent(fCode);
+        if (Pref.getBool(WAMApp.DISPLAY_FIELD_ORDINE, null, true)) {
+            if (layout instanceof FormLayout) {
+                layout.addComponent(bIcona);
+                layout.addComponent(fCode);
+                layout.addComponent(fSigla);
+                layout.addComponent(fDescrizione);
 
-        return super.creaCompStandard(layout);
+                if (!isNewRecord() && LibSession.isAdmin()) {
+                    layout.addComponent(fOrdine);
+                }// end of if cycle
+            } else {
+                AHorizontalLayout riga = new AHorizontalLayout(fCode, bIcona, fSigla,fOrdine);
+                riga.setComponentAlignment(bIcona, Alignment.BOTTOM_CENTER);
+                layout.addComponent(new AHorizontalLayout(riga));
+                layout.addComponent(new AHorizontalLayout(fDescrizione));
+            }// end of if/else cycle
+        } else {
+            AHorizontalLayout riga = new AHorizontalLayout(fCode, bIcona, fSigla);
+            riga.setComponentAlignment(bIcona, Alignment.BOTTOM_CENTER);
+            layout.addComponent(new AHorizontalLayout(riga));
+            layout.addComponent(new AHorizontalLayout(fDescrizione));
+        }// end of if/else cycle
+
+        return layout;
     }// end of method
 
 
@@ -213,7 +236,7 @@ public class FunzioneForm extends WanForm {
         bNuova.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                EditorFunz editor = new EditorFunz(form, getFunzione(), false);
+                EditorFunz editor = new EditorFunz(form, null, false);
                 placeholderFunz.addComponent(editor);
                 fEditors.add(editor);
             }// end of inner method
@@ -255,7 +278,7 @@ public class FunzioneForm extends WanForm {
     /**
      * Restituisce la funzione di questo Form
      */
-    private Funzione getFunzione() {
+    public Funzione getFunzione() {
         return (Funzione) super.getEntity();
     }// end of method
 
@@ -274,7 +297,6 @@ public class FunzioneForm extends WanForm {
      */
     @Override
     protected String checkRegistrabile() {
-        String err = "";
         Funzione funzione = getFunzione();
         ArrayList<String> lista = new ArrayList<>();
 
@@ -282,31 +304,43 @@ public class FunzioneForm extends WanForm {
         if (isNewRecord()) {
             String codeCompanyUnico = fCodeCompanyUnico.getValue();
             if (Funzione.isEntityByCodeCompanyUnico(codeCompanyUnico)) {
-                err += "Esiste già una funzione con questo code";
+                return "Esiste già una funzione con questo code";
             }// end of if cycle
         }// end of if cycle
 
         //--le funzioni dipendenti non possono contenere la funzione principale
         if (!isNewRecord()) {
             for (Funzione funz : funzione.getFunzioniDipendenti()) {
-                if (funzione.getCode().equals(funz.getCode())) {
-                    err += "Una funzione dipendente è uguale a se stessa";
-                    break;
+                if (funz != null) {
+                    if (funzione.getCode().equals(funz.getCode())) {
+                        return "Una funzione dipendente è uguale a se stessa";
+                    }// end of if cycle
                 }// end of if cycle
             }// end of for cycle
         }// end of if cycle
 
-        //--due (o più) funzioni dipendenti sono uguali
-        for (Funzione funz : funzione.getFunzioniDipendenti()) {
-            if (!lista.contains(funz.getCodeCompanyUnico())) {
-                lista.add(funz.getCodeCompanyUnico());
+        //--le funzioni dipendenti non possono essere nulle
+        if (!isNewRecord()) {
+            for (Funzione funz : funzione.getFunzioniDipendenti()) {
+                if (funz == null) {
+                    return "Una funzione dipendente è nulla";
+                }// end of for cycle
             }// end of if cycle
-        }// end of for cycle
-        if (lista.size() < funzione.getFunzioniDipendenti().size()) {
-            err += "Due funzioni dipendenti sono uguali";
+
+            //--due (o più) funzioni dipendenti sono uguali
+            for (Funzione funz : funzione.getFunzioniDipendenti()) {
+                if (funz != null) {
+                    if (!lista.contains(funz.getCodeCompanyUnico())) {
+                        lista.add(funz.getCodeCompanyUnico());
+                    }// end of if cycle
+                }// end of if cycle
+            }// end of for cycle
+            if (lista.size() < funzione.getFunzioniDipendenti().size()) {
+                return "Due funzioni dipendenti sono uguali";
+            }// end of if cycle
         }// end of if cycle
 
-        return err;
+        return "";
     }// end of method
 
     @Override

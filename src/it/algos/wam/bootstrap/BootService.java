@@ -290,7 +290,7 @@ public abstract class BootService {
                 l.add(servo(c, m, funz, "amb-pom", "Ambulanza pomeriggio", 14, 20, verdino, 2, 3, 4, 5, 8));
                 l.add(servo(c, m, funz, "amb-notte", "Ambulanza notte", 20, 8, verdino, 2, 3, 4, 5));
 
-                l.add(servnt(c, m, funz, "dim", "Dimissioni ordinarie", rosa, 2, 6, 7, 8, 9));
+                l.add(servnot(c, m, funz, "dim", "Dimissioni ordinarie", rosa, 2, 6, 7, 8, 9));
                 l.add(servno(c, m, funz, "ext", "Extra", rosa, 2, 6, 7, 8, 9));
                 l.add(servno(c, m, funz, "avis", "Avis", rosa, 1, 10, 9));
 
@@ -596,11 +596,12 @@ public abstract class BootService {
     private static ArrayList<Turno> creaTurniVuoti(WamCompany company, EntityManager manager, ArrayList<Servizio> servizi) {
         ArrayList<Turno> listaTurni = new ArrayList<>();
         Date oggi = LibDate.today();
+        Date inizio = LibDate.add(oggi, -7);
         Turno turno;
 
-        for (int k = 0; k < 30; k++) {
+        for (int k = 0; k < 21; k++) {
             for (Servizio servizio : servizi) {
-                turno = Turno.crea(company, servizio, LibDate.add(oggi, k), null, manager);
+                turno = Turno.crea(company, servizio, LibDate.add(inizio, k), null, manager);
                 listaTurni.add(turno);
             }// end of for cycle
         }// end of for cycle

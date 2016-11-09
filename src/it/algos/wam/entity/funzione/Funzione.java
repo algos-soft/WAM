@@ -59,7 +59,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotEmpty
     @Column(length = 20)
     @Index
-    @AIField(type = AFType.text, required = true, width = "8em", caption = "Code", prompt = "codice interno", help = "Codice interno unico, non visibile nel tabellone.", error = "Manca il codice interno")
+    @AIField(type = AFType.text, required = true, width = "9em", caption = "Code", prompt = "codice interno", help = "Codice interno unico, non visibile nel tabellone.", error = "Manca il codice interno")
     private String code = "";
     //--sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
     //--calcolata -> codeCompanyUnico = company.companyCode + funzione.code (20+20=40);
@@ -76,12 +76,12 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @NotEmpty
     @Column(length = 20)
     @Index
-    @AIField(type = AFType.text, required = true, width = "8em", caption = "Sigla", prompt = "sigla visibile", help = "Sigla visibile nel tabellone.", error = "Manca la sigla visibile")
+    @AIField(type = AFType.text, required = true, width = "9em", caption = "Sigla", prompt = "sigla visibile", help = "Sigla visibile nel tabellone.", error = "Manca la sigla visibile")
     private String sigla = "";
     //--descrizione (obbligatoria, non unica)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
-    @AIField(type = AFType.text, required = true, width = "24em", caption = "Descrizione", prompt = "descrizione completa", help = "Descrizione completa della funzione.", error = "Manca la descrizione")
+    @AIField(type = AFType.text, required = true, width = "27em", caption = "Descrizione", prompt = "descrizione completa", help = "Descrizione completa della funzione.", error = "Manca la descrizione")
     private String descrizione = "";
     //--ordine di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
     @NotNull

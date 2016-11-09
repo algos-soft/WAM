@@ -6,12 +6,13 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
-import it.algos.wam.entity.companyentity.EditorFunz;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.EditorServ;
 import it.algos.wam.entity.companyentity.FunzioneListener;
 import it.algos.wam.entity.companyentity.WanForm;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.field.CheckBoxField;
 import it.algos.webbase.web.field.TextField;
@@ -78,7 +79,7 @@ public class ServizioForm extends WanForm implements FunzioneListener {
      * @return the component
      */
     @Override
-    protected Component creaCompStandard(FormLayout layout) {
+    protected Component creaCompStandard(AbstractOrderedLayout layout) {
 
         layout.addComponent(placeholderPicker);
         layout.addComponent(new AHorizontalLayout(fDescrizione));
@@ -117,10 +118,10 @@ public class ServizioForm extends WanForm implements FunzioneListener {
         cPicker.setWidth("8em");
         cPicker.setColor(color);
 
-        if (isNewRecord()) {
-            placeholderPicker = new AHorizontalLayout(fSigla, cPicker);
-        } else {
+        if (!isNewRecord() && Pref.getBool(WAMApp.DISPLAY_FIELD_ORDINE, null, true)) {
             placeholderPicker = new AHorizontalLayout(fSigla, cPicker, fOrdine);
+        } else {
+            placeholderPicker = new AHorizontalLayout(fSigla, cPicker);
         }// end of if/else cycle
 
         placeholderPicker.setComponentAlignment(cPicker, Alignment.BOTTOM_CENTER);
@@ -250,7 +251,6 @@ public class ServizioForm extends WanForm implements FunzioneListener {
     }// end of method
 
 
-
     /**
      * Controlla se questo servizio è registrabile
      *
@@ -341,7 +341,7 @@ public class ServizioForm extends WanForm implements FunzioneListener {
     private void regolaEditorServ() {
         Servizio servizio = getServizio();
         ServizioFunzione servFunz;
-        List<ServizioFunzione> servizioFunzioni= new ArrayList<>();
+        List<ServizioFunzione> servizioFunzioni = new ArrayList<>();
 
         for (EditorServ editor : sfEditors) {
             servFunz = editor.getServizioFunzione();
@@ -351,5 +351,8 @@ public class ServizioForm extends WanForm implements FunzioneListener {
         servizio.setServizioFunzioni(servizioFunzioni);
     }// end of method
 
-
+    @Override
+    public Funzione getFunzione() {
+        return null;
+    }// end of method
 }// end of class

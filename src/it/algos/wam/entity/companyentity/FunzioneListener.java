@@ -1,5 +1,6 @@
 package it.algos.wam.entity.companyentity;
 
+import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 
 /**
@@ -14,4 +15,5 @@ public interface FunzioneListener {
 
     WamCompany getCompany();
 
+    Funzione getFunzione();
 }// end of interface

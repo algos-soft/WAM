@@ -1,7 +1,7 @@
 package it.algos.wam.bootstrap;
 
 import it.algos.wam.WAMApp;
-import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.web.lib.LibPref;
 import it.algos.webbase.web.lib.LibVers;
 
 import javax.servlet.ServletContextEvent;
@@ -43,6 +43,26 @@ public class VersBootStrap implements ServletContextListener {
         if (LibVers.installa(++k)) {
             BootService.creaCompanyDemo();
             LibVers.nuova("DemoWam", "Creazione di una croce demo, visibile a tutti");
+        }// fine del blocco if
+
+        //--crea una nuova preferenza, globale per tutte le company
+        if (LibVers.installa(++k)) {
+            LibPref.newVersBool(WAMApp.DISPLAY_FOOTER_INFO, true, "Visualizza nel footer copyright ed informazioni sul programma");
+        }// fine del blocco if
+
+        //--crea una nuova preferenza, globale per tutte le company
+        if (LibVers.installa(++k)) {
+            LibPref.newVersBool(WAMApp.DISPLAY_TOOLTIPS, true, "Visualizza i toolTips di aiuto nel rollover sui campi del Form (occorre riavviare)");
+        }// fine del blocco if
+
+        //--crea una nuova preferenza, globale per tutte le company
+        if (LibVers.installa(++k)) {
+            LibPref.newVersBool(WAMApp.DISPLAY_FIELD_ORDINE, true, "Visualizza il campo ordine nel Form (solo per dev ed admin)");
+        }// fine del blocco if
+
+        //--crea una nuova preferenza, globale per tutte le company
+        if (LibVers.installa(++k)) {
+            LibPref.newVersBool(WAMApp.USA_FORM_LAYOUT, false, "Usa il layout form nei Form (campi con label a sinistra)");
         }// fine del blocco if
 
 //        //--creazione di una croce "test"

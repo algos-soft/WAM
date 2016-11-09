@@ -76,7 +76,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     //--descrizione per il tabellone (obbligatoria, non unica)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
-    @AIField(type = AFType.text, required = true, width = "24em", caption = "Descrizione", prompt = "descrizione completa", help = "Descrizione completa del servizio.", error = "Manca la descrizione")
+    @AIField(type = AFType.text, required = true, width = "26em", caption = "Descrizione", prompt = "descrizione completa", help = "Descrizione completa del servizio.", error = "Manca la descrizione")
     private String descrizione = "";
 
     //--ordine di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
