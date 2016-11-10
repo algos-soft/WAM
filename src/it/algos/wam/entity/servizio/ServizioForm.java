@@ -8,7 +8,6 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.EditorServ;
-import it.algos.wam.entity.companyentity.FunzioneListener;
 import it.algos.wam.entity.companyentity.ServFunzListener;
 import it.algos.wam.entity.companyentity.WanForm;
 import it.algos.wam.entity.funzione.Funzione;
