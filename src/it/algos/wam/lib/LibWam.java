@@ -3,6 +3,7 @@ package it.algos.wam.lib;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.lib.DateConvertUtils;
@@ -91,6 +92,28 @@ public abstract class LibWam {
         }// end of if cycle
 
         return funz;
+    }// end of static method
+
+    /**
+     * Legge il valore di un servizio-funzione selezionato in un popup di funzioni
+     * Usato sia da FunzioneForm che da ServozioForm
+     */
+    public static ServizioFunzione getServizioFunzione(Component.Event event) {
+        ServizioFunzione serFunz = null;
+        Object obj;
+        Object value;
+        RelatedComboField combo;
+
+        obj = event.getSource();
+        if (obj instanceof RelatedComboField) {
+            combo = (RelatedComboField) obj;
+            value = combo.getValue();
+            if (value instanceof Long) {
+                serFunz = ServizioFunzione.find((Long) value);
+            }// end of if cycle
+        }// end of if cycle
+
+        return serFunz;
     }// end of static method
 
 }// end of abstract static class

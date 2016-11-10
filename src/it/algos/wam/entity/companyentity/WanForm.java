@@ -313,7 +313,7 @@ public abstract class WanForm extends ModuleForm implements FunzioneListener {
     }// end of method
 
     @Override
-    public void doDeleteFunz(EditorFunz editor) {
+    public void doDeleteFunz(EditorWam editor) {
     }// end of method
 
     @Override

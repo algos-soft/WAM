@@ -351,6 +351,7 @@ public class ServizioForm extends WanForm implements FunzioneListener {
         servizio.setServizioFunzioni(servizioFunzioni);
     }// end of method
 
+
     @Override
     public Funzione getFunzione() {
         return null;

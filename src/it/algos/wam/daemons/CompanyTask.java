@@ -38,11 +38,11 @@ import java.util.logging.Logger;
  * E' un Runnable, implementare il codice da eseguire nel metodo
  * run(Company company) che viene eseguito una volta per ogni Company.
  */
-public class CompanyTasks implements Runnable {
-    private final static Logger logger = Logger.getLogger(CompanyTasks.class.getName());
+public class CompanyTask implements Runnable {
+    private final static Logger logger = Logger.getLogger(CompanyTask.class.getName());
     EntityManager manager;
 
-    public CompanyTasks() {
+    public CompanyTask() {
         manager = EM.createEntityManager();
     }
 

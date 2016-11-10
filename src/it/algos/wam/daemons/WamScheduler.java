@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 
 /**
- * Schedulatore che esegue periodicamente dei task in un apposito thread sul server.
+ * Schedulatore che esegue periodicamente singoli task in appositi thread sul server.
  * Implementa il pattern Singleton.
  * Uso:
  * Per avviare il daemon e schedulare i task, invocare il metodo start().
@@ -35,7 +35,7 @@ public class WamScheduler extends Scheduler {
 		@Override
 		public void execute(TaskExecutionContext context) throws RuntimeException {
 			logger.log(Level.INFO, "Start WAM daemon tasks");
-			Runnable checker = new CompanyTasks();
+			Runnable checker = new CompanyTask();
 			checker.run();
 			logger.log(Level.INFO, "End WAM daemon tasks");
 		}

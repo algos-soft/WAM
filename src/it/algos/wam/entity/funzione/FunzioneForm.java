@@ -6,6 +6,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.EditorFunz;
+import it.algos.wam.entity.companyentity.EditorWam;
 import it.algos.wam.entity.companyentity.WanForm;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.component.AHorizontalLayout;
@@ -236,7 +237,7 @@ public class FunzioneForm extends WanForm {
         bNuova.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                EditorFunz editor = new EditorFunz(form, null, false);
+                EditorFunz editor = new EditorFunz(form);
                 placeholderFunz.addComponent(editor);
                 fEditors.add(editor);
             }// end of inner method
@@ -265,7 +266,7 @@ public class FunzioneForm extends WanForm {
         if (!isNewRecord()) {
             List<Funzione> listaFunzioniDipenenti = getFunzione().getFunzioniDipendenti();
             for (Funzione funz : listaFunzioniDipenenti) {
-                EditorFunz editor = new EditorFunz(this, funz, false);
+                EditorFunz editor = new EditorFunz(this, funz);
                 placeholderFunz.addComponent(editor);
                 fEditors.add(editor);
             }// end of for cycle
@@ -284,7 +285,7 @@ public class FunzioneForm extends WanForm {
 
 
     @Override
-    public void doDeleteFunz(EditorFunz editor) {
+    public void doDeleteFunz(EditorWam editor) {
         placeholderFunz.removeComponent(editor);
         fEditors.remove(editor);
     }// end of method
@@ -362,5 +363,6 @@ public class FunzioneForm extends WanForm {
 
         funzioneMadre.setFunzioniDipendenti(funzioniDipendenti);
     }// end of method
+
 
 }// end of class

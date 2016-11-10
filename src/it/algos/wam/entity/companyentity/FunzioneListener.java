@@ -9,11 +9,10 @@ import it.algos.wam.entity.wamcompany.WamCompany;
  */
 public interface FunzioneListener {
 
-    void doDeleteFunz(EditorFunz editor);
+    void doDeleteFunz(EditorWam editor);
 
     void doDeleteServ(EditorServ editor);
 
     WamCompany getCompany();
-
     Funzione getFunzione();
 }// end of interface

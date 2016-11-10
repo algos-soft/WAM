@@ -21,65 +21,43 @@ import it.algos.webbase.multiazienda.ERelatedComboField;
  * - popup delle funzioni della company
  * - bottone di cancellazione
  */
-public class EditorFunz extends HorizontalLayout {
+public class EditorFunz extends EditorWam {
 
-    private Funzione funzione;
-    private Button bIcona;
-    private ERelatedComboField comboFunzioni;
-    private CheckBox checkObbligatorio;
-    private Button bElimina;
-    private boolean usaFieldObbligatorio;
-    private FunzioneListener formChiamante;
+//    private Funzione funzione;
 
 
-    public EditorFunz(FunzioneListener formChiamante, Funzione funzione, boolean usaFieldObbligatorio) {
-        this.formChiamante = formChiamante;
-        this.funzione = funzione;
-        this.usaFieldObbligatorio = usaFieldObbligatorio;
+    public EditorFunz(FunzioneListener formChiamante) {
+        this(formChiamante, (Funzione) null);
+    }// end of constructor
+
+    public EditorFunz(FunzioneListener formChiamante, Funzione funzione) {
+        super(formChiamante,funzione);
         this.init();
     }// end of constructor
 
     protected void init() {
-        setSpacing(true);
-
         //--crea prima tutti i componenti
-        creaComponenti();
+        super.init();
 
         //--assembla i vari elementi grafici
         addComponent(bIcona);
         addComponent(comboFunzioni);
-        if (usaFieldObbligatorio) {
-            addComponent(checkObbligatorio);
-        }// end of if cycle
         addComponent(bElimina);
-
-    }// end of method
-
-    protected void creaComponenti() {
-        this.creaBottoneIcona();
-        this.creaComboBox();
-        this.creaCheckbox();
-        this.creaBottoneElimina();
     }// end of method
 
     /**
      * Crea il bottone per la selezione dell'icona
      */
-    private void creaBottoneIcona() {
-        bIcona = new Button();
-        bIcona.setHtmlContentAllowed(true);
-        bIcona.addStyleName("blue");
-        bIcona.setWidth("3em");
-        bIcona.setDescription("Icona grafica rappresentativa della funzione");
-        setbIcona(funzione);
-
+    protected void creaBottoneIcona() {
+        super.creaBottoneIcona();
+        setIconButton(funzione);
     }// end of method
 
     /**
      * Crea il combo di selezione della funzione
      * Elimina la funzione madre nel comboBox delle funzioni dipendenti
      */
-    private void creaComboBox() {
+    protected void creaComboBox() {
         comboFunzioni = new ERelatedComboField(Funzione.class, formChiamante.getCompany());
 
         comboFunzioni.sort(Funzione_.sigla);
@@ -98,65 +76,15 @@ public class EditorFunz extends HorizontalLayout {
         comboFunzioni.addListener(new Listener() {
             @Override
             public void componentEvent(Event event) {
-                setbIcona(LibWam.getFunzione(event));
+                setIconButton(LibWam.getFunzione(event));
             }// end of inner method
         });// end of anonymous inner class
     }// end of method
-
-    /**
-     * Crea il checkbox per la obbligatorietà della funzione
-     * Opzionale, usato solo da ServizioForm e non da FunzioneForm
-     */
-    private void creaCheckbox() {
-        checkObbligatorio = new CheckBox("obb.");
-        checkObbligatorio.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                syncIconaColor((boolean) valueChangeEvent.getProperty().getValue());
-            }// end of inner method
-        });// end of anonymous inner class
-    }// end of method
-
-    /**
-     * Crea il bottone per eliminare la funzione
-     */
-    private void creaBottoneElimina() {
-        bElimina = new Button("", FontAwesome.TRASH_O);
-        bElimina.setDescription("Elimina la funzione dipendente");
-
-        bElimina.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent clickEvent) {
-                doDelete();
-            }// end of inner method
-        });// end of anonymous inner class
-    }// end of method
-
-
-    public void syncIconaColor(boolean obbligatoria) {
-        if (bIcona != null) {
-            if (obbligatoria) {
-                bIcona.setStyleName("rosso");
-            } else {
-                bIcona.setStyleName("verde");
-            }// end of if/else cycle
-        }// end of if cycle
-    }// end of method
-
-    /**
-     * Eliminazione effettiva di questo componente
-     * La relativa Funzione, deve essere regolata in FunzioneForm
-     * La relativa ServizioFunzione, deve essere regolata in ServizioForm
-     */
-    private void doDelete() {
-        formChiamante.doDeleteFunz(this);
-    }// end of method
-
 
     /**
      * Assegna un'icona al bottone
      */
-    private void setbIcona(Funzione funz) {
+    private void setIconButton(Funzione funz) {
         if (funz != null) {
             bIcona.setCaption(funz.getIconHtml());
         } else {
@@ -164,22 +92,14 @@ public class EditorFunz extends HorizontalLayout {
         }// end of if/else cycle
     }// end of method
 
-
     /**
-     * Ritorna la funzione correntemente selezionata nel popup
-     *
-     * @return la funzione selezionata
+     * Eliminazione effettiva di questo componente
+     * La relativa Funzione, deve essere regolata in FunzioneForm
+     * La relativa ServizioFunzione, deve essere regolata in ServizioForm
      */
-    public Funzione getFunzione() {
-        Object obj;
-        Funzione funz = null;
-
-        obj = comboFunzioni.getSelectedBean();
-        if (obj != null && obj instanceof Funzione) {
-            funz = (Funzione) obj;
-        }// end of if cycle
-
-        return funz;
+    protected void doDelete() {
+        formChiamante.doDeleteFunz(this);
     }// end of method
+
 
 }// end of class
