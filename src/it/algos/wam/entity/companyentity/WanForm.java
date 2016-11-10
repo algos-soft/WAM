@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * Created by Gac on 02 nov 2016.
  * Scheda personalizzata per le entity Funzione, Servizio, Volonario
  */
-public abstract class WanForm extends ModuleForm implements FunzioneListener {
+public abstract class WanForm extends ModuleForm {
 
     protected ArrayList<EditorFunz> fEditors;
     protected ArrayList<EditorServ> sfEditors;
@@ -312,12 +312,5 @@ public abstract class WanForm extends ModuleForm implements FunzioneListener {
         return "";
     }// end of method
 
-    @Override
-    public void doDeleteFunz(EditorWam editor) {
-    }// end of method
-
-    @Override
-    public void doDeleteServ(EditorServ editor) {
-    }// end of method
 
 }// end of class

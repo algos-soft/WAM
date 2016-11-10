@@ -9,6 +9,7 @@ import com.vaadin.ui.*;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.EditorServ;
 import it.algos.wam.entity.companyentity.FunzioneListener;
+import it.algos.wam.entity.companyentity.ServFunzListener;
 import it.algos.wam.entity.companyentity.WanForm;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -28,7 +29,7 @@ import java.util.List;
  * Created by alex on 5-04-2016.
  * Scheda personalizzata per la entity Servizio
  */
-public class ServizioForm extends WanForm implements FunzioneListener {
+public class ServizioForm extends WanForm implements ServFunzListener {
 
 
     //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
@@ -244,11 +245,6 @@ public class ServizioForm extends WanForm implements FunzioneListener {
         return Lib.getBool(fOrarioPredefinito.getValue());
     }// end of method
 
-    @Override
-    public void doDeleteServ(EditorServ editor) {
-        placeholderFunz.removeComponent(editor);
-        sfEditors.remove(editor);
-    }// end of method
 
 
     /**
@@ -356,4 +352,11 @@ public class ServizioForm extends WanForm implements FunzioneListener {
     public Funzione getFunzione() {
         return null;
     }// end of method
+
+    @Override
+    public void doDelete(EditorServ editor) {
+        placeholderFunz.removeComponent(editor);
+        sfEditors.remove(editor);
+    }// end of method
+
 }// end of class

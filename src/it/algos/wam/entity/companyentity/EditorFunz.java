@@ -1,13 +1,10 @@
 package it.algos.wam.entity.companyentity;
 
 import com.vaadin.data.Container;
-import com.vaadin.data.Property;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.data.util.filter.Not;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.HorizontalLayout;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.lib.LibWam;
@@ -23,15 +20,15 @@ import it.algos.webbase.multiazienda.ERelatedComboField;
  */
 public class EditorFunz extends EditorWam {
 
-//    private Funzione funzione;
+    private Funzione funzione;
 
-
-    public EditorFunz(FunzioneListener formChiamante) {
+    public EditorFunz(FunzListener formChiamante) {
         this(formChiamante, (Funzione) null);
     }// end of constructor
 
-    public EditorFunz(FunzioneListener formChiamante, Funzione funzione) {
-        super(formChiamante,funzione);
+    public EditorFunz(FunzListener formChiamante, Funzione funzione) {
+        super(formChiamante);
+        this.funzione = funzione;
         this.init();
     }// end of constructor
 
@@ -82,6 +79,20 @@ public class EditorFunz extends EditorWam {
     }// end of method
 
     /**
+     * Crea il bottone per eliminare la funzione
+     */
+    protected void creaBottoneElimina() {
+        super.creaBottoneElimina();
+
+        bElimina.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                doDelete();
+            }// end of inner method
+        });// end of anonymous inner class
+    }// end of method
+
+    /**
      * Assegna un'icona al bottone
      */
     private void setIconButton(Funzione funz) {
@@ -95,10 +106,9 @@ public class EditorFunz extends EditorWam {
     /**
      * Eliminazione effettiva di questo componente
      * La relativa Funzione, deve essere regolata in FunzioneForm
-     * La relativa ServizioFunzione, deve essere regolata in ServizioForm
      */
     protected void doDelete() {
-        formChiamante.doDeleteFunz(this);
+        ((FunzListener) formChiamante).doDelete(this);
     }// end of method
 
 

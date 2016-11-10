@@ -7,6 +7,7 @@ import com.vaadin.ui.*;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.EditorFunz;
 import it.algos.wam.entity.companyentity.EditorWam;
+import it.algos.wam.entity.companyentity.FunzListener;
 import it.algos.wam.entity.companyentity.WanForm;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.component.AHorizontalLayout;
@@ -22,7 +23,7 @@ import java.util.List;
  * Created by alex on 18-04-2016.
  * Scheda personalizzata per la entity Funzione
  */
-public class FunzioneForm extends WanForm {
+public class FunzioneForm extends WanForm implements FunzListener {
 
     //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
     //--alcuni sono nella superclasse
@@ -284,11 +285,6 @@ public class FunzioneForm extends WanForm {
     }// end of method
 
 
-    @Override
-    public void doDeleteFunz(EditorWam editor) {
-        placeholderFunz.removeComponent(editor);
-        fEditors.remove(editor);
-    }// end of method
 
 
     /**
@@ -364,5 +360,11 @@ public class FunzioneForm extends WanForm {
         funzioneMadre.setFunzioniDipendenti(funzioniDipendenti);
     }// end of method
 
+
+    @Override
+    public void doDelete(EditorWam editor) {
+        placeholderFunz.removeComponent(editor);
+        fEditors.remove(editor);
+    }// end of method
 
 }// end of class

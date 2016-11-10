@@ -1,16 +1,10 @@
 package it.algos.wam.entity.companyentity;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.filter.Compare;
-import com.vaadin.data.util.filter.Not;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.funzione.Funzione_;
-import it.algos.wam.lib.LibWam;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 
 /**
@@ -24,22 +18,21 @@ import it.algos.webbase.multiazienda.ERelatedComboField;
  */
 public abstract class EditorWam extends HorizontalLayout {
 
-    protected Funzione funzione;
     protected Button bIcona;
     protected ERelatedComboField comboFunzioni;
     protected CheckBox checkObbligatorio;
     protected Button bElimina;
-    protected FunzioneListener formChiamante;
+    protected WamListener formChiamante;
 
 
-    public EditorWam(FunzioneListener formChiamante) {
-        this(formChiamante, (Funzione) null);
-    }// end of constructor
-
-    public EditorWam(FunzioneListener formChiamante, Funzione funzione) {
+    public EditorWam(FunzListener formChiamante) {
         this.formChiamante = formChiamante;
-        this.funzione = funzione;
     }// end of constructor
+
+    public EditorWam(ServFunzListener formChiamante) {
+        this.formChiamante = formChiamante;
+    }// end of constructor
+
 
     protected void init() {
         setSpacing(true);
@@ -50,7 +43,7 @@ public abstract class EditorWam extends HorizontalLayout {
         //--assembla i vari elementi grafici
         addComponent(bIcona);
         addComponent(comboFunzioni);
-        if (checkObbligatorio!=null) {
+        if (checkObbligatorio != null) {
             addComponent(checkObbligatorio);
         }// end of if cycle
         addComponent(bElimina);
@@ -85,16 +78,9 @@ public abstract class EditorWam extends HorizontalLayout {
     /**
      * Crea il bottone per eliminare la funzione
      */
-    private void creaBottoneElimina() {
+    protected void creaBottoneElimina() {
         bElimina = new Button("", FontAwesome.TRASH_O);
         bElimina.setDescription("Elimina la funzione dipendente");
-
-        bElimina.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent clickEvent) {
-                doDelete();
-            }// end of inner method
-        });// end of anonymous inner class
     }// end of method
 
 
@@ -105,7 +91,6 @@ public abstract class EditorWam extends HorizontalLayout {
      */
     protected void doDelete() {
     }// end of method
-
 
 
     /**
