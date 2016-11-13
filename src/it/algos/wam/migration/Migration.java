@@ -55,28 +55,21 @@ public class Migration {
      * Costruttore
      */
     public Migration() {
-        long inizio ;
+        long inizio;
         creaManagers();
 
-        CroceAmb crfOld = CroceAmb.findBySigla("crf", managerOld);
-        if (crfOld != null) {
-            inizio = System.currentTimeMillis();
-            inizia(crfOld, crfOld.getSigla().toLowerCase());
-            Log.debug("migration", "Croce " + crfOld.getSigla() + " replicata in " + LibTime.difText(inizio));
+        List<CroceAmb> listaVecchieCrociEsistenti = CroceAmb.findAll(managerOld);
+        List<CroceAmb> listaVecchieCrociDaImportare = selezionaCrodiDaImportare(listaVecchieCrociEsistenti);
+
+        if (listaVecchieCrociDaImportare != null) {
+            for (CroceAmb company : listaVecchieCrociDaImportare) {
+                inizio = System.currentTimeMillis();
+                inizia(company, company.getSigla().toLowerCase());
+                Log.debug("migration", "Croce " + company.getSigla() + " replicata in " + LibTime.difText(inizio));
+            }// end of for cycle
         }// end of if cycle
 
-
-//        List<CroceAmb> listaVecchieCrociEsistenti = CroceAmb.findAll(managerOld);
-//        List<CroceAmb> listaVecchieCrociDaImportare = selezionaCrodiDaImportare(listaVecchieCrociEsistenti);
-//
-//        if (listaVecchieCrociDaImportare != null) {
-//            for (CroceAmb company : listaVecchieCrociDaImportare) {
-//                inizio = System.currentTimeMillis();
-//                inizia(company, company.getSigla().toLowerCase());
-//                Log.debug("migration", "Croce " + company.getSigla() + " replicata in " + LibTime.difText(inizio));
-//            }// end of for cycle
-//        }// end of if cycle
-
+        chiudeManagers();
     }// end of constructor
 
     /**
@@ -99,6 +92,7 @@ public class Migration {
         creaManagers();
         CroceAmb companyOld = CroceAmb.findBySigla(siglaCompanyOld, managerOld);
         inizia(companyOld, siglaCompanyNew);
+        chiudeManagers();
     }// end of constructor
 
     /**
@@ -108,16 +102,28 @@ public class Migration {
      * Si apre e si chiude una transazione per ogni company
      */
     private void creaManagers() {
+        chiudeManagers();
 
-        if (managerOld == null) {
-            EntityManagerFactory factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-            if (factory != null) {
-                managerOld = factory.createEntityManager();
-            }// end of if cycle
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+        if (factory != null) {
+            managerOld = factory.createEntityManager();
+        }// end of if cycle
+        managerNew = EM.createEntityManager();
+    }// end of method
+
+    /**
+     * Chiusura dei due manager specifici
+     */
+    private void chiudeManagers() {
+
+        if (managerOld != null) {
+            managerOld.close();
+            managerOld = null;
         }// end of if cycle
 
-        if (managerNew == null) {
-            managerNew = EM.createEntityManager();
+        if (managerNew != null) {
+            managerNew.close();
+            managerNew = null;
         }// end of if cycle
 
     }// end of method
@@ -157,6 +163,7 @@ public class Migration {
      * @param siglaCompanyNew nome della company usata in wam
      */
     private void inizia(CroceAmb companyOld, String siglaCompanyNew) {
+        creaManagers();
         WamCompany companyNew = WamCompany.findByCode(siglaCompanyNew);
         List<WrapVolontario> listaWrapVolontari = null;
 
@@ -639,6 +646,10 @@ public class Migration {
         iscrizione = recuperaIscrizione4(turnoOld, turnoNew, company, servizio, listaWrapVolontari);
         if (iscrizione != null) {
             iscrizioni.add(iscrizione);
+        }// end of if cycle
+
+        if (iscrizioni.size() == 0) {
+            iscrizioni = null;
         }// end of if cycle
 
         return iscrizioni;

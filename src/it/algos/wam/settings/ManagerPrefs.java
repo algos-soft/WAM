@@ -28,7 +28,7 @@ public enum ManagerPrefs {
 
     smtpUserName("smtpUser", PrefType.string, ""),
 
-    startDaemonAtStartup("startDaemonAtStartup", PrefType.bool, false);
+    startDaemonAtStartup("startDaemonAtStartup", PrefType.bool, true);
 
     private String code;
     private PrefType type;

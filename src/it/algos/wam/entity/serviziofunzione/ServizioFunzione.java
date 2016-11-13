@@ -6,7 +6,10 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.Index;
@@ -16,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe di tipo JavaBean.
@@ -228,6 +232,38 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }// end of getter method
+
+//    public static void resetServizi() {
+//        resetServizi((WamCompany) CompanySessionLib.getCompany(), (EntityManager) null);
+//    }// end of getter method
+//
+//    public static void resetServizi(WamCompany company, EntityManager manager) {
+////        Object vettore = null;
+////        Query query;
+//        String queryTxt;
+////        queryTxt = "update ServizioFunzione serfun set serfun.servizio=null where ServizioFunzione.company_id=" + id;
+////        query = manager.createQuery(queryTxt);
+////        vettore = query.executeUpdate();
+//
+//        boolean usaManagerLocale = false;
+//        // se non specificato l'EntityManager, ne crea uno locale
+//        if (manager == null) {
+//            manager = EM.createEntityManager();
+//            usaManagerLocale = true;
+//        }// end of if cycle
+//
+//        List<ServizioFunzione> listaByCompany = (List<ServizioFunzione>) CompanyQuery.getList(ServizioFunzione.class, company);
+//        for (ServizioFunzione servFunz : listaByCompany) {
+//            servFunz.setServizio(null);
+//            servFunz.save(manager);
+//        }// end of for cycle
+//
+//        // eventualmente chiude l'EntityManager locale
+//        if (usaManagerLocale) {
+//            manager.close();
+//        }// end of if cycle
+//
+//    }// end of getter method
 
     public Servizio getServizio() {
         return servizio;

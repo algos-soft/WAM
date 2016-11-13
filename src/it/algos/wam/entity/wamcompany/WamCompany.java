@@ -5,6 +5,7 @@ import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.webbase.domain.company.BaseCompany;
@@ -257,12 +258,19 @@ public class WamCompany extends BaseCompany {
     private void deleteAllWamData(EntityManager manager) {
 
         // elimina le tabelle
-        AQuery.delete(Volontario.class, CompanyEntity_.company, this, manager);
-        AQuery.delete(Funzione.class, CompanyEntity_.company, this, manager);
-        AQuery.delete(Servizio.class, CompanyEntity_.company, this, manager);
-
-        // elimina i turni
-        AQuery.delete(Turno.class, CompanyEntity_.company, this, manager);
+//        ServizioFunzione.resetServizi(this,manager);
+//        AQuery.delete(ServizioFunzione.class, CompanyEntity_.company, this, manager);
+//        AQuery.delete(Volontario.class, CompanyEntity_.company, this, manager);
+//        AQuery.delete(Volontario.class, CompanyEntity_.company, this, manager);
+//        AQuery.delete(Volontario.class, CompanyEntity_.company, this, manager);
+//        AQuery.delete(Volontario.class, CompanyEntity_.company, this, manager);
+//        AQuery.delete(Volontario.class, CompanyEntity_.company, this, manager);
+//        AQuery.delete(Volontario.class, CompanyEntity_.company, this, manager);
+//        AQuery.delete(Funzione.class, CompanyEntity_.company, this, manager);
+//        AQuery.delete(Servizio.class, CompanyEntity_.company, this, manager);
+//
+//        // elimina i turni
+//        AQuery.delete(Turno.class, CompanyEntity_.company, this, manager);
 
     }// end of method
 

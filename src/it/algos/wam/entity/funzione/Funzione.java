@@ -52,6 +52,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     //--private BaseCompany company;
     //--funzioni che vengono automaticamente abilitate se questa funzione è abilitata
     @OneToMany
+    @CascadeOnDelete
     public List<Funzione> funzioniDipendenti = new ArrayList<>();
     //--sigla di codifica interna specifica per ogni company (obbligatoria, non unica in generale ma unica all'interno della company)
     //--visibile solo per admin e developer

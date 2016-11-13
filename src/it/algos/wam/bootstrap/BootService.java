@@ -103,7 +103,6 @@ public abstract class BootService {
 
         //--modifica la mail (vuota) per costruirla col nome della company
         CompanyPrefs.senderAddress.put(company, company.getCompanyCode() + "@algos.it");
-        CompanyPrefs.senderAddress.put(company, company.getCompanyCode() + "@algos.it");
     }// end of static method
 
     /**
@@ -113,13 +112,15 @@ public abstract class BootService {
     private static WamCompany creaCroceDemo() {
         WamCompany company = WamCompany.findByCode(WAMApp.DEMO_COMPANY_CODE);
 
-        if (company == null) {
-            company = new WamCompany(WAMApp.DEMO_COMPANY_CODE, "Company dimostrativa", "info@crocedemo.it");
-            company.setAddress1("Via Turati, 12");
-            company.setAddress1("20199 Garbagnate Milanese");
-            company.setContact("Mario Bianchi");
-            company.save();
-        }// end of if cycle
+        if (company != null) {
+            company.delete();
+        }// fine del blocco if
+
+        company = new WamCompany(WAMApp.DEMO_COMPANY_CODE, "Company dimostrativa", "info@crocedemo.it");
+        company.setAddress1("Via Turati, 12");
+        company.setAddress1("20199 Garbagnate Milanese");
+        company.setContact("Mario Bianchi");
+        company.save();
 
         return company;
     }// end of static method
@@ -131,13 +132,15 @@ public abstract class BootService {
     private static WamCompany creaCroceTest() {
         WamCompany company = WamCompany.findByCode(WAMApp.TEST_COMPANY_CODE);
 
-        if (company == null) {
-            company = new WamCompany(WAMApp.TEST_COMPANY_CODE, "Company di test", "info@crocetest.it");
-            company.setAddress1("Piazza Napoli, 51");
-            company.setAddress1("20100 Milano");
-            company.setContact("Giovanni Rossi");
-            company.save();
-        }// end of if cycle
+        if (company != null) {
+            company.delete();
+        }// fine del blocco if
+
+        company = new WamCompany(WAMApp.TEST_COMPANY_CODE, "Company di test", "info@crocetest.it");
+        company.setAddress1("Piazza Napoli, 51");
+        company.setAddress1("20100 Milano");
+        company.setContact("Giovanni Rossi");
+        company.save();
 
         return company;
     }// end of static method
@@ -596,10 +599,10 @@ public abstract class BootService {
     private static ArrayList<Turno> creaTurniVuoti(WamCompany company, EntityManager manager, ArrayList<Servizio> servizi) {
         ArrayList<Turno> listaTurni = new ArrayList<>();
         Date oggi = LibDate.today();
-        Date inizio = LibDate.add(oggi, -7);
+        Date inizio = LibDate.add(oggi, -10);
         Turno turno;
 
-        for (int k = 0; k < 21; k++) {
+        for (int k = 0; k < 24; k++) {
             for (Servizio servizio : servizi) {
                 turno = Turno.crea(company, servizio, LibDate.add(inizio, k), null, manager);
                 listaTurni.add(turno);

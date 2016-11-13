@@ -24,6 +24,7 @@ public class WAMApp extends AlgosApp {
     public final static String DISPLAY_TOOLTIPS = "displayTooltips";
     public final static String DISPLAY_FIELD_ORDINE = "displayFieldOrdine";
     public final static String USA_FORM_LAYOUT = "usaFormLayout";
+    public final static String USA_REFRESH_DEMO = "usaRefreshDemo";
 
     /**
      * Name of the local folder for images.<br>
