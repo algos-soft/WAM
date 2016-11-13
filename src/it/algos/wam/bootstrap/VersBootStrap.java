@@ -67,7 +67,7 @@ public class VersBootStrap implements ServletContextListener {
 
         //--crea una nuova preferenza, globale per tutte le company
         if (LibVers.installa(++k)) {
-            LibPref.newVersBool(WAMApp.USA_REFRESH_DEMO, false, "Ricostruisce periodicamente la company demo)");
+            LibPref.newVersBool(WAMApp.USA_REFRESH_DEMO, true, "Ricostruisce periodicamente la company demo)");
         }// fine del blocco if
 
 //        //--creazione di una croce "test"

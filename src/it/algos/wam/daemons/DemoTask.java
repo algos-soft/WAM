@@ -22,7 +22,7 @@ public class DemoTask implements Runnable {
     @Override
     public void run() {
 
-        if (Pref.getBool(WAMApp.USA_REFRESH_DEMO, false)) {
+        if (Pref.getBool(WAMApp.USA_REFRESH_DEMO, true)) {
             long inizio = System.currentTimeMillis();
             BootService.creaCompanyDemo();
             Log.debug("demo", "Ricostruita la company " + WAMApp.DEMO_COMPANY_CODE + " in " + LibTime.difText(inizio));

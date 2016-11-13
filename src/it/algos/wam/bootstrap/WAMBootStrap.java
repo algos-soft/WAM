@@ -59,9 +59,6 @@ public class WAMBootStrap extends ABootStrap {
         // Avvia lo schedulatore che esegue i task periodici sul server
         if (ManagerPrefs.startDaemonAtStartup.getBool()) {
             WamScheduler.getInstance().start();
-
-            // avvia lo scheduler per la migrazione dei dati dalla vecchia versione webambulanze
-            DaemonMigration.getInstance().start();
         }
 
 //        EntityManagerFactory FACTORY = Persistence.createEntityManagerFactory("Webambulanze");

@@ -702,9 +702,7 @@ public class WamUI extends UI {
         footer.setSpacing(true);
         footer.setHeight("30px");
 
-        footer.addComponent(new Label("Algos s.r.l."));
-        footer.addComponent(new Label("-"));
-        footer.addComponent(new Label("webAmbulanze"));
+        footer.addComponent(new Label(WAMApp.INFO_APP));
 
         if (LibSession.isDeveloper()) {
             footer.addComponent(new Label("- programmatore"));
