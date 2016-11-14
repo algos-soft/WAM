@@ -4,14 +4,23 @@ package it.algos.wam.entity.funzione;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamModSposta;
+import it.algos.wam.entity.iscrizione.Iscrizione;
+import it.algos.wam.entity.iscrizione.Iscrizione_;
+import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.form.ModuleForm;
+import it.algos.webbase.web.lib.LibArray;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.metamodel.Attribute;
+import java.util.List;
 
 /**
  * Gestione (minimale) del modulo specifico
@@ -88,6 +97,33 @@ public class FunzioneMod extends WamModSposta  {
                 Funzione_.descrizione);
     }// end of method
 
+
+    /**
+     * Override di delete per controllare che non ci siano
+     * servizi associate alle funzioni da cancellare
+     */
+    @Override
+    public void delete() {
+        boolean continua = true;
+        final Object[] ids = getTable().getSelectedIds();
+
+        for (Object id : ids) {
+            BaseEntity entity = getEntityManager().find(getEntityClass(), id);
+            if (entity != null && entity instanceof Funzione) {
+                Funzione funz = (Funzione) entity;
+                if (LibArray.isValido(funz.getServizioFunzioni())) {
+                    continua = false;
+                    break;
+                }// end of if cycle
+            }// end of if cycle
+        }// end of for cycle
+
+        if (continua) {
+            super.delete();
+        } else {
+            Notification.show("Impossibile cancellare le funzioni selezionate perché sono già utilizzate in alcuni servizi.", Notification.Type.WARNING_MESSAGE);
+        }// end of if/else cycle
+    }// end of method
 
 }// end of class
 

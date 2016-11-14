@@ -1,7 +1,5 @@
 package it.algos.wam.entity.funzione;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -15,7 +13,6 @@ import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.AQuery;
-import it.algos.webbase.web.query.SortProperty;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
@@ -54,6 +51,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @OneToMany
     @CascadeOnDelete
     public List<Funzione> funzioniDipendenti = new ArrayList<>();
+
     //--sigla di codifica interna specifica per ogni company (obbligatoria, non unica in generale ma unica all'interno della company)
     //--visibile solo per admin e developer
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
@@ -62,6 +60,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @Index
     @AIField(type = AFType.text, required = true, width = "9em", caption = "Code", prompt = "codice interno", help = "Codice interno unico, non visibile nel tabellone.", error = "Manca il codice interno")
     private String code = "";
+
     //--sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
     //--calcolata -> codeCompanyUnico = company.companyCode + funzione.code (20+20=40);
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
@@ -71,6 +70,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @Index
     @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "CodiceUnico", help = "Codifica interna. Valore unico. Calcola automaticamente")
     private String codeCompanyUnico = "";
+
     //--sigla di codifica visibile (obbligatoria, non unica)
     //--visibile nel tabellone
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
@@ -79,11 +79,13 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @Index
     @AIField(type = AFType.text, required = true, width = "9em", caption = "Sigla", prompt = "sigla visibile", help = "Sigla visibile nel tabellone.", error = "Manca la sigla visibile")
     private String sigla = "";
+
     //--descrizione (obbligatoria, non unica)
     //--va inizializzato con una stringa vuota, per evitare che compaia null nel Form nuovoRecord
     @NotEmpty
     @AIField(type = AFType.text, required = true, width = "27em", caption = "Descrizione", prompt = "descrizione completa", help = "Descrizione completa della funzione.", error = "Manca la descrizione")
     private String descrizione = "";
+
     //--ordine di presentazione nelle liste (obbligatorio, con controllo automatico prima del persist se è zero)
     @NotNull
     @Index
@@ -200,6 +202,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param manager the EntityManager to use
+     *
      * @return il numero totale di records nella Entity
      */
     public static int countByAllCompanies(EntityManager manager) {
@@ -224,6 +227,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param manager the EntityManager to use
+     *
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCurrentCompany(EntityManager manager) {
@@ -236,6 +240,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
+     *
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCompany(WamCompany company) {
@@ -251,6 +256,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
+     *
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCompany(WamCompany company, EntityManager manager) {
@@ -268,6 +274,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param attr    the searched attribute
      * @param value   the value to search for
      * @param manager the EntityManager to use
+     *
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCompanyAndProperty(WamCompany company, SingularAttribute attr, Object value, EntityManager manager) {
@@ -284,6 +291,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Nessun filtro sulla company, perché la primary key è unica
      *
      * @param id valore (unico) della Primary Key
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione find(long id) {
@@ -300,6 +308,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @param id      valore (unico) della Primary Key
      * @param manager the EntityManager to use
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione find(long id, EntityManager manager) {
@@ -316,6 +325,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Nessun filtro sulla company, perché la property è unica
      *
      * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione getEntityByCodeCompanyUnico(String codeCompanyUnico) {
@@ -327,6 +337,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Nessun filtro sulla company, perché la property è unica
      *
      * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
+     *
      * @return vero se esiste Entity, false se non trovata
      */
     public static boolean isEntityByCodeCompanyUnico(String codeCompanyUnico) {
@@ -340,6 +351,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
      * @param manager          the EntityManager to use
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione getEntityByCodeCompanyUnico(String codeCompanyUnico, EntityManager manager) {
@@ -351,6 +363,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Nessun filtro sulla company, perché la property è unica
      *
      * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
+     *
      * @return vero se esiste Entity, false se non trovata
      */
     public static boolean isEntityByCodeCompanyUnico(String codeCompanyUnico, EntityManager manager) {
@@ -362,6 +375,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @param code sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione getEntityByCode(String code) {
@@ -374,6 +388,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @param company di appartenenza (property della superclasse)
      * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione getEntityByCompanyAndCode(WamCompany company, String code) {
@@ -388,6 +403,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company di appartenenza (property della superclasse)
      * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param manager the EntityManager to use
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static Funzione getEntityByCompanyAndCode(WamCompany company, String code, EntityManager manager) {
@@ -410,6 +426,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company di appartenenza (property della superclasse)
      * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param manager the EntityManager to use
+     *
      * @return vero se esiste Entity, false se non trovata
      */
     public static boolean isEntityByCompanyAndCode(WamCompany company, String code, EntityManager manager) {
@@ -424,6 +441,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param company di appartenenza (property della superclasse)
      * @param code    sigla di codifica interna specifica per ogni company (obbligatoria, unica all'interno della company)
      * @param manager the EntityManager to use
+     *
      * @return vero se esiste Entity, false se non trovata
      */
     public static boolean isNotEntityByCompanyAndCode(WamCompany company, String code, EntityManager manager) {
@@ -452,6 +470,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * (non va usata CompanyQuery, altrimenti arriverebbe solo la lista della company corrente)
      *
      * @param manager the EntityManager to use
+     *
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
@@ -475,6 +494,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @param manager the EntityManager to use
+     *
      * @return lista di tutte le entities
      */
     public static List<Funzione> getListByCurrentCompany(EntityManager manager) {
@@ -488,6 +508,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Se si arriva qui con una company null, vuol dire che non esiste la company corrente
      *
      * @param company di appartenenza (property della superclasse)
+     *
      * @return lista di tutte le entities
      */
     public static List<Funzione> getListByCompany(WamCompany company) {
@@ -504,6 +525,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
+     *
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
@@ -590,6 +612,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * @param glyph              dell'icona (facoltativo)
      * @param manager            the EntityManager to use
      * @param funzioniDipendenti lista delle funzioni dipendenti (facoltativa)
+     *
      * @return istanza della Entity
      */
     public static Funzione crea(
@@ -654,6 +677,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @param company da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
+     *
      * @return massimo valore
      */
     public static int maxOrdine(WamCompany company, EntityManager manager) {
@@ -767,6 +791,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Saves this entity to the database using a local EntityManager
      *
      * @param manager the entity manager to use (if null, a new one is created on the fly)
+     *
      * @return the merged Entity (new entity, unmanaged, has the id)
      */
     @Override
@@ -782,6 +807,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      *
      * @param company da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
+     *
      * @return the merged Entity (new entity, unmanaged, has the id)
      */
     public Funzione save(WamCompany company, EntityManager manager) {
@@ -829,6 +855,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Otherwise, a new transaction is used to save this single entity.
      *
      * @param manager the entity manager to use (if null, a new one is created on the fly)
+     *
      * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
      */
     public Funzione saveSafe(EntityManager manager) {
@@ -837,15 +864,14 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
 
 
     public boolean delete() {
-        funzioniDipendenti = null;
-//        spostaInBasso();
+////        spostaInBasso();
         return super.delete();
     }// end of method
 
-       @PreRemove
-       public void delete2() {
-           int a=87;
-       }// end of  method
+    @PreRemove
+    public void delete2() {
+        int a = 87;
+    }// end of  method
 
 //     * Sposta in basso.
 //     * Cambia il valore del parametro 'ordine'', in modo che venga cancellato l'ultimo record
@@ -1005,6 +1031,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
      * Compara per ordine della funzione
      *
      * @param other funzione
+     *
      * @return a negative integer, zero, or a positive integer as this object
      * is less than, equal to, or greater than the specified object.
      */

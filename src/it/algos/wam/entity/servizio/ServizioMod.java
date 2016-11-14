@@ -75,11 +75,11 @@ public class ServizioMod extends WamModSposta {
     }
 
 
-    @Override
     /**
      * Override di delete per controllare che non ci siano
      * iscrizioni associate ai servizi da cancellare
      */
+    @Override
     public void delete() {
         boolean cont = true;
         final Object[] ids = getTable().getSelectedIds();
@@ -93,17 +93,17 @@ public class ServizioMod extends WamModSposta {
                     if (iscrizioni.size() > 0) {
                         cont = false;
                         break;
-                    }
-                }
-            }
-        }
+                    }// end of if cycle
+                }// end of for cycle
+            }// end of if cycle
+        }// end of for cycle
 
         if (cont) {
             super.delete();
         } else {
             Notification.show("Impossibile cancellare i servizi selezionati perché dei volontari si sono già iscritti.", Notification.Type.WARNING_MESSAGE);
-        }
-    }
+        }// end of if/else cycle
+    }// end of method
 
 
 }// end of class
