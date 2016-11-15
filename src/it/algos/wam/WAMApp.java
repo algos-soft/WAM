@@ -26,13 +26,14 @@ public class WAMApp extends AlgosApp {
     public final static String USA_FORM_LAYOUT = "usaFormLayout";
     public final static String USA_REFRESH_DEMO = "usaRefreshDemo";
     public final static String USA_MIGRATION = "usaMigration";
-    public final static String INFO_APP = "Algos s.r.l. - wam.0.8";
+    public final static String INFO_APP = "Algos s.r.l. - wam.0.8 del 15.11.16";
 
     /**
      * Name of the local folder for images.<br>
      * static initialisation block
      */
     public static final String IMG_FOLDER_NAME = "WEB-INF/data/img/";
+
 
     /**
      * Static initialisation block

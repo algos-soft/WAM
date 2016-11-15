@@ -2,6 +2,7 @@ package it.algos.wam.daemons;
 
 import it.algos.wam.WAMApp;
 import it.algos.wam.bootstrap.BootService;
+import it.algos.wam.migration.Migration;
 import it.algos.webbase.domain.log.Log;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.lib.LibTime;
@@ -18,7 +19,7 @@ public class MigrationTask implements Runnable {
     @Override
     public void run() {
         if (Pref.getBool(WAMApp.USA_MIGRATION, true)) {
-            new MigrationTask();
+            new Migration();
         }// end of if cycle
     }// end of method
 
