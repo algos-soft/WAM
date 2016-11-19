@@ -1,5 +1,7 @@
 package it.algos.wam.entity.funzione;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.FontAwesome;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -13,6 +15,7 @@ import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.AQuery;
+import it.algos.webbase.web.query.SortProperty;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
@@ -863,25 +866,15 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     }// end of method
 
 
-    public boolean delete() {
-////        spostaInBasso();
-        return super.delete();
-    }// end of method
+//    public boolean delete() {
+//        return super.delete();
+//    }// end of method
 
-    @PreRemove
-    public void delete2() {
-        int a = 87;
-    }// end of  method
+//    @PreRemove
+//    public void delete2() {
+//        int a = 87;
+//    }// end of  method
 
-//     * Sposta in basso.
-//     * Cambia il valore del parametro 'ordine'', in modo che venga cancellato l'ultimo record
-//     */
-//    public void spostaInBasso() {
-//        SortProperty sort = new SortProperty(Funzione_.ordine);
-//        Container.Filter filtro = new Compare.GreaterOrEqual(Funzione_.ordine.getName(), this.getOrdine());
-//        List<Funzione> lista = (List<Funzione>) CompanyQuery.getList(Funzione.class,sort,filtro);
-//        int a=87;
-//    }// end of static method
 
 
     //------------------------------------------------------------------------------------------------------------------------

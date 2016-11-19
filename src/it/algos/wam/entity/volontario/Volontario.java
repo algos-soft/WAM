@@ -56,10 +56,14 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     //--private BaseCompany company;
 
     /**
-     * Nel form un field di tipo EmailField (facoltativo)
+     * Nome del volontario (obbligatorio, non unico)
      */
-    @AIField(type = AFType.email, width = "16em", caption = "Indirizzo internet", prompt = "nome.cognome@mail.it", help = "Inserire un indirizzo valido, oppure lasciare vuoto")
-    public String email = "";
+    @NotEmpty
+    @Column(length = 30)
+    @Index
+    @AIField(type = AFType.text, required = true, width = "12em", caption = "Nome", prompt = "Giovanni", help = "Inserire un nome. Obbligatorio")
+    private String nome = "";
+
     /**
      * Cognome del volontario (obbligatorio, non unico)
      */
@@ -68,14 +72,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     @Index
     @AIField(type = AFType.text, required = true, width = "16em", caption = "Cognome", prompt = "Rossi", help = "Inserire un cognome. Obbligatorio")
     private String cognome = "";
-    /**
-     * Nome del volontario (obbligatorio, non unico)
-     */
-    @NotEmpty
-    @Column(length = 30)
-    @Index
-    @AIField(type = AFType.text, required = true, width = "12em", caption = "Nome", prompt = "Giovanni", help = "Inserire un nome. Obbligatorio")
-    private String nome = "";
+
     /**
      * Sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
      * Calcolata -> codeCompanyUnico = company.companyCode + volontario.cognome + volontario.nome (20+30+30=80);
@@ -85,18 +82,29 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     @NotNull
     @Column(length = 80, unique = true)
     @Index
-    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "Codice", help = "Codifica interna. Valore unico")
+    @AIField(type = AFType.text, required = true, enabled = false, width = "18em", caption = "CodiceUnico", help = "Codifica interna. Valore unico. Calcola automaticamente")
     private String codeCompanyUnico = "";
+
+    /**
+     * Nel form un field di tipo EmailField (facoltativo)
+     */
+    @AIField(type = AFType.email, width = "16em", caption = "Indirizzo internet", prompt = "nome.cognome@mail.it", help = "Inserire un indirizzo valido, oppure lasciare vuoto")
+    public String email = "";
+
     /**
      * Dati personali facoltativi
      */
-    @AIField(type = AFType.text, width = "12em", caption = "Cellulare", prompt = "337 451899", help = "Inserire un numero di cellulare")
+    @AIField(type = AFType.text, width = "12em", caption = "Cellulare", prompt = "337 451899", help = "Inserire un numero di cellulare, oppure lasciare vuoto")
     private String cellulare = "";
+
     private String telefono = "";
-    @AIField(type = AFType.date, caption = "Nascita", help = "Data di nascita (non obbligatoria)")
+
+    @AIField(type = AFType.date, caption = "Data di nascita", help = "Data di nascita (facoltativa)")
     private Date dataNascita = null;
-    @AIField(type = AFType.password, required = true, caption = "Password", prompt = "...", help = "Password iniziale modificabile solo dal volontario.")
+
+    @AIField(type = AFType.password, required = true, caption = "Password", prompt = "...", help = "Password iniziale, successivamente modificabile solo dal volontario.")
     private String password = "";
+
     private String note = "";
 
     /**

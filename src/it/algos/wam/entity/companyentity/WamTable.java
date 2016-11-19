@@ -1,6 +1,9 @@
 package it.algos.wam.entity.companyentity;
 
+import com.vaadin.data.Container;
 import com.vaadin.event.Action;
+import it.algos.wam.entity.servizio.Servizio_;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
@@ -21,6 +24,28 @@ public class WamTable extends ETable {
         super(module);
     }// end of constructor
 
+    /**
+     * Initializes the table.
+     * Must be called from the costructor in each subclass
+     * Chiamato dal costruttore di ModuleTable
+     */
+    @Override
+    protected void init() {
+        super.init();
+
+        setColumnReorderingAllowed(true);
+        this.setColumnCollapsed(WamCompanyEntity_.company.getName(), CompanySessionLib.isCompanySet());
+
+        fixSort();
+        fixColumn();
+    }// end of method
+
+    protected void fixSort() {
+    }// end of method
+
+
+    protected void fixColumn() {
+    }// end of method
 
     /**
      * Return the Actions to display in contextual menu

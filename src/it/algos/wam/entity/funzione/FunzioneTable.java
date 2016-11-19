@@ -12,6 +12,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
@@ -96,16 +97,12 @@ public class FunzioneTable extends WamTable {
     @Override
     protected void init() {
         super.init();
-
-        setColumnReorderingAllowed(true);
-//        this.setColumnCollapsed(Funzione_.ordine.getName(), true);
-
-        fixSort();
-        fixColumn();
+        this.setColumnCollapsed(Funzione_.ordine.getName(), !CompanySessionLib.isCompanySet());
     }// end of method
 
 
-    private void fixSort() {
+    @Override
+    protected void fixSort() {
         Container cont = getContainerDataSource();
         if (cont instanceof Sortable) {
             Sortable sortable = (Sortable) cont;
@@ -114,7 +111,8 @@ public class FunzioneTable extends WamTable {
     }// end of method
 
 
-    private void fixColumn() {
+    @Override
+    protected void fixColumn() {
         setColumnHeader(Funzione_.ordine, "##"); // visibile solo per il developer
         setColumnHeader(Funzione_.code, "Cod.");
         setColumnHeader(Funzione_.sigla, "Sigla");
@@ -191,7 +189,7 @@ public class FunzioneTable extends WamTable {
                     glyph = FontAwesome.fromCodepoint(codepoint);
                     bIcon.setCaption(glyph.getHtml());
                 } catch (Exception e) {
-                    int a=78;
+                    int a = 78;
                 }// fine del blocco try-catch
             }// end of if cycle
 
@@ -219,7 +217,7 @@ public class FunzioneTable extends WamTable {
             for (int k = 0; k < lista.size(); k++) {
                 Funzione funz = lista.get(k);
                 int codePoint = funz.getIconCodepoint();
-                if (codePoint>0) {
+                if (codePoint > 0) {
                     FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
                     str += glyph.getHtml() + " ";
                 }// fine del blocco if

@@ -5,13 +5,9 @@ import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamModSposta;
-import it.algos.wam.entity.iscrizione.Iscrizione;
-import it.algos.wam.entity.iscrizione.Iscrizione_;
-import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
-import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibArray;
@@ -20,12 +16,13 @@ import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.metamodel.Attribute;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Gestione (minimale) del modulo specifico
  */
-public class FunzioneMod extends WamModSposta  {
+public class FunzioneMod extends WamModSposta {
 
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
@@ -55,6 +52,7 @@ public class FunzioneMod extends WamModSposta  {
      * The concrete subclass must override for a specific Form.
      *
      * @param item singola istanza della classe
+     *
      * @return the Form
      */
     @Override
@@ -66,6 +64,7 @@ public class FunzioneMod extends WamModSposta  {
     /**
      * Crea una Table già filtrata sulla company corrente
      * The concrete subclass must override for a specific Table.
+     *
      * @return the Table
      */
     @Override
@@ -85,7 +84,7 @@ public class FunzioneMod extends WamModSposta  {
 
     /**
      * Crea i campi visibili nella scheda (search)
-     * <p/>
+     * <p>
      * Come default spazzola tutti i campi della Entity <br>
      * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
      * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
@@ -124,6 +123,38 @@ public class FunzioneMod extends WamModSposta  {
             Notification.show("Impossibile cancellare le funzioni selezionate perché sono già utilizzate in alcuni servizi.", Notification.Type.WARNING_MESSAGE);
         }// end of if/else cycle
     }// end of method
+
+    /**
+     * Ricalcola il valore del parametro 'ordine''
+     */
+    @Override
+    protected void fixOrdine() {
+        List<Funzione> lista = null;
+        Funzione funz;
+
+        WamCompany company = (WamCompany) CompanySessionLib.getCompany();
+        if (company != null) {
+            lista = Funzione.getListByCompany(company);
+
+            lista.sort(new Comparator<Funzione>() {
+                @Override
+                public int compare(Funzione o1, Funzione o2) {
+                    Integer ordQuesto = o1.getOrdine();
+                    Integer ordAltro = o2.getOrdine();
+                    return ordQuesto.compareTo(ordAltro);
+                }// end of inner method
+            });// end of anonymous inner class
+
+            for (int k = 0; k < lista.size(); k++) {
+                funz = lista.get(k);
+                funz.setOrdine(k + 1);
+                funz.save();
+            }// end of for cycle
+        }// end of if cycle
+
+        getTable().refresh();
+    }// end of method
+
 
 }// end of class
 

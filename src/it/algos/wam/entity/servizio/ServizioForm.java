@@ -8,6 +8,7 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.EditorServ;
+import it.algos.wam.entity.companyentity.EditorWam;
 import it.algos.wam.entity.companyentity.ServFunzListener;
 import it.algos.wam.entity.companyentity.WanForm;
 import it.algos.wam.entity.funzione.Funzione;
@@ -34,12 +35,13 @@ public class ServizioForm extends WanForm implements ServFunzListener {
     //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
     //--alcuni sono nella superclasse
     private ColorPicker cPicker;
-    private CheckBoxField fOrarioPredefinito;
+    private HorizontalLayout placeholderPicker;
+
     private CheckBoxField fVisibileTabellone;
+
+    private CheckBoxField fOrarioPredefinito;
     private OreMinuti hlOraInizio;
     private OreMinuti hlOraFine;
-
-    private HorizontalLayout placeholderPicker;
     private HorizontalLayout placeholderOrario;
 
 
@@ -353,9 +355,9 @@ public class ServizioForm extends WanForm implements ServFunzListener {
     }// end of method
 
     @Override
-    public void doDelete(EditorServ editor) {
+    public void doDelete(EditorWam editor) {
         placeholderFunz.removeComponent(editor);
-        sfEditors.remove(editor);
+        sfEditors.remove((EditorServ) editor);
     }// end of method
 
 }// end of class

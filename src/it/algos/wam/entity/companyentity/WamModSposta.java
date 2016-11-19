@@ -2,13 +2,9 @@ package it.algos.wam.entity.companyentity;
 
 
 import com.vaadin.server.Resource;
-import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.webbase.multiazienda.CompanyModule;
-import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.query.AQuery;
 import it.algos.webbase.web.table.TablePortal;
-
-import javax.persistence.metamodel.Attribute;
-import java.util.ArrayList;
 
 /**
  * Modulo astratto per implementare la creazione della WamTablePortalSposta
@@ -52,5 +48,18 @@ public abstract class WamModSposta extends WamMod {
         return new WamTablePortalSposta(this);
     }// end of method
 
+    public void delete(Object id) {
+        BaseEntity entity = AQuery.find(getEntityClass(), (long) id);
+        if (entity != null) {
+            entity.delete();
+            fixOrdine();
+        }// end of if cycle
+    }// end of method
+
+    /**
+     * Ricalcola il valore del parametro 'ordine''
+     */
+    protected void fixOrdine() {
+    }// end of static method
 
 }// end of class

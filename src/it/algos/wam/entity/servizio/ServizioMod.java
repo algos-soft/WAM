@@ -6,16 +6,20 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Notification;
 import it.algos.wam.entity.companyentity.WamModSposta;
+import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.iscrizione.Iscrizione_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -105,6 +109,36 @@ public class ServizioMod extends WamModSposta {
         }// end of if/else cycle
     }// end of method
 
+    /**
+     * Ricalcola il valore del parametro 'ordine''
+     */
+    @Override
+    protected void fixOrdine() {
+        List<Servizio> lista = null;
+        Servizio serv;
+
+        WamCompany company = (WamCompany) CompanySessionLib.getCompany();
+        if (company != null) {
+            lista = Servizio.getListByCompany(company);
+
+            lista.sort(new Comparator<Servizio>() {
+                @Override
+                public int compare(Servizio o1, Servizio o2) {
+                    Integer ordQuesto = o1.getOrdine();
+                    Integer ordAltro = o2.getOrdine();
+                    return ordQuesto.compareTo(ordAltro);
+                }// end of inner method
+            });// end of anonymous inner class
+
+            for (int k = 0; k < lista.size(); k++) {
+                serv = lista.get(k);
+                serv.setOrdine(k + 1);
+                serv.save();
+            }// end of for cycle
+        }// end of if cycle
+
+        getTable().refresh();
+    }// end of method
 
 }// end of class
 

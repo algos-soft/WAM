@@ -5,67 +5,50 @@ import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
-import it.algos.wam.WAMApp;
+import it.algos.wam.entity.companyentity.EditorServ;
+import it.algos.wam.entity.companyentity.WanForm;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.web.component.AHorizontalLayout;
-import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.field.*;
-import it.algos.webbase.web.field.DateField;
 import it.algos.webbase.web.field.PasswordField;
-import it.algos.webbase.web.field.TextArea;
 import it.algos.webbase.web.field.TextField;
-import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
-import javax.persistence.metamodel.Attribute;
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by webbase templates.
  * Scheda personalizzata per la entity Volontario
  */
-public class VolontarioForm extends ModuleForm {
+public class VolontarioForm extends WanForm {
 
     //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
-    @SuppressWarnings("all")
-    private RelatedComboField fCompanyCombo;
-    @SuppressWarnings("all")
-    private TextField fCompanyText;
-    @SuppressWarnings("all")
-    private Field fCodeCompanyUnico;
-    @SuppressWarnings("all")
-    private Field fNome;
-    @SuppressWarnings("all")
-    private Field fCognome;
-    @SuppressWarnings("all")
-    private Field fCellulare;
-    @SuppressWarnings("all")
-    private Field fEmail;
-    @SuppressWarnings("all")
-    private Field fPassword;
-    @SuppressWarnings("all")
-    private  TextField fPasswordTextField = null;
-    @SuppressWarnings("all")
-    private Field fAdmin;
-    @SuppressWarnings("all")
-    private Field fDipendente;
-    @SuppressWarnings("all")
-    private Field fAttivo;
-    @SuppressWarnings("all")
-    private Field fScadenzaBLSD;
-    @SuppressWarnings("all")
-    private Field fScadenzaPNT;
-    @SuppressWarnings("all")
-    private Field fScadenzaBPHT;
+    //--alcuni sono nella superclasse
+    private TextField fNome;
+    private TextField fCognome;
+    private TextField fCellulare;
+    private EmailField fEmail;
+    private PasswordField fPassword;
+    private TextField fPasswordTextField;
+
+    private CheckBoxField fAdmin;
+    private CheckBoxField fDipendente;
+    private CheckBoxField fAttivo;
+
     private CheckBoxField mostraBrevetti;
-    private CheckBoxField mostraFunzioni;
+    private Field fScadenzaBLSD;
+    private Field fScadenzaPNT;
+    private Field fScadenzaBPHT;
     private AHorizontalLayout placeholderBrevetti;
-    private VerticalLayout placeholderFunzioni;
+
+    private CheckBoxField mostraFunzioni;
+//    private VerticalLayout placeholderFunzioni;
 
 
     /**
@@ -82,20 +65,111 @@ public class VolontarioForm extends ModuleForm {
 
 
     /**
-     * Create the detail component (the upper part containing the fields).
-     * <p>
-     * Usa il FormLayout che ha le label a sinsitra dei campi (standard)
-     * Se si vogliono le label sopra i campi, sovrascivere questo metodo e usare un VerticalLayout
-     *
-     * @return the detail component containing the fields
+     * Crea prima tutti i fields (ed altri componenti)
+     * Alcuni hanno delle particolarità aggiuntive
+     * Vengono regolati i valori dal DB verso la UI
      */
     @Override
-    protected Component createComponent() {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
-        layout.setSpacing(true);
+    protected void creaFields() {
+        super.creaFields();
 
-        return creaCompDetail(layout);
+        this.creaNome();
+        this.creaCognome();
+        this.creaCellulare();
+        this.creaMail();
+        this.creaPassword();
+    }// end of method
+
+    /**
+     * Fields creati in maniera assolutamente automatica
+     * Parte centrale del Form
+     *
+     * @return the component
+     */
+    @Override
+    protected Component creaCompStandard(AbstractOrderedLayout layout) {
+
+        layout.addComponent(new AHorizontalLayout(fNome, fCognome));
+        layout.addComponent(new AHorizontalLayout(fCellulare, fEmail, fPassword));
+
+//        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+//        layout.addComponent(fVisibileTabellone);
+//        layout.addComponent(fOrarioPredefinito);
+//        layout.addComponent(placeholderOrario);
+//
+//        layout.addComponent(placeholderFunz);
+
+        return layout;
+    }// end of method
+
+    /**
+     * Crea il campo nome, obbligatorio
+     */
+    protected void creaNome() {
+        fNome = (TextField) getField(Volontario_.nome);
+    }// end of method
+
+    /**
+     * Crea il campo cognome, obbligatorio
+     */
+    protected void creaCognome() {
+        fCognome = (TextField) getField(Volontario_.cognome);
+    }// end of method
+
+    /**
+     * Crea il campo cellulare
+     */
+    protected void creaCellulare() {
+        fCellulare = (TextField) getField(Volontario_.cellulare);
+    }// end of method
+
+    /**
+     * Crea il campo email
+     */
+    protected void creaMail() {
+        fEmail = (EmailField) getField(Volontario_.email);
+    }// end of method
+
+    /**
+     * Crea il campo password
+     */
+    protected void creaPassword() {
+        fPassword = (PasswordField) getField(Volontario_.password);
+    }// end of method
+
+    /**
+     * Crea il placeholder per le funzioni previste
+     *
+     * @return il componente creato
+     */
+    @Override
+    protected VerticalLayout creaPlacehorder() {
+        placeholderFunz = new VerticalLayout();
+//        placeholderFunz.setCaption("Funzioni previste");
+//        placeholderFunz.setSpacing(true);
+//        placeholderFunz.addComponent(bNuova);
+//
+//        if (isNewRecord()) {
+//            placeholderFunz.setVisible(false);
+//        }// end of if cycle
+//
+//        // aggiunge gli editor per le funzioni esistenti
+//        List<ServizioFunzione> listaSF = getServizio().getServizioFunzioniOrd();
+//        Collections.sort(listaSF);
+//        for (ServizioFunzione sf : listaSF) {
+//            EditorServ editor = new EditorServ(this, getServizio(), sf);
+//            sfEditors.add(editor);
+//            placeholderFunz.addComponent(editor);
+//        }// end of for cycle
+//
+        return placeholderFunz;
+    }// end of method
+
+
+    protected void syncPlaceholder() {
+        if (LibSession.isDeveloper()) {
+            placeholderFunz.setVisible(fCompanyCombo.getValue() != null);
+        }// end of if cycle
     }// end of method
 
     /**
@@ -103,89 +177,87 @@ public class VolontarioForm extends ModuleForm {
      * Retrieve the fields from the binder and place them in the UI.
      *
      * @param layout per visualizzare i componenti
+     *
      * @return il componente dettagli
      */
     @SuppressWarnings("all")
     private Component creaCompDetail(VerticalLayout layout) {
-        creaFields();
-
-        // selezione della company (solo per developer)
-        AHorizontalLayout layoutCompany = new AHorizontalLayout(creaCompany(), fCodeCompanyUnico);
-        layoutCompany.setVisible(LibSession.isDeveloper());
-        layout.addComponent(layoutCompany);
-
-        layout.addComponent(new AHorizontalLayout(fNome, fCognome));
-        if (isNewRecord()) {
-            layout.addComponent(new AHorizontalLayout(fCellulare, fEmail, fPassword));
-        } else {
-            if (LibSession.isDeveloper()|| WAMApp.ADMIN_VEDE_PASSWORD) {
-                layout.addComponent(new AHorizontalLayout(fCellulare, fEmail, regolaPasswordField()));
-            } else {
-                layout.addComponent(new AHorizontalLayout(fCellulare, fEmail));
-            }// end of if/else cycle
-        }// end of if/else cycle
-
-        // aggiunge un po di spazio
-        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
-        layout.addComponent(new AHorizontalLayout(fAdmin, fDipendente, fAttivo));
-        layout.addComponent(mostraBrevetti);
-        layout.addComponent(creaPlaceholderBrevetti());
-
-        // aggiunge un po di spazio
-        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
-        layout.addComponent(mostraFunzioni);
-        layout.addComponent(creaPlaceorderFunzioni());
-
-        syncPlaceholderFunzioni();
-
-        return layout;
+//        creaFields();
+//
+//
+//        layout.addComponent(new AHorizontalLayout(fNome, fCognome));
+//        if (isNewRecord()) {
+//            layout.addComponent(new AHorizontalLayout(fCellulare, fEmail, fPassword));
+//        } else {
+//            if (LibSession.isDeveloper() || WAMApp.ADMIN_VEDE_PASSWORD) {
+//                layout.addComponent(new AHorizontalLayout(fCellulare, fEmail, regolaPasswordField()));
+//            } else {
+//                layout.addComponent(new AHorizontalLayout(fCellulare, fEmail));
+//            }// end of if/else cycle
+//        }// end of if/else cycle
+//
+//        // aggiunge un po di spazio
+//        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+//        layout.addComponent(new AHorizontalLayout(fAdmin, fDipendente, fAttivo));
+//        layout.addComponent(mostraBrevetti);
+//        layout.addComponent(creaPlaceholderBrevetti());
+//
+//        // aggiunge un po di spazio
+//        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+//        layout.addComponent(mostraFunzioni);
+//        layout.addComponent(creaPlaceorderFunzioni());
+//
+//        syncPlaceholderFunzioni();
+//
+//        return layout;
+        return null;
     }// end of method
 
-    protected void creaFields() {
+    protected void creaFieldsOld() {
 
-        fCodeCompanyUnico = getField(Volontario_.codeCompanyUnico);
-        fNome = getField(Volontario_.nome);
-        fNome.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                syncCode();
-            }// end of inner method
-        });// end of anonymous inner class
-
-        fCognome = getField(Volontario_.cognome);
-        fCognome.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                syncCode();
-            }// end of inner method
-        });// end of anonymous inner class
-        fCellulare = getField(Volontario_.cellulare);
-        fEmail = getField(Volontario_.email);
-
-        fPassword = getField(Volontario_.password);
-
-        fAdmin = getField(Volontario_.admin);
-        fDipendente = getField(Volontario_.dipendente);
-        fAttivo = getField(Volontario_.attivo);
-
-        mostraBrevetti = new CheckBoxField("Controllo scadenze brevetti", false);
-        mostraBrevetti.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                placeholderBrevetti.setVisible(mostraBrevetti.getValue());
-            }// end of inner method
-        });// end of anonymous inner class
-        fScadenzaBLSD = getField(Volontario_.scadenzaBLSD);
-        fScadenzaPNT = getField(Volontario_.scadenzaNonTrauma);
-        fScadenzaBPHT = getField(Volontario_.scadenzaTrauma);
-
-        mostraFunzioni = new CheckBoxField("Controllo funzioni abilitate", isNewRecord());
-        mostraFunzioni.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                syncPlaceholderFunzioni();
-            }// end of inner method
-        });// end of anonymous inner class
+//        fCodeCompanyUnico = getField(Volontario_.codeCompanyUnico);
+//        fNome = getField(Volontario_.nome);
+//        fNome.addValueChangeListener(new Property.ValueChangeListener() {
+//            @Override
+//            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+//                syncCode();
+//            }// end of inner method
+//        });// end of anonymous inner class
+//
+//        fCognome = getField(Volontario_.cognome);
+//        fCognome.addValueChangeListener(new Property.ValueChangeListener() {
+//            @Override
+//            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+//                syncCode();
+//            }// end of inner method
+//        });// end of anonymous inner class
+//        fCellulare = getField(Volontario_.cellulare);
+//        fEmail = getField(Volontario_.email);
+//
+//        fPassword = getField(Volontario_.password);
+//
+//        fAdmin = getField(Volontario_.admin);
+//        fDipendente = getField(Volontario_.dipendente);
+//        fAttivo = getField(Volontario_.attivo);
+//
+//        mostraBrevetti = new CheckBoxField("Controllo scadenze brevetti", false);
+//        mostraBrevetti.addValueChangeListener(new Property.ValueChangeListener() {
+//            @Override
+//            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+//                placeholderBrevetti.setVisible(mostraBrevetti.getValue());
+//            }// end of inner method
+//        });// end of anonymous inner class
+//        fScadenzaBLSD = getField(Volontario_.scadenzaBLSD);
+//        fScadenzaPNT = getField(Volontario_.scadenzaNonTrauma);
+//        fScadenzaBPHT = getField(Volontario_.scadenzaTrauma);
+//
+//        mostraFunzioni = new CheckBoxField("Controllo funzioni abilitate", isNewRecord());
+//        mostraFunzioni.addValueChangeListener(new Property.ValueChangeListener() {
+//            @Override
+//            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+//                syncPlaceholderFunzioni();
+//            }// end of inner method
+//        });// end of anonymous inner class
     }// end of method
 
 //    /**
@@ -318,7 +390,7 @@ public class VolontarioForm extends ModuleForm {
         fPasswordTextField.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                fPassword.setValue(valueChangeEvent.getProperty().getValue());
+//                fPassword.setValue(valueChangeEvent.getProperty().getValue());
             }// end of inner method
         });// end of anonymous inner class
 
@@ -326,48 +398,47 @@ public class VolontarioForm extends ModuleForm {
     }// end of method
 
 
-    /**
-     * Selezione della company (solo per developer)
-     * Crea il campo company, obbligatorio
-     * Nel nuovo record è un ComboBox di selezione
-     * Nella modifica è un TextField
-     *
-     * @return il componente creato
-     */
-    private Component creaCompany() {
-        // popup di selezione (solo per nuovo record)
-        if (isNewRecord()) {
-            fCompanyCombo = (RelatedComboField) getField(CompanyEntity_.company);
-            fCompanyCombo.setWidth("8em");
-            fCompanyCombo.setRequired(true);
-            fCompanyCombo.setRequiredError("Manca la company");
-
-            fCompanyCombo.addValueChangeListener(new Property.ValueChangeListener() {
-                @Override
-                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                    syncPlaceholderFunzioni();
-                }// end of inner method
-            });// end of anonymous inner class
-
-            return fCompanyCombo;
-        } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
-            fCompanyText = null;
-            BaseEntity entity = getEntity();
-            WamCompany company = null;
-            Volontario vol = null;
-            if (entity != null && entity instanceof Volontario) {
-                vol = (Volontario) entity;
-                company = (WamCompany) vol.getCompany();
-                fCompanyText = new TextField("Company", company.getCompanyCode());
-                fCompanyText.setWidth("8em");
-                fCompanyText.setEnabled(false);
-                fCompanyText.setRequired(true);
-            }// end of if cycle
-
-            return fCompanyText;
-        }// end of if/else cycle
-    }// end of method
-
+//    /**
+//     * Selezione della company (solo per developer)
+//     * Crea il campo company, obbligatorio
+//     * Nel nuovo record è un ComboBox di selezione
+//     * Nella modifica è un TextField
+//     *
+//     * @return il componente creato
+//     */
+//    protected Component creaCompany() {
+//        // popup di selezione (solo per nuovo record)
+//        if (isNewRecord()) {
+//            fCompanyCombo = (RelatedComboField) getField(CompanyEntity_.company);
+//            fCompanyCombo.setWidth("8em");
+//            fCompanyCombo.setRequired(true);
+//            fCompanyCombo.setRequiredError("Manca la company");
+//
+//            fCompanyCombo.addValueChangeListener(new Property.ValueChangeListener() {
+//                @Override
+//                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+//                    syncPlaceholderFunzioni();
+//                }// end of inner method
+//            });// end of anonymous inner class
+//
+//            return fCompanyCombo;
+//        } else { // label fissa (solo per modifica record) NON si può cambiare (farebbe casino)
+//            fCompanyText = null;
+//            BaseEntity entity = getEntity();
+//            WamCompany company = null;
+//            Volontario vol = null;
+//            if (entity != null && entity instanceof Volontario) {
+//                vol = (Volontario) entity;
+//                company = (WamCompany) vol.getCompany();
+//                fCompanyText = new TextField("Company", company.getCompanyCode());
+//                fCompanyText.setWidth("8em");
+//                fCompanyText.setEnabled(false);
+//                fCompanyText.setRequired(true);
+//            }// end of if cycle
+//
+//            return fCompanyText;
+//        }// end of if/else cycle
+//    }// end of method
 
 
     /**
@@ -396,29 +467,29 @@ public class VolontarioForm extends ModuleForm {
         fCognome.setValue(LibText.primaMaiuscola((String) fCognome.getValue()));
     }// end of method
 
-    /**
-     * Crea il placeholder per le funzioni previste
-     *
-     * @return il componente creato
-     */
-    private VerticalLayout creaPlaceorderFunzioni() {
-        placeholderFunzioni = new VerticalLayout();
-        placeholderFunzioni.setCaption("Funzioni abilitate");
-        placeholderFunzioni.setSpacing(true);
+//    /**
+//     * Crea il placeholder per le funzioni previste
+//     *
+//     * @return il componente creato
+//     */
+//    private VerticalLayout creaPlaceorderFunzioni() {
+//        placeholderFunzioni = new VerticalLayout();
+//        placeholderFunzioni.setCaption("Funzioni abilitate");
+//        placeholderFunzioni.setSpacing(true);
+//
+//        placeholderFunzioni.setVisible(mostraFunzioni.getValue());
+//        return placeholderFunzioni;
+//    }// end of method
 
-        placeholderFunzioni.setVisible(mostraFunzioni.getValue());
-        return placeholderFunzioni;
-    }// end of method
-
-    private void syncPlaceholderFunzioni() {
-        placeholderFunzioni.removeAllComponents();
-        placeholderFunzioni.addComponent(creaCompFunzioni());
-
-//        if (LibSession.isDeveloper()) {
-        placeholderFunzioni.setVisible(isCompanyValida() && mostraFunzioni.getValue());
-//            creaPlaceorderFunzioni();
-//        }// end of if cycle
-    }// end of method
+//    private void syncPlaceholderFunzioni() {
+//        placeholderFunzioni.removeAllComponents();
+//        placeholderFunzioni.addComponent(creaCompFunzioni());
+//
+////        if (LibSession.isDeveloper()) {
+//        placeholderFunzioni.setVisible(isCompanyValida() && mostraFunzioni.getValue());
+////            creaPlaceorderFunzioni();
+////        }// end of if cycle
+//    }// end of method
 
     /**
      * Crea il componente per la selezione delle funzioni abilitate.
@@ -455,7 +526,7 @@ public class VolontarioForm extends ModuleForm {
     /**
      * Restituisce la company selezionata
      */
-    private WamCompany getCompany() {
+    public WamCompany getCompany() {
         WamCompany company = null;
 
         if (isNewRecord()) {

@@ -364,7 +364,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
     @Override
     public void doDelete(EditorWam editor) {
         placeholderFunz.removeComponent(editor);
-        fEditors.remove(editor);
+        fEditors.remove((EditorFunz) editor);
     }// end of method
 
 }// end of class

@@ -60,13 +60,28 @@ public class WamTablePortal extends TablePortal {
         toolbar.setSelectButtonVisible(false);
 
         if (developer) {
-            useAllCompany = true;
+            if (CompanySessionLib.isCompanySet()) {
+                useAllCompany = false;
+            } else {
+                useAllCompany = true;
+            }// end of if/else cycle
+            if (isUsaBottoniSpostamento()) {
+                if (useAllCompany) {
+                    syncButtonsSpostamento(false);
+                } else {
+                    syncButtonsSpostamento(true);
+                }// end of if/else cycle
+            } else {
+                syncButtonsSpostamento(false);
+            }// end of if/else cycle
         } else {
             if (admin) {
                 useAllCompany = false;
                 if (isUsaBottoniSpostamento()) {
                     syncButtonsSpostamento(true);
-                }// end of if cycle
+                } else {
+                    syncButtonsSpostamento(false);
+                }// end of if/else cycle
             } else {
                 toolbar = null;
             }// fine del blocco if-else
@@ -154,7 +169,7 @@ public class WamTablePortal extends TablePortal {
      *
      * @param sopra true per spostare in alto, false per spostare in basso
      */
-    protected void spostaRecord(boolean sopra) {
+    public void spostaRecord(boolean sopra) {
     }// end of method
 
 

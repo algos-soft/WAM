@@ -9,6 +9,6 @@ import it.algos.wam.entity.wamcompany.WamCompany;
  */
 public interface ServFunzListener extends WamListener {
 
-    void doDelete(EditorServ editor);
+    void doDelete(EditorWam editor);
 
 }// end of interface

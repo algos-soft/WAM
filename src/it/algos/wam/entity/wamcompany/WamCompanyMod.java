@@ -85,6 +85,8 @@ public class WamCompanyMod extends ModulePop {
             addCommandSingolaCroce(menuFiltro, company);
         }// end of for cycle
 
+        WamCompany companyCurrent = (WamCompany) CompanySessionLib.getCompany();
+        spuntaMenu(menuFiltro, companyCurrent);
     }// end of method
 
     /**
@@ -113,8 +115,8 @@ public class WamCompanyMod extends ModulePop {
 
         menuItem.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
+//                spuntaMenu(menuItem, null);
                 fireCompanyChanged(null);
-                spuntaMenu(menuItem, null);
             }// end of inner method
         });// end of anonymous inner class
 
@@ -130,8 +132,8 @@ public class WamCompanyMod extends ModulePop {
 
         menuItem.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
+//                spuntaMenu(menuItem, company);
                 fireCompanyChanged(company);
-                spuntaMenu(menuItem, company);
             }// end of inner method
         });// end of anonymous inner class
 
@@ -195,6 +197,7 @@ public class WamCompanyMod extends ModulePop {
         company.delete();
         fireCompanyRemoved(company);
     }// end of method
+
 
     /**
      * Spunta il menu selezionato

@@ -233,6 +233,10 @@ public abstract class WanForm extends ModuleForm {
     protected void creaOrdine() {
         fOrdine = (IntegerField) getField(Funzione_.ordine);
 
+        if (fOrdine==null) {
+            return;
+        }// end of if cycle
+
         if (LibSession.isDeveloper()) {
             fOrdine.setEnabled(true);
         }// end of if cycle

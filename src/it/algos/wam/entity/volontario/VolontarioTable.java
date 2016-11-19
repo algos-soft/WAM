@@ -91,23 +91,8 @@ public class VolontarioTable extends WamTable {
     }// end of method
 
 
-    /**
-     * Initializes the table.
-     * Must be called from the costructor in each subclass
-     * Chiamato dal costruttore di ModuleTable
-     */
-    @Override
-    protected void init() {
-        super.init();
 
-        setColumnReorderingAllowed(true);
-
-        fixSort();
-        fixColumn();
-    }// end of method
-
-
-    private void fixSort() {
+    protected void fixSort() {
         Container cont = getContainerDataSource();
         if (cont instanceof Sortable) {
             Sortable sortable = (Sortable) cont;
@@ -116,7 +101,7 @@ public class VolontarioTable extends WamTable {
     }// end of method
 
 
-    private void fixColumn() {
+    protected void fixColumn() {
         List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
 
         setColumnHeader(Volontario_.attivo, "ok");

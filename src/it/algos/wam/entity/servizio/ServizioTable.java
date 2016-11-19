@@ -15,7 +15,9 @@ import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
 import com.vaadin.ui.components.colorpicker.ColorChangeListener;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
@@ -101,16 +103,12 @@ public class ServizioTable extends WamTable {
     @Override
     protected void init() {
         super.init();
-
-        setColumnReorderingAllowed(true);
-//        this.setColumnCollapsed(Servizio_.ordine.getName(), true);
-        fixSort();
-        fixColumn();
-
+        this.setColumnCollapsed(Servizio_.ordine.getName(), !CompanySessionLib.isCompanySet());
     }// end of method
 
 
-    private void fixSort() {
+    @Override
+    protected void fixSort() {
         Container cont = getContainerDataSource();
         if (cont instanceof Sortable) {
             Sortable sortable = (Sortable) cont;
@@ -119,7 +117,8 @@ public class ServizioTable extends WamTable {
     }// end of method
 
 
-    private void fixColumn() {
+    @Override
+    protected void fixColumn() {
         setColumnHeader(Servizio_.ordine, "##"); // visibile solo per il developer
         setColumnHeader(Servizio_.sigla, "Sigla");
         setColumnHeader(Servizio_.visibile, "Tab");

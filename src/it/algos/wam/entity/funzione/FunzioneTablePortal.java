@@ -30,7 +30,7 @@ public class FunzioneTablePortal extends WamTablePortalSposta {
          *
          * @param sopra true per spostare in alto, false per spostare in basso
          */
-    protected void spostaRecord(boolean sopra) {
+        public void spostaRecord(boolean sopra) {
         Funzione funz = (Funzione) table.getSelectedEntity();
         Funzione adiacente = WamQuery.queryFunzioneAdiacente(table.getEntityManager(), funz, sopra);
 
@@ -42,7 +42,7 @@ public class FunzioneTablePortal extends WamTablePortalSposta {
     /**
      * Scambia il numero d'ordine di due record
      */
-    private void swap(Funzione f1, Funzione f2) {
+    public void swap(Funzione f1, Funzione f2) {
         int o1 = f1.getOrdine();
         int o2 = f2.getOrdine();
 

@@ -23,7 +23,7 @@ public class ServizioTablePortal extends WamTablePortalSposta {
      *
      * @param sopra true per spostare in alto, false per spostare in basso
      */
-    protected void spostaRecord(boolean sopra) {
+    public void spostaRecord(boolean sopra) {
         Servizio serv = (Servizio) table.getSelectedEntity();
         Servizio adiacente = WamQuery.queryServizioAdiacente(table.getEntityManager(), serv, sopra);
 
