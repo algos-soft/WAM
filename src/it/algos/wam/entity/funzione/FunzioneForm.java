@@ -253,10 +253,10 @@ public class FunzioneForm extends WanForm implements FunzListener {
      * @return il componente creato
      */
     @Override
-    protected VerticalLayout creaPlacehorder() {
+    protected AbstractLayout creaPlacehorder() {
         placeholderFunz = new VerticalLayout();
         placeholderFunz.setCaption("Funzioni dipendenti da questa");
-        placeholderFunz.setSpacing(true);
+        ((VerticalLayout)placeholderFunz).setSpacing(true);
         placeholderFunz.addComponent(bNuova);
 
         if (isNewRecord()) {

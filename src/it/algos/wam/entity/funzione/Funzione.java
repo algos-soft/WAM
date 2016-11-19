@@ -534,7 +534,7 @@ public class Funzione extends WamCompanyEntity implements Comparable<Funzione> {
     @SuppressWarnings("unchecked")
     public static List<Funzione> getListByCompany(WamCompany company, EntityManager manager) {
         if (company != null) {
-            return (List<Funzione>) CompanyQuery.getList(Funzione.class, CompanyEntity_.company, company, manager);
+            return (List<Funzione>) AQuery.getList(Funzione.class, CompanyEntity_.company, company, manager);
         } else {
             return new ArrayList<>();
         }// end of if/else cycle

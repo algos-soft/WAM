@@ -38,7 +38,7 @@ public abstract class WanForm extends ModuleForm {
     protected IntegerField fOrdine;
 
     protected Button bNuova;
-    protected VerticalLayout placeholderFunz;
+    protected AbstractLayout placeholderFunz;
 
     /**
      * The form used to edit an item.
@@ -89,7 +89,7 @@ public abstract class WanForm extends ModuleForm {
             layoutAll.addComponent(creaCompDeveloper());
         }// end of if cycle
         layoutAll.addComponent(creaCompStandard(layoutStandard));
-        layoutAll.addComponent(creaCompPlaceholder());
+        layoutAll.addComponent(placeholderFunz);
 
         return layoutAll;
     }// end of method
@@ -145,19 +145,6 @@ public abstract class WanForm extends ModuleForm {
         if (!isNewRecord() && LibSession.isAdmin() && Pref.getBool(WAMApp.DISPLAY_FIELD_ORDINE, null, true)) {
             layout.addComponent(fOrdine);
         }// end of if cycle
-
-        return layout;
-    }// end of method
-
-    /**
-     * Parte bassa del Form
-     *
-     * @return the component
-     */
-    protected Component creaCompPlaceholder() {
-        VerticalLayout layout = new VerticalLayout();
-
-        layout.addComponent(placeholderFunz);
 
         return layout;
     }// end of method
@@ -261,7 +248,7 @@ public abstract class WanForm extends ModuleForm {
      *
      * @return il componente creato
      */
-    protected VerticalLayout creaPlacehorder() {
+    protected AbstractLayout creaPlacehorder() {
         return placeholderFunz;
     }// end of method
 

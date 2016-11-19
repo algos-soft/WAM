@@ -70,7 +70,8 @@ public class ServizioForm extends WanForm implements ServFunzListener {
         this.creaRigaPicker();
         this.creaChekOrario();
         this.creaPlacehorderOrario();
-        this.creaChekVisibile();
+
+        fVisibileTabellone = (CheckBoxField) getField(Servizio_.visibile);
     }// end of method
 
 
@@ -167,19 +168,10 @@ public class ServizioForm extends WanForm implements ServFunzListener {
 
 
     /**
-     * Crea il chekbox visibile
-     */
-    private void creaChekVisibile() {
-        fVisibileTabellone = (CheckBoxField) getField(Servizio_.visibile);
-    }// end of method
-
-
-    /**
      * Sincronizza il codeCompanyUnico e suggerisce la sigla
      */
     protected void syncCodeCompanyUnico() {
         String codeCompanyUnico = LibText.creaChiave(getCompany(), fSigla.getValue());
-
         fCodeCompanyUnico.setValue(codeCompanyUnico);
     }// end of method
 
@@ -212,10 +204,10 @@ public class ServizioForm extends WanForm implements ServFunzListener {
      * @return il componente creato
      */
     @Override
-    protected VerticalLayout creaPlacehorder() {
+    protected AbstractLayout creaPlacehorder() {
         placeholderFunz = new VerticalLayout();
         placeholderFunz.setCaption("Funzioni previste");
-        placeholderFunz.setSpacing(true);
+        ((VerticalLayout) placeholderFunz).setSpacing(true);
         placeholderFunz.addComponent(bNuova);
 
         if (isNewRecord()) {
@@ -245,7 +237,6 @@ public class ServizioForm extends WanForm implements ServFunzListener {
     private boolean isOrarioPredefinito() {
         return Lib.getBool(fOrarioPredefinito.getValue());
     }// end of method
-
 
 
     /**
