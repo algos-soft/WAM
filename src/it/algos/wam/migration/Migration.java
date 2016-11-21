@@ -14,6 +14,7 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.log.Log;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibArray;
+import it.algos.webbase.web.lib.LibQuery;
 import it.algos.webbase.web.lib.LibTime;
 import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 
@@ -135,6 +136,7 @@ public class Migration {
      * Elimina PAVT, non più attiva
      *
      * @param listaVecchieCrociEsistenti di webambulanze
+     *
      * @return croci da importare da webambulanze in WAM
      */
     private List<CroceAmb> selezionaCrodiDaImportare(List<CroceAmb> listaVecchieCrociEsistenti) {
@@ -167,12 +169,17 @@ public class Migration {
         WamCompany companyNew = WamCompany.findByCode(siglaCompanyNew);
         List<WrapVolontario> listaWrapVolontari = null;
 
-//        managerNew.getTransaction().begin();
-        if (companyNew != null) {
-            companyNew.delete(managerNew);
-        }// fine del blocco if
+        try { // prova ad eseguire il codice
+            managerNew.getTransaction().begin();
+            if (companyNew != null) {
+                companyNew.delete(managerNew);
+            }// fine del blocco if
+            managerNew.getTransaction().commit();
+        } catch (Exception unErrore) { // intercetta l'errore
+            managerNew.getTransaction().rollback();
+        }// fine del blocco try-catch
 
-        companyNew = importSingolaCroce(managerNew, companyOld, siglaCompanyNew);
+        companyNew = importSingolaCroce(companyOld, siglaCompanyNew, managerNew);
 
         listaFunzioniOld = FunzioneAmb.findAll(companyOld, managerOld);
         listaServiziOld = ServizioAmb.findAll(companyOld, managerOld);
@@ -181,16 +188,17 @@ public class Migration {
         listaTurniOld = TurnoAmb.findAllRecenti(companyOld, managerOld); //todo provvisorio - levare
 //        listaTurniOld = TurnoAmb.findAll(companyOld, managerOld); //todo rimettere
 
-        importFunzioni(companyNew);
-        importServizi(companyNew);
-        listaWrapVolontari = importVolontari(companyNew);
-        importTurni(companyNew, listaWrapVolontari);
+        importFunzioni(companyNew, managerNew);
+        importServizi(companyNew, managerNew);
+        listaWrapVolontari = importVolontari(companyNew, managerNew);
+        importTurni(companyNew, listaWrapVolontari, managerNew);
 
 //        try { // prova ad eseguire il codice
 //            managerNew.getTransaction().commit();
 //        } catch (Exception unErrore) { // intercetta l'errore
 //            managerNew.getTransaction().rollback();
 //        }// fine del blocco try-catch
+        int a = 87;
     }// end of method
 
     /**
@@ -198,25 +206,34 @@ public class Migration {
      *
      * @param companyOld      company usata in webambulanze
      * @param siglaCompanyNew nome della company da usare in wam
+     *
      * @return la nuova company
      */
-    private WamCompany importSingolaCroce(EntityManager manager, CroceAmb companyOld, String siglaCompanyNew) {
-        WamCompany companyNew;
+    private WamCompany importSingolaCroce(CroceAmb companyOld, String siglaCompanyNew, EntityManager manager) {
+        WamCompany companyNew = null;
 
-        if (SIGLA_MAIUSCOLA) {
-            siglaCompanyNew = siglaCompanyNew.toUpperCase();
-        } else {
-            siglaCompanyNew = siglaCompanyNew.toLowerCase();
-        }// end of if/else cycle
+        manager.getTransaction().begin();
+        try { // prova ad eseguire il codice
+            if (SIGLA_MAIUSCOLA) {
+                siglaCompanyNew = siglaCompanyNew.toUpperCase();
+            } else {
+                siglaCompanyNew = siglaCompanyNew.toLowerCase();
+            }// end of if/else cycle
 
-        companyNew = new WamCompany();
-        companyNew.setCompanyCode(siglaCompanyNew);
-        companyNew.setOrganizzazione(recuperaOrganizzazione(companyOld));
-        companyNew.setName(companyOld.getDescrizione());
-        companyNew.setAddress1(companyOld.getIndirizzo());
-        companyNew.setPresidente(companyOld.getPresidente());
+            companyNew = new WamCompany();
+            companyNew.setCompanyCode(siglaCompanyNew);
+            companyNew.setOrganizzazione(recuperaOrganizzazione(companyOld));
+            companyNew.setName(companyOld.getDescrizione());
+            companyNew.setAddress1(companyOld.getIndirizzo());
+            companyNew.setPresidente(companyOld.getPresidente());
 
-        companyNew.save(manager);
+            companyNew = (WamCompany) companyNew.save(manager); //todo indispensabile il ritorno, altrimenti NON c'è l'ID
+
+            manager.getTransaction().commit();
+        } catch (Exception unErrore) { // intercetta l'errore
+            manager.getTransaction().rollback();
+        }// fine del blocco try-catch
+
 
         return companyNew;
     }// end of method
@@ -239,18 +256,35 @@ public class Migration {
      *
      * @param companyNew company usata in wam
      */
-    private void importFunzioni(WamCompany companyNew) {
+    private void importFunzioni(WamCompany companyNew, EntityManager manager) {
         List<WrapFunzione> listaWrapFunzioni = new ArrayList<>();
         Funzione funzioneNew;
 
-        if (listaFunzioniOld != null && listaFunzioniOld.size() > 0) {
-            for (FunzioneAmb funzioneOld : listaFunzioniOld) {
-                funzioneNew = creaSingolaFunzione(funzioneOld, companyNew);
-                listaWrapFunzioni.add(new WrapFunzione(funzioneOld, funzioneNew));
-            }// end of for cycle
-        }// end of if cycle
+        //--controlla se la transazione è attiva
+        boolean createTransaction;
+        createTransaction = LibQuery.isTransactionNotActive(manager);
 
-        this.recuperaFunzioniDipendenti(listaWrapFunzioni);
+        try { // prova ad eseguire il codice
+            if (createTransaction) {
+                manager.getTransaction().begin();
+            }// end of if cycle
+
+            if (listaFunzioniOld != null && listaFunzioniOld.size() > 0) {
+                for (FunzioneAmb funzioneOld : listaFunzioniOld) {
+                    funzioneNew = creaSingolaFunzione(funzioneOld, companyNew, manager);
+                    listaWrapFunzioni.add(new WrapFunzione(funzioneOld, funzioneNew));//todo forse da levare
+                }// end of for cycle
+            }// end of if cycle
+            this.recuperaFunzioniDipendenti(listaWrapFunzioni, manager);
+
+            if (createTransaction) {
+                manager.getTransaction().commit();
+            }// end of if cycle
+        } catch (Exception unErrore) { // intercetta l'errore
+            if (createTransaction) {
+                manager.getTransaction().rollback();
+            }// end of if cycle
+        }// fine del blocco try-catch
     }// end of method
 
     /**
@@ -258,22 +292,24 @@ public class Migration {
      *
      * @param funzioneOld della companyOld
      * @param companyNew  company usata in wam
+     *
      * @return la nuova funzione
      */
-    private Funzione creaSingolaFunzione(FunzioneAmb funzioneOld, WamCompany companyNew) {
+    private Funzione creaSingolaFunzione(FunzioneAmb funzioneOld, WamCompany companyNew, EntityManager manager) {
         String code = funzioneOld.getSigla();
         String sigla = funzioneOld.getSigla_visibile();
         int ordine = funzioneOld.getOrdine();
         String descrizione = funzioneOld.getDescrizione();
         FontAwesome glyph = selezionaIcona(descrizione);
 
-        return Funzione.crea(companyNew, code, sigla, descrizione, ordine, glyph, managerNew, null);
+        return Funzione.crea(companyNew, code, sigla, descrizione, ordine, glyph, manager, null);
     }// end of method
 
     /**
      * Elabora la vecchia descrizione per selezionare una icona adeguata
      *
      * @param descrizione usata in webambulanze
+     *
      * @return la FontAwesome selezionata
      */
     private FontAwesome selezionaIcona(String descrizione) {
@@ -305,7 +341,7 @@ public class Migration {
     /**
      * Solo dopo che sono state create tutte
      */
-    private void recuperaFunzioniDipendenti(List<WrapFunzione> listaWrapFunzioni) {
+    private void recuperaFunzioniDipendenti(List<WrapFunzione> listaWrapFunzioni, EntityManager manager) {
         FunzioneAmb funzOld;
         Funzione funzNew;
         String funzioniDipendentiStr;
@@ -324,12 +360,12 @@ public class Migration {
                 for (String siglaOld : funzioniDipendentiArray) {
                     Funzione funzDipNew;
                     codeNew = siglaOld;
-                    funzDipNew = Funzione.getEntityByCompanyAndCode(company, codeNew, managerNew);
+                    funzDipNew = Funzione.getEntityByCompanyAndCode(company, codeNew, manager);
                     if (funzDipNew != null) {
                         funzNew.funzioniDipendenti.add(funzDipNew);
                     }// end of if cycle
                 }// end of for cycle
-                funzNew.save((WamCompany) funzNew.getCompany(), managerNew);
+                funzNew.save((WamCompany) funzNew.getCompany(), manager);
             }// end of if cycle
 
         }// end of for cycle
@@ -340,13 +376,30 @@ public class Migration {
      *
      * @param companyNew company usata in wam
      */
-    private void importServizi(WamCompany companyNew) {
-        if (listaServiziOld != null && listaServiziOld.size() > 0) {
-            for (ServizioAmb servizioOld : listaServiziOld) {
-                creaSingoloServizio(servizioOld, companyNew);
-                int a = 87;
-            }// end of for cycle
-        }// end of if cycle
+    private void importServizi(WamCompany companyNew, EntityManager manager) {
+        //--controlla se la transazione è attiva
+        boolean createTransaction;
+        createTransaction = LibQuery.isTransactionNotActive(manager);
+
+        try { // prova ad eseguire il codice
+            if (createTransaction) {
+                manager.getTransaction().begin();
+            }// end of if cycle
+
+            if (listaServiziOld != null && listaServiziOld.size() > 0) {
+                for (ServizioAmb servizioOld : listaServiziOld) {
+                    creaSingoloServizio(servizioOld, companyNew, manager);
+                }// end of for cycle
+            }// end of if cycle
+
+            if (createTransaction) {
+                manager.getTransaction().commit();
+            }// end of if cycle
+        } catch (Exception unErrore) { // intercetta l'errore
+            if (createTransaction) {
+                manager.getTransaction().rollback();
+            }// end of if cycle
+        }// fine del blocco try-catch
     }// end of method
 
     /**
@@ -354,22 +407,23 @@ public class Migration {
      *
      * @param servizioOld della companyOld
      * @param companyNew  company usata in wam
+     *
      * @return il nuovo servizio
      */
     @SuppressWarnings("all")
-    private Servizio creaSingoloServizio(ServizioAmb servizioOld, WamCompany companyNew) {
+    private Servizio creaSingoloServizio(ServizioAmb servizioOld, WamCompany companyNew, EntityManager manager) {
         int ordine = servizioOld.getOrdine();
         String sigla = servizioOld.getSigla();
         String descrizione = servizioOld.getDescrizione();
         int numObbligatorie = servizioOld.getFunzioni_obbligatorie();
-        List<ServizioFunzione> listaServizioFunzioni = recuperaFunzioni(companyNew, servizioOld, numObbligatorie);
+        List<ServizioFunzione> listaServizioFunzioni = recuperaFunzioni(companyNew, servizioOld, numObbligatorie, manager);
         int colore = 0;
         int oraInizio = servizioOld.getOra_inizio();
         int minutiInizio = servizioOld.getMinuti_inizio();
         int oraFine = servizioOld.getOra_fine();
         int minutiFine = servizioOld.getMinuti_fine();
 
-        return Servizio.crea(companyNew, sigla, true, descrizione, ordine, colore, true, oraInizio, minutiInizio, oraFine, minutiFine, managerNew, listaServizioFunzioni);
+        return Servizio.crea(companyNew, sigla, true, descrizione, ordine, colore, true, oraInizio, minutiInizio, oraFine, minutiFine, manager, listaServizioFunzioni);
     }// end of method
 
     /**
@@ -377,10 +431,11 @@ public class Migration {
      *
      * @param servizioOld      della companyOld
      * @param listaFunzioniAll nuove appena create
+     *
      * @return lista di nuove funzioni
      */
     @SuppressWarnings("all")
-    private List<ServizioFunzione> recuperaFunzioni(WamCompany companyNew, ServizioAmb servizioOld, int numObbligatorie) {
+    private List<ServizioFunzione> recuperaFunzioni(WamCompany companyNew, ServizioAmb servizioOld, int numObbligatorie, EntityManager manager) {
         List<ServizioFunzione> listaServizioFunzioni = new ArrayList<>();
         ServizioFunzione servFunz;
         FunzioneAmb funzOld = null;
@@ -402,7 +457,7 @@ public class Migration {
             }// end of if cycle
             if (funzOld != null) {
                 code = funzOld.getSigla();
-                funz = Funzione.getEntityByCompanyAndCode(companyNew, code);
+                funz = Funzione.getEntityByCompanyAndCode(companyNew, code, manager);
                 if (funz != null) {
                     servFunz = new ServizioFunzione(companyNew, null, funz, obbligatoria, pos);
                     listaServizioFunzioni.add(servFunz);
@@ -418,18 +473,36 @@ public class Migration {
      *
      * @param companyNew company usata in wam
      */
-    private List<WrapVolontario> importVolontari(WamCompany companyNew) {
+    private List<WrapVolontario> importVolontari(WamCompany companyNew, EntityManager manager) {
         List<WrapVolontario> listaWrapVolontari = new ArrayList<>();
         Volontario volontarioNew = null;
 
-        if (listaVolontariOld != null && listaVolontariOld.size() > 0) {
-            for (VolontarioAmb volontarioOld : listaVolontariOld) {
-                volontarioNew = creaSingoloVolontario(volontarioOld, companyNew);
-                listaWrapVolontari.add(new WrapVolontario(volontarioOld, volontarioNew));
-            }// end of for cycle
-        }// end of if cycle
+        //--controlla se la transazione è attiva
+        boolean createTransaction;
+        createTransaction = LibQuery.isTransactionNotActive(manager);
 
-        this.recuperaAdmin(listaWrapVolontari);
+        try { // prova ad eseguire il codice
+            if (createTransaction) {
+                manager.getTransaction().begin();
+            }// end of if cycle
+
+            if (listaVolontariOld != null && listaVolontariOld.size() > 0) {
+                for (VolontarioAmb volontarioOld : listaVolontariOld) {
+                    volontarioNew = creaSingoloVolontario(volontarioOld, companyNew, manager);
+                    listaWrapVolontari.add(new WrapVolontario(volontarioOld, volontarioNew));//todo forse non serve
+                }// end of for cycle
+            }// end of if cycle
+
+            this.recuperaAdmin(listaWrapVolontari, manager);
+
+            if (createTransaction) {
+                manager.getTransaction().commit();
+            }// end of if cycle
+        } catch (Exception unErrore) { // intercetta l'errore
+            if (createTransaction) {
+                manager.getTransaction().rollback();
+            }// end of if cycle
+        }// fine del blocco try-catch
 
         return listaWrapVolontari;
     }// end of method
@@ -440,10 +513,11 @@ public class Migration {
      * @param companyNew       company usata in wam
      * @param volontarioOld    della companyOld
      * @param listaFunzioniAll nuove appena create
+     *
      * @return il nuovo volontario
      */
     @SuppressWarnings("all")
-    private Volontario creaSingoloVolontario(VolontarioAmb volontarioOld, WamCompany companyNew) {
+    private Volontario creaSingoloVolontario(VolontarioAmb volontarioOld, WamCompany companyNew, EntityManager manager) {
         Volontario volontario = null;
 
         String nome = volontarioOld.getNome();
@@ -459,14 +533,13 @@ public class Migration {
         int turniAnno = volontarioOld.getTurni_anno();
         int oreExtra = volontarioOld.getOre_extra();
         String password = recuperaPassword(volontarioOld);
-        List<Funzione> funzioni = recuperaFunzioni(volontarioOld, companyNew);
+        List<Funzione> funzioni = recuperaFunzioni(volontarioOld, companyNew, manager);
 
-        volontario = Volontario.crea(companyNew, null, nome, cognome, cellulare, email, "", false, funzioni);
+        volontario = new Volontario(companyNew, nome, cognome, dataNascita, cellulare, dipendente);
         if (volontario != null) {
             volontario.setTelefono(telefono);
-            volontario.setDataNascita(dataNascita);
+            volontario.setEmail(email);
             volontario.setNote(note);
-            volontario.setDipendente(dipendente);
             volontario.setAttivo(attivo);
             volontario.setOreAnno(oreAnno);
             volontario.setTurniAnno(turniAnno);
@@ -476,13 +549,13 @@ public class Migration {
                 volontario.setAttivo(false);
             }// end of if cycle
 
-            volontario = (Volontario) volontario.save(managerNew);
+            volontario = (Volontario) volontario.save(companyNew, manager);
         }// end of if cycle
 
         return volontario;
     }// end of method
 
-    private List<Funzione> recuperaFunzioni(VolontarioAmb volontarioOld, WamCompany companyNew) {
+    private List<Funzione> recuperaFunzioni(VolontarioAmb volontarioOld, WamCompany companyNew, EntityManager manager) {
         List<Funzione> funzioniNew = new ArrayList<>();
         List<MiliteFunzioneAmb> listaIncroci;
         long keyMiliteID = volontarioOld.getId();
@@ -495,7 +568,7 @@ public class Migration {
                 keyFunzioneOld = incrocio.getFunzione_id();
                 FunzioneAmb funzOld = FunzioneAmb.find(keyFunzioneOld, managerOld);
                 String code = funzOld.getSigla();
-                funzNew = Funzione.getEntityByCompanyAndCode(companyNew, code);
+                funzNew = Funzione.getEntityByCompanyAndCode(companyNew, code, manager);
                 funzioniNew.add(funzNew);
             }// end of for cycle
         }// end of if cycle
@@ -504,7 +577,7 @@ public class Migration {
     }// end of method
 
 
-    private void recuperaAdmin(List<WrapVolontario> listaWrap) {
+    private void recuperaAdmin(List<WrapVolontario> listaWrap, EntityManager manager) {
         UtenteRuoloAmb utenteRuolo;
         long utenteAmbID;
         Volontario volontarioNew;
@@ -530,7 +603,7 @@ public class Migration {
                 volontarioNew = recuperaVolontarioNew(listaWrap, volontarioAmb);
                 if (volontarioNew != null) {
                     volontarioNew.setAdmin(true);
-                    volontarioNew.save(managerNew);
+                    volontarioNew.save(manager);
                 }// end of if cycle
             }// end of if cycle
         }// end of for cycle
@@ -550,29 +623,47 @@ public class Migration {
     }// end of method
 
 
-    private List<Turno> importTurni(WamCompany companyNew, List<WrapVolontario> listaWrapVolontari) {
+    private List<Turno> importTurni(WamCompany companyNew, List<WrapVolontario> listaWrapVolontari, EntityManager manager) {
         List<Turno> listaTurniNew = new ArrayList<>();
         Turno turnoNew;
         int k = 0;
         int delta = 150;
 
-        if (listaTurniOld != null && listaTurniOld.size() > 0) {
-            for (TurnoAmb turnoOld : listaTurniOld) {
-                turnoNew = creaSingoloTurno(companyNew, turnoOld, listaWrapVolontari);
-                listaTurniNew.add(turnoNew);
-                k++;
-                if (k > delta) {
-                    break;//todo provvisorio
-                }// end of if cycle
-            }// end of for cycle
-        }// end of if cycle
+        //--controlla se la transazione è attiva
+        boolean createTransaction;
+        createTransaction = LibQuery.isTransactionNotActive(manager);
+
+        try { // prova ad eseguire il codice
+            if (createTransaction) {
+                manager.getTransaction().begin();
+            }// end of if cycle
+
+            if (listaTurniOld != null && listaTurniOld.size() > 0) {
+                for (TurnoAmb turnoOld : listaTurniOld) {
+                    turnoNew = creaSingoloTurno(companyNew, turnoOld, listaWrapVolontari, manager);
+                    listaTurniNew.add(turnoNew);
+                    k++;
+                    if (k > delta) {
+                        break;//todo provvisorio
+                    }// end of if cycle
+                }// end of for cycle
+            }// end of if cycle
+
+            if (createTransaction) {
+                manager.getTransaction().commit();
+            }// end of if cycle
+        } catch (Exception unErrore) { // intercetta l'errore
+            if (createTransaction) {
+                manager.getTransaction().rollback();
+            }// end of if cycle
+        }// fine del blocco try-catch
 
         return listaTurniNew;
     }// end of method
 
-    private Turno creaSingoloTurno(WamCompany companyNew, TurnoAmb turnoOld, List<WrapVolontario> listaWrapVolontari) {
+    private Turno creaSingoloTurno(WamCompany companyNew, TurnoAmb turnoOld, List<WrapVolontario> listaWrapVolontari, EntityManager manager) {
         Turno turnoNew = null;
-        Servizio servizio = recuperaServizio(companyNew, turnoOld);
+        Servizio servizio = recuperaServizio(companyNew, turnoOld, manager);
         Date inizio = turnoOld.getInizio();
         Date fine = turnoOld.getFine();
         List<Iscrizione> iscrizioni = null;
@@ -580,16 +671,16 @@ public class Migration {
         String localitaExtra = turnoOld.getLocalità_extra();
         String note = turnoOld.getNote();
 
-        turnoNew = Turno.crea(companyNew, servizio, inizio, fine, managerNew);
-        turnoNew.setIscrizioni(recuperaIscrizioni(turnoOld, turnoNew, companyNew, servizio, listaWrapVolontari));
+        turnoNew = Turno.crea(companyNew, servizio, inizio, fine, manager);
+        turnoNew.setIscrizioni(recuperaIscrizioni(turnoOld, turnoNew, companyNew, servizio, listaWrapVolontari, manager));
         turnoNew.setTitoloExtra(titoloExtra);
         turnoNew.setLocalitaExtra(localitaExtra);
         turnoNew.setNote(note);
-        turnoNew = turnoNew.save(companyNew, managerNew);
+        turnoNew = turnoNew.save(companyNew, manager);
         return turnoNew;
     }// end of method
 
-    private Servizio recuperaServizio(WamCompany company, TurnoAmb turnoOld) {
+    private Servizio recuperaServizio(WamCompany company, TurnoAmb turnoOld, EntityManager manager) {
         Servizio servizioNew = null;
         ServizioAmb servizioOld = null;
         String sigla;
@@ -600,7 +691,7 @@ public class Migration {
                 sigla = servizioOld.getSigla();
 
                 if (!sigla.equals("")) {
-                    servizioNew = Servizio.getEntityByCompanyAndSigla(company, sigla);
+                    servizioNew = Servizio.getEntityByCompanyAndSigla(company, sigla, manager);
                 }// end of if cycle
             }// end of if cycle
         }// end of if cycle
@@ -624,26 +715,26 @@ public class Migration {
         return servizioNew;
     }// end of method
 
-    private List<Iscrizione> recuperaIscrizioni(TurnoAmb turnoOld, Turno turnoNew, WamCompany company, Servizio servizio, List<WrapVolontario> listaWrapVolontari) {
+    private List<Iscrizione> recuperaIscrizioni(TurnoAmb turnoOld, Turno turnoNew, WamCompany company, Servizio servizio, List<WrapVolontario> listaWrapVolontari, EntityManager manager) {
         List<Iscrizione> iscrizioni = new ArrayList<>();
         Iscrizione iscrizione;
 
-        iscrizione = recuperaIscrizione1(turnoOld, turnoNew, company, servizio, listaWrapVolontari);
+        iscrizione = recuperaIscrizione1(turnoOld, turnoNew, company, servizio, listaWrapVolontari, manager);
         if (iscrizione != null) {
             iscrizioni.add(iscrizione);
         }// end of if cycle
 
-        iscrizione = recuperaIscrizione2(turnoOld, turnoNew, company, servizio, listaWrapVolontari);
+        iscrizione = recuperaIscrizione2(turnoOld, turnoNew, company, servizio, listaWrapVolontari, manager);
         if (iscrizione != null) {
             iscrizioni.add(iscrizione);
         }// end of if cycle
 
-        iscrizione = recuperaIscrizione3(turnoOld, turnoNew, company, servizio, listaWrapVolontari);
+        iscrizione = recuperaIscrizione3(turnoOld, turnoNew, company, servizio, listaWrapVolontari, manager);
         if (iscrizione != null) {
             iscrizioni.add(iscrizione);
         }// end of if cycle
 
-        iscrizione = recuperaIscrizione4(turnoOld, turnoNew, company, servizio, listaWrapVolontari);
+        iscrizione = recuperaIscrizione4(turnoOld, turnoNew, company, servizio, listaWrapVolontari, manager);
         if (iscrizione != null) {
             iscrizioni.add(iscrizione);
         }// end of if cycle
@@ -656,7 +747,7 @@ public class Migration {
     }// end of method
 
 
-    private Iscrizione recuperaIscrizione1(TurnoAmb turnoOld, Turno turnoNew, WamCompany company, Servizio serv, List<WrapVolontario> listaWrapVolontari) {
+    private Iscrizione recuperaIscrizione1(TurnoAmb turnoOld, Turno turnoNew, WamCompany company, Servizio serv, List<WrapVolontario> listaWrapVolontari, EntityManager manager) {
         Iscrizione iscrizione = null;
         FunzioneAmb funzioneOld;
         String siglaOld;
@@ -671,7 +762,7 @@ public class Migration {
         if (funzioneOld != null) {
             siglaOld = funzioneOld.getSigla();
             codeNew = siglaOld;
-            funzioneNew = Funzione.getEntityByCompanyAndCode(company, codeNew);
+            funzioneNew = Funzione.getEntityByCompanyAndCode(company, codeNew, manager);
         }// end of if cycle
 
         volontarioOld = turnoOld.getMilite_funzione1();
@@ -680,15 +771,15 @@ public class Migration {
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
 //            serFunz = new ServizioFunzione(company, serv, funzioneNew);
-            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew);
-            iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
+            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew, manager);
+            iscrizione = new Iscrizione(company, turnoNew, volontarioNew, serFunz);
             iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle
 
         return iscrizione;
     }// end of method
 
-    private Iscrizione recuperaIscrizione2(TurnoAmb turnoOld, Turno turnoNew, WamCompany company, Servizio serv, List<WrapVolontario> listaWrapVolontari) {
+    private Iscrizione recuperaIscrizione2(TurnoAmb turnoOld, Turno turnoNew, WamCompany company, Servizio serv, List<WrapVolontario> listaWrapVolontari, EntityManager manager) {
         Iscrizione iscrizione = null;
         FunzioneAmb funzioneOld;
         String siglaOld;
@@ -703,7 +794,7 @@ public class Migration {
         if (funzioneOld != null) {
             siglaOld = funzioneOld.getSigla();
             codeNew = siglaOld;
-            funzioneNew = Funzione.getEntityByCompanyAndCode(company, codeNew);
+            funzioneNew = Funzione.getEntityByCompanyAndCode(company, codeNew, manager);
         }// end of if cycle
 
         volontarioOld = turnoOld.getMilite_funzione2();
@@ -711,7 +802,7 @@ public class Migration {
 
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
-            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew);
+            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew, manager);
             iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
             iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle
@@ -719,7 +810,7 @@ public class Migration {
         return iscrizione;
     }// end of method
 
-    private Iscrizione recuperaIscrizione3(TurnoAmb turnoOld, Turno turnoNew, WamCompany company, Servizio serv, List<WrapVolontario> listaWrapVolontari) {
+    private Iscrizione recuperaIscrizione3(TurnoAmb turnoOld, Turno turnoNew, WamCompany company, Servizio serv, List<WrapVolontario> listaWrapVolontari, EntityManager manager) {
         Iscrizione iscrizione = null;
         FunzioneAmb funzioneOld;
         String siglaOld;
@@ -734,7 +825,7 @@ public class Migration {
         if (funzioneOld != null) {
             siglaOld = funzioneOld.getSigla();
             codeNew = siglaOld;
-            funzioneNew = Funzione.getEntityByCompanyAndCode(company, codeNew);
+            funzioneNew = Funzione.getEntityByCompanyAndCode(company, codeNew, manager);
         }// end of if cycle
 
         volontarioOld = turnoOld.getMilite_funzione3();
@@ -742,7 +833,7 @@ public class Migration {
 
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
-            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew);
+            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew, manager);
             iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
             iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle
@@ -750,7 +841,7 @@ public class Migration {
         return iscrizione;
     }// end of method
 
-    private Iscrizione recuperaIscrizione4(TurnoAmb turnoOld, Turno turnoNew, WamCompany company, Servizio serv, List<WrapVolontario> listaWrapVolontari) {
+    private Iscrizione recuperaIscrizione4(TurnoAmb turnoOld, Turno turnoNew, WamCompany company, Servizio serv, List<WrapVolontario> listaWrapVolontari, EntityManager manager) {
         Iscrizione iscrizione = null;
         FunzioneAmb funzioneOld;
         String siglaOld;
@@ -765,7 +856,7 @@ public class Migration {
         if (funzioneOld != null) {
             siglaOld = funzioneOld.getSigla();
             codeNew = siglaOld;
-            funzioneNew = Funzione.getEntityByCompanyAndCode(company, codeNew);
+            funzioneNew = Funzione.getEntityByCompanyAndCode(company, codeNew, manager);
         }// end of if cycle
 
         volontarioOld = turnoOld.getMilite_funzione4();
@@ -773,7 +864,7 @@ public class Migration {
 
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
-            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew);
+            serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew, manager);
             iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
             iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle

@@ -4,13 +4,12 @@ import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
-import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
-import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.company.BaseCompany_;
-import it.algos.webbase.multiazienda.CompanyEntity_;
+import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.DefaultSort;
@@ -104,6 +103,7 @@ public class WamCompany extends BaseCompany {
      * Nessun filtro sulla azienda, perché la primary key è unica
      *
      * @param id valore (unico) della Primary Key
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany find(long id) {
@@ -133,6 +133,7 @@ public class WamCompany extends BaseCompany {
      * Recupera una istanza della Entity usando la query per una property specifica
      *
      * @param code valore della property code
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany findByCode(String code) {
@@ -150,6 +151,7 @@ public class WamCompany extends BaseCompany {
      *
      * @param code    valore della property code
      * @param manager the EntityManager to use
+     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany findByCode(String code, EntityManager manager) {
@@ -234,7 +236,19 @@ public class WamCompany extends BaseCompany {
      */
     @Override
     public boolean delete() {
-        return delete((EntityManager) null);
+        boolean cancellato = false;
+
+        EntityManager manager = EM.createEntityManager();
+        try {
+            manager.getTransaction().begin();
+            cancellato = delete(manager);
+            manager.getTransaction().commit();
+        } catch (Exception e) {
+            manager.getTransaction().rollback();
+        }// fine del blocco try-catch
+        manager.close();
+
+        return cancellato;
     }// end of method
 
     /**
@@ -256,8 +270,10 @@ public class WamCompany extends BaseCompany {
      * @param manager the EntityManager to use
      */
     private void deleteAllWamData(EntityManager manager) {
+        int recCancellati;
 
         // elimina le tabelle
+        recCancellati = CompanyQuery.delete(Iscrizione.class, this, manager);
 //        ServizioFunzione.resetServizi(this,manager);
 //        AQuery.delete(ServizioFunzione.class, CompanyEntity_.company, this, manager);
 //        AQuery.delete(Volontario.class, CompanyEntity_.company, this, manager);

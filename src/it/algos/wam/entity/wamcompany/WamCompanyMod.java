@@ -11,12 +11,14 @@ import it.algos.wam.migration.Migration;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
+import javax.persistence.EntityManager;
 import javax.persistence.metamodel.Attribute;
 
 /**
