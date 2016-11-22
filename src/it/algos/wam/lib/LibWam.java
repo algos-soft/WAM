@@ -9,9 +9,11 @@ import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibText;
+import org.apache.commons.lang.LocaleUtils;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -20,6 +22,7 @@ import java.util.Date;
  */
 public abstract class LibWam {
 
+    private static Locale LOCALE = new Locale("it");
 
     /**
      * Costruisce una chiave della data
@@ -115,5 +118,15 @@ public abstract class LibWam {
 
         return serFunz;
     }// end of static method
+
+
+    /**
+     * Ritorna il locale per l'applicazione
+     */
+    public static Locale getCurrentLocale() {
+        return LOCALE;
+    }
+
+
 
 }// end of abstract static class

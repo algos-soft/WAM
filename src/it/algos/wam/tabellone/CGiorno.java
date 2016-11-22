@@ -1,12 +1,15 @@
 package it.algos.wam.tabellone;
 
 import com.vaadin.ui.Label;
+import it.algos.wam.lib.LibWam;
 import it.algos.webbase.web.lib.LibDate;
+import org.apache.commons.lang.LocaleUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 /**
  * Created by alex on 21/02/16.
@@ -17,7 +20,9 @@ public class CGiorno extends Label {
 
         setWidth(GridTabellone.W_COLONNE_TURNI);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE d MMM");
+
+        Locale locale = LibWam.getCurrentLocale();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE d MMM", locale);
         String text = date.format(formatter);
         setValue(text);
 
