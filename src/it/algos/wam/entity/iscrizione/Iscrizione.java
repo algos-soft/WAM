@@ -15,6 +15,7 @@ import it.algos.webbase.web.entity.EM;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 /**
@@ -34,14 +35,17 @@ public class Iscrizione extends WamCompanyEntity {
     private static final long serialVersionUID = 1L;
 
     // turno di riferimento
+    @NotNull
     @ManyToOne
     private Turno turno;
 
     // volontario di riferimento
+    @NotNull
     @OneToOne
     private Volontario volontario = null;
 
     // per quale funzione il volontario si iscrive
+    @NotNull
     @OneToOne
     private ServizioFunzione servizioFunzione = null;
 

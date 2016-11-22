@@ -643,31 +643,42 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     }// end of static method
 
     public static Volontario crea(WamCompany company, String nome, String cognome) {
-        return crea(company, (EntityManager) null, nome, cognome, "");
+        return crea(company, nome, cognome, (EntityManager) null);
     }// end of static method
 
     public static Volontario crea(WamCompany company, String nome, String cognome, EntityManager manager) {
-        return crea(company, nome, cognome, "", manager);
+        return crea(company, manager, nome, cognome, "", "", (List<Funzione>) null);
     }// end of static method
 
-    public static Volontario crea(WamCompany company, String nome, String cognome, String email, EntityManager manager) {
-        return crea(company, manager, nome, cognome, email, new ArrayList<Funzione>());
-    }// end of static method
+//    public static Volontario crea(WamCompany company, String nome, String cognome, String email, EntityManager manager) {
+//        return crea(company, manager, nome, cognome, email, new ArrayList<Funzione>());
+//    }// end of static method
+//
+//    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, List<Funzione> listaFunz) {
+//        return crea(company, manager, nome, cognome, "", "", listaFunz);
+//    }// end of static method
 
-    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, ArrayList<Funzione> listaFunz) {
-        return crea(company, manager, nome, cognome, email, listaFunz.toArray(new Funzione[listaFunz.size()]));
-    }// end of static method
+//    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, Funzione... funzioni) {
+//        return crea(company, manager, nome, cognome, "", email, "", false, null, null, null, funzioni);
+//    }// end of static method
+//
+//    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, List<Funzione> listaFunz) {
+//        return crea(company, manager, nome, cognome, cellulare, email, password, false, null, null, null, listaFunz.toArray(new Funzione[listaFunz.size()]));
+//    }// end of static method
+//
+//    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, boolean admin, List<Funzione> listaFunz) {
+//        return crea(company, manager, nome, cognome, cellulare, email, password, admin, null, null, null, listaFunz.toArray(new Funzione[listaFunz.size()]));
+//    }// end of static method
 
-    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String email, Funzione... funzioni) {
-        return crea(company, manager, nome, cognome, "", email, "", false, null, null, null, funzioni);
-    }// end of static method
-
-    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, List<Funzione> listaFunz) {
-        return crea(company, manager, nome, cognome, cellulare, email, password, false, null, null, null, listaFunz.toArray(new Funzione[listaFunz.size()]));
-    }// end of static method
-
-    public static Volontario crea(WamCompany company, EntityManager manager, String nome, String cognome, String cellulare, String email, String password, boolean admin, List<Funzione> listaFunz) {
-        return crea(company, manager, nome, cognome, cellulare, email, password, admin, null, null, null, listaFunz.toArray(new Funzione[listaFunz.size()]));
+    public static Volontario crea(
+            WamCompany company,
+            EntityManager manager,
+            String nome,
+            String cognome,
+            String cellulare,
+            String email,
+            List<Funzione> listaFunz) {
+        return crea(company, manager, nome, cognome, (Date) null, cellulare, "", email, "", "", false, false, true, null, null, null, 0, 0, 0, listaFunz);
     }// end of static method
 
     public static Volontario crea(
@@ -683,7 +694,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
             Date sPNT,
             Date sBPHTP,
             List<Funzione> listaFunz) {
-        return crea(company, manager, nome, cognome, cellulare, email, password, admin, sBLSD, sPNT, sBPHTP, listaFunz.toArray(new Funzione[listaFunz.size()]));
+        return crea(company, manager, nome, cognome, (Date) null, cellulare, "", email, password, "", admin, false, true, sBLSD, sPNT, sBPHTP, 0, 0, 0, listaFunz);
     }// end of static method
 
     /**
@@ -710,28 +721,42 @@ public class Volontario extends WamCompanyEntity implements UserIF {
             EntityManager manager,
             String nome,
             String cognome,
+            Date dataNascita,
             String cellulare,
+            String telefono,
             String email,
             String password,
+            String note,
             boolean admin,
+            boolean dipendente,
+            boolean attivo,
             Date scadenzaBLSD,
             Date scadenzaPNT,
             Date scadenzaBPHTP,
-            Funzione... funzioni) {
+            int oreAnno,
+            int turniAnno,
+            int oreExtra,
+            List<Funzione> funzioni) {
         Volontario volontario = null;
 
         if (isNotEntityByCompanyAndNomeAndCognome(company, nome, cognome, manager)) {
             try { // prova ad eseguire il codice
                 volontario = new Volontario(company, nome, cognome);
+                volontario.setDataNascita(dataNascita);
                 volontario.setCellulare(cellulare);
+                volontario.setTelefono(telefono);
                 volontario.setEmail(email);
                 volontario.setPassword(password);
+                volontario.setNote(note);
                 volontario.setAdmin(admin);
-                volontario.setDipendente(false);
-                volontario.setAttivo(true);
+                volontario.setDipendente(dipendente);
+                volontario.setAttivo(attivo);
                 volontario.setScadenzaBLSD(scadenzaBLSD);
                 volontario.setScadenzaNonTrauma(scadenzaPNT);
                 volontario.setScadenzaTrauma(scadenzaBPHTP);
+                volontario.setOreAnno(oreAnno);
+                volontario.setTurniAnno(turniAnno);
+                volontario.setOreExtra(oreExtra);
 
                 if (funzioni != null) {
                     for (Funzione funz : funzioni) {
