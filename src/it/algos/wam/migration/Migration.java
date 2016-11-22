@@ -33,8 +33,8 @@ import java.util.List;
  */
 public class Migration {
 
-
     protected final static String PERSISTENCE_UNIT_NAME = "Webambulanzelocal";
+    private final static boolean USA_TRANSAZIONE = false;
     private final static String DB_OLD_LOCAL = "";
     private final static String DB_OLD_SERVER = "";
     private final static String DB_NEW_LOCAL = "";
@@ -477,15 +477,34 @@ public class Migration {
         List<WrapVolontario> listaWrapVolontari = new ArrayList<>();
         Volontario volontarioNew = null;
 
-        //--controlla se la transazione è attiva
-        boolean createTransaction;
-        createTransaction = LibQuery.isTransactionNotActive(manager);
+        if (USA_TRANSAZIONE) {
+            //--controlla se la transazione è attiva
+            boolean createTransaction;
+            createTransaction = LibQuery.isTransactionNotActive(manager);
 
-        try { // prova ad eseguire il codice
-            if (createTransaction) {
-                manager.getTransaction().begin();
-            }// end of if cycle
+            try { // prova ad eseguire il codice
+                if (createTransaction) {
+                    manager.getTransaction().begin();
+                }// end of if cycle
 
+                if (listaVolontariOld != null && listaVolontariOld.size() > 0) {
+                    for (VolontarioAmb volontarioOld : listaVolontariOld) {
+                        volontarioNew = creaSingoloVolontario(volontarioOld, companyNew, manager);
+                        listaWrapVolontari.add(new WrapVolontario(volontarioOld, volontarioNew));//todo forse non serve
+                    }// end of for cycle
+                }// end of if cycle
+
+                this.recuperaAdmin(listaWrapVolontari, manager);
+
+                if (createTransaction) {
+                    manager.getTransaction().commit();
+                }// end of if cycle
+            } catch (Exception unErrore) { // intercetta l'errore
+                if (createTransaction) {
+                    manager.getTransaction().rollback();
+                }// end of if cycle
+            }// fine del blocco try-catch
+        } else {
             if (listaVolontariOld != null && listaVolontariOld.size() > 0) {
                 for (VolontarioAmb volontarioOld : listaVolontariOld) {
                     volontarioNew = creaSingoloVolontario(volontarioOld, companyNew, manager);
@@ -494,15 +513,7 @@ public class Migration {
             }// end of if cycle
 
             this.recuperaAdmin(listaWrapVolontari, manager);
-
-            if (createTransaction) {
-                manager.getTransaction().commit();
-            }// end of if cycle
-        } catch (Exception unErrore) { // intercetta l'errore
-            if (createTransaction) {
-                manager.getTransaction().rollback();
-            }// end of if cycle
-        }// fine del blocco try-catch
+        }// end of if/else cycle
 
         return listaWrapVolontari;
     }// end of method
@@ -522,35 +533,52 @@ public class Migration {
 
         String nome = volontarioOld.getNome();
         String cognome = volontarioOld.getCognome();
+        Date dataNascita = volontarioOld.getData_nascita();
         String cellulare = volontarioOld.getTelefono_cellulare();
         String telefono = volontarioOld.getTelefono_fisso();
         String email = volontarioOld.getEmail();
-        Date dataNascita = volontarioOld.getData_nascita();
+        String password = recuperaPassword(volontarioOld);
         String note = volontarioOld.getNote();
+        boolean admin = false;
         boolean dipendente = volontarioOld.isDipendente();
         boolean attivo = volontarioOld.isAttivo();
         int oreAnno = volontarioOld.getOre_anno();
         int turniAnno = volontarioOld.getTurni_anno();
         int oreExtra = volontarioOld.getOre_extra();
-        String password = recuperaPassword(volontarioOld);
+        Date scadenzaBLSD = null;
+        Date scadenzaPNT = null;
+        Date scadenzaBPHTP = null;
         List<Funzione> funzioni = recuperaFunzioni(volontarioOld, companyNew, manager);
 
-        volontario = new Volontario(companyNew, nome, cognome, dataNascita, cellulare, dipendente);
-        if (volontario != null) {
-            volontario.setTelefono(telefono);
-            volontario.setEmail(email);
-            volontario.setNote(note);
-            volontario.setAttivo(attivo);
-            volontario.setOreAnno(oreAnno);
-            volontario.setTurniAnno(turniAnno);
-            volontario.setOreExtra(oreExtra);
-            volontario.setPassword(password);
-            if (password.equals("")) {
-                volontario.setAttivo(false);
-            }// end of if cycle
-
-            volontario = (Volontario) volontario.save(companyNew, manager);
+        if (password.equals("")) {
+            attivo = false;
         }// end of if cycle
+
+        try { // prova ad eseguire il codice
+            volontario = Volontario.crea(
+                    companyNew,
+                    manager,
+                    nome,
+                    cognome,
+                    dataNascita,
+                    cellulare,
+                    telefono,
+                    email,
+                    password,
+                    note,
+                    admin,
+                    dipendente,
+                    attivo,
+                    scadenzaBLSD,
+                    scadenzaPNT,
+                    scadenzaBPHTP,
+                    oreAnno,
+                    turniAnno,
+                    oreExtra,
+                    funzioni);
+        } catch (Exception unErrore) { // intercetta l'errore
+            int a = 87;
+        }// fine del blocco try-catch
 
         return volontario;
     }// end of method
@@ -629,15 +657,36 @@ public class Migration {
         int k = 0;
         int delta = 150;
 
-        //--controlla se la transazione è attiva
-        boolean createTransaction;
-        createTransaction = LibQuery.isTransactionNotActive(manager);
+        if (USA_TRANSAZIONE) {
+            //--controlla se la transazione è attiva
+            boolean createTransaction;
+            createTransaction = LibQuery.isTransactionNotActive(manager);
 
-        try { // prova ad eseguire il codice
-            if (createTransaction) {
-                manager.getTransaction().begin();
-            }// end of if cycle
+            try { // prova ad eseguire il codice
+                if (createTransaction) {
+                    manager.getTransaction().begin();
+                }// end of if cycle
 
+                if (listaTurniOld != null && listaTurniOld.size() > 0) {
+                    for (TurnoAmb turnoOld : listaTurniOld) {
+                        turnoNew = creaSingoloTurno(companyNew, turnoOld, listaWrapVolontari, manager);
+                        listaTurniNew.add(turnoNew);
+                        k++;
+                        if (k > delta) {
+                            break;//todo provvisorio
+                        }// end of if cycle
+                    }// end of for cycle
+                }// end of if cycle
+
+                if (createTransaction) {
+                    manager.getTransaction().commit();
+                }// end of if cycle
+            } catch (Exception unErrore) { // intercetta l'errore
+                if (createTransaction) {
+                    manager.getTransaction().rollback();
+                }// end of if cycle
+            }// fine del blocco try-catch
+        } else {
             if (listaTurniOld != null && listaTurniOld.size() > 0) {
                 for (TurnoAmb turnoOld : listaTurniOld) {
                     turnoNew = creaSingoloTurno(companyNew, turnoOld, listaWrapVolontari, manager);
@@ -648,15 +697,7 @@ public class Migration {
                     }// end of if cycle
                 }// end of for cycle
             }// end of if cycle
-
-            if (createTransaction) {
-                manager.getTransaction().commit();
-            }// end of if cycle
-        } catch (Exception unErrore) { // intercetta l'errore
-            if (createTransaction) {
-                manager.getTransaction().rollback();
-            }// end of if cycle
-        }// fine del blocco try-catch
+        }// end of if/else cycle
 
         return listaTurniNew;
     }// end of method
@@ -677,6 +718,7 @@ public class Migration {
         turnoNew.setLocalitaExtra(localitaExtra);
         turnoNew.setNote(note);
         turnoNew = turnoNew.save(companyNew, manager);
+
         return turnoNew;
     }// end of method
 
@@ -770,7 +812,6 @@ public class Migration {
 
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
-//            serFunz = new ServizioFunzione(company, serv, funzioneNew);
             serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew, manager);
             iscrizione = new Iscrizione(company, turnoNew, volontarioNew, serFunz);
             iscrizione.setEsisteProblema(esisteProblema);
@@ -803,7 +844,7 @@ public class Migration {
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
             serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew, manager);
-            iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
+            iscrizione = new Iscrizione(company, turnoNew, volontarioNew, serFunz);
             iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle
 
@@ -834,7 +875,7 @@ public class Migration {
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
             serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew, manager);
-            iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
+            iscrizione = new Iscrizione(company, turnoNew, volontarioNew, serFunz);
             iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle
 
@@ -865,7 +906,7 @@ public class Migration {
         if (funzioneNew != null && volontarioOld != null) {
             volontarioNew = recuperaVolontarioNew(listaWrapVolontari, volontarioOld);
             serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew, manager);
-            iscrizione = new Iscrizione(turnoNew, volontarioNew, serFunz);
+            iscrizione = new Iscrizione(company, turnoNew, volontarioNew, serFunz);
             iscrizione.setEsisteProblema(esisteProblema);
         }// end of if cycle
 
