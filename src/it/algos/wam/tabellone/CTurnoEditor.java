@@ -302,7 +302,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                         desc = operatore.getNomeCognome();
                         desc += " ha cancellato ";
                         desc += volontario.getNomeCognome();
-                        desc += " come "+funzione.getSigla();
+                        desc += " come "+funzione.getCode();
                         desc += " dal turno ";
                         desc += getLogTurno(turno);
                     }
@@ -333,7 +333,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                         desc = operatore.getNomeCognome();
                         desc += " ha iscritto ";
                         desc += volontario.getNomeCognome();
-                        desc += " come "+funzione.getSigla();
+                        desc += " come "+funzione.getCode();
                         desc += " al turno ";
                         desc += getLogTurno(turno);
                     }
@@ -398,7 +398,7 @@ public class CTurnoEditor extends CTabelloneEditor {
     private String getLogIscrizione(Volontario volontario, Funzione funzione, Turno turno) {
         String desc = volontario.getNomeCognome();
         desc += " si è iscritto/a come ";
-        desc += funzione.getSigla();
+        desc += funzione.getCode();
         desc += " al turno ";
         desc += getLogTurno(turno);
         return desc;
@@ -416,7 +416,7 @@ public class CTurnoEditor extends CTabelloneEditor {
         String desc;
         desc = volontario.getNomeCognome();
         desc += " si è cancellato/a come ";
-        desc += funzione.getSigla();
+        desc += funzione.getCode();
         desc += " dal turno ";
         desc += getLogTurno(turno);
         return desc;

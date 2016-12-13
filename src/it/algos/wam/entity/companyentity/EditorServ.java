@@ -137,7 +137,7 @@ public class EditorServ extends EditorWam {
                 if (servFunz != null) {
                     List<Iscrizione> iscrizioni= (List<Iscrizione>)CompanyQuery.getList(Iscrizione.class, Iscrizione_.servizioFunzione,servFunz);
                     if (iscrizioni.size() == 0) {
-                        String messaggio = "Vuoi eliminare la funzione " + servFunz.getFunzione().getSigla() + "?";
+                        String messaggio = "Vuoi eliminare la funzione " + servFunz.getFunzione().getCode() + "?";
                         new ConfirmDialog(null, messaggio, new ConfirmDialog.Listener() {
                             @Override
                             public void onClose(ConfirmDialog dialog, boolean confirmed) {

@@ -4,23 +4,16 @@ import com.vaadin.data.Container;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.UI;
-import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.wamcompany.WamCompany;
-import it.algos.wam.ui.WamUI;
-import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ELazyContainer;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.lib.LibSession;
-import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
-import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.EntityManager;
-import java.util.HashMap;
 
 /**
  * Created by gac on 07 mag 2016.
@@ -145,7 +138,7 @@ public class WamTablePortal extends TablePortal {
      */
     @SuppressWarnings("all")
     protected void setFiltro(WamCompany company) {
-        WamTable table = (WamTable)this.getTable();
+        WamTable table = (WamTable) this.getTable();
         Container.Filterable cont = null;
 
         if (table != null) {

@@ -156,7 +156,7 @@ public class CompanyTask implements Runnable {
                         text += "\n- ";
                         text += i.getVolontario().getNickname();
                         text += " (";
-                        text += funz.getSigla();
+                        text += funz.getCode();
                         text += ")";
                     }
                 }

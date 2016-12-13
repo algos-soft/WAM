@@ -1269,7 +1269,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         ArrayList<Funzione> funzioni = getFunzioni();
         for (int i = 0; i < funzioni.size(); i++) {
             Funzione currFun = funzioni.get(i);
-            if (currFun.getSigla().equals(f.getSigla())) {
+            if (currFun.getCode().equals(f.getCode())) {
                 pos = i;
                 break;
             }

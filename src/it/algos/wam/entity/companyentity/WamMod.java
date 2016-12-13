@@ -76,6 +76,7 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
     public ATable createTable() {
         return new WamTable(this);
     }// end of method
+
     /**
      * Create the Table Portal
      * <p>
