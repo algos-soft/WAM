@@ -3,10 +3,7 @@ package it.algos.wam.ui;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
-import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.*;
 import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ui.Transport;
@@ -39,11 +36,13 @@ import it.algos.webbase.domain.utente.UtenteModulo;
 import it.algos.webbase.domain.vers.VersMod;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.lib.LibCookie;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
 import it.algos.webbase.web.menu.AMenuBar;
 import it.algos.webbase.web.module.ModulePop;
 
+import javax.servlet.http.Cookie;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -185,6 +184,8 @@ public class WamUI extends UI {
             });
 
         }
+
+
         boolean loggato = Login.getLogin().isLogged();
 
         //--controllo se l'url contiene un login valido
@@ -727,4 +728,14 @@ public class WamUI extends UI {
         return footer;
     }// end of method
 
+
+    public static void setCookie(String key, String value) {
+        setCookie(key, value, "");
+    }
+
+    public static void setCookie(String key, String value, String path) {
+        JavaScript.getCurrent().execute(String.format(
+                "document.cookie = \"%s=%s; path=%s\";", key, value, path
+        ));
+    }
 }// end of class

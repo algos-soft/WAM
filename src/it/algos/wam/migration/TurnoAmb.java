@@ -4,6 +4,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.BaseEntity_;
+import it.algos.webbase.web.lib.LibCookie;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.query.AQuery;
 import org.eclipse.persistence.annotations.ReadOnly;

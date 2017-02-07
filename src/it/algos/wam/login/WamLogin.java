@@ -1,6 +1,7 @@
 package it.algos.wam.login;
 
 import com.vaadin.server.Page;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import it.algos.wam.entity.volontario.Volontario;
@@ -12,6 +13,8 @@ import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
 
+import javax.servlet.http.Cookie;
+
 /**
  * Created by alex on 15-03-2016.
  * .
@@ -22,7 +25,7 @@ public class WamLogin extends Login {
     private WamUserProfileForm profileForm;
 
     public WamLogin(BaseCompany company) {
-        setCookiePrefix(company.getCompanyCode());
+        setCookiePrefix("wam_" + company.getCompanyCode());
         loginForm = new WamLoginForm();
         profileForm = new WamUserProfileForm();
     }
@@ -51,8 +54,8 @@ public class WamLogin extends Login {
     public static Volontario getLoggedVolontario() {
         Volontario volontario = null;
         Login login = Login.getLogin();
-        if(login!=null){
-            if(login.isLogged()){
+        if (login != null) {
+            if (login.isLogged()) {
                 UserIF user = login.getUser();
                 if (user instanceof Volontario) {
                     volontario = (Volontario) user;

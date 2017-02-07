@@ -45,6 +45,7 @@ public class WAMApp extends AlgosApp {
     static {
         AlgosApp.DISPLAY_NEW_RECORD_ONLY = false;
         AlgosApp.DISPLAY_TOOLTIPS = Pref.getBool(DISPLAY_TOOLTIPS, null, true);
+        AlgosApp.COOKIES_PATH = WAMApp.class.getPackage().getName();
     }// end of static method
 
 }// end of static class

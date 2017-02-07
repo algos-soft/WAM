@@ -231,7 +231,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param manager the EntityManager to use
-     *
      * @return il numero totale di records nella Entity
      */
     public static int countByAllCompanies(EntityManager manager) {
@@ -258,7 +257,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Se il manager è valido, lo usa (must be close by caller method)
      *
      * @param manager the EntityManager to use
-     *
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCurrentCompany(EntityManager manager) {
@@ -271,7 +269,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Filtrato sulla company passata come parametro.
      *
      * @param company di appartenenza (property della superclasse)
-     *
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCompany(WamCompany company) {
@@ -287,7 +284,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
-     *
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCompany(WamCompany company, EntityManager manager) {
@@ -305,7 +301,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param attr    the searched attribute
      * @param value   the value to search for
      * @param manager the EntityManager to use
-     *
      * @return il numero filtrato di records nella Entity
      */
     public static int countByCompanyAndProperty(WamCompany company, SingularAttribute attr, Object value, EntityManager manager) {
@@ -322,7 +317,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Nessun filtro sulla company, perché la primary key è unica
      *
      * @param id valore (unico) della Primary Key
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static Volontario find(long id) {
@@ -339,7 +333,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @param id      valore (unico) della Primary Key
      * @param manager the EntityManager to use
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static Volontario find(long id, EntityManager manager) {
@@ -357,7 +350,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Nessun filtro sulla company, perché la property è unica
      *
      * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static Volontario getEntityByCodeCompanyUnico(String codeCompanyUnico) {
@@ -370,7 +362,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Nessun filtro sulla company, perché la property è unica
      *
      * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
-     *
      * @return vero se esiste Entity, false se non trovata
      */
     public static boolean isEntityByCodeCompanyUnico(String codeCompanyUnico) {
@@ -383,7 +374,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
      * @param manager          the EntityManager to use
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static Volontario getEntityByCodeCompanyUnico(String codeCompanyUnico, EntityManager manager) {
@@ -395,7 +385,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Nessun filtro sulla company, perché la property è unica
      *
      * @param codeCompanyUnico sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
-     *
      * @return vero se esiste Entity, false se non trovata
      */
     public static boolean isEntityByCodeCompanyUnico(String codeCompanyUnico, EntityManager manager) {
@@ -408,7 +397,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static Volontario getEntityByNomeAndCognome(String nome, String cognome) {
@@ -422,7 +410,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param company di appartenenza (property della superclasse)
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static Volontario getEntityByCompanyAndNomeAndCognome(WamCompany company, String nome, String cognome) {
@@ -438,7 +425,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
      * @param manager the EntityManager to use
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static Volontario getEntityByCompanyAndNomeAndCognome(WamCompany company, String nome, String cognome, EntityManager manager) {
@@ -464,7 +450,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
      * @param manager the EntityManager to use
-     *
      * @return vero se esiste Entity, false se non trovata
      */
     public static boolean isEntityByCompanyAndNomeAndCognome(WamCompany company, String nome, String cognome, EntityManager manager) {
@@ -479,7 +464,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param nome    del volontario/milite (obbligatorio)
      * @param cognome del volontario/milite (obbligatorio)
      * @param manager the EntityManager to use
-     *
      * @return vero se esiste Entity, false se non trovata
      */
     public static boolean isNotEntityByCompanyAndNomeAndCognome(WamCompany company, String nome, String cognome, EntityManager manager) {
@@ -491,7 +475,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Recupera un volontario della company corrente per nick
      *
      * @param nick il nick (come ritornato da getNickname())
-     *
      * @return il volontario
      */
     @SuppressWarnings("unchecked")
@@ -529,7 +512,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * (non va usata CompanyQuery, altrimenti arriverebbe solo la lista della company corrente)
      *
      * @param manager the EntityManager to use
-     *
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
@@ -553,7 +535,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
      *
      * @param manager the EntityManager to use
-     *
      * @return lista di tutte le entities
      */
     public static List<Volontario> getListByCurrentCompany(EntityManager manager) {
@@ -567,7 +548,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Se si arriva qui con una company null, vuol dire che non esiste la company corrente
      *
      * @param company di appartenenza (property della superclasse)
-     *
      * @return lista di tutte le entities
      */
     public static List<Volontario> getListByCompany(WamCompany company) {
@@ -584,7 +564,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @param company di appartenenza (property della superclasse)
      * @param manager the EntityManager to use
-     *
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
@@ -713,7 +692,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * @param scadenzaPNT   del brevetto (facoltativa)
      * @param scadenzaBPHTP del brevetto (facoltativa)
      * @param funzioni      lista delle funzioni (facoltativa)
-     *
      * @return istanza di Volontario
      */
     public static Volontario crea(
@@ -988,7 +966,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Saves this entity to the database using a local EntityManager
      *
      * @param manager the entity manager to use (if null, a new one is created on the fly)
-     *
      * @return the merged Entity (new entity, unmanaged, has the id)
      */
     @Override
@@ -1004,7 +981,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      *
      * @param company da filtrare
      * @param manager the entity manager to use (if null, a new one is created on the fly)
-     *
      * @return the merged Entity (new entity, unmanaged, has the id)
      */
     public Volontario save(WamCompany company, EntityManager manager) {
@@ -1047,7 +1023,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Otherwise, a new transaction is used to save this single entity.
      *
      * @param manager the entity manager to use (if null, a new one is created on the fly)
-     *
      * @return the merged Entity (new entity, unmanaged, has the id), casted as Funzione
      */
     public Volontario saveSafe(EntityManager manager) {
@@ -1156,7 +1131,8 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     }// end of method
 
     public String getEncryptedPassword() {
-        return password;
+//        return password;
+        return LibCrypto.encrypt(password);
     }// end of method
 
     @Override
@@ -1206,7 +1182,6 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      * Verifica se il volontario ha una data funzione
      *
      * @param funz la funzione da verificare
-     *
      * @return true se ha la funzione
      */
     public boolean haFunzione(Funzione funz) {
