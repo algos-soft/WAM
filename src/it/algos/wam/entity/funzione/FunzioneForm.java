@@ -12,6 +12,7 @@ import it.algos.wam.entity.companyentity.WanForm;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.field.TextField;
+import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
@@ -77,10 +78,18 @@ public class FunzioneForm extends WanForm implements FunzListener {
                     layout.addComponent(fOrdine);
                 }// end of if cycle
             } else {
-                AHorizontalLayout riga = new AHorizontalLayout(fCode, bIcona, fSigla,fOrdine);
-                riga.setComponentAlignment(bIcona, Alignment.BOTTOM_CENTER);
-                layout.addComponent(new AHorizontalLayout(riga));
-                layout.addComponent(new AHorizontalLayout(fDescrizione));
+                if (Pref.getBool(WAMApp.DISPLAY_LISTE_COLLEGATE, null, false)) {
+                    TabSheet tabsheet = new TabSheet();
+                    tabsheet.setWidth("1200px");
+                    tabsheet.addTab(creaTabForm(), "Form");
+                    tabsheet.addTab(creaTabList(), "List");
+                    layout.addComponent(tabsheet);
+                } else {
+                    AHorizontalLayout riga = new AHorizontalLayout(fCode, bIcona, fSigla,fOrdine);
+                    riga.setComponentAlignment(bIcona, Alignment.BOTTOM_CENTER);
+                    layout.addComponent(new AHorizontalLayout(riga));
+                    layout.addComponent(new AHorizontalLayout(fDescrizione));
+                }// end of if/else cycle
             }// end of if/else cycle
         } else {
             AHorizontalLayout riga = new AHorizontalLayout(fCode, bIcona, fSigla);
@@ -92,6 +101,21 @@ public class FunzioneForm extends WanForm implements FunzListener {
         return layout;
     }// end of method
 
+
+    protected Component creaTabForm() {
+        VerticalLayout layout = new VerticalLayout();
+
+        AHorizontalLayout riga = new AHorizontalLayout(fCode, bIcona, fSigla,fOrdine);
+        riga.setComponentAlignment(bIcona, Alignment.BOTTOM_CENTER);
+        layout.addComponent(new AHorizontalLayout(riga));
+        layout.addComponent(new AHorizontalLayout(fDescrizione));
+
+        return layout;
+    }// end of method
+
+    protected Component creaTabList() {
+        return new Label("lista funzione");
+    }// end of method
 
     /**
      * Crea il bottone per la selezione dell'icona

@@ -23,10 +23,11 @@ public class WAMApp extends AlgosApp {
     public final static String DISPLAY_FOOTER_INFO = "displayFooterInfo";
     public final static String DISPLAY_TOOLTIPS = "displayTooltips";
     public final static String DISPLAY_FIELD_ORDINE = "displayFieldOrdine";
+    public final static String DISPLAY_LISTE_COLLEGATE = "displayListeCollegate";
     public final static String USA_FORM_LAYOUT = "usaFormLayout";
     public final static String USA_REFRESH_DEMO = "usaRefreshDemo";
     public final static String USA_MIGRATION = "usaMigration";
-    public final static String INFO_APP = "Algos s.r.l. - wam.0.98 del 13.12.16";
+    public final static String INFO_APP = "Algos s.r.l. - wam.0.99 del 20.1.17";
 
     /**
      * Name of the local folder for images.<br>
@@ -46,4 +47,4 @@ public class WAMApp extends AlgosApp {
         AlgosApp.DISPLAY_TOOLTIPS = Pref.getBool(DISPLAY_TOOLTIPS, null, true);
     }// end of static method
 
-}// end of abstract static class
+}// end of static class

@@ -85,6 +85,35 @@ public abstract class WanForm extends ModuleForm {
         creaFields();
 
         //--assembla i vari elementi grafici
+        if (Pref.getBool(WAMApp.DISPLAY_LISTE_COLLEGATE, null, false)) {
+            TabSheet tabsheet = new TabSheet();
+            tabsheet.setWidth("1200px");
+            tabsheet.addTab(creaTabForm(), "Form");
+            tabsheet.addTab(creaTabList(), "List");
+            layoutAll.addComponent(tabsheet);
+        } else {
+            if (LibSession.isDeveloper()) {
+                layoutAll.addComponent(creaCompDeveloper());
+            }// end of if cycle
+            layoutAll.addComponent(creaCompStandard(layoutStandard));
+            layoutAll.addComponent(placeholderFunz);
+        }// end of if/else cycle
+
+        return layoutAll;
+    }// end of method
+
+    protected Component creaTabForm() {
+        VerticalLayout layoutAll = new VerticalLayout();
+        AbstractOrderedLayout layoutStandard;
+
+        if (Pref.getBool(WAMApp.USA_FORM_LAYOUT, null, false)) {
+            layoutStandard = new FormLayout();
+        } else {
+            layoutStandard = new VerticalLayout();
+            layoutStandard.setSpacing(true);
+            layoutStandard.setMargin(new MarginInfo(true, false, true, false));
+        }// end of if/else cycle
+
         if (LibSession.isDeveloper()) {
             layoutAll.addComponent(creaCompDeveloper());
         }// end of if cycle
@@ -94,6 +123,9 @@ public abstract class WanForm extends ModuleForm {
         return layoutAll;
     }// end of method
 
+    protected Component creaTabList() {
+        return new Label("lista wam generica");
+    }// end of method
 
     /**
      * Crea prima tutti i fields (ed altri componenti)
@@ -220,7 +252,7 @@ public abstract class WanForm extends ModuleForm {
     protected void creaOrdine() {
         fOrdine = (IntegerField) getField(Funzione_.ordine);
 
-        if (fOrdine==null) {
+        if (fOrdine == null) {
             return;
         }// end of if cycle
 
