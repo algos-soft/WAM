@@ -25,7 +25,7 @@ public class WamLogin extends Login {
     private WamUserProfileForm profileForm;
 
     public WamLogin(BaseCompany company) {
-        setCookiePrefix("wam_" + company.getCompanyCode());
+        setCookiePrefix("wam." + company.getCompanyCode());
         loginForm = new WamLoginForm();
         profileForm = new WamUserProfileForm();
     }
