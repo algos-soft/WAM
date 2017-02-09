@@ -4,12 +4,14 @@ import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.ui.WamLoginComponent;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.lib.LibCookie;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.*;
 
@@ -25,7 +27,7 @@ public class WamLogin extends Login {
     private WamUserProfileForm profileForm;
 
     public WamLogin(BaseCompany company) {
-        setCookiePrefix("wam." + company.getCompanyCode());
+        setCookiePrefix(WAMApp.class.getPackage().getName() + "." + company.getCompanyCode());
         loginForm = new WamLoginForm();
         profileForm = new WamUserProfileForm();
     }
@@ -44,7 +46,6 @@ public class WamLogin extends Login {
     protected UserIF userFromNick(String username) {
         return Volontario.queryByNick(username);
     }
-
 
     /**
      * Ritorna il volontario correntemente loggato
@@ -83,5 +84,8 @@ public class WamLogin extends Login {
         CompanySessionLib.setCompany(null);
     }
 
-
+    @Override
+    protected String getLoginPath() {
+        return "/";
+    }
 }
