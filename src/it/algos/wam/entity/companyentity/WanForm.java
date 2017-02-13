@@ -85,9 +85,10 @@ public abstract class WanForm extends ModuleForm {
         creaFields();
 
         //--assembla i vari elementi grafici
-        if (Pref.getBool(WAMApp.DISPLAY_LISTE_COLLEGATE, null, false)) {
+//        if (Pref.getBool(WAMApp.DISPLAY_LISTE_COLLEGATE, null, false)) {
+        if (false) {
             TabSheet tabsheet = new TabSheet();
-            tabsheet.setWidth("1200px");
+            tabsheet.setWidth("1000px");
             tabsheet.addTab(creaTabForm(), "Form");
             tabsheet.addTab(creaTabList(), "List");
             layoutAll.addComponent(tabsheet);
@@ -104,6 +105,8 @@ public abstract class WanForm extends ModuleForm {
 
     protected Component creaTabForm() {
         VerticalLayout layoutAll = new VerticalLayout();
+        layoutAll.setMargin(true);
+        layoutAll.setSpacing(true);
         AbstractOrderedLayout layoutStandard;
 
         if (Pref.getBool(WAMApp.USA_FORM_LAYOUT, null, false)) {

@@ -6,6 +6,7 @@ import com.vaadin.shared.ui.colorpicker.Color;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione_;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.turno.Turno_;
 import it.algos.wam.entity.wamcompany.WamCompany;
@@ -512,7 +513,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     /**
      * Recupera una lista (array) di tutti i records della Entity
-     * Filtrato sulla company corrente (che viene regolata nella superclasse CompanyEntity)
+     * Filtrato sulla company corrente
      *
      * @param manager the EntityManager to use
      * @return lista di tutte le entities
@@ -633,6 +634,30 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         return lista;
     }// end of static method
 
+
+    /**
+     * Recupera una lista (array) di tutti i servizi relativi ad una funzione
+     * Filtrato sulla company corrente
+     *
+     * @param funzione da utilizzare per filtrare i servizi
+     * @return lista delle entities selezionate
+     */
+    public static List<Servizio> getListByFunzione(Funzione funzione) {
+        List<Servizio> lista = new ArrayList<>();
+        List<ServizioFunzione> servizioFunzioni = null;
+
+        if (funzione != null) {
+            servizioFunzioni = (List<ServizioFunzione>) CompanyQuery.getList(ServizioFunzione.class, ServizioFunzione_.funzione, funzione);
+        }// end of if cycle
+
+        if (servizioFunzioni != null) {
+            for (ServizioFunzione servFunz : servizioFunzioni) {
+                lista.add(servFunz.getServizio());
+            }// end of for cycle
+        }// end of if cycle
+
+        return lista;
+    }// end of static method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Get properties (list)

@@ -18,6 +18,7 @@ public class Volontario_ extends CompanyEntity_ {
     public static volatile SingularAttribute<Volontario, String> email;
     public static volatile SingularAttribute<Volontario, Date> dataNascita;
     public static volatile SingularAttribute<Volontario, String> password;
+    public static volatile SingularAttribute<Volontario, Boolean> invioMail;
     public static volatile SingularAttribute<Volontario, String> note;
     public static volatile SingularAttribute<Volontario, Boolean> admin;
     public static volatile SingularAttribute<Volontario, Boolean> dipendente;

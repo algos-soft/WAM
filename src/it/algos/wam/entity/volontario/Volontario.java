@@ -5,7 +5,11 @@ import com.vaadin.data.util.filter.Compare;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione_;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
+import it.algos.wam.entity.volontariofunzione.VolontarioFunzione_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.multiazienda.CompanyEntity_;
@@ -57,7 +61,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     /**
      * Nel form un field di tipo EmailField (facoltativo)
      */
-    @AIField(type = AFType.email, width = "16em", caption = "Indirizzo internet", prompt = "nome.cognome@mail.it", help = "Inserire un indirizzo valido, oppure lasciare vuoto")
+    @AIField(type = AFType.email, width = "16em", caption = "Mail", prompt = "nome.cognome@mail.it", help = "Inserire un indirizzo valido, oppure lasciare vuoto")
     public String email = "";
     /**
      * Nome del volontario (obbligatorio, non unico)
@@ -99,6 +103,9 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
     @AIField(type = AFType.password, required = true, caption = "Password", prompt = "...", help = "Password iniziale, successivamente modificabile solo dal volontario.")
     private String password = "";
+
+    @AIField(type = AFType.checkbox, caption = "Invio Mail Turni")
+    private boolean invioMail = false;
 
     private String note = "";
 
@@ -576,6 +583,30 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     }// end of static method
 
 
+    /**
+     * Recupera una lista (array) di tutti i volontari relativi ad una funzione
+     * Filtrato sulla company corrente
+     *
+     * @param funzione da utilizzare per filtrare i volontari
+     * @return lista delle entities selezionate
+     */
+    public static List<Volontario> getListByFunzione(Funzione funzione) {
+        List<Volontario> lista = new ArrayList<>();
+        List<VolontarioFunzione> volontarioFunzioni = null;
+
+        if (funzione != null) {
+            volontarioFunzioni = (List<VolontarioFunzione>) CompanyQuery.getList(VolontarioFunzione.class, VolontarioFunzione_.funzione, funzione);
+        }// end of if cycle
+
+        if (volontarioFunzioni != null) {
+            for (VolontarioFunzione volFunz : volontarioFunzioni) {
+                lista.add(volFunz.getVolontario());
+            }// end of for cycle
+        }// end of if cycle
+
+        return lista;
+    }// end of static method
+
     //------------------------------------------------------------------------------------------------------------------------
     // Get properties (list)
     //------------------------------------------------------------------------------------------------------------------------
@@ -942,6 +973,13 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         this.oreExtra = oreExtra;
     }//end of setter method
 
+    public boolean isInvioMail() {
+        return invioMail;
+    }
+
+    public void setInvioMail(boolean invioMail) {
+        this.invioMail = invioMail;
+    }
 
     //------------------------------------------------------------------------------------------------------------------------
     // Save

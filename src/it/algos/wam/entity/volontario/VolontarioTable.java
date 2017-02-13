@@ -79,6 +79,8 @@ public class VolontarioTable extends WamTable {
         lista.add(Volontario_.cognome);
         lista.add(Volontario_.nome);
         lista.add(Volontario_.cellulare);
+        lista.add(Volontario_.email);
+        lista.add(Volontario_.invioMail);
         lista.add(Volontario_.scadenzaBLSD);
         lista.add(Volontario_.scadenzaNonTrauma);
         lista.add(Volontario_.scadenzaTrauma);
@@ -104,26 +106,33 @@ public class VolontarioTable extends WamTable {
     protected void fixColumn() {
         List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
 
-        setColumnHeader(Volontario_.attivo, "ok");
+        setColumnHeader(Volontario_.attivo, "OK");
         setColumnHeader(Volontario_.admin, "Admin");
         setColumnHeader(Volontario_.cognome, "Cognome");
         setColumnHeader(Volontario_.nome, "Nome");
         setColumnHeader(Volontario_.cellulare, "Cellulare");
+        setColumnHeader(Volontario_.email, "Mail");
+        setColumnHeader(Volontario_.invioMail, "Invio");
         setColumnHeader(Volontario_.scadenzaBLSD, "BLSD");
         setColumnHeader(Volontario_.scadenzaTrauma, "BPHT");
         setColumnHeader(Volontario_.scadenzaNonTrauma, "PNT");
 
-        setColumnWidth(Volontario_.attivo, 70);
+        setColumnWidth(Volontario_.company, 70);
+        setColumnWidth(Volontario_.codeCompanyUnico, 70);
+        setColumnWidth(Volontario_.attivo, 50);
         setColumnWidth(Volontario_.admin, 70);
-        setColumnWidth(Volontario_.cognome, 190);
+        setColumnWidth(Volontario_.cognome, 180);
         setColumnWidth(Volontario_.nome, 130);
         setColumnWidth(Volontario_.cellulare, 140);
+        setColumnWidth(Volontario_.email, 270);
+        setColumnWidth(Volontario_.invioMail, 60);
         setColumnWidth(Volontario_.scadenzaBLSD, LAR_SCADENZE);
         setColumnWidth(Volontario_.scadenzaTrauma, LAR_SCADENZE);
         setColumnWidth(Volontario_.scadenzaNonTrauma, LAR_SCADENZE);
 
         setColumnAlignment(Volontario_.attivo, Align.CENTER);
         setColumnAlignment(Volontario_.admin, Align.CENTER);
+        setColumnAlignment(Volontario_.invioMail, Align.CENTER);
         setColumnAlignment(Volontario_.scadenzaBLSD, Align.CENTER);
         setColumnAlignment(Volontario_.scadenzaTrauma, Align.CENTER);
         setColumnAlignment(Volontario_.scadenzaNonTrauma, Align.CENTER);

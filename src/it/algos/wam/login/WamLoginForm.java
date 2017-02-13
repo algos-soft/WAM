@@ -11,12 +11,15 @@ import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.ui.WamUI;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.utente.Utente;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ERelatedComboField;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.DefaultLoginForm;
 import it.algos.webbase.web.login.UserIF;
+
+import java.util.List;
 
 /**
  * Created by alex on 25-05-2016.

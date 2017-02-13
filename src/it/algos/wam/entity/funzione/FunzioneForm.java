@@ -2,13 +2,19 @@ package it.algos.wam.entity.funzione;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.renderers.DateRenderer;
 import it.algos.wam.WAMApp;
-import it.algos.wam.entity.companyentity.EditorFunz;
-import it.algos.wam.entity.companyentity.EditorWam;
-import it.algos.wam.entity.companyentity.FunzListener;
-import it.algos.wam.entity.companyentity.WanForm;
+import it.algos.wam.entity.companyentity.*;
+import it.algos.wam.entity.servizio.Servizio;
+import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.ui.NavComponent;
+import it.algos.wam.ui.WamUI;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.field.TextField;
@@ -16,15 +22,20 @@ import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.navigator.AlgosNavigator;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by alex on 18-04-2016.
  * Scheda personalizzata per la entity Funzione
  */
 public class FunzioneForm extends WanForm implements FunzListener {
+
+    private static String LAR_SHEET = "800px";
 
     //--Campi del form. Potrebbero essere variabili locali, ma così li 'vedo' meglio
     //--alcuni sono nella superclasse
@@ -57,65 +68,140 @@ public class FunzioneForm extends WanForm implements FunzListener {
         this.creaCode();
     }// end of method
 
-
     /**
-     * Fields creati in maniera assolutamente automatica
-     * Parte centrale del Form
+     * Create the detail component (the upper part containing the fields).
+     * <p>
+     * Usa il FormLayout che ha le label a sinistra dei campi (standard)
+     * Se si vogliono le label sopra i campi, sovrascivere questo metodo e usare un VerticalLayout
+     * <p>
+     * Costruisco 3 diversi layout, disposti in verticale:
+     * 1- layoutDeveloper con la selezione (eventuale) della company ed il codeCompanyUnico
+     * 2- layoutForm standard per i campi normali
+     * 3- layoutAggiuntivo per un placehorder
      *
-     * @return the component
+     * @return the detail component containing the fields
      */
     @Override
-    protected Component creaCompStandard(AbstractOrderedLayout layout) {
+    protected Component createComponent() {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(true);
+        layout.setSpacing(true);
 
-        if (Pref.getBool(WAMApp.DISPLAY_FIELD_ORDINE, null, true)) {
-            if (layout instanceof FormLayout) {
-                layout.addComponent(bIcona);
-                layout.addComponent(fCode);
-                layout.addComponent(fSigla);
-                layout.addComponent(fDescrizione);
+        //--crea prima tutti i fields
+        //--alcuni hanno delle particolarità aggiuntive
+        creaFields();
 
-                if (!isNewRecord() && LibSession.isAdmin()) {
-                    layout.addComponent(fOrdine);
-                }// end of if cycle
-            } else {
-                if (Pref.getBool(WAMApp.DISPLAY_LISTE_COLLEGATE, null, false)) {
-                    TabSheet tabsheet = new TabSheet();
-                    tabsheet.setWidth("1200px");
-                    tabsheet.addTab(creaTabForm(), "Form");
-                    tabsheet.addTab(creaTabList(), "List");
-                    layout.addComponent(tabsheet);
-                } else {
-                    AHorizontalLayout riga = new AHorizontalLayout(fCode, bIcona, fSigla,fOrdine);
-                    riga.setComponentAlignment(bIcona, Alignment.BOTTOM_CENTER);
-                    layout.addComponent(new AHorizontalLayout(riga));
-                    layout.addComponent(new AHorizontalLayout(fDescrizione));
-                }// end of if/else cycle
-            }// end of if/else cycle
+        if (Pref.getBool(WAMApp.DISPLAY_LISTE_COLLEGATE, null, false)) {
+            layout.addComponent(createTabSheet());
         } else {
-            AHorizontalLayout riga = new AHorizontalLayout(fCode, bIcona, fSigla);
-            riga.setComponentAlignment(bIcona, Alignment.BOTTOM_CENTER);
-            layout.addComponent(new AHorizontalLayout(riga));
-            layout.addComponent(new AHorizontalLayout(fDescrizione));
+            layout.addComponent(creaTabForm());
         }// end of if/else cycle
 
         return layout;
     }// end of method
 
 
+
+    protected Component createTabSheet() {
+        TabSheet tabsheet = new TabSheet();
+        tabsheet.setWidth(LAR_SHEET);
+        tabsheet.addTab(creaTabForm(), "Scheda");
+        tabsheet.addTab(creaTabServ(), "Servizi");
+        tabsheet.addTab(creaTabVol(), "Volontari");
+
+        return tabsheet;
+    }// end of method
+
+
     protected Component creaTabForm() {
         VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(new MarginInfo(true, false, false, false));
+        layout.setSpacing(true);
 
-        AHorizontalLayout riga = new AHorizontalLayout(fCode, bIcona, fSigla,fOrdine);
+        if (LibSession.isDeveloper()) {
+            layout.addComponent(creaCompDeveloper());
+            layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+        }// end of if cycle
+
+        AHorizontalLayout riga = new AHorizontalLayout(fCode, bIcona, fSigla, fOrdine);
         riga.setComponentAlignment(bIcona, Alignment.BOTTOM_CENTER);
         layout.addComponent(new AHorizontalLayout(riga));
         layout.addComponent(new AHorizontalLayout(fDescrizione));
+        layout.addComponent(new Label("&nbsp;", ContentMode.HTML));
+
+        layout.addComponent(placeholderFunz);
 
         return layout;
     }// end of method
 
-    protected Component creaTabList() {
-        return new Label("lista funzione");
+    private Component creaTabServ() {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(new MarginInfo(true, false, false, false));
+        List<Servizio> servizi;
+        Label label = new Label("Servizi che usano questa funzione");
+        servizi = Servizio.getListByFunzione(getFunzione());
+
+        // Create a grid
+        Grid grid = new Grid();
+        grid.setWidth(LAR_SHEET);
+
+        // Define some columns
+        grid.addColumn("sigla", String.class);
+        grid.addColumn("tab", Boolean.class);
+        grid.addColumn("desc", String.class);
+        grid.addColumn("time", String.class);
+
+        // Add some data rows
+        for (Servizio serv : servizi) {
+            grid.addRow(serv.getSigla(), serv.isVisibile(), serv.getDescrizione(), serv.getStrOrario());
+        }// end of for cycle
+
+        layout.addComponent(label);
+        layout.addComponent(grid);
+
+        return layout;
     }// end of method
+
+    private Component creaTabVol() {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(new MarginInfo(true, false, false, false));
+        List<Volontario> volontari;
+        Label label = new Label("Volontari abilitati per questa funzione e scadenza certificati");
+        DateRenderer blsdRenderer = new DateRenderer("%1$te %1$tb %1$ty", Locale.ITALIAN);
+        DateRenderer pntRenderer = new DateRenderer("%1$te %1$tb %1$ty", Locale.ITALIAN);
+        DateRenderer bphtpRenderer = new DateRenderer("%1$te %1$tb %1$ty", Locale.ITALIAN);
+        volontari = Volontario.getListByFunzione(getFunzione());
+
+        // Create a grid
+        Grid grid = new Grid();
+        grid.setWidth(LAR_SHEET);
+
+        // Define some columns
+        grid.addColumn("nome", String.class);
+        grid.addColumn("cognome", String.class);
+        grid.addColumn("cell", String.class);
+        grid.addColumn("BLSD", Date.class);
+        grid.addColumn("PNT", Date.class);
+        grid.addColumn("BPHTP", Date.class);
+
+        // Add some data rows
+        for (Volontario vol : volontari) {
+            grid.addRow(vol.getNome(), vol.getCognome(), vol.getCellulare(), vol.getScadenzaBLSD(), vol.getScadenzaNonTrauma(), vol.getScadenzaTrauma());
+        }// end of for cycle
+
+        Grid.Column blsdColumn = grid.getColumn("BLSD");
+        blsdColumn.setRenderer(blsdRenderer);
+        Grid.Column pntColumn = grid.getColumn("PNT");
+        pntColumn.setRenderer(pntRenderer);
+        Grid.Column bphtpColumn = grid.getColumn("BPHTP");
+        bphtpColumn.setRenderer(bphtpRenderer);
+
+        layout.addComponent(label);
+        layout.addComponent(grid);
+
+        return layout;
+    }// end of method
+
 
     /**
      * Crea il bottone per la selezione dell'icona
@@ -280,7 +366,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
     protected AbstractLayout creaPlacehorder() {
         placeholderFunz = new VerticalLayout();
         placeholderFunz.setCaption("Funzioni dipendenti da questa");
-        ((VerticalLayout)placeholderFunz).setSpacing(true);
+        ((VerticalLayout) placeholderFunz).setSpacing(true);
         placeholderFunz.addComponent(bNuova);
 
         if (isNewRecord()) {
@@ -307,8 +393,6 @@ public class FunzioneForm extends WanForm implements FunzListener {
     public Funzione getFunzione() {
         return (Funzione) super.getEntity();
     }// end of method
-
-
 
 
     /**

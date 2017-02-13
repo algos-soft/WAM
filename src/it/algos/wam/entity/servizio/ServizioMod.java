@@ -5,6 +5,7 @@ import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamModSposta;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
@@ -138,6 +139,21 @@ public class ServizioMod extends WamModSposta {
         }// end of if cycle
 
         getTable().refresh();
+    }// end of method
+
+    /**
+     * Tavola dei servizi per funzione
+     */
+    public Table getTavola(Funzione funzione) {
+        Table tavola = null;
+        List<Servizio> lista = null;
+        WamCompany company = (WamCompany) CompanySessionLib.getCompany();
+
+        if (company != null) {
+            lista = Servizio.getListByCompany(company);
+        }// end of if cycle
+
+        return tavola;
     }// end of method
 
 }// end of class

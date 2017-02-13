@@ -73,6 +73,8 @@ public class WamUI extends UI {
      */
     @Override
     protected void init(VaadinRequest request) {
+        WamLogin wamLogin = null;
+
         //--faccio partire una classe statica per eseguire uno 'static initialisation block'
         new WAMApp();
 
@@ -112,10 +114,12 @@ public class WamUI extends UI {
 
         // Se c'è una company nella sessione e la company dell'URL è diversa dalla company della sessione
         // eseguo un logout automatico (che elimina la company dalla sessione)
+        // Inoltre cancello il WamLogin per ricrearlo nuovo con la company corretta
         BaseCompany sessionComp = CompanySessionLib.getCompany();
         if (sessionComp != null) {
             if (!company.equals(sessionComp)) {
                 Login.getLogin().logout();
+                LibSession.setAttribute(Login.LOGIN_KEY_IN_SESSION, null);
                 return;
             }
         }
@@ -128,10 +132,11 @@ public class WamUI extends UI {
         // Questa applicazione necessita di una logica di login specifica (WamLogin)
         // (inizialmente il Login non ha user e quindi non è in stato logged).
         if (!Login.isEsisteLoginInSessione()) {
-            Login.setLogin(new WamLogin(company));
+            wamLogin = new WamLogin(company);
+            Login.setLogin(wamLogin);
 
             // listener dei tentativi di login
-            Login.getLogin().setLoginListener(new LoginListener() {
+            wamLogin.setLoginListener(new LoginListener() {
                 @Override
                 public void onUserLogin(LoginEvent e) {
                     if (e.isSuccess()) {
@@ -174,7 +179,7 @@ public class WamUI extends UI {
             });
 
             // listener dei logout
-            Login.getLogin().addLogoutListener(new LogoutListener() {
+            wamLogin.addLogoutListener(new LogoutListener() {
                 @Override
                 public void onUserLogout(LogoutEvent e) {
                     LibSession.setAttribute(KEY_TABELLONE, null); // annulla il tabellone di sessione per farlo ricreare
@@ -189,25 +194,21 @@ public class WamUI extends UI {
         boolean loggato = Login.getLogin().isLogged();
 
         //--controllo se l'url contiene un login valido
-        String utente = request.getParameter("utente");
-        String password = request.getParameter("password");
-
-
-        // registra l'oggetto UserIF nella Login
-        if (utente != null && !utente.equals("")) {
-            List<Volontario> militiPerCognome = (List<Volontario>) CompanyQuery.getList(Volontario.class, Volontario_.cognome, utente);
-            if (militiPerCognome != null && militiPerCognome.size() > 0) {
-                Volontario volontario = militiPerCognome.get(0);
-                if (volontario.getPassword().equals(password)) {
-                    Login.getLogin().setUser(volontario);
-                }// end of if cycle
-            }// end of if cycle
+        if (wamLogin != null) {
+            wamLogin.checkLoggato(request);
         }// end of if cycle
 
 
+        //--Controlla se ci sono cookies con un login valido
+        if (wamLogin != null) {
+            if (!wamLogin.isLogged()) {
+                wamLogin.checkLoggato();
+            }// end of if cycle
+        }// end of if cycle
+
         // Se è loggato, la company dell'url
         // deve essere uguale alla company loggata
-        if (Login.getLogin().isLogged()) {
+        if (wamLogin != null && wamLogin.isLogged()) {
             BaseCompany currCompany = CompanySessionLib.getCompany();
             if (currCompany != null) {
                 if (!company.equals(currCompany)) {
@@ -230,10 +231,12 @@ public class WamUI extends UI {
         }
 
         // Se non già loggato, presento la pagina di login
-        if (!Login.getLogin().isLogged()) {
-            Login.getLogin().readCookies();
-            UI.getCurrent().setContent(new WamLoginComponent(Login.getLogin()));
-            return;
+        if (wamLogin != null) {
+            if (!wamLogin.isLogged()) {
+                wamLogin.readCookies();
+                UI.getCurrent().setContent(new WamLoginComponent(Login.getLogin()));
+                return;
+            }
         }
 
 
@@ -243,6 +246,7 @@ public class WamUI extends UI {
 
 
     }
+
 
     /**
      * Init per il developer
@@ -738,4 +742,9 @@ public class WamUI extends UI {
                 "document.cookie = \"%s=%s; path=%s\";", key, value, path
         ));
     }
+
+    public NavComponent getNavComp() {
+        return navComp;
+    }// end of method
+
 }// end of class

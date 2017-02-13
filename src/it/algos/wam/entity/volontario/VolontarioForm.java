@@ -39,6 +39,7 @@ public class VolontarioForm extends WanForm {
     private CheckBoxField fAdmin;
     private CheckBoxField fDipendente;
     private CheckBoxField fAttivo;
+    private CheckBoxField fInvioMail;
 
     private CheckBoxField mostraBrevetti;
     private DateField fScadenzaBLSD;
@@ -81,6 +82,7 @@ public class VolontarioForm extends WanForm {
         fAdmin = (CheckBoxField) getField(Volontario_.admin);
         fDipendente = (CheckBoxField) getField(Volontario_.dipendente);
         fAttivo = (CheckBoxField) getField(Volontario_.attivo);
+        fInvioMail = (CheckBoxField) getField(Volontario_.invioMail);
 
         fScadenzaBLSD = (DateField) getField(Volontario_.scadenzaBLSD);
         fScadenzaPNT = (DateField) getField(Volontario_.scadenzaNonTrauma);
@@ -112,7 +114,7 @@ public class VolontarioForm extends WanForm {
             }// end of if/else cycle
         }// end of if/else cycle
 
-        layout.addComponent(new AHorizontalLayout(fAdmin, fDipendente, fAttivo));
+        layout.addComponent(new AHorizontalLayout(fAdmin, fDipendente, fAttivo,fInvioMail));
 
         layout.addComponent(new Label("&nbsp;", ContentMode.HTML)); // aggiunge un po di spazio
         layout.addComponent(mostraBrevetti);
