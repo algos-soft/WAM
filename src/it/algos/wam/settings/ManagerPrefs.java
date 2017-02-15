@@ -18,15 +18,15 @@ import java.util.Date;
 
 public enum ManagerPrefs {
 
-    smtpServer("smtpServer", PrefType.string, ""),
+    smtpServer("smtpServer", PrefType.string, "smtp.algos.it"),
 
     smtpPort("smtpPort", PrefType.integer, 25),
 
-    smtpUseAuth("smtpUseAuth", PrefType.bool, false),
+    smtpUseAuth("smtpUseAuth", PrefType.bool, true),
 
-    smtpPassword("smtpPassword", PrefType.string, ""),
+    smtpUserName("smtpUser", PrefType.string, "gac@algos.it"),
 
-    smtpUserName("smtpUser", PrefType.string, ""),
+    smtpPassword("smtpPassword", PrefType.string, "fulvia"),
 
     startDaemonAtStartup("startDaemonAtStartup", PrefType.bool, true);
 

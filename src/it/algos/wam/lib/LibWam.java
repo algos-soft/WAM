@@ -5,6 +5,7 @@ import com.vaadin.ui.Component;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibDate;
@@ -127,6 +128,12 @@ public abstract class LibWam {
         return LOCALE;
     }
 
+    /**
+     * Ritorna la coompany col casting
+     */
+    public static WamCompany getCompany() {
+        return (WamCompany) CompanySessionLib.getCompany();
+    }// end of method
 
 
 }// end of abstract static class

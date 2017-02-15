@@ -3,6 +3,7 @@ package it.algos.wam.entity.iscrizione;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.funzione.Funzione_;
+import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
@@ -12,6 +13,8 @@ import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.EM;
+import it.algos.webbase.web.lib.LibDate;
+import it.algos.webbase.web.lib.LibText;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import javax.persistence.*;
@@ -27,9 +30,9 @@ import java.sql.Timestamp;
 public class Iscrizione extends WamCompanyEntity {
 
     // codici modalità di controllo cancIscrizione turno
-    public static final int MODE_CANC_NONE=0;   // nessun controllo
-    public static final int MODE_CANC_POST=1;   // controllo minuti dopo iscrizione
-    public static final int MODE_CANC_PRE=2;    // controllo ore prima di inizio turno
+    public static final int MODE_CANC_NONE = 0;   // nessun controllo
+    public static final int MODE_CANC_POST = 1;   // controllo minuti dopo iscrizione
+    public static final int MODE_CANC_PRE = 2;    // controllo ore prima di inizio turno
 
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
@@ -107,18 +110,16 @@ public class Iscrizione extends WamCompanyEntity {
 
     @PrePersist
     protected void prePersist() {
-        tsCreazione=new Timestamp(System.currentTimeMillis());
+        tsCreazione = new Timestamp(System.currentTimeMillis());
     }
-
-
 
 
     /**
      * Recupera una istanza di Iscrizione usando la query di una property specifica
      * Filtrato sulla azienda passata come parametro.
      *
-     * @param company      croce di appartenenza
-     * @param turno      turno di riferimento
+     * @param company croce di appartenenza
+     * @param turno   turno di riferimento
      * @return istanza di Iscrizione, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -127,7 +128,7 @@ public class Iscrizione extends WamCompanyEntity {
         BaseEntity bean;
 
 //        EntityManager manager = EM.createEntityManager();
-        bean = CompanyQuery.getEntity(Iscrizione.class, Iscrizione_.turno ,turno);
+        bean = CompanyQuery.getEntity(Iscrizione.class, Iscrizione_.turno, turno);
 //        manager.close();
 
         if (bean != null && bean instanceof Iscrizione) {
@@ -147,20 +148,18 @@ public class Iscrizione extends WamCompanyEntity {
      * @param turno      turno di riferimento
      * @param volontario milite/volontario assegnato alle funzione prevista per questa iscrizione (obbligatorio)
      * @param serFun     a quale funzione del servizio il volontario si iscrive
-     *
      * @return istanza di Iscrizione
      */
-    public static Iscrizione crea(WamCompany company, EntityManager manager,Turno turno, Volontario volontario, ServizioFunzione serFun) {
+    public static Iscrizione crea(WamCompany company, EntityManager manager, Turno turno, Volontario volontario, ServizioFunzione serFun) {
         Iscrizione isc = Iscrizione.findByTurno(company, turno);
 
         if (isc == null) {
-            isc = new Iscrizione(company, turno, volontario,serFun);
+            isc = new Iscrizione(company, turno, volontario, serFun);
             isc = (Iscrizione) isc.save(manager);
         }// end of if cycle
 
         return isc;
     }// end of static method
-
 
 
     public Volontario getVolontario() {
@@ -233,4 +232,121 @@ public class Iscrizione extends WamCompanyEntity {
     public void setNotificaInviata(boolean notificaInviata) {
         this.notificaInviata = notificaInviata;
     }
+
+    /**
+     * Restituisce la funzione associata
+     */
+    public Funzione getFunzione() {
+        Funzione funz = null;
+        ServizioFunzione servFunz = this.getServizioFunzione();
+
+        if (servFunz != null) {
+            funz = servFunz.getFunzione();
+        }// end of if cycle
+
+        return funz;
+    }// end of getter method
+
+    /**
+     * Restituisce il servizio associato
+     */
+    public Servizio getServizio() {
+        Servizio serv = null;
+        ServizioFunzione servFunz = this.getServizioFunzione();
+
+        if (servFunz != null) {
+            serv = servFunz.getServizio();
+        }// end of if cycle
+
+        return serv;
+    }// end of getter method
+
+    /**
+     * Restituisce il testo del log di una nuova iscrizione
+     *
+     * @return il testo per il log
+     */
+    public String getNewLog() {
+        return getNew(false, false);
+    }// end of method
+
+
+    /**
+     * Restituisce il testo della mail di una nuova iscrizione
+     *
+     * @return il testo per la mail
+     */
+    public String getNewMail() {
+        return getNew(true, true);
+    }// end of method
+
+    /**
+     * Restituisce il testo di una nuova iscrizione
+     *
+     * @return il testo elaborato
+     */
+    private String getNew(boolean html, boolean bold) {
+        String text = "";
+        String volontarioTxt = "";
+        String funzioneTxt = "";
+        String servizioTxt = "";
+        String turnoTxt = LibDate.toStringDMMMYY(turno.getInizio());
+        Volontario vol = this.getVolontario();
+        Funzione funz = this.getFunzione();
+        Servizio serv = this.getServizio();
+        String aCapo = "<br>";
+        String boldTagIni = "<strong>";
+        String boldTagEnd = "</strong>";
+
+        if (vol != null) {
+            volontarioTxt = vol.getNomeCognome();
+            if (bold) {
+                volontarioTxt = boldTagIni + volontarioTxt+ boldTagEnd;
+            }// end of if cycle
+        }// end of if cycle
+
+        if (funz != null) {
+            funzioneTxt = funz.getDescrizione();
+            if (bold) {
+                funzioneTxt = boldTagIni + funzioneTxt + boldTagEnd;
+            }// end of if cycle
+        }// end of if cycle
+
+        if (serv != null) {
+            servizioTxt = serv.getDescrizione();
+            if (bold) {
+                servizioTxt = boldTagIni + servizioTxt + boldTagEnd;
+            }// end of if cycle
+        }// end of if cycle
+
+        if (bold) {
+            turnoTxt = boldTagIni + turnoTxt + boldTagEnd;
+        }// end of if cycle
+
+        text += volontarioTxt;
+        text += " si è iscritto/a  ";
+        if (html) {
+            text += aCapo;
+        }// end of if cycle
+        text += "come: ";
+        text += funzioneTxt + " ";
+        if (html) {
+            text += aCapo;
+        }// end of if cycle
+        text += "al turno: ";
+        text += servizioTxt + " ";
+        if (html) {
+            text += aCapo;
+        }// end of if cycle
+        text += "del: ";
+        text += turnoTxt;
+
+        return text;
+    }// end of method
+
+    public String getLogDel() {
+        return nota;
+    }// end of method
+
+
 }// end of class

@@ -45,6 +45,7 @@ public class WamLoginForm extends DefaultLoginForm {
     public Component createUsernameComponent() {
         userCombo = new ERelatedComboField(Volontario.class, "Utente");
         userCombo.sort(Volontario_.cognome, Volontario_.nome);
+        List alfa = userCombo.getLista();
 
         //--filtro. Solo quelli attivi
         Container.Filter filter = new Compare.Equal(Volontario_.attivo.getName(), true);

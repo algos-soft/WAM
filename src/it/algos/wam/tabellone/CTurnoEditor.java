@@ -11,6 +11,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.LogType;
+import it.algos.wam.email.WamEmailService;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
@@ -40,6 +41,7 @@ import java.util.List;
 import it.algos.webbase.domain.log.Log;
 import it.algos.webbase.web.login.Login;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.tools.ant.taskdefs.email.Mailer;
 
 /**
  * Componente per presentare e modificare un intero turno nel Tabellone.
@@ -398,7 +400,7 @@ public class CTurnoEditor extends CTabelloneEditor {
     private String getLogIscrizione(Volontario volontario, Funzione funzione, Turno turno) {
         String desc = volontario.getNomeCognome();
         desc += " si è iscritto/a come ";
-        desc += funzione.getCode();
+        desc += funzione.getDescrizione();
         desc += " al turno ";
         desc += getLogTurno(turno);
         return desc;
@@ -430,9 +432,9 @@ public class CTurnoEditor extends CTabelloneEditor {
      */
     private String getLogTurno(Turno turno) {
         String desc;
-        desc = turno.getServizio().getSigla();
+        desc = turno.getServizio().getDescrizione();
         desc += " del ";
-        desc += LibDate.toStringDDMMYYYY(turno.getInizio());
+        desc += LibDate.toStringDMMMYY(turno.getInizio());
         return desc;
     }
 
@@ -776,7 +778,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                         // log iscrizione
                         String desc = getLogIscrizione(iscrizione.getVolontario(),funz, turno);
                         Log.info(LogType.iscrizione.getTag(), desc);
-
+                        WamEmailService.newIscrizione(iscrizione);
                     }
 
                 }
