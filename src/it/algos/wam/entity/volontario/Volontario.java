@@ -12,6 +12,7 @@ import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.domain.log.Log;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;

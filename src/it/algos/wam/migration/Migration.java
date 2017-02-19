@@ -136,12 +136,11 @@ public class Migration {
      * Elimina PAVT, non più attiva
      *
      * @param listaVecchieCrociEsistenti di webambulanze
-     *
      * @return croci da importare da webambulanze in WAM
      */
     private List<CroceAmb> selezionaCrodiDaImportare(List<CroceAmb> listaVecchieCrociEsistenti) {
         List<CroceAmb> listaVecchieCrociDaImportare = new ArrayList<>();
-        String[] escluse = {"ALGOS", "algos", "DEMO", "demo", "TEST", "test", "PAVT", "pavt"};
+        String[] escluse = {"ALGOS", "algos", "TEST", "test", "PAVT", "pavt"};
         ArrayList<String> listaEscluse = LibArray.fromString(escluse);
         String code;
 
@@ -206,7 +205,6 @@ public class Migration {
      *
      * @param companyOld      company usata in webambulanze
      * @param siglaCompanyNew nome della company da usare in wam
-     *
      * @return la nuova company
      */
     private WamCompany importSingolaCroce(CroceAmb companyOld, String siglaCompanyNew, EntityManager manager) {
@@ -292,7 +290,6 @@ public class Migration {
      *
      * @param funzioneOld della companyOld
      * @param companyNew  company usata in wam
-     *
      * @return la nuova funzione
      */
     private Funzione creaSingolaFunzione(FunzioneAmb funzioneOld, WamCompany companyNew, EntityManager manager) {
@@ -309,7 +306,6 @@ public class Migration {
      * Elabora la vecchia descrizione per selezionare una icona adeguata
      *
      * @param descrizione usata in webambulanze
-     *
      * @return la FontAwesome selezionata
      */
     private FontAwesome selezionaIcona(String descrizione) {
@@ -407,7 +403,6 @@ public class Migration {
      *
      * @param servizioOld della companyOld
      * @param companyNew  company usata in wam
-     *
      * @return il nuovo servizio
      */
     @SuppressWarnings("all")
@@ -431,7 +426,6 @@ public class Migration {
      *
      * @param servizioOld      della companyOld
      * @param listaFunzioniAll nuove appena create
-     *
      * @return lista di nuove funzioni
      */
     @SuppressWarnings("all")
@@ -507,8 +501,16 @@ public class Migration {
         } else {
             if (listaVolontariOld != null && listaVolontariOld.size() > 0) {
                 for (VolontarioAmb volontarioOld : listaVolontariOld) {
+
                     volontarioNew = creaSingoloVolontario(volontarioOld, companyNew, manager);
-                    listaWrapVolontari.add(new WrapVolontario(volontarioOld, volontarioNew));//todo forse non serve
+                    if (volontarioNew == null) {
+                        volontarioNew = recoveryVolontario(volontarioOld, companyNew, manager);
+                    }// end of if cycle
+
+                    if (volontarioNew != null) {
+                        listaWrapVolontari.add(new WrapVolontario(volontarioOld, volontarioNew));//todo forse non serve
+                    }// end of if cycle
+
                 }// end of for cycle
             }// end of if cycle
 
@@ -519,12 +521,62 @@ public class Migration {
     }// end of method
 
     /**
+     * Arriva qui se ci sono DUE (o più) volontari con lo stesso nome e cognome in una company
+     * Nel vecchio programma era ammesso
+     * Nel nuovo no
+     * Se uno solo dei vecchi militi usa i turni, tengo quello
+     * Se due o più usano i turni, li rinomino con cognome!, cognome2, cognome3
+     *
+     * @return il nuovo volontario
+     */
+    private Volontario recoveryVolontario(VolontarioAmb volontarioOldAttuale, WamCompany companyNew, EntityManager manager) {
+        CroceAmb companyOld = volontarioOldAttuale.getCroce();
+        String nome = volontarioOldAttuale.getNome();
+        String cognome = volontarioOldAttuale.getCognome();
+        Volontario volontarioNew = Volontario.getEntityByCompanyAndNomeAndCognome(companyNew, nome, cognome, manager);
+        List<VolontarioAmb> lista = VolontarioAmb.getListByCompanyAndNomeAndCognome(companyOld, nome, cognome, managerOld);
+        int quantiUsanoTurno = 0;
+        VolontarioAmb volontarioOldModificato = null;
+
+        for (VolontarioAmb volOld : lista) {
+            if (TurnoAmb.isEsisteByMilite(volOld, managerOld)) {
+                quantiUsanoTurno++;
+            }// end of if cycle
+        }// end of for cycle
+
+        switch (quantiUsanoTurno) {
+            case 0:
+                Log.warning("Migration", "Ho trovato " + nome + " " + cognome + " della " + companyOld.getSigla() + " che era doppio, ma non usava i turni");
+                break;
+            case 1:
+                Log.warning("Migration", nome + " " + cognome + " della " + companyOld.getSigla() + " era doppio. Ho preso solo quello che usava i turni");
+                break;
+            case 2:
+                try { // prova ad eseguire il codice
+                    volontarioOldModificato = volontarioOldAttuale.clone();
+                    volontarioOldModificato.setCognome(cognome + "2");
+                } catch (Exception unErrore) { // intercetta l'errore
+                }// fine del blocco try-catch
+                volontarioNew = creaSingoloVolontario(volontarioOldModificato, companyNew, manager);
+                Log.warning("Migration", nome + " " + cognome + " della " + companyOld.getSigla() + " era doppio ed entrambi usavano i turni. Ho rinominato il secondo come " + cognome + "2");
+                break;
+            case 3:
+            case 4:
+                Log.error("Migration", "Ci sono troppi militi di nome " + nome + " " + cognome + " nella " + companyOld.getSigla() + " che usano i turni. Non riesco migrare la company");
+                break;
+            default: // caso non definito
+                break;
+        } // fine del blocco switch
+
+        return volontarioNew;
+    }// end of method
+
+    /**
      * Crea il singolo volontario
      *
      * @param companyNew       company usata in wam
      * @param volontarioOld    della companyOld
      * @param listaFunzioniAll nuove appena create
-     *
      * @return il nuovo volontario
      */
     @SuppressWarnings("all")
@@ -689,8 +741,14 @@ public class Migration {
         } else {
             if (listaTurniOld != null && listaTurniOld.size() > 0) {
                 for (TurnoAmb turnoOld : listaTurniOld) {
+
                     turnoNew = creaSingoloTurno(companyNew, turnoOld, listaWrapVolontari, manager);
-                    listaTurniNew.add(turnoNew);
+                    if (turnoNew != null) {
+                        listaTurniNew.add(turnoNew);
+                    } else {
+                        Log.error("Migrazione", "Manca turno " + turnoOld.getCroce().getSigla() + " del " + turnoOld.getInizio() + " con ID: " + turnoOld.getId());
+                    }// end of if/else cycle
+
                     k++;
                     if (k > delta) {
                         break;//todo provvisorio
@@ -846,6 +904,11 @@ public class Migration {
             serFunz = ServizioFunzione.findByServFunz(company, serv, funzioneNew, manager);
             iscrizione = new Iscrizione(company, turnoNew, volontarioNew, serFunz);
             iscrizione.setEsisteProblema(esisteProblema);
+
+            if (volontarioNew == null) {
+                Log.warning("Migrazione", "Nella " + company.getCompanyCode() + " manca il volontario " + volontarioOld.getCognome());
+            }// end of if cycle
+
         }// end of if cycle
 
         return iscrizione;

@@ -1,7 +1,13 @@
 package it.algos.wam.migration;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
+import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.volontario.Volontario_;
+import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
+import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.ReadOnly;
 
 import javax.persistence.*;
@@ -67,6 +73,41 @@ public class VolontarioAmb extends BaseEntity {
             return (VolontarioAmb) AQuery.find(VolontarioAmb.class, id, manager);
         }// end of if cycle
         return null;
+    }// end of static method
+
+
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla company passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param nome    del volontario/milite (obbligatorio)
+     * @param cognome del volontario/milite (obbligatorio)
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    public static VolontarioAmb getEntityByCompanyAndNomeAndCognome(CroceAmb company, String nome, String cognome, EntityManager manager) {
+        Container.Filter filterCompany = new Compare.Equal(VolontarioAmb_.croce.getName(), company);
+        Container.Filter filterNome = new Compare.Equal(VolontarioAmb_.nome.getName(), nome);
+        Container.Filter filterCognome = new Compare.Equal(VolontarioAmb_.cognome.getName(), cognome);
+        return (VolontarioAmb) AQuery.getEntity(VolontarioAmb.class, manager, filterCompany, filterNome, filterCognome);
+    }// end of static method
+
+    /**
+     * Recupera una istanza della Entity usando la query di una property specifica
+     * Filtrato sulla company passata come parametro.
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param nome    del volontario/milite (obbligatorio)
+     * @param cognome del volontario/milite (obbligatorio)
+     * @param manager the EntityManager to use
+     * @return istanza della Entity, null se non trovata
+     */
+    public static List<VolontarioAmb> getListByCompanyAndNomeAndCognome(CroceAmb company, String nome, String cognome, EntityManager manager) {
+        Container.Filter filterCompany = new Compare.Equal(VolontarioAmb_.croce.getName(), company);
+        Container.Filter filterNome = new Compare.Equal(VolontarioAmb_.nome.getName(), nome);
+        Container.Filter filterCognome = new Compare.Equal(VolontarioAmb_.cognome.getName(), cognome);
+        return (List<VolontarioAmb>) AQuery.getList(VolontarioAmb.class, manager, filterCompany, filterNome, filterCognome);
     }// end of static method
 
     /**
@@ -184,4 +225,22 @@ public class VolontarioAmb extends BaseEntity {
     public void setOre_extra(int ore_extra) {
         this.ore_extra = ore_extra;
     }//end of setter method
+
+    /**
+     * Clone di questa istanza
+     * Una DIVERSA istanza (indirizzo di memoria) con gi STESSI valori (property)
+     * È obbligatorio invocare questo metodo all'interno di un codice try/catch
+     *
+     * @return nuova istanza di Funzione con gli stessi valori dei parametri di questa istanza
+     */
+    @Override
+    @SuppressWarnings("all")
+    public VolontarioAmb clone() throws CloneNotSupportedException {
+        try {
+            return (VolontarioAmb) BeanUtils.cloneBean(this);
+        } catch (Exception ex) {
+            throw new CloneNotSupportedException();
+        }// fine del blocco try-catch
+    }// end of method
+
 }// end of entity class

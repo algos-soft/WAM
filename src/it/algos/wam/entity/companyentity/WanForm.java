@@ -2,6 +2,7 @@ package it.algos.wam.entity.companyentity;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import it.algos.wam.WAMApp;

@@ -7,6 +7,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
 import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.domain.log.Log;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -85,13 +86,13 @@ public class Turno extends WamCompanyEntity {
     private Date fine;
 
     //--motivazione del turno extra
-    @AIField(type = AFType.text, width = "18em", caption = "Titolo extra",  help = "Titolo del viaggio extra.")
+    @AIField(type = AFType.text, width = "18em", caption = "Titolo extra", help = "Titolo del viaggio extra.")
     private String titoloExtra = "";
     //--nome evidenziato della località per turni extra
-    @AIField(type = AFType.text, width = "18em", caption = "Località extra",  help = "Località del viaggio extra.")
+    @AIField(type = AFType.text, width = "18em", caption = "Località extra", help = "Località del viaggio extra.")
     private String localitaExtra = "";
     //--descrizione dei viaggi extra
-    @AIField(type = AFType.area, width = "24em", caption = "Note",  help = "Eventuali note aggiuntive.")
+    @AIField(type = AFType.area, width = "24em", caption = "Note", help = "Eventuali note aggiuntive.")
     private String note = "";
 
     //--turno previsto (vuoto) oppure assegnato (militi inseriti)
@@ -107,7 +108,7 @@ public class Turno extends WamCompanyEntity {
      * Da non usare MAI per la creazione diretta di una nuova istanza (si perdono i controlli)
      */
     public Turno() {
-        this(null,null, null, null);
+        this(null, null, null, null);
     }// end of JavaBean constructor
 
     /**
@@ -128,10 +129,10 @@ public class Turno extends WamCompanyEntity {
      * Filtrato sulla company passata come parametro.
      * La chiave (obbligatoria) viene calcolata in automatico prima del persist
      *
-     * @param company    di appartenenza (property della superclasse)
-     * @param servizio   tipologia di servizio (obbligatoria)
-     * @param inizio     giorno, ora e minuto di inizio turno
-     * @param fine       giorno, ora e minuto di fine turno
+     * @param company  di appartenenza (property della superclasse)
+     * @param servizio tipologia di servizio (obbligatoria)
+     * @param inizio   giorno, ora e minuto di inizio turno
+     * @param fine     giorno, ora e minuto di fine turno
      */
     public Turno(WamCompany company, Servizio servizio, Date inizio, Date fine) {
         super();
@@ -1011,7 +1012,7 @@ public class Turno extends WamCompanyEntity {
      */
     public Iscrizione getIscrizione(ServizioFunzione sf) {
         Iscrizione iscrizione = null;
-        if (getIscrizioni()!=null) {
+        if (getIscrizioni() != null) {
             for (Iscrizione i : getIscrizioni()) {
                 if (i != null) {
                     ServizioFunzione s = i.getServizioFunzione();

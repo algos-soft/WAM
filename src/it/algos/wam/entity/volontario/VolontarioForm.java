@@ -19,6 +19,7 @@ import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -412,5 +413,23 @@ public class VolontarioForm extends WanForm {
 
     }
 
+    /**
+     * Controlla se questo volontario è registrabile
+     *
+     * @return stringa vuota se registrabile, motivo se non registrabile
+     */
+    @Override
+    protected String checkRegistrabile() {
+
+        //--codeCompanyUnico deve essere unico (per i nuovi record)
+        if (isNewRecord()) {
+            String codeCompanyUnico = fCodeCompanyUnico.getValue();
+            if (Volontario.isEntityByCodeCompanyUnico(codeCompanyUnico)) {
+                return "Esiste già un volontario con questo nome e cognome";
+            }// end of if cycle
+        }// end of if cycle
+
+        return "";
+    }// end of method
 
 }// end of class

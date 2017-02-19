@@ -166,6 +166,33 @@ public class TurnoAmb extends BaseEntity {
         return (List<TurnoAmb>) AQuery.getList(TurnoAmb.class, manager, filtroCroce, filtroOre);
     }// end of method
 
+    @SuppressWarnings("unchecked")
+    public static boolean isEsisteByMilite( VolontarioAmb milite, EntityManager manager) {
+        boolean esiste = false;
+        List lista1= AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione1, milite, manager);
+        List lista2= AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione2, milite, manager);
+        List lista3= AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione3, milite, manager);
+        List lista4= AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione4, milite, manager);
+
+        if (lista1.size() > 0) {
+            esiste = true;
+        }// end of if cycle
+
+        if (AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione2, milite, manager).size() > 0) {
+            esiste = true;
+        }// end of if cycle
+
+        if (AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione3, milite, manager).size() > 0) {
+            esiste = true;
+        }// end of if cycle
+
+        if (AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione4, milite, manager).size() > 0) {
+            esiste = true;
+        }// end of if cycle
+
+        return esiste;
+    }// end of method
+
     public CroceAmb getCroce() {
         return croce;
     }// end of getter method

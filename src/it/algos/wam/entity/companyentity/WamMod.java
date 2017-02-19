@@ -28,6 +28,15 @@ public abstract class WamMod extends CompanyModule implements CompanyListener, M
      * Costruttore
      *
      * @param entity   di riferimento del modulo
+     */
+    public WamMod(Class entity) {
+        this(entity, "", null);
+    }// end of constructor
+
+    /**
+     * Costruttore
+     *
+     * @param entity   di riferimento del modulo
      * @param menuIcon icona del menu
      */
     public WamMod(Class entity, Resource menuIcon) {

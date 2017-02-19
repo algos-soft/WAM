@@ -36,7 +36,8 @@ public enum CompanyPrefs {
     turnoAlertOrePrima("turnoAlertOrePrima", PrefType.integer, 24, "Quante ore prima dell'inizio un turno incompleto si colora di rosso"),
     turnoWarningOrePrima("turnoWarningOrePrima", PrefType.integer, 96, "Quante ore prima dell'inizio un turno incompleto si colora di giallo"),
 
-    creazioneTurniExtra("creazioneTurniExtra", PrefType.bool, true, "Volontario può creare turni extra"),;
+    creazioneTurniNormali("creazioneTurniNormali", PrefType.bool, true, "Volontario può creare turni normali"),
+    creazioneTurniExtra("creazioneTurniExtra", PrefType.bool, false, "Volontario può creare turni extra");
 
 
     private String code;
