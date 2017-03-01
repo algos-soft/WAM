@@ -1,14 +1,19 @@
 package it.algos.wam.lib;
 
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.login.WamLogin;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.field.RelatedComboField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibDate;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
 import org.apache.commons.lang.LocaleUtils;
 
@@ -129,10 +134,81 @@ public abstract class LibWam {
     }
 
     /**
-     * Ritorna la coompany col casting
+     * Ritorna la company col casting
      */
     public static WamCompany getCompany() {
         return (WamCompany) CompanySessionLib.getCompany();
+    }// end of method
+
+    /**
+     * Ritorna l'utente loggato
+     */
+    public static String getLoggato() {
+        String utente = "";
+        WamLogin login = (WamLogin) LibSession.getLogin();
+        Volontario vol = null;
+
+        if (login != null) {
+            vol = (Volontario) login.getUser();
+        }// end of if cycle
+
+        if (vol != null) {
+            utente = vol.getNomeCognome();
+        }// end of if cycle
+
+        return utente;
+    }// end of method
+
+    /**
+     * Nuova label
+     * Testo normale, senza html
+     */
+    public static Label label(String testo) {
+        return label(testo, null);
+    }// end of method
+
+    /**
+     * Nuova label
+     * Con html
+     */
+    public static Label labelHtml(String testo) {
+        return label(testo, Html.plain);
+    }// end of method
+
+    /**
+     * Nuova label
+     * Testo html strong
+     */
+    public static Label labelStrong(String testo) {
+        return label(testo, Html.strong);
+    }// end of method
+
+    /**
+     * Nuova label
+     * Testo html small
+     */
+    public static Label labelSmall(String testo) {
+        return label(testo, Html.small);
+    }// end of method
+
+
+    /**
+     * Nuova label
+     */
+    public static Label label(String testo, Html tag) {
+        Label label = null;
+
+        if (tag != null) {
+            if (tag == Html.plain) {
+                label = new Label(testo, ContentMode.HTML);
+            } else {
+                label = new Label(tag.get(testo), ContentMode.HTML);
+            }// end of if/else cycle
+        } else {
+            label = new Label(testo);
+        }// end of if/else cycle
+
+        return label;
     }// end of method
 
 

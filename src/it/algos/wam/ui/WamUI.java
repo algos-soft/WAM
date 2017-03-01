@@ -15,6 +15,7 @@ import it.algos.wam.entity.funzione.FunzioneMod;
 import it.algos.wam.entity.iscrizione.IscrizioneMod;
 import it.algos.wam.entity.servizio.ServizioMod;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzioneMod;
+import it.algos.wam.entity.statistiche.StatisticheMod;
 import it.algos.wam.entity.turno.TurnoMod;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.VolontarioMod;
@@ -372,6 +373,7 @@ public class WamUI extends UI {
         this.addMod(menuBarUtente, new FunzioneMod());
         this.addMod(menuBarUtente, new ServizioMod());
         this.addMod(menuBarUtente, new VolontarioMod());
+        this.addMod(menuBarUtente, new StatisticheMod());
 
         // aggiungo un MenuItem con il tabellone.
         menuBarUtente.addItem("Tabellone", FontAwesome.CALENDAR_O, new MenuBar.Command() {

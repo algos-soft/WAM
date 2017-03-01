@@ -9,6 +9,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.settings.CompanyPrefs;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.lib.LibSession;
 
 import java.time.LocalDate;
@@ -58,7 +59,7 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         // numero di righe di iscrizione pari al numero delle funzioni previste
         int rows = turno.getServizio().getNumFunzioni();
 
-        if (rows==0) {
+        if (rows == 0) {
             rows++;
         }// end of if cycle
 
@@ -97,6 +98,7 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         this.tabellone = tabellone;
         this.serv = serv;
         this.dataInizio = dataInizio;
+        boolean utentePuoCreareTurno = CompanyPrefs.creazioneTurniNormali.getBool();
 
         // inizializzazioni comuni turno e no-turno
         init();
@@ -109,12 +111,15 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         blank.setWidth("100%");
         blank.setHeight("100%");
         blank.addStyleName("cnoturno");
-        if(LibSession.isAdmin()){
+
+        // non solo admin :-) @todo gac 25-2-17
+        if (LibSession.isAdmin() || utentePuoCreareTurno) {
             blank.addStyleName("cursor-pointer");
         }
 
         // solo admin: listener quando viene cliccata l'area iscrizioni
-        if(LibSession.isAdmin()){
+        // non solo admin :-) @todo gac 25-2-17
+        if (LibSession.isAdmin() || utentePuoCreareTurno) {
             blank.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
                 @Override
                 public void layoutClick(LayoutEvents.LayoutClickEvent event) {
@@ -140,11 +145,11 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
 
         if (!serv.isOrario()) {
 
-            String note=null;
-            if(turno!=null){
-                note=turno.getNote();
+            String note = null;
+            if (turno != null) {
+                note = turno.getNote();
             }
-            if(note==null || note.isEmpty()){
+            if (note == null || note.isEmpty()) {
                 note = "&nbsp;";
             }
             Label label = new Label(note, ContentMode.HTML);
@@ -179,7 +184,7 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
             if (LocalDate.now().isBefore(dataTurno)) {   // è nel futuro
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime inizioTurno = turno.getStartTime();
-                long oreMancanti = ChronoUnit.HOURS.between(now,inizioTurno);
+                long oreMancanti = ChronoUnit.HOURS.between(now, inizioTurno);
                 if (oreMancanti < CompanyPrefs.turnoWarningOrePrima.getInt()) {
                     String[] styles = coloraTurnoUrgenza(turno);
                     bgStyle = styles[0];
@@ -202,8 +207,8 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
             if (iscr != null) {
                 String nome = iscr.getVolontario().toString();
                 FontAwesome fa = null;
-                if(iscr.hasNota()){
-                    fa=FontAwesome.EXCLAMATION_TRIANGLE;
+                if (iscr.hasNota()) {
+                    fa = FontAwesome.EXCLAMATION_TRIANGLE;
                 }
                 ci = new CIscrizione(nome, icon, fa, iscr.getNota());
             } else {
@@ -225,8 +230,8 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
      * Colorazione di un turno futuro in funzione dell'urgenza di completamento
      * - se è valido è verde
      * - se non è valido:
-     *    - se è vicino è giallo
-     *    - se è molto vicino è rosso
+     * - se è vicino è giallo
+     * - se è molto vicino è rosso
      *
      * @param turno il turno da esaminare
      * @return una coppia di stringhe con lo stile di background e lo stile di foreground
@@ -264,7 +269,6 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
     }
 
 
-
     /**
      * @return x la colonna del tabellone in cui è posizionato questo componente
      */
@@ -292,7 +296,6 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
     public void setY(int y) {
         this.y = y;
     }
-
 
 
 }// end of class

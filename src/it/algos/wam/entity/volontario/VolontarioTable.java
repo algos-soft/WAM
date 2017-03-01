@@ -29,7 +29,7 @@ public class VolontarioTable extends WamTable {
 
     // larghezza delle colonne funzioni
     private static int LAR_SCADENZE = 85;
-    private static int LAR_FUNZIONI = 80;
+    private static int LAR_FUNZIONI = 85;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MMM-yy");
 

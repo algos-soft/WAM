@@ -198,7 +198,7 @@ public class FunzioneTable extends WamTable {
     }// end of inner class
 
     /**
-     * Colonna generata: icona.
+     * Colonna generata: funzioni.
      */
     private class FunzColumnGenerator implements ColumnGenerator {
 

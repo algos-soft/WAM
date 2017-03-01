@@ -140,7 +140,7 @@ public class Migration {
      */
     private List<CroceAmb> selezionaCrodiDaImportare(List<CroceAmb> listaVecchieCrociEsistenti) {
         List<CroceAmb> listaVecchieCrociDaImportare = new ArrayList<>();
-        String[] escluse = {"ALGOS", "algos", "TEST", "test", "PAVT", "pavt"};
+        String[] escluse = {"ALGOS", "algos", "TEST", "test", "PAVT", "pavt", "demo", "DEMO"};
         ArrayList<String> listaEscluse = LibArray.fromString(escluse);
         String code;
 

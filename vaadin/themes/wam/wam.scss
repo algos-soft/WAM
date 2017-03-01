@@ -269,6 +269,8 @@
 
   // verde
   .verde {
+    color: green;
+
     .v-label {
       color: green;
     }
@@ -283,11 +285,12 @@
       color: white;
       background: #6282A3;
     }
-    .v-menubar-menuitem-highlight {
-      color: white;
+    .v-grid-row {
+      color: green;
       background: #6282A3;
     }
   }
+
   // salmone
   .salmone {
     color: #FA8072;
@@ -306,11 +309,11 @@
       color: white;
       background: #6282A3;
     }
-    .v-menubar-menuitem-highlight {
-      color: white;
-      background: #6282A3;
+    .v-grid-row {
+      color: #FA8072;
     }
   }
+
   // rosso pompeiano
   .rosso {
     color: #D21F1B;
@@ -329,9 +332,8 @@
       color: white;
       background: #6282A3;
     }
-    .v-menubar-menuitem-highlight {
-      color: white;
-      background: #6282A3;
+    .v-grid-row {
+      color: #D21F1B;
     }
   }
 
@@ -341,6 +343,9 @@
       color: blue;
     }
     .v-icon {
+      color: blue;
+    }
+    .v-grid-row {
       color: blue;
     }
   }

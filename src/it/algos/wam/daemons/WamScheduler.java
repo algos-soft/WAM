@@ -96,7 +96,9 @@ public class WamScheduler extends Scheduler {
 
 			// Schedule task.
 			//--ogni giorno (alle cinque del mattino)
-			schedule("0 5 * * *", new TaskMigration());
+//			schedule("0 5 * * *", new TaskMigration());
+			//--ogni ora (alla mezz'ora)
+			schedule("30 * * * *", new TaskMigration());
 
 		}// end of method
 	}// end of method

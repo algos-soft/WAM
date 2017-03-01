@@ -18,6 +18,7 @@ import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.lib.LibWam;
 import it.algos.wam.login.WamLogin;
 import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.multiazienda.CompanyQuery;
@@ -37,6 +38,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import it.algos.webbase.domain.log.Log;
 import it.algos.webbase.web.login.Login;
@@ -86,26 +88,29 @@ public class CTurnoEditor extends CTabelloneEditor {
 
     /**
      * Crea il componente che visualizza il titolo del turno
+     * (volontario loggato)
      * (descrizione, data, ora ecc..)
      *
      * @return il componente titolo
      */
     private Component creaCompTitolo() {
         VerticalLayout layout = new VerticalLayout();
-
         Servizio serv = turno.getServizio();
+        String utente = LibWam.getLoggato();
         LocalDate dataInizio = DateConvertUtils.asLocalDate(turno.getInizio());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d LLLL YYYY");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d LLLL YYYY", Locale.ITALIAN);
         String dataOra = dataInizio.format(formatter);
+        dataOra = dataOra.toLowerCase(); //i nomi dei giorni e dei mesi, in italiano, iniziano con la minuscola
         if (serv.isOrario()) {
             dataOra += ", ore " + serv.getStrOrario();
-        }
+        }// end of if cycle
 
-        layout.addComponent(new Label(dataOra));
-        layout.addComponent(new Label("<strong>" + serv.getDescrizione() + "</strong>", ContentMode.HTML));
+        layout.addComponent(LibWam.labelSmall("Sei collegato come: " + utente));
+        layout.addComponent(LibWam.label(dataOra));
+        layout.addComponent(LibWam.labelStrong(serv.getDescrizione()));
 
         return layout;
-    }
+    }// end of method
 
 
     /**
@@ -134,6 +139,7 @@ public class CTurnoEditor extends CTabelloneEditor {
         HorizontalLayout layout = new HorizontalLayout();
         layout.setMargin(true);
         layout.setSpacing(true);
+        boolean utentePuoCreareTurno = CompanyPrefs.creazioneTurniNormali.getBool();
 
         Button bElimina = new Button("Elimina turno");
         bElimina.addClickListener(new Button.ClickListener() {
@@ -148,8 +154,8 @@ public class CTurnoEditor extends CTabelloneEditor {
                             // prepara il testo del log
                             Volontario volontario = WamLogin.getLoggedVolontario();
                             String desc = volontario.getNomeCognome();
-                            desc+=" ha cancellato il turno ";
-                            desc+=getLogTurno(turno);
+                            desc += " ha cancellato il turno ";
+                            desc += getLogTurno(turno);
 
                             // cancella il turno
                             deleteTurno();
@@ -200,8 +206,9 @@ public class CTurnoEditor extends CTabelloneEditor {
         /**
          * Il bottone Registra
          * Usato solo in modalità multi-iscrizione
+         * non solo admin :-) @todo gac 25-2-17
          */
-        if (isMultiIscrizione()) {
+        if (isMultiIscrizione() || utentePuoCreareTurno) {
             layout.addComponent(bRegistra);
         }
 
@@ -271,13 +278,13 @@ public class CTurnoEditor extends CTabelloneEditor {
             turno.getIscrizioni().clear();
 
             // se è nuovo turno, logga la creazione del turno
-            boolean nuovo=true;
+            boolean nuovo = true;
             Long id = turno.getId();
-            if(id==null || id==0){
+            if (id == null || id == 0) {
                 Volontario volontario = WamLogin.getLoggedVolontario();
                 String desc = volontario.getNomeCognome();
-                desc+="  ha creato il turno ";
-                desc+=getLogTurno(turno);
+                desc += "  ha creato il turno ";
+                desc += getLogTurno(turno);
                 Log.info(LogType.creaTurno.getTag(), desc);
             }
 
@@ -289,7 +296,7 @@ public class CTurnoEditor extends CTabelloneEditor {
 
             // crea le righe di log per le iscrizioni cancellate.
             // (quelle che erano nella lista originali e non sono più nella lista delle nuove)
-            Volontario operatore = (Volontario)Login.getLogin().getUser();
+            Volontario operatore = (Volontario) Login.getLogin().getUser();
             for (Iscrizione iOriginale : originali) {
                 Volontario volontario = iOriginale.getVolontario();
                 Funzione funzione = iOriginale.getServizioFunzione().getFunzione();
@@ -304,7 +311,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                         desc = operatore.getNomeCognome();
                         desc += " ha cancellato ";
                         desc += volontario.getNomeCognome();
-                        desc += " come "+funzione.getCode();
+                        desc += " come " + funzione.getCode();
                         desc += " dal turno ";
                         desc += getLogTurno(turno);
                     }
@@ -335,7 +342,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                         desc = operatore.getNomeCognome();
                         desc += " ha iscritto ";
                         desc += volontario.getNomeCognome();
-                        desc += " come "+funzione.getCode();
+                        desc += " come " + funzione.getCode();
                         desc += " al turno ";
                         desc += getLogTurno(turno);
                     }
@@ -550,7 +557,7 @@ public class CTurnoEditor extends CTabelloneEditor {
             for (IscrizioneEditor ie : iEditors) {
                 Iscrizione i = ie.getIscrizioneOriginale();
                 if (i != null) {
-                    if(i.getVolontario()!=null){
+                    if (i.getVolontario() != null) {
                         iscrizioni.add(i);
                     }
                 }
@@ -584,9 +591,9 @@ public class CTurnoEditor extends CTabelloneEditor {
             this.iscrizione = iscrizione;
 
             // clona l'iscrizione originale prima che venga cambiata
-            if(this.iscrizione!=null){
+            if (this.iscrizione != null) {
                 try {
-                    iscrizioneOriginale=(Iscrizione)BeanUtils.cloneBean(this.iscrizione);
+                    iscrizioneOriginale = (Iscrizione) BeanUtils.cloneBean(this.iscrizione);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InstantiationException e) {
@@ -699,9 +706,18 @@ public class CTurnoEditor extends CTabelloneEditor {
             bMain.setHtmlContentAllowed(true);
             Volontario volIscritto = iscrizione.getVolontario();
             Funzione funz = iscrizione.getServizioFunzione().getFunzione();
-            String caption;
+            String caption = "";
+            Volontario volLoggato = WamLogin.getLoggedVolontario();
+
             if (volIscritto != null) {  // già iscritto
-                caption = volIscritto.toString();
+                if (volIscritto.equals(volLoggato)) {
+                    caption = "Sei già iscritto come <strong>" + funz.getSigla() + "</strong> ";
+                    bMain.addStyleName("verde");
+                } else {
+                    caption = "Già iscritto " + volIscritto.toString();
+                    bMain.addStyleName("rosso");
+                }// end of if/else cycle
+
                 FontAwesome glyph = funz.getIcon();
                 if (glyph != null) {
                     caption = glyph.getHtml() + " " + caption;
@@ -712,13 +728,16 @@ public class CTurnoEditor extends CTabelloneEditor {
                 if (glyph != null) {
                     caption = glyph.getHtml() + " " + caption;
                 }
-                caption += " Iscriviti come <strong>" + funz.getSigla() + "</strong>";
-                Volontario volontario = WamLogin.getLoggedVolontario();
-                if (volontario != null) {
-                    if (!volontario.haFunzione(funz)) {
+                if (volLoggato != null) {
+                    if (volLoggato.haFunzione(funz)) {
+                        caption += "Iscriviti come <strong>" + funz.getSigla() + "</strong>";
+                        bMain.addStyleName("verde");
+                    } else {
+                        caption += "Non abilitato come <strong>" + funz.getSigla() + "</strong>";
+                        bMain.addStyleName("rosso");
                         bMain.addStyleName("lightGrayBg");
-                    }
-                }
+                    }// end of if/else cycle
+                }// end of if cycle
             }
             bMain.setCaption(caption);
 
@@ -776,7 +795,7 @@ public class CTurnoEditor extends CTabelloneEditor {
                         fireDismissListeners(new DismissEvent(bMain, true, false));
 
                         // log iscrizione
-                        String desc = getLogIscrizione(iscrizione.getVolontario(),funz, turno);
+                        String desc = getLogIscrizione(iscrizione.getVolontario(), funz, turno);
                         Log.info(LogType.iscrizione.getTag(), desc);
                         WamEmailService.newIscrizione(iscrizione);
                     }
