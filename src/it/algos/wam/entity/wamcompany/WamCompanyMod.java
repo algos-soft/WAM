@@ -7,6 +7,7 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
+import it.algos.wam.lib.LibWam;
 import it.algos.wam.migration.Migration;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany_;
@@ -100,7 +101,11 @@ public class WamCompanyMod extends ModulePop {
 
         menu.addItem("Importa", null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                new Migration();
+                if (LibWam.isCompany()) {
+                    new Migration(LibWam.getCompanySigla());
+                } else {
+                    new Migration();
+                }// end of if/else cycle
                 creaFiltri();
                 getTable().refresh();
             }// end of inner method

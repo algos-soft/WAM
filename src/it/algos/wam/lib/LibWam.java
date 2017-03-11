@@ -134,10 +134,28 @@ public abstract class LibWam {
     }
 
     /**
+     * Controlla se la company è correttamente selezionata
+     */
+    public static Boolean isCompany() {
+        return CompanySessionLib.getCompany() != null;
+    }// end of method
+
+    /**
      * Ritorna la company col casting
      */
     public static WamCompany getCompany() {
         return (WamCompany) CompanySessionLib.getCompany();
+    }// end of method
+
+    /**
+     * Ritorna la sigla della company
+     */
+    public static String getCompanySigla() {
+        if (isCompany()) {
+            return getCompany().getCompanyCode();
+        } else {
+            return "";
+        }// end of if/else cycle
     }// end of method
 
     /**

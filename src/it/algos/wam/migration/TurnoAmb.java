@@ -137,6 +137,7 @@ public class TurnoAmb extends BaseEntity {
         int delta = 10;
         Date oggi = new Date();
         Date dataIniziale = LibDate.add(oggi, -delta);
+        dataIniziale= LibDate.getPrimoGennaio(2017);
 
         Container.Filter filtroCroce = new Compare.Equal(TurnoAmb_.croce.getName(), company);
         Container.Filter filtroData = new Compare.Greater(TurnoAmb_.giorno.getName(), dataIniziale);

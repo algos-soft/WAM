@@ -24,6 +24,7 @@
           <factory-entry name="WAMTEST" />
           <factory-entry name="Webambulanze" />
           <factory-entry name="Webambulanzelocal" />
+          <factory-entry name="Webambulanzeserver" />
           <factory-entry name="wamtest" />
         </datasource-mapping>
         <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/META-INF/persistence.xml" />

@@ -34,6 +34,7 @@ import java.util.List;
 public class Migration {
 
     protected final static String PERSISTENCE_UNIT_NAME = "Webambulanzelocal";
+//    protected final static String PERSISTENCE_UNIT_NAME = "Webambulanzeserver";
     private final static boolean USA_TRANSAZIONE = false;
     private final static String DB_OLD_LOCAL = "";
     private final static String DB_OLD_SERVER = "";
