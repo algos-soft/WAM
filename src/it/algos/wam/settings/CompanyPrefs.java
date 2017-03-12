@@ -18,7 +18,9 @@ import java.util.Date;
  */
 public enum CompanyPrefs {
 
-    tabellonePubblico("tabellonePubblico", PrefType.bool, true, "Se il tabellone è liberamente accessibile in visione senza login"),
+    tabellonePubblico("tabellonePubblico", PrefType.bool, true, "Tabellone liberamente visibile, anche senza essere loggato"),
+    creazioneTurniNormali("creazioneTurniNormali", PrefType.bool, true, "I volontari possono creare turni normali"),
+    creazioneTurniExtra("creazioneTurniExtra", PrefType.bool, false, "I volontari possono creare turni extra"),
 
     senderAddress("senderAddress", PrefType.email, "", "Indirizzo email del mittente"),
 
@@ -34,10 +36,8 @@ public enum CompanyPrefs {
     cancMinutiDopoIscrizione("cancMinutiDopoIscrizione", PrefType.integer, 15, "Per quanti minuti dopo l'iscrizione il volontario si può cancellare"),
     cancOrePrimaInizioTurno("cancOrePrimaInizioTurno", PrefType.integer, 24, "Fino a quante ore prima dell'inizio turno il volontario si può cancellare"),
     turnoAlertOrePrima("turnoAlertOrePrima", PrefType.integer, 24, "Quante ore prima dell'inizio un turno incompleto si colora di rosso"),
-    turnoWarningOrePrima("turnoWarningOrePrima", PrefType.integer, 96, "Quante ore prima dell'inizio un turno incompleto si colora di giallo"),
+    turnoWarningOrePrima("turnoWarningOrePrima", PrefType.integer, 96, "Quante ore prima dell'inizio un turno incompleto si colora di giallo");
 
-    creazioneTurniNormali("creazioneTurniNormali", PrefType.bool, true, "Volontario può creare turni normali"),
-    creazioneTurniExtra("creazioneTurniExtra", PrefType.bool, false, "Volontario può creare turni extra");
 
 
     private String code;
@@ -283,4 +283,7 @@ public enum CompanyPrefs {
         Pref.remove(code, company);
     }// end of method
 
+    public String getDescrizione() {
+        return descrizione;
+    }
 }// end of enumeration class

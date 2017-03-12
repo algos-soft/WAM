@@ -237,9 +237,12 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
      * @return una coppia di stringhe con lo stile di background e lo stile di foreground
      */
     private String[] coloraTurnoUrgenza(Turno turno) {
-
         String bgStyle;
         String fgStyle;
+        LocalDate now = LocalDate.now();
+        LocalDate inizioTurno = turno.getStartTime().toLocalDate();
+        long gMancanti = 0;
+        long hMancanti = 0;
 
         // controlla se il turno è valido
         boolean valido = turno.isValido();
@@ -254,11 +257,17 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
             fgStyle = "ciscrizione-dark";
 
             // se il turno è vicino e giallo, se è vicinissimo è rosso, se è lontano resta com'è
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime inizioTurno = turno.getStartTime();
-            long hMancanti = ChronoUnit.HOURS.between(now, inizioTurno);
+//            LocalDateTime now = LocalDateTime.now();
+//            LocalDateTime inizioTurno = turno.getStartTime();
+//            long hMancanti = ChronoUnit.HOURS.between(now, inizioTurno);
 //            long ggMancanti = ChronoUnit.DAYS.between(LocalDate.now(), turno.getData1());
-            if (hMancanti < CompanyPrefs.turnoAlertOrePrima.getInt()) {
+
+            gMancanti = ChronoUnit.DAYS.between(now, inizioTurno);
+            if (gMancanti > 0) {
+                hMancanti = gMancanti * 24;
+            }// end of if cycle
+
+            if (hMancanti <= CompanyPrefs.turnoAlertOrePrima.getInt()) {
                 bgStyle = "cturno-alert";
                 fgStyle = "ciscrizione-light";
             }

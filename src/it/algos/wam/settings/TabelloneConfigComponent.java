@@ -16,11 +16,13 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
     private static final String KEY_ORE_ALERT = "oreAlert";
     private static final String KEY_ORE_WARNING = "oreWarning";
     private static final String KEY_TABELLONE_VISIBILE = "tabelloneVisibile";
+    private static final String KEY_CREA_TURNI = "creaTurniNormali";
     private static final String KEY_CREA_EXTRA = "creaTurniExtra";
 
     private ArrayComboField comboOreAlert;
     private ArrayComboField comboOreWarning;
     private CheckBoxField checkTabellone;
+    private CheckBoxField checkTurni;
     private CheckBoxField checkExtra;
 
 
@@ -39,12 +41,26 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         hl = new HorizontalLayout();
         hl.setSpacing(true);
         hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
-        hl.addComponent(new Label("Tabellone liberamente visibile, anche senza essere loggato"));
+        hl.addComponent(new Label(CompanyPrefs.tabellonePubblico.getDescrizione()));
         hl.addComponent(checkTabellone);
         layout.addComponent(hl);
 
-        layout.addComponent(new Label("Un turno si considera <strong>incompleto</strong> quando non tutte le funzioni obbligatorie sono coperte", ContentMode.HTML));
+        hl = new HorizontalLayout();
+        hl.setSpacing(true);
+        hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
+        hl.addComponent(new Label(CompanyPrefs.creazioneTurniNormali.getDescrizione()));
+        hl.addComponent(checkTurni);
+        layout.addComponent(hl);
 
+        hl = new HorizontalLayout();
+        hl.setSpacing(true);
+        hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
+        hl.addComponent(new Label(CompanyPrefs.creazioneTurniExtra.getDescrizione()));
+        hl.addComponent(checkExtra);
+        layout.addComponent(hl);
+
+        layout.addComponent(new Label(""));
+        layout.addComponent(new Label("Un turno si considera <strong>incompleto</strong> quando non tutte le funzioni obbligatorie sono coperte", ContentMode.HTML));
 
         hl = new HorizontalLayout();
         hl.setSpacing(true);
@@ -62,13 +78,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         hl.addComponent(new Label("ore prima dell'inizio (alert)"));
         layout.addComponent(hl);
 
-        hl = new HorizontalLayout();
-        hl.setSpacing(true);
-        hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
-        hl.addComponent(new Label("Volontario può creare turni extra"));
-        hl.addComponent(checkExtra);
-        layout.addComponent(hl);
-
+        layout.addComponent(new Label(""));
         layout.addComponent(createSaveButton());
 
         setCompositionRoot(layout);
@@ -88,12 +98,14 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         comboOreWarning.setWidth("6em");
 
         checkTabellone = new CheckBoxField();
+        checkTurni = new CheckBoxField();
         checkExtra = new CheckBoxField();
 
         // bind fields to properties
         getGroup().bind(comboOreAlert, KEY_ORE_ALERT);
         getGroup().bind(comboOreWarning, KEY_ORE_WARNING);
         getGroup().bind(checkTabellone, KEY_TABELLONE_VISIBILE);
+        getGroup().bind(checkTurni, KEY_CREA_TURNI);
         getGroup().bind(checkExtra, KEY_CREA_EXTRA);
 
 
@@ -130,6 +142,9 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
             boolean tabelloneVisibile = CompanyPrefs.tabellonePubblico.getBool();
             addItemProperty(KEY_TABELLONE_VISIBILE, new ObjectProperty<>(tabelloneVisibile));
 
+            boolean creaTurni = CompanyPrefs.creazioneTurniNormali.getBool();
+            addItemProperty(KEY_CREA_TURNI,new ObjectProperty<>(creaTurni));
+
             boolean creaTurniExtra = CompanyPrefs.creazioneTurniExtra.getBool();
             addItemProperty(KEY_CREA_EXTRA, new ObjectProperty<>(creaTurniExtra));
 
@@ -140,12 +155,14 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
             int alertOrePrima = (int) getItemProperty(KEY_ORE_ALERT).getValue();
             int warningOrePrima = (int) getItemProperty(KEY_ORE_WARNING).getValue();
             boolean tabelloneVisibile = (Boolean) getItemProperty(KEY_TABELLONE_VISIBILE).getValue();
+            boolean creaTurni = (Boolean) getItemProperty(KEY_CREA_TURNI).getValue();
             boolean creaTurniExtra = (Boolean) getItemProperty(KEY_CREA_EXTRA).getValue();
 
             if (warningOrePrima > alertOrePrima) {
                 CompanyPrefs.turnoAlertOrePrima.put(alertOrePrima);
                 CompanyPrefs.turnoWarningOrePrima.put(warningOrePrima);
                 CompanyPrefs.tabellonePubblico.put(tabelloneVisibile);
+                CompanyPrefs.creazioneTurniNormali.put(creaTurni);
                 CompanyPrefs.creazioneTurniExtra.put(creaTurniExtra);
 
                 Notification.show("Dati salvati");

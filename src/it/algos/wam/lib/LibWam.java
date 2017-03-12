@@ -166,7 +166,7 @@ public abstract class LibWam {
         WamLogin login = (WamLogin) LibSession.getLogin();
         Volontario vol = null;
 
-        if (login != null) {
+        if (login != null && login.getUser() != null && login.getUser() instanceof Volontario) {
             vol = (Volontario) login.getUser();
         }// end of if cycle
 

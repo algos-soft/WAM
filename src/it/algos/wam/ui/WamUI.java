@@ -713,6 +713,10 @@ public class WamUI extends UI {
 
         footer.addComponent(new Label(WAMApp.INFO_APP));
 
+        if (CompanySessionLib.getCompany() != null) {
+            footer.addComponent(new Label("- " + CompanySessionLib.getCompany().getCompanyCode()));
+        }// end of if cycle
+
         if (LibSession.isDeveloper()) {
             footer.addComponent(new Label("- programmatore"));
         } else {
@@ -720,10 +724,6 @@ public class WamUI extends UI {
                 footer.addComponent(new Label("- admin"));
             }// end of if/else cycle
         }// end of if/else cycle
-
-        if (CompanySessionLib.getCompany() != null) {
-            footer.addComponent(new Label("- " + CompanySessionLib.getCompany().getCompanyCode()));
-        }// end of if cycle
 
         if (LibSession.isDeveloper()) {
             footer.addStyleName("rosso");

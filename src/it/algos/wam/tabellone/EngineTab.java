@@ -120,6 +120,7 @@ public class EngineTab {
         ArrayList<Servizio> listaServizi;
         LocalDate d2 = d1.plusDays(quantiGiorni - 1);
         WTabellone wtab = new WTabellone(d1, d2);
+        d2 = d2.plusDays(1); //Localdate non ha orario e altrimenti si perde il turno dell'ultimo giorno
 
         //--aggiunge una riga per ogni servizio con orario prestabilito
         //--la lista dei servizi deve essere composta:
