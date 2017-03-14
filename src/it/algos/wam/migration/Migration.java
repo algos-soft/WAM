@@ -21,6 +21,7 @@ import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -34,7 +35,7 @@ import java.util.List;
 public class Migration {
 
     protected final static String PERSISTENCE_UNIT_NAME = "Webambulanzelocal";
-//    protected final static String PERSISTENCE_UNIT_NAME = "Webambulanzeserver";
+    //    protected final static String PERSISTENCE_UNIT_NAME = "Webambulanzeserver";
     private final static boolean USA_TRANSAZIONE = false;
     private final static String DB_OLD_LOCAL = "";
     private final static String DB_OLD_SERVER = "";
@@ -165,19 +166,10 @@ public class Migration {
      * @param siglaCompanyNew nome della company usata in wam
      */
     private void inizia(CroceAmb companyOld, String siglaCompanyNew) {
-        creaManagers();
         WamCompany companyNew = WamCompany.findByCode(siglaCompanyNew);
         List<WrapVolontario> listaWrapVolontari = null;
 
-        try { // prova ad eseguire il codice
-            managerNew.getTransaction().begin();
-            if (companyNew != null) {
-                companyNew.delete(managerNew);
-            }// fine del blocco if
-            managerNew.getTransaction().commit();
-        } catch (Exception unErrore) { // intercetta l'errore
-            managerNew.getTransaction().rollback();
-        }// fine del blocco try-catch
+        companyNew.delete(managerNew);
 
         companyNew = importSingolaCroce(companyOld, siglaCompanyNew, managerNew);
 
@@ -193,12 +185,11 @@ public class Migration {
         listaWrapVolontari = importVolontari(companyNew, managerNew);
         importTurni(companyNew, listaWrapVolontari, managerNew);
 
-//        try { // prova ad eseguire il codice
-//            managerNew.getTransaction().commit();
-//        } catch (Exception unErrore) { // intercetta l'errore
-//            managerNew.getTransaction().rollback();
-//        }// fine del blocco try-catch
-        int a = 87;
+        // regolazioni aggiuntive di una particolare croce/company
+        if (siglaCompanyNew.equals("gaps")) {
+            patchGaps();
+        }// end of if cycle
+
     }// end of method
 
     /**
@@ -211,7 +202,6 @@ public class Migration {
     private WamCompany importSingolaCroce(CroceAmb companyOld, String siglaCompanyNew, EntityManager manager) {
         WamCompany companyNew = null;
 
-        manager.getTransaction().begin();
         try { // prova ad eseguire il codice
             if (SIGLA_MAIUSCOLA) {
                 siglaCompanyNew = siglaCompanyNew.toUpperCase();
@@ -228,9 +218,7 @@ public class Migration {
 
             companyNew = (WamCompany) companyNew.save(manager); //todo indispensabile il ritorno, altrimenti NON c'è l'ID
 
-            manager.getTransaction().commit();
         } catch (Exception unErrore) { // intercetta l'errore
-            manager.getTransaction().rollback();
         }// fine del blocco try-catch
 
 
@@ -259,15 +247,7 @@ public class Migration {
         List<WrapFunzione> listaWrapFunzioni = new ArrayList<>();
         Funzione funzioneNew;
 
-        //--controlla se la transazione è attiva
-        boolean createTransaction;
-        createTransaction = LibQuery.isTransactionNotActive(manager);
-
         try { // prova ad eseguire il codice
-            if (createTransaction) {
-                manager.getTransaction().begin();
-            }// end of if cycle
-
             if (listaFunzioniOld != null && listaFunzioniOld.size() > 0) {
                 for (FunzioneAmb funzioneOld : listaFunzioniOld) {
                     funzioneNew = creaSingolaFunzione(funzioneOld, companyNew, manager);
@@ -275,14 +255,7 @@ public class Migration {
                 }// end of for cycle
             }// end of if cycle
             this.recuperaFunzioniDipendenti(listaWrapFunzioni, manager);
-
-            if (createTransaction) {
-                manager.getTransaction().commit();
-            }// end of if cycle
         } catch (Exception unErrore) { // intercetta l'errore
-            if (createTransaction) {
-                manager.getTransaction().rollback();
-            }// end of if cycle
         }// fine del blocco try-catch
     }// end of method
 
@@ -374,28 +347,13 @@ public class Migration {
      * @param companyNew company usata in wam
      */
     private void importServizi(WamCompany companyNew, EntityManager manager) {
-        //--controlla se la transazione è attiva
-        boolean createTransaction;
-        createTransaction = LibQuery.isTransactionNotActive(manager);
-
         try { // prova ad eseguire il codice
-            if (createTransaction) {
-                manager.getTransaction().begin();
-            }// end of if cycle
-
             if (listaServiziOld != null && listaServiziOld.size() > 0) {
                 for (ServizioAmb servizioOld : listaServiziOld) {
                     creaSingoloServizio(servizioOld, companyNew, manager);
                 }// end of for cycle
             }// end of if cycle
-
-            if (createTransaction) {
-                manager.getTransaction().commit();
-            }// end of if cycle
         } catch (Exception unErrore) { // intercetta l'errore
-            if (createTransaction) {
-                manager.getTransaction().rollback();
-            }// end of if cycle
         }// fine del blocco try-catch
     }// end of method
 
@@ -473,15 +431,7 @@ public class Migration {
         Volontario volontarioNew = null;
 
         if (USA_TRANSAZIONE) {
-            //--controlla se la transazione è attiva
-            boolean createTransaction;
-            createTransaction = LibQuery.isTransactionNotActive(manager);
-
             try { // prova ad eseguire il codice
-                if (createTransaction) {
-                    manager.getTransaction().begin();
-                }// end of if cycle
-
                 if (listaVolontariOld != null && listaVolontariOld.size() > 0) {
                     for (VolontarioAmb volontarioOld : listaVolontariOld) {
                         volontarioNew = creaSingoloVolontario(volontarioOld, companyNew, manager);
@@ -491,13 +441,7 @@ public class Migration {
 
                 this.recuperaAdmin(listaWrapVolontari, manager);
 
-                if (createTransaction) {
-                    manager.getTransaction().commit();
-                }// end of if cycle
             } catch (Exception unErrore) { // intercetta l'errore
-                if (createTransaction) {
-                    manager.getTransaction().rollback();
-                }// end of if cycle
             }// fine del blocco try-catch
         } else {
             if (listaVolontariOld != null && listaVolontariOld.size() > 0) {
@@ -711,15 +655,7 @@ public class Migration {
         int delta = 150;
 
         if (USA_TRANSAZIONE) {
-            //--controlla se la transazione è attiva
-            boolean createTransaction;
-            createTransaction = LibQuery.isTransactionNotActive(manager);
-
             try { // prova ad eseguire il codice
-                if (createTransaction) {
-                    manager.getTransaction().begin();
-                }// end of if cycle
-
                 if (listaTurniOld != null && listaTurniOld.size() > 0) {
                     for (TurnoAmb turnoOld : listaTurniOld) {
                         turnoNew = creaSingoloTurno(companyNew, turnoOld, listaWrapVolontari, manager);
@@ -730,14 +666,7 @@ public class Migration {
                         }// end of if cycle
                     }// end of for cycle
                 }// end of if cycle
-
-                if (createTransaction) {
-                    manager.getTransaction().commit();
-                }// end of if cycle
             } catch (Exception unErrore) { // intercetta l'errore
-                if (createTransaction) {
-                    manager.getTransaction().rollback();
-                }// end of if cycle
             }// fine del blocco try-catch
         } else {
             if (listaTurniOld != null && listaTurniOld.size() > 0) {
@@ -995,8 +924,33 @@ public class Migration {
     private Volontario recuperaVolontarioNew(List<WrapVolontario> listaWrapVolontari, long volontarioOldID) {
         VolontarioAmb volontarioOld = VolontarioAmb.find(volontarioOldID, managerOld);
 
-
         return recuperaVolontarioNew(listaWrapVolontari, volontarioOldID);
+    }// end of method
+
+    /**
+     * Patch specifica della croce/company GAPS
+     * <p>
+     * Regola i colori dei gruppi di servizi
+     */
+    private void patchGaps() {
+        WamCompany company = WamCompany.findByCode("gaps",managerNew);
+        List<Servizio> listaServizi = Servizio.getListByCompany(company, managerNew);
+        Servizio servNew;
+
+        if (listaServizi.size() == 3) {
+            servNew = listaServizi.get(0);
+            servNew.setColore(new Color(255, 50, 50).getRGB());
+            servNew.save(managerNew);
+
+            servNew = listaServizi.get(1);
+            servNew.setColore(new Color(50, 255, 50).getRGB());
+            servNew.save(managerNew);
+
+            servNew = listaServizi.get(2);
+            servNew.setColore(new Color(50, 50, 255).getRGB());
+            servNew.save(managerNew);
+        }// end of if cycle
+
     }// end of method
 
     private class WrapFunzione {

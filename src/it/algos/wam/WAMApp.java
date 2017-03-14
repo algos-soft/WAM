@@ -26,7 +26,8 @@ public class WAMApp extends AlgosApp {
     public final static String DISPLAY_LISTE_COLLEGATE = "displayListeCollegate";
     public final static String USA_FORM_LAYOUT = "usaFormLayout";
     public final static String USA_REFRESH_DEMO = "usaRefreshDemo";
-    public final static String USA_MIGRATION = "usaMigration";
+    public final static String ATTIVA_MIGRATION = "attivaMigration";
+    public final static String USA_MIGRATION_COMPLETA = "usaMigrationCompleta";
     public final static String INFO_APP = "Algos s.r.l. - wam.1.1 del 12.3.17";
 
     /**

@@ -550,7 +550,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     @SuppressWarnings("unchecked")
     public static List<Servizio> getListByCompany(WamCompany company, EntityManager manager) {
         if (company != null) {
-            return (List<Servizio>) CompanyQuery.getList(Servizio.class, CompanyEntity_.company, company, manager);
+            return (List<Servizio>) AQuery.getList(Servizio.class, CompanyEntity_.company, company, manager);
         } else {
             return new ArrayList<>();
         }// end of if/else cycle

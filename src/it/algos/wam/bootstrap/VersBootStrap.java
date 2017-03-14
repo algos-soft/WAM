@@ -62,6 +62,11 @@ public class VersBootStrap implements ServletContextListener {
 
         //--crea una nuova preferenza, globale per tutte le company
         if (LibVers.installa(++k)) {
+            LibPref.newVersBool(WAMApp.DISPLAY_LISTE_COLLEGATE, false, "Visualizza un TabSheet con Form e Liste");
+        }// fine del blocco if
+
+        //--crea una nuova preferenza, globale per tutte le company
+        if (LibVers.installa(++k)) {
             LibPref.newVersBool(WAMApp.USA_FORM_LAYOUT, false, "Usa il layout form nei Form (campi con label a sinistra)");
         }// fine del blocco if
 
@@ -72,12 +77,12 @@ public class VersBootStrap implements ServletContextListener {
 
         //--crea una nuova preferenza, globale per tutte le company
         if (LibVers.installa(++k)) {
-            LibPref.newVersBool(WAMApp.USA_MIGRATION, false, "Importa periodicamente le croci da webambulanze");
+            LibPref.newVersBool(WAMApp.ATTIVA_MIGRATION, false, "Importa periodicamente le croci da webambulanze");
         }// fine del blocco if
 
         //--crea una nuova preferenza, globale per tutte le company
         if (LibVers.installa(++k)) {
-            LibPref.newVersBool(WAMApp.DISPLAY_LISTE_COLLEGATE, false, "Visualizza un TabSheet con Form e Liste");
+            LibPref.newVersBool(WAMApp.USA_MIGRATION_COMPLETA, false, "Importa tutti i turni da webambulanze (invece che solo l'ultima settimana)");
         }// fine del blocco if
 
 

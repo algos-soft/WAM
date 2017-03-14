@@ -18,7 +18,7 @@ public class MigrationTask implements Runnable {
 
     @Override
     public void run() {
-        if (Pref.getBool(WAMApp.USA_MIGRATION, true)) {
+        if (Pref.getBool(WAMApp.ATTIVA_MIGRATION, true)) {
             new Migration();
         }// end of if cycle
     }// end of method
