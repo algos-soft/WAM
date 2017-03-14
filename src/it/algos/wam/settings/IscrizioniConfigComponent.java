@@ -71,7 +71,12 @@ public class IscrizioniConfigComponent extends BaseConfigPanel {
         hl.addComponent(new Label("ore prima dell'inizio del turno"));
         layout.addComponent(hl);
 
-        layout.addComponent(checkNessunaLimitazione);
+        hl = new HorizontalLayout();
+        hl.setSpacing(true);
+        hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
+        hl.addComponent(checkNessunaLimitazione);
+        hl.addComponent(new Label("sempre"));
+        layout.addComponent(hl);
 
         layout.addComponent(createSaveButton());
 

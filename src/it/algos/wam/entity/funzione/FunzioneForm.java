@@ -91,10 +91,11 @@ public class FunzioneForm extends WanForm implements FunzListener {
         //--alcuni hanno delle particolarità aggiuntive
         creaFields();
 
-        if (Pref.getBool(WAMApp.DISPLAY_LISTE_COLLEGATE, null, false)) {
+        if (Pref.getBool(WAMApp.DISPLAY_LISTE_COLLEGATE, null, true)) {
             layout.addComponent(createTabSheet());
         } else {
-            layout.addComponent(creaTabForm());
+            layout.addComponent(createTabSheet());
+//            layout.addComponent(creaTabForm());
         }// end of if/else cycle
 
         return layout;

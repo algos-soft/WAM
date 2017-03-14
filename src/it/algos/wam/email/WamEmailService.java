@@ -120,6 +120,7 @@ public class WamEmailService {
                 bcc += bkMailbox;
             }
         }
+        it.algos.webbase.domain.log.Log.info("mail","inviata");
 
         // delega al sistema di invio generale
         return EmailService.sendMail(hostName, smtpPort, useAuth, username, password, from, to, cc, bcc, subject, text, html, attachments);
