@@ -2,6 +2,7 @@ package it.algos.wam.entity.servizio;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -294,6 +295,7 @@ public class ServizioForm extends WanForm implements ServFunzListener {
         return err;
     }// end of method
 
+
     @Override
     protected boolean save() {
         uiToServizio();
@@ -301,28 +303,27 @@ public class ServizioForm extends WanForm implements ServFunzListener {
         return super.save();
     }// end of method
 
-
     /**
      * Sincronizza il servizio con quanto contenuto attualmente nella UI.
      */
+    @SuppressWarnings("unchecked")
     private void uiToServizio() {
-        Servizio servizio = getServizio();
         int colorCode;
         int ore;
         int minuti;
 
         colorCode = cPicker.getColor().getRGB();
-        servizio.setColore(colorCode);
+        getField(Servizio_.colore.getName()).setValue(colorCode);
 
         ore = hlOraInizio.getHour();
         minuti = hlOraInizio.getMinute();
-        servizio.setOraInizio(ore);
-        servizio.setMinutiInizio(minuti);
+        getField(Servizio_.oraInizio.getName()).setValue(ore);
+        getField(Servizio_.minutiInizio.getName()).setValue(minuti);
 
         ore = hlOraFine.getHour();
         minuti = hlOraFine.getMinute();
-        servizio.setOraFine(ore);
-        servizio.setMinutiFine(minuti);
+        getField(Servizio_.oraFine.getName()).setValue(ore);
+        getField(Servizio_.minutiFine.getName()).setValue(minuti);
     }// end of method
 
 
