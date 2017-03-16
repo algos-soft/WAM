@@ -366,6 +366,7 @@ public class WamUI extends UI {
         // il menu utente c'è sempre
         // aggiunge una menubar con le funzioni di utente
         MenuBar menuBarUtente = new MenuBar();
+        menuBarUtente.setAutoOpen(true);
 //        navComp.addView(FunzioneMod.class, FunzioneMod.MENU_ADDRESS, FontAwesome.CHECK_SQUARE);
 //        navComp.addView(ServizioMod.class, ServizioMod.MENU_ADDRESS, FontAwesome.TASKS);
 //        navComp.addView(VolontarioMod.class, VolontarioMod.MENU_ADDRESS, FontAwesome.USER);

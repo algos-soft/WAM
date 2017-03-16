@@ -23,6 +23,7 @@ import it.algos.webbase.web.lib.LibCrypto;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.login.UserIF;
 import it.algos.webbase.web.query.AQuery;
+import it.algos.webbase.web.query.SortProperty;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
@@ -31,9 +32,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Entity che descrive un Volontario
@@ -585,15 +584,17 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
 
     /**
-     * Recupera una lista (array) di tutti i volontari relativi ad una funzione
+     * Recupera una lista (array) di tutti i volontari attivi relativi ad una funzione
      * Filtrato sulla company corrente
      *
      * @param funzione da utilizzare per filtrare i volontari
      * @return lista delle entities selezionate
      */
+    @SuppressWarnings("unchecked")
     public static List<Volontario> getListByFunzione(Funzione funzione) {
         List<Volontario> lista = new ArrayList<>();
         List<VolontarioFunzione> volontarioFunzioni = null;
+        Volontario vol;
 
         if (funzione != null) {
             volontarioFunzioni = (List<VolontarioFunzione>) CompanyQuery.getList(VolontarioFunzione.class, VolontarioFunzione_.funzione, funzione);
@@ -601,11 +602,14 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
         if (volontarioFunzioni != null) {
             for (VolontarioFunzione volFunz : volontarioFunzioni) {
-                lista.add(volFunz.getVolontario());
+                vol = volFunz.getVolontario();
+                if (vol.isAttivo()) {
+                    lista.add(volFunz.getVolontario());
+                }// end of if cycle
             }// end of for cycle
         }// end of if cycle
 
-        return lista;
+        return orderList(lista);
     }// end of static method
 
     //------------------------------------------------------------------------------------------------------------------------
@@ -1071,6 +1075,28 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     //------------------------------------------------------------------------------------------------------------------------
     // Utilities
     //------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Ordina una lista (array) di volontari per cognome
+     *
+     * @return lista delle entities selezionate
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Volontario> orderList(List<Volontario> listaDisordinata) {
+        List<Volontario> listaOrdinata = new ArrayList<>();
+        TreeMap<String, Volontario> mappa = new TreeMap();
+        Set set;
+
+        for (Volontario vol : listaDisordinata) {
+            mappa.put(vol.getCognome() + vol.getNome(), vol);
+        }// end of for cycle
+
+        for (String key : mappa.keySet()) {
+            listaOrdinata.add(mappa.get(key));
+        }// end of for cycle
+
+        return listaOrdinata;
+    }// end of static method
 
     /**
      * Implementa come business logic, la obbligatorietà del nome

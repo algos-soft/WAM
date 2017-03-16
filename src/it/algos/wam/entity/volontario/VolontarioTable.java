@@ -7,10 +7,12 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
@@ -68,6 +70,7 @@ public class VolontarioTable extends WamTable {
     protected Object[] getDisplayColumns() {
         ArrayList lista = new ArrayList<>();
         List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
+        boolean usaGestioneCertificati = Pref.getBool(WAMApp.USA_GESTIONE_CERTIFICATI, false);
 
         if (LibSession.isDeveloper()) {
             lista.add(WamCompanyEntity_.company);
@@ -81,9 +84,13 @@ public class VolontarioTable extends WamTable {
         lista.add(Volontario_.cellulare);
         lista.add(Volontario_.email);
         lista.add(Volontario_.invioMail);
-        lista.add(Volontario_.scadenzaBLSD);
-        lista.add(Volontario_.scadenzaNonTrauma);
-        lista.add(Volontario_.scadenzaTrauma);
+
+        if (usaGestioneCertificati) {
+            lista.add(Volontario_.scadenzaBLSD);
+            lista.add(Volontario_.scadenzaNonTrauma);
+            lista.add(Volontario_.scadenzaTrauma);
+        }// end of if cycle
+
 
         for (Funzione funz : listaFunzioni) {
             lista.add(LibText.primaMaiuscola(funz.getCode()));
@@ -105,6 +112,7 @@ public class VolontarioTable extends WamTable {
 
     protected void fixColumn() {
         List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
+        boolean usaGestioneCertificati = Pref.getBool(WAMApp.USA_GESTIONE_CERTIFICATI, false);
 
         setColumnHeader(Volontario_.attivo, "OK");
         setColumnHeader(Volontario_.admin, "Admin");
@@ -113,9 +121,11 @@ public class VolontarioTable extends WamTable {
         setColumnHeader(Volontario_.cellulare, "Cellulare");
         setColumnHeader(Volontario_.email, "Mail");
         setColumnHeader(Volontario_.invioMail, "Invio");
-        setColumnHeader(Volontario_.scadenzaBLSD, "BLSD");
-        setColumnHeader(Volontario_.scadenzaTrauma, "BPHT");
-        setColumnHeader(Volontario_.scadenzaNonTrauma, "PNT");
+        if (usaGestioneCertificati) {
+            setColumnHeader(Volontario_.scadenzaBLSD, "BLSD");
+            setColumnHeader(Volontario_.scadenzaTrauma, "BPHT");
+            setColumnHeader(Volontario_.scadenzaNonTrauma, "PNT");
+        }// end of if cycle
 
         setColumnWidth(Volontario_.company, 70);
         setColumnWidth(Volontario_.codeCompanyUnico, 70);
@@ -126,16 +136,20 @@ public class VolontarioTable extends WamTable {
         setColumnWidth(Volontario_.cellulare, 140);
         setColumnWidth(Volontario_.email, 270);
         setColumnWidth(Volontario_.invioMail, 60);
-        setColumnWidth(Volontario_.scadenzaBLSD, LAR_SCADENZE);
-        setColumnWidth(Volontario_.scadenzaTrauma, LAR_SCADENZE);
-        setColumnWidth(Volontario_.scadenzaNonTrauma, LAR_SCADENZE);
+        if (usaGestioneCertificati) {
+            setColumnWidth(Volontario_.scadenzaBLSD, LAR_SCADENZE);
+            setColumnWidth(Volontario_.scadenzaTrauma, LAR_SCADENZE);
+            setColumnWidth(Volontario_.scadenzaNonTrauma, LAR_SCADENZE);
+        }// end of if cycle
 
         setColumnAlignment(Volontario_.attivo, Align.CENTER);
         setColumnAlignment(Volontario_.admin, Align.CENTER);
         setColumnAlignment(Volontario_.invioMail, Align.CENTER);
-        setColumnAlignment(Volontario_.scadenzaBLSD, Align.CENTER);
-        setColumnAlignment(Volontario_.scadenzaTrauma, Align.CENTER);
-        setColumnAlignment(Volontario_.scadenzaNonTrauma, Align.CENTER);
+        if (usaGestioneCertificati) {
+            setColumnAlignment(Volontario_.scadenzaBLSD, Align.CENTER);
+            setColumnAlignment(Volontario_.scadenzaTrauma, Align.CENTER);
+            setColumnAlignment(Volontario_.scadenzaNonTrauma, Align.CENTER);
+        }// end of if cycle
 
         for (Funzione funz : listaFunzioni) {
             setColumnWidth(LibText.primaMaiuscola(funz.getCode()), LAR_FUNZIONI);

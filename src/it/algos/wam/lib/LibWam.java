@@ -4,19 +4,20 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.login.WamLogin;
+import it.algos.webbase.domain.pref.Pref;
+import it.algos.webbase.domain.pref.PrefType;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.field.RelatedComboField;
-import it.algos.webbase.web.lib.DateConvertUtils;
-import it.algos.webbase.web.lib.LibDate;
-import it.algos.webbase.web.lib.LibSession;
-import it.algos.webbase.web.lib.LibText;
+import it.algos.webbase.web.lib.*;
 import org.apache.commons.lang.LocaleUtils;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
@@ -229,5 +230,31 @@ public abstract class LibWam {
         return label;
     }// end of method
 
+    /**
+     * Regola una preferenza della company
+     * La crea, se non esiste
+     */
+    public static void setPrefBool(WamCompany company, EntityManager manager, String code, String descrizione, boolean value) {
+        Pref pref = null;
+        String codeCompanyUnico = getCodiceUnico(company.getCompanyCode(), code);
+        boolean esiste = Pref.isEntityByCodeCompanyUnico(codeCompanyUnico, manager);
+
+        if (!esiste) {
+            pref = Pref.crea(code, company, PrefType.bool, descrizione);
+        }// end of if cycle
+
+        if (pref != null) {
+            pref.setBool(value);
+            pref.save(manager);
+        }// end of if cycle
+
+    }// end of method
+
+    /**
+     * Codice unico
+     */
+    public static String getCodiceUnico(String companyCode, String code) {
+        return LibText.primaMaiuscola(companyCode) + LibText.primaMaiuscola(code);
+    }// end of method
 
 }// end of abstract static class

@@ -3,6 +3,7 @@ package it.algos.wam.migration;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.server.FontAwesome;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
@@ -11,11 +12,11 @@ import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.Organizzazione;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.lib.LibWam;
 import it.algos.webbase.domain.log.Log;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.entity.EM;
-import it.algos.webbase.web.lib.LibArray;
-import it.algos.webbase.web.lib.LibQuery;
-import it.algos.webbase.web.lib.LibTime;
+import it.algos.webbase.web.lib.*;
 import org.vaadin.addons.lazyquerycontainer.LazyEntityContainer;
 
 import javax.persistence.EntityManager;
@@ -933,22 +934,59 @@ public class Migration {
      * Regola i colori dei gruppi di servizi
      */
     private void patchGaps() {
-        WamCompany company = WamCompany.findByCode("gaps",managerNew);
+        WamCompany company = WamCompany.findByCode("gaps", managerNew);
         List<Servizio> listaServizi = Servizio.getListByCompany(company, managerNew);
+        List<Funzione> listaFunzioni = Funzione.getListByCompany(company, managerNew);
         Servizio servNew;
+        Funzione funzNew;
+        FontAwesome glyph = null;
+
+        // gestione certificati
+        LibWam.setPrefBool(company, managerNew, WAMApp.USA_GESTIONE_CERTIFICATI, "Gestione dei certificati BLSD, PNT e BPHTP", false);
 
         if (listaServizi.size() == 3) {
             servNew = listaServizi.get(0);
-            servNew.setColore(new Color(255, 50, 50).getRGB());
+            servNew.setColore(new Color(240 , 100, 100).getRGB());
             servNew.save(managerNew);
 
             servNew = listaServizi.get(1);
-            servNew.setColore(new Color(50, 255, 50).getRGB());
+            servNew.setColore(new Color(100, 200, 100).getRGB());
             servNew.save(managerNew);
 
             servNew = listaServizi.get(2);
-            servNew.setColore(new Color(50, 50, 255).getRGB());
+            servNew.setColore(new Color(100, 100, 240).getRGB());
             servNew.save(managerNew);
+        }// end of if cycle
+
+        if (listaFunzioni.size() > 3) {
+            funzNew = listaFunzioni.get(0);
+            glyph = funzNew.getIcon();
+            if (glyph != null && glyph.equals(FontAwesome.STETHOSCOPE)) {
+                funzNew.setIcon(FontAwesome.USER);
+                funzNew.save(managerNew);
+            }// end of if cycle
+
+            funzNew = listaFunzioni.get(1);
+            glyph = funzNew.getIcon();
+            if (glyph != null && glyph.equals(FontAwesome.STETHOSCOPE)) {
+                funzNew.setIcon(FontAwesome.USER);
+                funzNew.save(managerNew);
+            }// end of if cycle
+
+            funzNew = listaFunzioni.get(2);
+            glyph = funzNew.getIcon();
+            if (glyph != null && glyph.equals(FontAwesome.STETHOSCOPE)) {
+                funzNew.setIcon(FontAwesome.STAR);
+                funzNew.save(managerNew);
+            }// end of if cycle
+
+            funzNew = listaFunzioni.get(3);
+            glyph = funzNew.getIcon();
+            if (glyph != null && glyph.equals(FontAwesome.STETHOSCOPE)) {
+                funzNew.setIcon(FontAwesome.USER_MD);
+                funzNew.save(managerNew);
+            }// end of if cycle
+
         }// end of if cycle
 
     }// end of method

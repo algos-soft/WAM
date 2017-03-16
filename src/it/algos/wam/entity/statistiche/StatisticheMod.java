@@ -3,9 +3,11 @@ package it.algos.wam.entity.statistiche;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.renderers.DateRenderer;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.funzione.Funzione;
@@ -14,11 +16,14 @@ import it.algos.wam.entity.iscrizione.Iscrizione_;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.lib.LibWam;
+import it.algos.wam.migration.Migration;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.SortProperty;
+import it.algos.webbase.web.ui.AlgosUI;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +39,7 @@ public class StatisticheMod extends WamMod {
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
+    private static final int ANNO_BASE = 2017;
     private static Integer[] anni = {2012, 2013, 2014, 2015, 2016, 2017};
     private static String COL_VOL = "volontario";
     private static String COL_ULT = "ultimo turno";
@@ -88,6 +94,7 @@ public class StatisticheMod extends WamMod {
         for (int anno : anni) {
             addCommandSingoloAnno(menu, anno);
         }// end of for cycle
+        spuntaMenu(menu, ANNO_BASE);
     }// end of method
 
     /**
@@ -97,11 +104,12 @@ public class StatisticheMod extends WamMod {
      * @param anno     di riferimento
      */
     private void addCommandSingoloAnno(MenuBar.MenuItem menuItem, int anno) {
-        menuItem.addItem("" + anno, null, new MenuBar.Command() {
+        MenuBar.MenuItem sottoMenu = menuItem.addItem("" + anno, null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                spuntaMenu(menuItem, company);
+                spuntaMenu(menuItem, anno);
             }// end of inner method
         });// end of anonymous inner class
+        sottoMenu.setCheckable(true);
     }// end of method
 
     private void coloraRighe() {
@@ -120,6 +128,30 @@ public class StatisticheMod extends WamMod {
         });
     }// end of method
 
+    /**
+     * Spunta il menu selezionato
+     * Elimina la spunta in tutti gli altri
+     *
+     * @param menuItem a cui agganciare il bottone/item
+     * @param anno     periodo da filtrare
+     */
+    private void spuntaMenu(MenuBar.MenuItem menuItem, int anno) {
+        String sigla = "";
+
+        for (MenuBar.MenuItem item : menuItem.getChildren()) {
+            item.setChecked(false);
+        }// end of for cycle
+
+        if (anno > 0) {
+            sigla = "" + anno;
+        }// end of if/else cycle
+        for (MenuBar.MenuItem item : menuItem.getChildren()) {
+            if (item.getText().equals(sigla)) {
+                item.setChecked(true);
+            }// end of if cycle
+        }// end of for cycle
+
+    }// end of method
 
     private Frequenza controllaFrequenza(Grid.RowReference rowRef) {
         Frequenza frequenza = null;
@@ -260,6 +292,14 @@ public class StatisticheMod extends WamMod {
         return riga.toArray();
     }// end of method
 
+    /**
+     *
+     */
+    protected void fireYearChanged(int anno) {
+        //@todo cambia il filtro
+        spuntaMenu(menuItem, anno);
+        Page.getCurrent().reload();
+    }// end of method
 
     public enum Frequenza {
         insufficiente, scarsa, sufficiente;

@@ -119,14 +119,13 @@ public class WamCompanyMod extends ModulePop {
      * @param menuItem del modulo a cui aggiungere i sottomenu
      */
     private void addCommandAllCroci(MenuBar.MenuItem menuItem) {
-
-        menuItem.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
+        MenuBar.MenuItem sottoMenu =  menuItem.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                spuntaMenu(menuItem, null);
                 fireCompanyChanged(null);
             }// end of inner method
         });// end of anonymous inner class
 
+        sottoMenu.setCheckable(true);
     }// end of method
 
     /**
@@ -136,14 +135,13 @@ public class WamCompanyMod extends ModulePop {
      * @param company  croce da filtrare
      */
     private void addCommandSingolaCroce(MenuBar.MenuItem menuItem, WamCompany company) {
-
-        menuItem.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
+        MenuBar.MenuItem sottoMenu =  menuItem.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                spuntaMenu(menuItem, company);
                 fireCompanyChanged(company);
             }// end of inner method
         });// end of anonymous inner class
 
+        sottoMenu.setCheckable(true);
     }// end of method
 
     @Override
@@ -217,7 +215,7 @@ public class WamCompanyMod extends ModulePop {
         String sigla = "";
 
         for (MenuBar.MenuItem item : menuItem.getChildren()) {
-            item.setIcon(FontAwesome.MINUS);
+            item.setChecked(false);
         }// end of for cycle
 
         if (company == null) {
@@ -227,7 +225,7 @@ public class WamCompanyMod extends ModulePop {
         }// end of if/else cycle
         for (MenuBar.MenuItem item : menuItem.getChildren()) {
             if (item.getText().equals(sigla)) {
-                item.setIcon(FontAwesome.CHECK);
+                item.setChecked(true);
             }// end of if cycle
         }// end of for cycle
 

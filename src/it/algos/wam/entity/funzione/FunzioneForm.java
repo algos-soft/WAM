@@ -102,7 +102,6 @@ public class FunzioneForm extends WanForm implements FunzListener {
     }// end of method
 
 
-
     protected Component createTabSheet() {
         TabSheet tabsheet = new TabSheet();
         tabsheet.setWidth(LAR_SHEET);
@@ -167,11 +166,24 @@ public class FunzioneForm extends WanForm implements FunzListener {
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(new MarginInfo(true, false, false, false));
         List<Volontario> volontari;
-        Label label = new Label("Volontari abilitati per questa funzione e scadenza certificati");
-        DateRenderer blsdRenderer = new DateRenderer("%1$te %1$tb %1$ty", Locale.ITALIAN);
-        DateRenderer pntRenderer = new DateRenderer("%1$te %1$tb %1$ty", Locale.ITALIAN);
-        DateRenderer bphtpRenderer = new DateRenderer("%1$te %1$tb %1$ty", Locale.ITALIAN);
         volontari = Volontario.getListByFunzione(getFunzione());
+        String labelText = "";
+        DateRenderer blsdRenderer = null;
+        DateRenderer pntRenderer = null;
+        DateRenderer bphtpRenderer = null;
+        boolean usaGestioneCertificati = Pref.getBool(WAMApp.USA_GESTIONE_CERTIFICATI, false);
+
+        if (usaGestioneCertificati) {
+            blsdRenderer = new DateRenderer("%1$te %1$tb %1$ty", Locale.ITALIAN);
+            pntRenderer = new DateRenderer("%1$te %1$tb %1$ty", Locale.ITALIAN);
+            bphtpRenderer = new DateRenderer("%1$te %1$tb %1$ty", Locale.ITALIAN);
+        }// end of if cycle
+
+        if (usaGestioneCertificati) {
+            labelText = "Volontari abilitati per questa funzione e scadenza certificati";
+        } else {
+            labelText = "Volontari abilitati per questa funzione";
+        }// end of if/else cycle
 
         // Create a grid
         Grid grid = new Grid();
@@ -181,23 +193,32 @@ public class FunzioneForm extends WanForm implements FunzListener {
         grid.addColumn("nome", String.class);
         grid.addColumn("cognome", String.class);
         grid.addColumn("cell", String.class);
-        grid.addColumn("BLSD", Date.class);
-        grid.addColumn("PNT", Date.class);
-        grid.addColumn("BPHTP", Date.class);
+
+        if (usaGestioneCertificati) {
+            grid.addColumn("BLSD", Date.class);
+            grid.addColumn("PNT", Date.class);
+            grid.addColumn("BPHTP", Date.class);
+        }// end of if cycle
 
         // Add some data rows
         for (Volontario vol : volontari) {
-            grid.addRow(vol.getNome(), vol.getCognome(), vol.getCellulare(), vol.getScadenzaBLSD(), vol.getScadenzaNonTrauma(), vol.getScadenzaTrauma());
+            if (usaGestioneCertificati) {
+                grid.addRow(vol.getNome(), vol.getCognome(), vol.getCellulare(), vol.getScadenzaBLSD(), vol.getScadenzaNonTrauma(), vol.getScadenzaTrauma());
+            } else {
+                grid.addRow(vol.getNome(), vol.getCognome(), vol.getCellulare());
+            }// end of if/else cycle
         }// end of for cycle
 
-        Grid.Column blsdColumn = grid.getColumn("BLSD");
-        blsdColumn.setRenderer(blsdRenderer);
-        Grid.Column pntColumn = grid.getColumn("PNT");
-        pntColumn.setRenderer(pntRenderer);
-        Grid.Column bphtpColumn = grid.getColumn("BPHTP");
-        bphtpColumn.setRenderer(bphtpRenderer);
+        if (usaGestioneCertificati) {
+            Grid.Column blsdColumn = grid.getColumn("BLSD");
+            blsdColumn.setRenderer(blsdRenderer);
+            Grid.Column pntColumn = grid.getColumn("PNT");
+            pntColumn.setRenderer(pntRenderer);
+            Grid.Column bphtpColumn = grid.getColumn("BPHTP");
+            bphtpColumn.setRenderer(bphtpRenderer);
+        }// end of if cycle
 
-        layout.addComponent(label);
+        layout.addComponent(new Label(labelText));
         layout.addComponent(grid);
 
         return layout;
