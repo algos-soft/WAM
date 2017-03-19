@@ -39,13 +39,16 @@ public class ServizioTable extends WamTable {
     // id della colonna generata "colore"
     protected static final String COL_COLORE = ServizioMod.LABEL_COLOR;
 
+    //--titolo della table
+    private static String CAPTION = "Servizi previsti. Ogni servizio ha una o più funzioni, di cui almeno una è obbligatoria (in rosso)";
+
     /**
      * Costruttore
      *
      * @param module di riferimento (obbligatorio)
      */
     public ServizioTable(ModulePop module) {
-        super(module);
+        super(module, CAPTION);
     }// end of constructor
 
     /**

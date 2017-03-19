@@ -57,53 +57,52 @@ public class Migration {
 
     /**
      * Costruttore
+     * Importa tutte le company
+     * Importa i turni di tutti gli anni
      */
     public Migration() {
-        long inizio;
-        creaManagers();
-
-        List<CroceAmb> listaVecchieCrociEsistenti = CroceAmb.findAll(managerOld);
-        List<CroceAmb> listaVecchieCrociDaImportare = selezionaCrodiDaImportare(listaVecchieCrociEsistenti);
-
-        if (listaVecchieCrociDaImportare != null) {
-            for (CroceAmb company : listaVecchieCrociDaImportare) {
-                inizio = System.currentTimeMillis();
-                inizia(company, company.getSigla().toLowerCase());
-                Log.debug("migration", "Croce " + company.getSigla() + " replicata in " + LibTime.difText(inizio));
-            }// end of for cycle
-        }// end of if cycle
-
-        chiudeManagers();
+        this(0);
     }// end of constructor
 
     /**
      * Costruttore
+     * Importa tutte le company
+     * Importa solo i turni dell'anno passato come parametro
+     *
+     * @param anno del quale importare i turni
+     */
+    public Migration(int anno) {
+        importAllCompanies(anno);
+    }// end of constructor
+
+    /**
+     * Costruttore
+     * Importa solo la company passata come parametro
+     * Importa i turni di tutti gli anni
      *
      * @param siglaCompanyOld nome della company usata in webambulanze
      */
     public Migration(String siglaCompanyOld) {
-        this(siglaCompanyOld, siglaCompanyOld);
+        this(siglaCompanyOld, 0);
     }// end of constructor
-
 
     /**
      * Costruttore
+     * Importa solo la company passata come parametro
+     * Importa solo i turni dell'anno passato come parametro
      *
      * @param siglaCompanyOld nome della company usata in webambulanze
-     * @param siglaCompanyNew nome della company usata in wam
+     * @param anno            del quale importare i turni
      */
-    public Migration(String siglaCompanyOld, String siglaCompanyNew) {
-        creaManagers();
-        CroceAmb companyOld = CroceAmb.findBySigla(siglaCompanyOld, managerOld);
-        inizia(companyOld, siglaCompanyNew);
-        chiudeManagers();
+    public Migration(String siglaCompanyOld, int anno) {
+        importCompany(siglaCompanyOld, siglaCompanyOld, anno);
     }// end of constructor
+
 
     /**
      * Creazione di due manager specifici
-     * Uno per la lettura delle vecchie classi (Amb)
+     * Uno per la sola lettura delle vecchie classi (Amb)
      * Uno per la cancellazione/scrittura delle nuove classi (WAM)
-     * Si apre e si chiude una transazione per ogni company
      */
     private void creaManagers() {
         chiudeManagers();
@@ -117,6 +116,8 @@ public class Migration {
 
     /**
      * Chiusura dei due manager specifici
+     * Uno per la sola lettura delle vecchie classi (Amb)
+     * Uno per la cancellazione/scrittura delle nuove classi (WAM)
      */
     private void chiudeManagers() {
 
@@ -134,9 +135,10 @@ public class Migration {
 
     /**
      * Seleziona le croci da importare
+     * Elimina TEST, di servizio
      * Elimina ALGOS, di servizio
-     * Elimina DEMO, da ricreare ex-nove
      * Elimina PAVT, non più attiva
+     * Elimina DEMO, da ricreare ex-novo
      *
      * @param listaVecchieCrociEsistenti di webambulanze
      * @return croci da importare da webambulanze in WAM
@@ -158,6 +160,59 @@ public class Migration {
     }// end of method
 
     /**
+     * Importa i dati di tutte le companies
+     * Se l'anno è zero, importa i turni esistenti di tutti gli anni
+     * Crea i manager specifici
+     * Seleziona le croci da importare
+     * Importa i dati di ogni singola company
+     * Chiude i manager specifici
+     *
+     * @param anno del quale importare i turni
+     */
+    public void importAllCompanies(int anno) {
+        long inizio;
+        creaManagers();
+
+        List<CroceAmb> listaVecchieCrociEsistenti = CroceAmb.findAll(managerOld);
+        List<CroceAmb> listaVecchieCrociDaImportare = selezionaCrodiDaImportare(listaVecchieCrociEsistenti);
+
+        if (listaVecchieCrociDaImportare != null) {
+            for (CroceAmb company : listaVecchieCrociDaImportare) {
+                inizio = System.currentTimeMillis();
+                importCompany(company, company.getSigla().toLowerCase(), anno);
+                Log.debug("migration", "Croce " + company.getSigla() + " replicata in " + LibTime.difText(inizio));
+            }// end of for cycle
+        }// end of if cycle
+
+        chiudeManagers();
+    }// end of constructor
+
+
+    /**
+     * Importa i dati di una singola company
+     * Se l'anno è zero, importa i turni esistenti di tutti gli anni
+     * <p>
+     * Crea i manager specifici
+     * Cerca una company con la sigla siglaCroceNew
+     * La cancella, con tutti i dati
+     * Cerca una company con la sigla siglaCroceOld
+     * Importa i dati
+     * Chiude i manager specifici
+     *
+     * @param siglaCompanyOld nome della company usata in webambulanze
+     * @param siglaCompanyNew nome della company usata in wam
+     * @param anno            del quale importare i turni
+     */
+    private void importCompany(String siglaCompanyOld, String siglaCompanyNew, int anno) {
+        creaManagers();
+        importCompany(CroceAmb.findBySigla(siglaCompanyOld, managerOld), siglaCompanyNew, anno);
+        chiudeManagers();
+    }// end of constructor
+
+    /**
+     * Importa i dati di una singola company
+     * Se l'anno è zero, importa i turni esistenti di tutti gli anni
+     * <p>
      * Cerca una company con la sigla siglaCroceNew
      * La cancella, con tutti i dati
      * Cerca una company con la sigla siglaCroceOld
@@ -165,30 +220,45 @@ public class Migration {
      *
      * @param companyOld      company usata in webambulanze
      * @param siglaCompanyNew nome della company usata in wam
+     * @param anno            del quale importare i turni
      */
-    private void inizia(CroceAmb companyOld, String siglaCompanyNew) {
+    private void importCompany(CroceAmb companyOld, String siglaCompanyNew, int anno) {
         WamCompany companyNew = WamCompany.findByCode(siglaCompanyNew);
         List<WrapVolontario> listaWrapVolontari = null;
 
-        companyNew.delete(managerNew);
-
-        companyNew = importSingolaCroce(companyOld, siglaCompanyNew, managerNew);
+        if (companyNew != null) {
+            companyNew.delete(managerNew);
+        }// end of if cycle
+        companyNew = importSoloCroce(companyOld, siglaCompanyNew, managerNew);
 
         listaFunzioniOld = FunzioneAmb.findAll(companyOld, managerOld);
         listaServiziOld = ServizioAmb.findAll(companyOld, managerOld);
         listaVolontariOld = VolontarioAmb.getList(companyOld, managerOld);
         listaUtentiOld = UtenteAmb.getList(companyOld, managerOld);
-        listaTurniOld = TurnoAmb.findAllRecenti(companyOld, managerOld); //todo provvisorio - levare
-//        listaTurniOld = TurnoAmb.findAll(companyOld, managerOld); //todo rimettere
 
         importFunzioni(companyNew, managerNew);
         importServizi(companyNew, managerNew);
         listaWrapVolontari = importVolontari(companyNew, managerNew);
-        importTurni(companyNew, listaWrapVolontari, managerNew);
+        importTurni(companyOld, companyNew, listaWrapVolontari, anno, managerNew);
 
         // regolazioni aggiuntive di una particolare croce/company
         if (siglaCompanyNew.equals("gaps")) {
             patchGaps();
+        }// end of if cycle
+
+        // regolazioni aggiuntive di una particolare croce/company
+        if (siglaCompanyNew.equals("crf")) {
+            patchCrf();
+        }// end of if cycle
+
+        // regolazioni aggiuntive di una particolare croce/company
+        if (siglaCompanyNew.equals("pap")) {
+            patchPap();
+        }// end of if
+
+        // regolazioni aggiuntive di una particolare croce/company
+        if (siglaCompanyNew.equals("crpt")) {
+            patchCrpt();
         }// end of if cycle
 
     }// end of method
@@ -200,7 +270,7 @@ public class Migration {
      * @param siglaCompanyNew nome della company da usare in wam
      * @return la nuova company
      */
-    private WamCompany importSingolaCroce(CroceAmb companyOld, String siglaCompanyNew, EntityManager manager) {
+    private WamCompany importSoloCroce(CroceAmb companyOld, String siglaCompanyNew, EntityManager manager) {
         WamCompany companyNew = null;
 
         try { // prova ad eseguire il codice
@@ -377,8 +447,9 @@ public class Migration {
         int minutiInizio = servizioOld.getMinuti_inizio();
         int oraFine = servizioOld.getOra_fine();
         int minutiFine = servizioOld.getMinuti_fine();
+        boolean visibile = servizioOld.isVisibile();
 
-        return Servizio.crea(companyNew, sigla, true, descrizione, ordine, colore, true, oraInizio, minutiInizio, oraFine, minutiFine, manager, listaServizioFunzioni);
+        return Servizio.crea(companyNew, sigla, visibile, descrizione, ordine, colore, true, oraInizio, minutiInizio, oraFine, minutiFine, manager, listaServizioFunzioni);
     }// end of method
 
     /**
@@ -412,6 +483,7 @@ public class Migration {
             if (funzOld != null) {
                 code = funzOld.getSigla();
                 funz = Funzione.getEntityByCompanyAndCode(companyNew, code, manager);
+                obbligatoria = pos <= numObbligatorie;
                 if (funz != null) {
                     servFunz = new ServizioFunzione(companyNew, null, funz, obbligatoria, pos);
                     listaServizioFunzioni.add(servFunz);
@@ -649,11 +721,18 @@ public class Migration {
     }// end of method
 
 
-    private List<Turno> importTurni(WamCompany companyNew, List<WrapVolontario> listaWrapVolontari, EntityManager manager) {
+    private List<Turno> importTurni(CroceAmb companyOld, WamCompany companyNew, List<WrapVolontario> listaWrapVolontari, int anno, EntityManager manager) {
         List<Turno> listaTurniNew = new ArrayList<>();
         Turno turnoNew;
         int k = 0;
         int delta = 150;
+
+        if (anno > 0) {
+            listaTurniOld = TurnoAmb.findAllAnno(companyOld, anno, managerOld);
+        } else {
+            listaTurniOld = TurnoAmb.findAll(companyOld, managerOld);
+        }// end of if/else cycle
+
 
         if (USA_TRANSAZIONE) {
             try { // prova ad eseguire il codice
@@ -935,7 +1014,7 @@ public class Migration {
      */
     private void patchGaps() {
         WamCompany company = WamCompany.findByCode("gaps", managerNew);
-        List<Servizio> listaServizi = Servizio.getListByCompany(company, managerNew);
+        List<Servizio> listaServizi = Servizio.getListVisibili(company, managerNew);
         List<Funzione> listaFunzioni = Funzione.getListByCompany(company, managerNew);
         Servizio servNew;
         Funzione funzNew;
@@ -946,7 +1025,7 @@ public class Migration {
 
         if (listaServizi.size() == 3) {
             servNew = listaServizi.get(0);
-            servNew.setColore(new Color(240 , 100, 100).getRGB());
+            servNew.setColore(new Color(240, 100, 100).getRGB());
             servNew.save(managerNew);
 
             servNew = listaServizi.get(1);
@@ -987,6 +1066,154 @@ public class Migration {
                 funzNew.save(managerNew);
             }// end of if cycle
 
+        }// end of if cycle
+
+    }// end of method
+
+    /**
+     * Patch specifica della croce/company CRF
+     * <p>
+     * Regola i colori dei gruppi di servizi
+     */
+    private void patchCrf() {
+        WamCompany company = WamCompany.findByCode("crf", managerNew);
+        List<Servizio> listaServizi = Servizio.getListVisibili(company, managerNew);
+        List<Funzione> listaFunzioni = Funzione.getListByCompany(company, managerNew);
+        Servizio servNew;
+        Funzione funzNew;
+        FontAwesome glyph = null;
+
+        // gestione certificati
+        LibWam.setPrefBool(company, managerNew, WAMApp.USA_GESTIONE_CERTIFICATI, "Gestione dei certificati BLSD, PNT e BPHTP", true);
+
+        if (listaServizi.size() > 6) {
+            for (int k = 0; k < listaServizi.size(); k++) {
+                servNew = listaServizi.get(k);
+
+                switch (k) {
+                    case 0:
+                    case 1:
+                    case 2:
+                        servNew.setColore(new Color(240, 100, 100).getRGB());
+                        break;
+                    case 3:
+                    case 4:
+                    case 5:
+                        servNew.setColore(new Color(100, 200, 100).getRGB());
+                        break;
+                    case 6:
+                        servNew.setColore(new Color(100, 100, 240).getRGB());
+                        break;
+                    default: // caso non definito
+                        break;
+                } // fine del blocco switch
+
+                servNew.save(managerNew);
+            }// end of for cycle
+        }// end of if cycle
+
+    }// end of method
+
+
+    /**
+     * Patch specifica della croce/company PAP
+     * <p>
+     * Regola i colori dei gruppi di servizi
+     */
+    private void patchPap() {
+        WamCompany company = WamCompany.findByCode("pap", managerNew);
+        List<Servizio> listaServizi = Servizio.getListVisibili(company, managerNew);
+        List<Funzione> listaFunzioni = Funzione.getListByCompany(company, managerNew);
+        Servizio servNew;
+        Funzione funzNew;
+        FontAwesome glyph = null;
+
+        // gestione certificati
+        LibWam.setPrefBool(company, managerNew, WAMApp.USA_GESTIONE_CERTIFICATI, "Gestione dei certificati BLSD, PNT e BPHTP", true);
+
+        if (listaServizi.size() >= 8) {
+            for (int k = 0; k < listaServizi.size(); k++) {
+                servNew = listaServizi.get(k);
+
+                switch (k) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        servNew.setColore(new Color(100, 200, 100).getRGB());
+                        break;
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        servNew.setColore(new Color(100, 100, 240).getRGB());
+                        break;
+                    default: // caso non definito
+                        break;
+                } // fine del blocco switch
+
+                servNew.save(managerNew);
+            }// end of for cycle
+        }// end of if cycle
+
+    }// end of method
+
+    /**
+     * Patch specifica della croce/company PAP
+     * <p>
+     * Regola i colori dei gruppi di servizi
+     */
+    private void patchCrpt() {
+        WamCompany company = WamCompany.findByCode("crpt", managerNew);
+        List<Servizio> listaServizi = Servizio.getListVisibili(company, managerNew);
+        List<Funzione> listaFunzioni = Funzione.getListByCompany(company, managerNew);
+        Servizio servNew;
+        Funzione funzNew;
+        FontAwesome glyph = null;
+
+        // gestione certificati
+        LibWam.setPrefBool(company, managerNew, WAMApp.USA_GESTIONE_CERTIFICATI, "Gestione dei certificati BLSD, PNT e BPHTP", true);
+
+        if (listaServizi.size() >= 12) {
+            for (int k = 0; k < listaServizi.size(); k++) {
+                servNew = listaServizi.get(k);
+
+                switch (k) {
+                    case 0:
+                        servNew.setColore(new Color(240, 100, 100).getRGB());
+                        break;
+                    case 1:
+                        servNew.setColore(new Color(250, 200, 200).getRGB());
+                        break;
+                    case 2:
+                        servNew.setColore(new Color(240, 100, 100).getRGB());
+                        break;
+                    case 3:
+                        servNew.setColore(new Color(250, 200, 200).getRGB());
+                        break;
+                    case 4:
+                        servNew.setColore(new Color(240, 100, 100).getRGB());
+                        break;
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        servNew.setColore(new Color(100, 200, 100).getRGB());
+                        break;
+                    case 9:
+                    case 10:
+                        servNew.setColore(new Color(100, 100, 240).getRGB());
+                        break;
+                    case 11:
+                        servNew.setColore(new Color(250, 200, 200).getRGB());
+                        break;
+                    default: // caso non definito
+                        break;
+                } // fine del blocco switch
+
+                servNew.save(managerNew);
+            }// end of for cycle
         }// end of if cycle
 
     }// end of method

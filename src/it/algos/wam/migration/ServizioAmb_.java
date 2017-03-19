@@ -17,4 +17,5 @@ public class ServizioAmb_ {
     public static volatile SingularAttribute<ServizioAmb, Integer> minuti_fine;
     public static volatile SingularAttribute<ServizioAmb, Boolean> orario;
     public static volatile SingularAttribute<ServizioAmb, Boolean> primo;
+    public static volatile SingularAttribute<ServizioAmb, Boolean> visibile;
 }// end of entity class

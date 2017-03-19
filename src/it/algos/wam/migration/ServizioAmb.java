@@ -39,6 +39,7 @@ public class ServizioAmb extends BaseEntity {
     private int minuti_fine;
     private boolean orario;
     private boolean primo;
+    private boolean visibile;
 
     private long funzione1_id;
     private long funzione2_id;
@@ -195,4 +196,11 @@ public class ServizioAmb extends BaseEntity {
         this.funzioni_obbligatorie = funzioni_obbligatorie;
     }//end of setter method
 
+    public boolean isVisibile() {
+        return visibile;
+    }
+
+    public void setVisibile(boolean visibile) {
+        this.visibile = visibile;
+    }
 }// end of entity class

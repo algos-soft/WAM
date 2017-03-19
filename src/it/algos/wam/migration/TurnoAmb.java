@@ -123,25 +123,25 @@ public class TurnoAmb extends BaseEntity {
     }// end of method
 
     /**
-     * Recupera una lista di tutti i records della Entity
+     * Recupera una lista parziale dei records della Entity
      * Filtrato sulla company passata come parametro.
      * <p>
-     * Recupera tutti i turni a partire da 7 (sette) giorni prima delkla data attuale
+     * Recupera tutti i turni dell'anno passato come parametro
      *
      * @param company di appartenenza
+     * @param anno    di riferimento
      * @return lista delle istanze filtrate della Entity
      */
     @SuppressWarnings("unchecked")
-    public static List<TurnoAmb> findAllRecenti(CroceAmb company, EntityManager manager) {
+    public static List<TurnoAmb> findAllAnno(CroceAmb company, int anno, EntityManager manager) {
         List lista;
-        int delta = 10;
-        Date oggi = new Date();
-        Date dataIniziale = LibDate.add(oggi, -delta);
-        dataIniziale= LibDate.getPrimoGennaio(2017);
+        Date dataIniziale = LibDate.getPrimoGennaio(anno);
+        Date dataFinale = LibDate.getTrentunoDicembre(anno);
 
         Container.Filter filtroCroce = new Compare.Equal(TurnoAmb_.croce.getName(), company);
-        Container.Filter filtroData = new Compare.Greater(TurnoAmb_.giorno.getName(), dataIniziale);
-        lista = AQuery.getList(TurnoAmb.class, manager, filtroCroce, filtroData);
+        Container.Filter filtroDataIni = new Compare.GreaterOrEqual(TurnoAmb_.giorno.getName(), dataIniziale);
+        Container.Filter filtroDataEnd = new Compare.LessOrEqual(TurnoAmb_.giorno.getName(), dataFinale);
+        lista = AQuery.getList(TurnoAmb.class, manager, filtroCroce, filtroDataIni, filtroDataEnd);
 
         return lista;
     }// end of method
@@ -168,12 +168,12 @@ public class TurnoAmb extends BaseEntity {
     }// end of method
 
     @SuppressWarnings("unchecked")
-    public static boolean isEsisteByMilite( VolontarioAmb milite, EntityManager manager) {
+    public static boolean isEsisteByMilite(VolontarioAmb milite, EntityManager manager) {
         boolean esiste = false;
-        List lista1= AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione1, milite, manager);
-        List lista2= AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione2, milite, manager);
-        List lista3= AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione3, milite, manager);
-        List lista4= AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione4, milite, manager);
+        List lista1 = AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione1, milite, manager);
+        List lista2 = AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione2, milite, manager);
+        List lista3 = AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione3, milite, manager);
+        List lista4 = AQuery.getList(TurnoAmb.class, TurnoAmb_.milite_funzione4, milite, manager);
 
         if (lista1.size() > 0) {
             esiste = true;

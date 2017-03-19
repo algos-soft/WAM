@@ -16,8 +16,10 @@ public class WAMApp extends AlgosApp {
     public final static boolean PASSWORD_CRIPTATE = false;
     public final static boolean ADMIN_VEDE_PASSWORD = true;
 
-    public static final String DEMO_COMPANY_CODE = "demo";
-    public static final String TEST_COMPANY_CODE = "test";
+    public final static int ANNO_BASE = 2017;
+
+    public final static String DEMO_COMPANY_CODE = "demo";
+    public final static String TEST_COMPANY_CODE = "test";
 
     //--chiavi per preferenze
     public final static String DISPLAY_FOOTER_INFO = "displayFooterInfo";

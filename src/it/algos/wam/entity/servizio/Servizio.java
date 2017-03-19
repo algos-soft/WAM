@@ -592,6 +592,25 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroVisibile, filtroOrario);
     }// end of static method
 
+    /**
+     * Recupera una lista (array) di tutti i servizi visibili
+     * Filtrato sulla company passata come parametro.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company di appartenenza (property della superclasse)
+     * @param manager the EntityManager to use
+     * @return lista di tutte le entities
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Servizio> getListVisibili(WamCompany company, EntityManager manager) {
+        SortProperty sort = new SortProperty(Servizio_.ordine);
+        Container.Filter filtroVisibile = new Compare.Equal(Servizio_.visibile.getName(), true);
+
+        return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroVisibile);
+    }// end of static method
+
 
     /**
      * Se il tabellone contiene giorni passati, recupera anche i servizi che hanno dei turni associati

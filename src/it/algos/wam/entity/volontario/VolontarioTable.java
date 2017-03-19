@@ -35,13 +35,16 @@ public class VolontarioTable extends WamTable {
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MMM-yy");
 
+    //--titolo della table
+    private static String CAPTION = "Elenco di tutti i volontari, con spuntate le funzioni per cui è abilitato";
+
     /**
      * Costruttore
      *
      * @param module di riferimento (obbligatorio)
      */
     public VolontarioTable(ModulePop module) {
-        super(module);
+        super(module, CAPTION);
     }// end of constructor
 
 

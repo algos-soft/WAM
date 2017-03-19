@@ -14,7 +14,6 @@ import it.algos.webbase.web.module.ModulePop;
  */
 public class WamTable extends ETable {
 
-
     /**
      * Costruttore
      *
@@ -22,6 +21,16 @@ public class WamTable extends ETable {
      */
     public WamTable(ModulePop module) {
         super(module);
+    }// end of constructor
+
+    /**
+     * Costruttore con caption
+     *
+     * @param module di riferimento (obbligatorio)
+     */
+    public WamTable(ModulePop module, String caption) {
+        super(module);
+        this.setCaption(caption);
     }// end of constructor
 
     /**

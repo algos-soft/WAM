@@ -27,12 +27,14 @@ public class FunzioneTable extends WamTable {
 
 
     //--id della colonna generata "Icona"
-    protected static final String COL_ICON = "Icona";
+    private static final String COL_ICON = "Icona";
 
 
     //--id della colonna generata "Altre funzioni"
-    protected static final String COL_FUNZIONI = "Funzioni dipendenti";
+    private static final String COL_FUNZIONI = "Funzioni dipendenti";
 
+    //--titolo della table
+    private static String CAPTION = "Funzioni previste. Ogni volontario può essere abilitato per una o più funzioni";
 
     /**
      * Costruttore
@@ -40,7 +42,7 @@ public class FunzioneTable extends WamTable {
      * @param module di riferimento (obbligatorio)
      */
     public FunzioneTable(ModulePop module) {
-        super(module);
+        super(module, CAPTION);
     }// end of constructor
 
 

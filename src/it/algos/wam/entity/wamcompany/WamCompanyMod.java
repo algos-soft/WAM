@@ -99,7 +99,19 @@ public class WamCompanyMod extends ModulePop {
      */
     private void addMenuImport(MenuBar.MenuItem menu) {
 
-        menu.addItem("Importa", null, new MenuBar.Command() {
+        menu.addItem("Importa 2017", null, new MenuBar.Command() {
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                if (LibWam.isCompany()) {
+                    new Migration(LibWam.getCompanySigla(),2017);
+                } else {
+                    new Migration(2017);
+                }// end of if/else cycle
+                creaFiltri();
+                getTable().refresh();
+            }// end of inner method
+        });// end of anonymous inner class
+
+        menu.addItem("Importa all", null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 if (LibWam.isCompany()) {
                     new Migration(LibWam.getCompanySigla());

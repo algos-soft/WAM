@@ -66,13 +66,24 @@ public class WamScheduler extends Scheduler {
 	}// end of inner class
 
 
-	class TaskMigration extends Task {
+	class TaskMigration2017 extends Task {
 		@Override
 		public void execute(TaskExecutionContext context) throws RuntimeException {
-			logger.log(Level.INFO, "Start WAM migration tasks");
-			Runnable migration = new MigrationTask();
-			migration.run();
-			logger.log(Level.INFO, "End WAM migration tasks");
+			logger.log(Level.INFO, "Start WAM migration tasks for 2017 only");
+			Runnable migration2017 = new Migration2017Task();
+			migration2017.run();
+			logger.log(Level.INFO, "End WAM migration tasks 2017");
+		}// end of inner method
+	}// end of inner class
+
+
+	class TaskMigrationAll extends Task {
+		@Override
+		public void execute(TaskExecutionContext context) throws RuntimeException {
+			logger.log(Level.INFO, "Start WAM migration tasks for all years");
+			Runnable migrationAll = new MigrationAllTask();
+			migrationAll.run();
+			logger.log(Level.INFO, "End WAM migration tasks all");
 		}// end of inner method
 	}// end of inner class
 
@@ -91,14 +102,16 @@ public class WamScheduler extends Scheduler {
 //			logger.log(Level.INFO, "WAM daemon attivato (eseguirà all'inizio di ogni ora).");
 
 			// Schedule task.
-			//--ogni ora (alla mezz'ora)
-			schedule("30 * * * *", new TaskDemo());
+			//--ogni ora (ai quindici)
+			schedule("15 * * * *", new TaskDemo());
 
 			// Schedule task.
-			//--ogni giorno (alle cinque del mattino)
-//			schedule("0 5 * * *", new TaskMigration());
 			//--ogni ora (alla mezz'ora)
-			schedule("30 * * * *", new TaskMigration());
+			schedule("30 * * * *", new TaskMigration2017());
+
+			// Schedule task.
+			//--ogni giorno (alle quattro del mattino)
+			schedule("0 4 * * *", new TaskMigrationAll());
 
 		}// end of method
 	}// end of method

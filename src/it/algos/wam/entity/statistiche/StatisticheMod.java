@@ -5,24 +5,29 @@ import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.Table;
+import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.DateRenderer;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.funzione.FunzioneTable;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.iscrizione.Iscrizione_;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.volontario.VolontarioTablePortal;
 import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
 import it.algos.wam.migration.Migration;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.query.SortProperty;
+import it.algos.webbase.web.table.ATable;
+import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.ui.AlgosUI;
 
 import java.util.ArrayList;
@@ -39,7 +44,6 @@ public class StatisticheMod extends WamMod {
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
 
-    private static final int ANNO_BASE = 2017;
     private static Integer[] anni = {2012, 2013, 2014, 2015, 2016, 2017};
     private static String COL_VOL = "volontario";
     private static String COL_ULT = "ultimo turno";
@@ -53,10 +57,14 @@ public class StatisticheMod extends WamMod {
     private List<Funzione> listaFunzioni;
 
     // indirizzo interno del modulo - etichetta del menu
-    public static String MENU_ADDRESS = "Statistiche";
+    private static String MENU_ADDRESS = "Statistiche";
 
     // icona (eventuale) del modulo
-    public static Resource ICON = FontAwesome.TASKS;
+    private static Resource ICON = FontAwesome.TASKS;
+
+    //--titolo base della grid
+    private static String CAPTION = "Statistiche di tutti i volontari attivi nel ";
+    private static String CAPTION_END = ", con i giorni trascorsi dall'ultimo turno effettuato. In rosso i volontari con una frequenza minore di 2 turni al mese.";
 
     /**
      * Costruttore senza parametri
@@ -94,7 +102,7 @@ public class StatisticheMod extends WamMod {
         for (int anno : anni) {
             addCommandSingoloAnno(menu, anno);
         }// end of for cycle
-        spuntaMenu(menu, ANNO_BASE);
+        fireYearChanged(menu, WAMApp.ANNO_BASE);
     }// end of method
 
     /**
@@ -106,7 +114,7 @@ public class StatisticheMod extends WamMod {
     private void addCommandSingoloAnno(MenuBar.MenuItem menuItem, int anno) {
         MenuBar.MenuItem sottoMenu = menuItem.addItem("" + anno, null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                spuntaMenu(menuItem, anno);
+                fireYearChanged(menuItem, anno);
             }// end of inner method
         });// end of anonymous inner class
         sottoMenu.setCheckable(true);
@@ -187,10 +195,12 @@ public class StatisticheMod extends WamMod {
      *
      * @return the Table
      */
-    public Grid createGrid() {
+    private Component createGrid() {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
         grid = new Grid();
-        grid.setWidth("1400px");
-        grid.setHeight("800px");
+        grid.setCaption("Pippoz");
+        grid.setSizeFull();
         DateRenderer dataRenderer = new DateRenderer("%1$te %1$tb %1$tY", Locale.ITALIAN);
 
         List<Volontario> listaVolontari = (List<Volontario>) CompanyQuery.getList(Volontario.class, new SortProperty(Volontario_.cognome));
@@ -211,7 +221,8 @@ public class StatisticheMod extends WamMod {
             grid.addRow(elaboraRiga(vol));
         }// end of for cycle
 
-        return grid;
+        layout.addComponent(grid);
+        return layout;
     }// end of method
 
     private Object[] elaboraRiga(Volontario vol) {
@@ -295,10 +306,21 @@ public class StatisticheMod extends WamMod {
     /**
      *
      */
-    protected void fireYearChanged(int anno) {
+    protected void fireYearChanged(MenuBar.MenuItem menuItem, int anno) {
+        //--modifica la caption della grid
+        if (grid != null) {
+            grid.setCaption(CAPTION + anno + CAPTION_END);
+        }// end of if cycle
+
+        //--modifica il menu
+        if (menuItem != null) {
+            spuntaMenu(menuItem, anno);
+        }// end of if cycle
+
         //@todo cambia il filtro
-        spuntaMenu(menuItem, anno);
-        Page.getCurrent().reload();
+
+        //--ricarica la grid
+//        Page.getCurrent().reload();
     }// end of method
 
     public enum Frequenza {
