@@ -11,8 +11,10 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzione_;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione_;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.log.Log;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -827,7 +829,11 @@ public class Volontario extends WamCompanyEntity implements UserIF {
      */
     @Override
     public String toString() {
-        return getCognome() + " " + getNome().substring(0, 1) + ".";
+        if (CompanyPrefs.usaPrimaCognome.getBool()) {
+            return getCognome() + " " + getNome().substring(0, 1) + ".";
+        } else {
+            return getNome() + " " + getCognome().substring(0, 1) + ".";
+        }// end of if/else cycle
     }// end of method
 
     public String getNome() {

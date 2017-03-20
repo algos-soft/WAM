@@ -2,6 +2,7 @@ package it.algos.wam.settings;
 
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Image;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.pref.Pref;
@@ -21,15 +22,15 @@ public enum CompanyPrefs {
     tabellonePubblico("tabellonePubblico", PrefType.bool, true, "Tabellone liberamente visibile, anche senza essere loggato"),
     creazioneTurniNormali("creazioneTurniNormali", PrefType.bool, true, "I volontari possono creare turni normali"),
     creazioneTurniExtra("creazioneTurniExtra", PrefType.bool, false, "I volontari possono creare turni extra"),
+    usaPrimaCognome("usaPrimaCognome", PrefType.bool, true, "Se true visualizza Cognome+Nome(1), se false Nome+Cognome(1)"),
+    usaGestioneCertificati("usaGestioneCertificati", PrefType.bool, false, "Gestione dei brevetti BLSD, PNT e BPHTP"),
+    usaStatisticheSuddivise("usaStatisticheSuddivise", PrefType.bool, false, "Statistiche suddivise per funzioni"),
 
-    senderAddress("senderAddress", PrefType.email, "", "Indirizzo email del mittente"),
-
+    senderAddress("senderAddress", PrefType.email, "info@algos.it", "Indirizzo email del mittente"),
     sendMailToBackup("sendMailToBackup", PrefType.bool, false, "Se invia ogni mail anche a una casella di backup"),
-
     backupMailbox("backupMailbox", PrefType.email, "pinco.pallino@mail.com", "La casella di backup delle email"),
 
     inviaNotificaInizioTurno("inviaNotificaInizioTurno", PrefType.bool, true, "Se invia le notifiche di inizio turno"),
-
     quanteOrePrimaNotificaInizioTurno("quanteOrePrimaNotificaInizioTurno", PrefType.integer, 24, "Quante ore prima invia le notifiche di inizio turno"),
 
     modoCancellazione("modoCancellazione", PrefType.integer, Iscrizione.MODE_CANC_PRE, "Modalità di controllo della cancIscrizione iscrizione (0=nessuno, 1=post, 2=pre)"),
@@ -37,7 +38,6 @@ public enum CompanyPrefs {
     cancOrePrimaInizioTurno("cancOrePrimaInizioTurno", PrefType.integer, 24, "Fino a quante ore prima dell'inizio turno il volontario si può cancellare"),
     turnoAlertOrePrima("turnoAlertOrePrima", PrefType.integer, 24, "Quante ore prima dell'inizio un turno incompleto si colora di rosso"),
     turnoWarningOrePrima("turnoWarningOrePrima", PrefType.integer, 96, "Quante ore prima dell'inizio un turno incompleto si colora di giallo");
-
 
 
     private String code;
@@ -286,4 +286,26 @@ public enum CompanyPrefs {
     public String getDescrizione() {
         return descrizione;
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /**
+     * Creazione iniziale delle preferenze per una nuova company
+     * Spazzola la Enumeration CompanyPrefs e crea tutte le preferenze
+     * Se la preferenza esisteva già, non fa nulla
+     * Se la preferenza non esiste, la crea col valore di default (sovrascrivibile successivamente)
+     * Regolata sulla company passata come parametro.
+     */
+    public static void creaPrefs(WamCompany company) {
+        for (CompanyPrefs pref : values()) {
+            pref.crea(company);
+        }// end of for cycle
+    }// end of method
+
 }// end of enumeration class

@@ -20,6 +20,7 @@ import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
 import it.algos.wam.migration.Migration;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.component.AHorizontalLayout;
@@ -55,6 +56,7 @@ public class StatisticheMod extends WamMod {
     private int giorniDaInizioAnno = 0;
     private static Date PRIMA_DATA = LibDate.creaData(1, 1, 2000);
     private List<Funzione> listaFunzioni;
+    private List<Volontario> listaVolontari;
 
     // indirizzo interno del modulo - etichetta del menu
     private static String MENU_ADDRESS = "Statistiche";
@@ -66,6 +68,9 @@ public class StatisticheMod extends WamMod {
     private static String CAPTION = "Statistiche di tutti i volontari attivi nel ";
     private static String CAPTION_END = ", con i giorni trascorsi dall'ultimo turno effettuato. In rosso i volontari con una frequenza minore di 2 turni al mese.";
 
+    private int annoCorrente = LibDate.getYear(new Date());
+    private int annoSelezionato = annoCorrente;
+
     /**
      * Costruttore senza parametri
      * <p/>
@@ -76,11 +81,17 @@ public class StatisticheMod extends WamMod {
      */
     public StatisticheMod() {
         super(Iscrizione.class, MENU_ADDRESS, ICON);
-        giorniDaInizioAnno = LibDate.diff(LibDate.getPrimoGennaio(2017), new Date());
         listaFunzioni = Funzione.getListByCurrentCompany();
+//        inizia();
+    }// end of constructor
+
+    public void inizia() {
+        giorniDaInizioAnno = LibDate.diff(LibDate.getPrimoGennaio(annoSelezionato), new Date());
+        listaVolontari = (List<Volontario>) CompanyQuery.getList(Volontario.class, Volontario_.attivo, true, new SortProperty(Volontario_.cognome), null);
+
         setCompositionRoot(createGrid());
         coloraRighe();
-    }// end of constructor
+    }// end of method
 
     /**
      * Crea i sottomenu specifici del modulo
@@ -198,22 +209,24 @@ public class StatisticheMod extends WamMod {
     private Component createGrid() {
         VerticalLayout layout = new VerticalLayout();
         layout.setSizeFull();
+        boolean usaStatistiche = CompanyPrefs.usaStatisticheSuddivise.getBool();
+        String caption = "Statistiche di tutti i " + listaVolontari.size() + " volontari attivi nel ";
         grid = new Grid();
-        grid.setCaption("Pippoz");
+        grid.setCaption(caption + annoSelezionato + CAPTION_END);
         grid.setSizeFull();
         DateRenderer dataRenderer = new DateRenderer("%1$te %1$tb %1$tY", Locale.ITALIAN);
 
-        List<Volontario> listaVolontari = (List<Volontario>) CompanyQuery.getList(Volontario.class, new SortProperty(Volontario_.cognome));
-
         grid.addColumn(COL_VOL, String.class);
-        grid.addColumn(COL_ULT, Date.class);
-        grid.addColumn(COL_GIO, Integer.class);
         grid.addColumn(COL_TUR, Integer.class);
         grid.addColumn(COL_ORE, Integer.class);
+        grid.addColumn(COL_ULT, Date.class);
+        grid.addColumn(COL_GIO, Integer.class);
 
-        for (Funzione funz : listaFunzioni) {
-            grid.addColumn(funz.getCode(), Integer.class);
-        }// end of for cycle
+        if (usaStatistiche) {
+            for (Funzione funz : listaFunzioni) {
+                grid.addColumn(funz.getCode(), Integer.class);
+            }// end of for cycle
+        }// end of if cycle
 
         grid.getColumn(COL_ULT).setRenderer(dataRenderer);
 
@@ -225,8 +238,15 @@ public class StatisticheMod extends WamMod {
         return layout;
     }// end of method
 
+    /**
+     * Se siamo nell'anno corrente, confronta la chiave di inzio anno con quella di oggi
+     * Se siamo in un anno passato, confronta la chiave di inizio anno con quella di fine anno
+     *
+     * @return the Table
+     */
     private Object[] elaboraRiga(Volontario vol) {
         ArrayList riga = new ArrayList();
+        boolean usaStatistiche = CompanyPrefs.usaStatisticheSuddivise.getBool();
         int turni = 0;
         int ore = 0;
         int oreIsc = 0;
@@ -237,10 +257,19 @@ public class StatisticheMod extends WamMod {
         List<Iscrizione> listaIscrizioni = (List<Iscrizione>) CompanyQuery.getList(Iscrizione.class, Iscrizione_.volontario, vol);
         int delta = 0;
         ArrayList<Integer> oreFunzione = new ArrayList<>();
-        turni = listaIscrizioni.size();
         Funzione funz;
         int pos;
         int value;
+        int chiaveTurno;
+        int chiaveIni;
+        int chiaveEnd;
+
+        chiaveIni = LibWam.creaChiave(LibDate.getPrimoGennaio(annoSelezionato));
+        if (annoSelezionato == annoCorrente) {
+            chiaveEnd = LibWam.creaChiave(oggi);
+        } else {
+            chiaveEnd = LibWam.creaChiave(LibDate.getTrentunoDicembre(annoSelezionato));
+        }// end of if/else cycle
 
         for (int k = 0; k < listaFunzioni.size(); k++) {
             oreFunzione.add(0);
@@ -248,8 +277,10 @@ public class StatisticheMod extends WamMod {
 
         for (Iscrizione isc : listaIscrizioni) {
             dataTurno = isc.getTurno().getInizio();
+            chiaveTurno = (int) isc.getTurno().getChiave();
 
-            if (LibDate.isPrecedente(dataTurno, oggi)) {
+            if (chiaveTurno >= chiaveIni && chiaveTurno <= chiaveEnd) {
+                turni++;
                 oreIsc = isc.getMinutiEffettivi() / 60;
                 ore += oreIsc;
                 isc.getVolontario().getNome();
@@ -273,12 +304,6 @@ public class StatisticheMod extends WamMod {
         }// end of if cycle
 
         riga.add(vol.getCognome() + " " + vol.getNome());
-        riga.add(last);
-        if (delta > 0) {
-            riga.add(delta);
-        } else {
-            riga.add((Integer) null);
-        }// end of if/else cycle
         if (turni > 0) {
             riga.add(turni);
         } else {
@@ -289,16 +314,23 @@ public class StatisticheMod extends WamMod {
         } else {
             riga.add((Integer) null);
         }// end of if/else cycle
+        riga.add(last);
+        if (delta > 0) {
+            riga.add(delta);
+        } else {
+            riga.add((Integer) null);
+        }// end of if/else cycle
 
-        for (int k = 0; k < oreFunzione.size(); k++) {
-            value = oreFunzione.get(k);
-            if (value > 0) {
-                riga.add(value);
-            } else {
-                riga.add((Integer) null);
-            }// end of if/else cycle
-        }// end of for cycle
-
+        if (usaStatistiche) {
+            for (int k = 0; k < oreFunzione.size(); k++) {
+                value = oreFunzione.get(k);
+                if (value > 0) {
+                    riga.add(value);
+                } else {
+                    riga.add((Integer) null);
+                }// end of if/else cycle
+            }// end of for cycle
+        }// end of if cycle
 
         return riga.toArray();
     }// end of method
@@ -307,17 +339,15 @@ public class StatisticheMod extends WamMod {
      *
      */
     protected void fireYearChanged(MenuBar.MenuItem menuItem, int anno) {
-        //--modifica la caption della grid
-        if (grid != null) {
-            grid.setCaption(CAPTION + anno + CAPTION_END);
-        }// end of if cycle
 
         //--modifica il menu
         if (menuItem != null) {
             spuntaMenu(menuItem, anno);
         }// end of if cycle
 
-        //@todo cambia il filtro
+        //--cambia il filtro
+        annoSelezionato = anno;
+        inizia();
 
         //--ricarica la grid
 //        Page.getCurrent().reload();

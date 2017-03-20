@@ -9,6 +9,8 @@ import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.WanForm;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.settings.CompanyPrefs;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.field.*;
 import it.algos.webbase.web.field.DateField;
@@ -73,6 +75,7 @@ public class VolontarioForm extends WanForm {
     @Override
     protected void creaFields() {
         super.creaFields();
+        boolean usaGestioneCertificati = CompanyPrefs.usaGestioneCertificati.getBool();
 
         this.creaNome();
         this.creaCognome();
@@ -85,11 +88,13 @@ public class VolontarioForm extends WanForm {
         fAttivo = (CheckBoxField) getField(Volontario_.attivo);
         fInvioMail = (CheckBoxField) getField(Volontario_.invioMail);
 
-        fScadenzaBLSD = (DateField) getField(Volontario_.scadenzaBLSD);
-        fScadenzaPNT = (DateField) getField(Volontario_.scadenzaNonTrauma);
-        fScadenzaBPHT = (DateField) getField(Volontario_.scadenzaTrauma);
-        this.creaChekBrevetti();
-        this.creaPlacehorderBrevetti();
+        if (usaGestioneCertificati) {
+            fScadenzaBLSD = (DateField) getField(Volontario_.scadenzaBLSD);
+            fScadenzaPNT = (DateField) getField(Volontario_.scadenzaNonTrauma);
+            fScadenzaBPHT = (DateField) getField(Volontario_.scadenzaTrauma);
+            this.creaChekBrevetti();
+            this.creaPlacehorderBrevetti();
+        }// end of if cycle
 
         this.creaChekFunzioni();
     }// end of method
@@ -102,6 +107,7 @@ public class VolontarioForm extends WanForm {
      */
     @Override
     protected Component creaCompStandard(AbstractOrderedLayout layout) {
+        boolean usaGestioneCertificati = CompanyPrefs.usaGestioneCertificati.getBool();
 
         layout.addComponent(new AHorizontalLayout(fNome, fCognome));
 
@@ -115,11 +121,14 @@ public class VolontarioForm extends WanForm {
             }// end of if/else cycle
         }// end of if/else cycle
 
-        layout.addComponent(new AHorizontalLayout(fAdmin, fDipendente, fAttivo,fInvioMail));
+        layout.addComponent(new AHorizontalLayout(fAdmin, fDipendente, fAttivo, fInvioMail));
 
-        layout.addComponent(new Label("&nbsp;", ContentMode.HTML)); // aggiunge un po di spazio
-        layout.addComponent(mostraBrevetti);
-        layout.addComponent(creaPlaceholderBrevetti());
+        if (usaGestioneCertificati) {
+            layout.addComponent(new Label("&nbsp;", ContentMode.HTML)); // aggiunge un po di spazio
+            layout.addComponent(mostraBrevetti);
+            layout.addComponent(creaPlaceholderBrevetti());
+        }// end of if cycle
+
 
         layout.addComponent(new Label("&nbsp;", ContentMode.HTML)); // aggiunge un po di spazio
         layout.addComponent(mostraFunzioni);

@@ -210,6 +210,16 @@ public class WamCompanyForm extends ModuleForm {
     }// end of method
 
     /**
+     * Saves the current values to the storage.
+     *
+     * @return true if saved successfully
+     */
+    @Override
+    protected boolean save() {
+        return super.save();
+    }// end of method
+
+    /**
      * Invoked after the item has been saved.
      * Chance for subclasses to override.
      *

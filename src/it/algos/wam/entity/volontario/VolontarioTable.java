@@ -12,6 +12,7 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
@@ -73,7 +74,7 @@ public class VolontarioTable extends WamTable {
     protected Object[] getDisplayColumns() {
         ArrayList lista = new ArrayList<>();
         List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
-        boolean usaGestioneCertificati = Pref.getBool(WAMApp.USA_GESTIONE_CERTIFICATI, false);
+        boolean usaGestioneCertificati = CompanyPrefs.usaGestioneCertificati.getBool();
 
         if (LibSession.isDeveloper()) {
             lista.add(WamCompanyEntity_.company);
@@ -115,7 +116,7 @@ public class VolontarioTable extends WamTable {
 
     protected void fixColumn() {
         List<Funzione> listaFunzioni = Funzione.getListByCurrentCompany();
-        boolean usaGestioneCertificati = Pref.getBool(WAMApp.USA_GESTIONE_CERTIFICATI, false);
+        boolean usaGestioneCertificati = CompanyPrefs.usaGestioneCertificati.getBool();
 
         setColumnHeader(Volontario_.attivo, "OK");
         setColumnHeader(Volontario_.admin, "Admin");

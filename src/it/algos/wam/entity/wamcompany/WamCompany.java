@@ -7,6 +7,7 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.CompanyQuery;
@@ -65,21 +66,21 @@ public class WamCompany extends BaseCompany {
      * Costruttore minimo con tutte le properties obbligatorie
      *
      * @param companyCode sigla di riferimento interna (obbligatoria)
-     * @param name        descrizione della company (obbligatoria)
+     * @param descrizione della company (obbligatoria)
      */
-    public WamCompany(String companyCode, String name) {
-        this(companyCode, name, "");
+    public WamCompany(String companyCode, String descrizione) {
+        this(companyCode, descrizione, "");
     }// end of constructor
 
     /**
      * Costruttore completo con tutte le properties obbligatorie
      *
      * @param companyCode sigla di riferimento interna (obbligatoria)
-     * @param name        descrizione della company (obbligatoria)
+     * @param descrizione della company (obbligatoria)
      * @param email       indirizzo elettronico (obbligatorio)
      */
-    public WamCompany(String companyCode, String name, String email) {
-        super(companyCode, name);
+    public WamCompany(String companyCode, String descrizione, String email) {
+        super(companyCode, descrizione);
     }// end of constructor
 
     /**
@@ -103,7 +104,6 @@ public class WamCompany extends BaseCompany {
      * Nessun filtro sulla azienda, perché la primary key è unica
      *
      * @param id valore (unico) della Primary Key
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany find(long id) {
@@ -133,7 +133,6 @@ public class WamCompany extends BaseCompany {
      * Recupera una istanza della Entity usando la query per una property specifica
      *
      * @param code valore della property code
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany findByCode(String code) {
@@ -151,7 +150,6 @@ public class WamCompany extends BaseCompany {
      *
      * @param code    valore della property code
      * @param manager the EntityManager to use
-     *
      * @return istanza della Entity, null se non trovata
      */
     public static WamCompany findByCode(String code, EntityManager manager) {
@@ -166,6 +164,33 @@ public class WamCompany extends BaseCompany {
 
         return instance;
     }// end of method
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    // New and save
+    //------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creazione iniziale di una istanza della Entity
+     * La crea SOLO se non esiste già
+     *
+     * @param companyCode sigla di riferimento interna (obbligatoria)
+     * @param descrizione della company (obbligatoria)
+     * @return istanza della Entity
+     */
+    public static WamCompany crea(String companyCode, String descrizione) {
+        WamCompany company = null;
+
+        if (isNonEsiste(companyCode)) {
+            company = new WamCompany(companyCode, descrizione);
+            company.save();
+        }// end of if cycle
+
+        // crea le preferenze (di default) relative alla nuova company
+        CompanyPrefs.creaPrefs(company);
+
+        return company;
+    }// end of static method
 
     /**
      * Ritorna la Demo Company

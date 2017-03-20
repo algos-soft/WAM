@@ -13,6 +13,7 @@ import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.Organizzazione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.wam.lib.LibWam;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.domain.log.Log;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.entity.EM;
@@ -724,8 +725,6 @@ public class Migration {
     private List<Turno> importTurni(CroceAmb companyOld, WamCompany companyNew, List<WrapVolontario> listaWrapVolontari, int anno, EntityManager manager) {
         List<Turno> listaTurniNew = new ArrayList<>();
         Turno turnoNew;
-        int k = 0;
-        int delta = 150;
 
         if (anno > 0) {
             listaTurniOld = TurnoAmb.findAllAnno(companyOld, anno, managerOld);
@@ -740,10 +739,6 @@ public class Migration {
                     for (TurnoAmb turnoOld : listaTurniOld) {
                         turnoNew = creaSingoloTurno(companyNew, turnoOld, listaWrapVolontari, manager);
                         listaTurniNew.add(turnoNew);
-                        k++;
-                        if (k > delta) {
-                            break;//todo provvisorio
-                        }// end of if cycle
                     }// end of for cycle
                 }// end of if cycle
             } catch (Exception unErrore) { // intercetta l'errore
@@ -751,18 +746,12 @@ public class Migration {
         } else {
             if (listaTurniOld != null && listaTurniOld.size() > 0) {
                 for (TurnoAmb turnoOld : listaTurniOld) {
-
                     turnoNew = creaSingoloTurno(companyNew, turnoOld, listaWrapVolontari, manager);
                     if (turnoNew != null) {
                         listaTurniNew.add(turnoNew);
                     } else {
                         Log.error("Migrazione", "Manca turno " + turnoOld.getCroce().getSigla() + " del " + turnoOld.getInizio() + " con ID: " + turnoOld.getId());
                     }// end of if/else cycle
-
-                    k++;
-                    if (k > delta) {
-                        break;//todo provvisorio
-                    }// end of if cycle
                 }// end of for cycle
             }// end of if cycle
         }// end of if/else cycle
@@ -1021,7 +1010,7 @@ public class Migration {
         FontAwesome glyph = null;
 
         // gestione certificati
-        LibWam.setPrefBool(company, managerNew, WAMApp.USA_GESTIONE_CERTIFICATI, "Gestione dei certificati BLSD, PNT e BPHTP", false);
+        CompanyPrefs.usaGestioneCertificati.put(company, false);
 
         if (listaServizi.size() == 3) {
             servNew = listaServizi.get(0);
@@ -1078,13 +1067,12 @@ public class Migration {
     private void patchCrf() {
         WamCompany company = WamCompany.findByCode("crf", managerNew);
         List<Servizio> listaServizi = Servizio.getListVisibili(company, managerNew);
-        List<Funzione> listaFunzioni = Funzione.getListByCompany(company, managerNew);
         Servizio servNew;
         Funzione funzNew;
         FontAwesome glyph = null;
 
         // gestione certificati
-        LibWam.setPrefBool(company, managerNew, WAMApp.USA_GESTIONE_CERTIFICATI, "Gestione dei certificati BLSD, PNT e BPHTP", true);
+        CompanyPrefs.usaGestioneCertificati.put(company, true);
 
         if (listaServizi.size() > 6) {
             for (int k = 0; k < listaServizi.size(); k++) {
@@ -1123,13 +1111,12 @@ public class Migration {
     private void patchPap() {
         WamCompany company = WamCompany.findByCode("pap", managerNew);
         List<Servizio> listaServizi = Servizio.getListVisibili(company, managerNew);
-        List<Funzione> listaFunzioni = Funzione.getListByCompany(company, managerNew);
         Servizio servNew;
         Funzione funzNew;
         FontAwesome glyph = null;
 
         // gestione certificati
-        LibWam.setPrefBool(company, managerNew, WAMApp.USA_GESTIONE_CERTIFICATI, "Gestione dei certificati BLSD, PNT e BPHTP", true);
+        CompanyPrefs.usaGestioneCertificati.put(company, true);
 
         if (listaServizi.size() >= 8) {
             for (int k = 0; k < listaServizi.size(); k++) {
@@ -1167,13 +1154,12 @@ public class Migration {
     private void patchCrpt() {
         WamCompany company = WamCompany.findByCode("crpt", managerNew);
         List<Servizio> listaServizi = Servizio.getListVisibili(company, managerNew);
-        List<Funzione> listaFunzioni = Funzione.getListByCompany(company, managerNew);
         Servizio servNew;
         Funzione funzNew;
         FontAwesome glyph = null;
 
         // gestione certificati
-        LibWam.setPrefBool(company, managerNew, WAMApp.USA_GESTIONE_CERTIFICATI, "Gestione dei certificati BLSD, PNT e BPHTP", true);
+        CompanyPrefs.usaGestioneCertificati.put(company, true);
 
         if (listaServizi.size() >= 12) {
             for (int k = 0; k < listaServizi.size(); k++) {

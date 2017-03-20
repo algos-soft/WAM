@@ -22,6 +22,7 @@ public class ConfigScreen extends TabSheet implements View {
         setSizeFull();
 
         configComponents = new ArrayList<>();
+        configComponents.add(new GeneraleConfigComponent());
         configComponents.add(new NotificheConfigComponent());
         configComponents.add(new EmailConfigComponent());
         configComponents.add(new IscrizioniConfigComponent());

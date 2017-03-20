@@ -62,7 +62,7 @@ public class VersBootStrap implements ServletContextListener {
 
         //--crea una nuova preferenza, globale per tutte le company
         if (LibVers.installa(++k)) {
-            LibPref.newVersBool(WAMApp.DISPLAY_LISTE_COLLEGATE, false, "Visualizza un TabSheet con Form e Liste");
+            LibPref.newVersBool(WAMApp.DISPLAY_LISTE_COLLEGATE, true, "Visualizza un TabSheet con Form e Liste");
         }// fine del blocco if
 
         //--crea una nuova preferenza, globale per tutte le company

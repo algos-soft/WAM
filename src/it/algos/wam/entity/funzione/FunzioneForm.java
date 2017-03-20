@@ -12,6 +12,7 @@ import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.*;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.wam.ui.NavComponent;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.company.BaseCompany;
@@ -94,8 +95,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
         if (Pref.getBool(WAMApp.DISPLAY_LISTE_COLLEGATE, null, true)) {
             layout.addComponent(createTabSheet());
         } else {
-            layout.addComponent(createTabSheet());
-//            layout.addComponent(creaTabForm());
+            layout.addComponent(creaTabForm());
         }// end of if/else cycle
 
         return layout;
@@ -171,7 +171,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
         DateRenderer blsdRenderer = null;
         DateRenderer pntRenderer = null;
         DateRenderer bphtpRenderer = null;
-        boolean usaGestioneCertificati = Pref.getBool(WAMApp.USA_GESTIONE_CERTIFICATI, false);
+        boolean usaGestioneCertificati = CompanyPrefs.usaGestioneCertificati.getBool();
 
         if (usaGestioneCertificati) {
             blsdRenderer = new DateRenderer("%1$te %1$tb %1$ty", Locale.ITALIAN);
@@ -470,11 +470,16 @@ public class FunzioneForm extends WanForm implements FunzListener {
         return "";
     }// end of method
 
-    @Override
-    protected boolean save() {
-        regolaEditorFunz();
-        return super.save();
-    }// end of method
+//    /**
+//     * Saves the current values to the storage.
+//     *
+//     * @return true if saved successfully
+//     */
+//    @Override
+//    protected boolean save() {
+//        regolaEditorFunz();
+//        return super.save();
+//    }// end of method
 
 
     private void regolaEditorFunz() {

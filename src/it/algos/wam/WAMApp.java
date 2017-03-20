@@ -21,7 +21,8 @@ public class WAMApp extends AlgosApp {
     public final static String DEMO_COMPANY_CODE = "demo";
     public final static String TEST_COMPANY_CODE = "test";
 
-    //--chiavi per preferenze
+    //--chiavi per preferenze globali dell'applicazione
+    //--le preferenze specifiche di ogni company sono nella Enumeration CompanyPrefs
     public final static String DISPLAY_FOOTER_INFO = "displayFooterInfo";
     public final static String DISPLAY_TOOLTIPS = "displayTooltips";
     public final static String DISPLAY_FIELD_ORDINE = "displayFieldOrdine";
@@ -30,8 +31,7 @@ public class WAMApp extends AlgosApp {
     public final static String USA_REFRESH_DEMO = "usaRefreshDemo";
     public final static String ATTIVA_MIGRATION = "attivaMigration";
     public final static String USA_MIGRATION_COMPLETA = "usaMigrationCompleta";
-    public final static String USA_GESTIONE_CERTIFICATI = "usaGestioneCertificati";
-    public final static String INFO_APP = "Algos s.r.l. - wam.1.2 del 19.3.17";
+    public final static String INFO_APP = "Algos s.r.l. - wam.1.3 del 20.3.17";
 
     /**
      * Name of the local folder for images.<br>
