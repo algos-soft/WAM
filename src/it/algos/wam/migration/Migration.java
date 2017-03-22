@@ -1009,8 +1009,10 @@ public class Migration {
         Funzione funzNew;
         FontAwesome glyph = null;
 
-        // gestione certificati
+        //--flag vari
+        CompanyPrefs.usaPrimaCognome.put(company, false);
         CompanyPrefs.usaGestioneCertificati.put(company, false);
+        CompanyPrefs.usaStatisticheSuddivise.put(company, false);
 
         if (listaServizi.size() == 3) {
             servNew = listaServizi.get(0);
@@ -1071,8 +1073,10 @@ public class Migration {
         Funzione funzNew;
         FontAwesome glyph = null;
 
-        // gestione certificati
+        //--flag vari
+        CompanyPrefs.usaPrimaCognome.put(company, true);
         CompanyPrefs.usaGestioneCertificati.put(company, true);
+        CompanyPrefs.usaStatisticheSuddivise.put(company, true);
 
         if (listaServizi.size() > 6) {
             for (int k = 0; k < listaServizi.size(); k++) {
@@ -1115,8 +1119,10 @@ public class Migration {
         Funzione funzNew;
         FontAwesome glyph = null;
 
-        // gestione certificati
+        //--flag vari
+        CompanyPrefs.usaPrimaCognome.put(company, true);
         CompanyPrefs.usaGestioneCertificati.put(company, true);
+        CompanyPrefs.usaStatisticheSuddivise.put(company, true);
 
         if (listaServizi.size() >= 8) {
             for (int k = 0; k < listaServizi.size(); k++) {
@@ -1158,8 +1164,10 @@ public class Migration {
         Funzione funzNew;
         FontAwesome glyph = null;
 
-        // gestione certificati
+        //--flag vari
+        CompanyPrefs.usaPrimaCognome.put(company, true);
         CompanyPrefs.usaGestioneCertificati.put(company, true);
+        CompanyPrefs.usaStatisticheSuddivise.put(company, true);
 
         if (listaServizi.size() >= 12) {
             for (int k = 0; k < listaServizi.size(); k++) {

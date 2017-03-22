@@ -174,24 +174,28 @@ public class StatisticheMod extends WamMod {
 
     private Frequenza controllaFrequenza(Grid.RowReference rowRef) {
         Frequenza frequenza = null;
+        int turniMinimi;
         int turni = 0;
         int turniMensili = 2;
         int giorniTurno = 30 / turniMensili;
-        Item item = rowRef.getItem();
         Property prop = rowRef.getItem().getItemProperty("turni");
         if (prop != null) {
             Object obj = prop.getValue();
             if (obj != null && obj instanceof Integer) {
                 turni = (Integer) obj;
             }// end of if cycle
-
         }// end of if cycle
-        int turniMinimi = giorniDaInizioAnno / giorniTurno;
 
-        if (turni > turniMinimi) {
+        if (annoSelezionato == annoCorrente) {
+            turniMinimi = giorniDaInizioAnno / giorniTurno;
+        } else {
+            turniMinimi = 24;
+        }// end of if/else cycle
+
+        if (turni >= turniMinimi) {
             frequenza = Frequenza.sufficiente;
         } else {
-            if (turni == turniMinimi) {
+            if (turni == turniMinimi - 2) {
                 frequenza = Frequenza.scarsa;
             } else {
                 frequenza = Frequenza.insufficiente;
@@ -219,8 +223,11 @@ public class StatisticheMod extends WamMod {
         grid.addColumn(COL_VOL, String.class);
         grid.addColumn(COL_TUR, Integer.class);
         grid.addColumn(COL_ORE, Integer.class);
-        grid.addColumn(COL_ULT, Date.class);
-        grid.addColumn(COL_GIO, Integer.class);
+
+        if (annoSelezionato == annoCorrente) {
+            grid.addColumn(COL_ULT, Date.class);
+            grid.addColumn(COL_GIO, Integer.class);
+        }// end of if cycle
 
         if (usaStatistiche) {
             for (Funzione funz : listaFunzioni) {
@@ -228,7 +235,9 @@ public class StatisticheMod extends WamMod {
             }// end of for cycle
         }// end of if cycle
 
-        grid.getColumn(COL_ULT).setRenderer(dataRenderer);
+        if (annoSelezionato == annoCorrente) {
+            grid.getColumn(COL_ULT).setRenderer(dataRenderer);
+        }// end of if cycle
 
         for (Volontario vol : listaVolontari) {
             grid.addRow(elaboraRiga(vol));
@@ -314,12 +323,14 @@ public class StatisticheMod extends WamMod {
         } else {
             riga.add((Integer) null);
         }// end of if/else cycle
-        riga.add(last);
-        if (delta > 0) {
-            riga.add(delta);
-        } else {
-            riga.add((Integer) null);
-        }// end of if/else cycle
+        if (annoSelezionato == annoCorrente) {
+            riga.add(last);
+            if (delta > 0) {
+                riga.add(delta);
+            } else {
+                riga.add((Integer) null);
+            }// end of if/else cycle
+        }// end of if cycle
 
         if (usaStatistiche) {
             for (int k = 0; k < oreFunzione.size(); k++) {
@@ -348,9 +359,6 @@ public class StatisticheMod extends WamMod {
         //--cambia il filtro
         annoSelezionato = anno;
         inizia();
-
-        //--ricarica la grid
-//        Page.getCurrent().reload();
     }// end of method
 
     public enum Frequenza {

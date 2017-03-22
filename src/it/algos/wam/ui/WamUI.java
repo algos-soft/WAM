@@ -389,7 +389,7 @@ public class WamUI extends UI {
         // aggiunge una menubar con le funzioni di admin
         if (LibSession.isAdmin()) {
             MenuBar menuBarAdmin = new MenuBar();
-            addMod(menuBarAdmin, new LogMod());
+//            addMod(menuBarAdmin, new LogMod());
             addView(menuBarAdmin, ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
             navComp.addMenu(menuBarAdmin, "verde");
         }// end of if cycle
@@ -400,6 +400,7 @@ public class WamUI extends UI {
             MenuBar menuBarDeveloper = new MenuBar();
             menuBarDeveloper.setAutoOpen(true);
             MenuBar.MenuItem menuUtilities = menuBarDeveloper.addItem("Utilities", null, null);
+            addMod(menuUtilities, new LogMod());
             addMod(menuUtilities, new UtenteModulo("User"));
             addMod(menuUtilities, new VersMod());
             addMod(menuUtilities, new PrefMod());
