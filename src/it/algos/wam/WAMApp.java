@@ -31,7 +31,7 @@ public class WAMApp extends AlgosApp {
     public final static String USA_REFRESH_DEMO = "usaRefreshDemo";
     public final static String ATTIVA_MIGRATION = "attivaMigration";
     public final static String USA_MIGRATION_COMPLETA = "usaMigrationCompleta";
-    public final static String INFO_APP = "Algos s.r.l. - wam.1.4 del 22.3.17";
+    public final static String INFO_APP = "Algos s.r.l. - wam.1.5 del 25.3.17";
 
     /**
      * Name of the local folder for images.<br>
