@@ -13,10 +13,12 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
 import com.vaadin.ui.components.colorpicker.ColorChangeListener;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
@@ -167,7 +169,7 @@ public class ServizioTable extends WamTable {
             }
 
             return new Label(s);
-        }// end of method
+        }// end of inner method
     }// end of inner class
 
 
@@ -175,60 +177,6 @@ public class ServizioTable extends WamTable {
      * Colonna generata: funzioni.
      */
     private class FunzioniColumnGenerator implements ColumnGenerator {
-
-//        /**
-//         * Genera la cella delle funzioni.
-//         */
-//        public Component generateCellOld(Table table, Object itemId, Object columnId) {
-//            HorizontalLayout comp = new HorizontalLayout();
-//            Item item = table.getItem(itemId);
-//            BeanItem bi = LibBean.fromItem(item);
-//            Servizio serv = (Servizio) bi.getBean();
-//            String testo;
-//            List<ServizioFunzione> lista = serv.getServizioFunzioniOrdine();
-//            Label label;
-//            ServizioFunzione servFunz;
-//            Funzione funz;
-//            FontAwesome font;
-//            int codePoint;
-//
-//            for (int k = 0; k < lista.size(); k++) {
-//                servFunz = lista.get(k);
-//                testo = "";
-//                funz = servFunz.getFunzione();
-//                codePoint = funz.getIconCodepoint();
-//                font = FontAwesome.fromCodepoint(codePoint);
-//                testo += font.getHtml() + "&nbsp;";
-//                testo += "<strong>";
-//
-//                if (servFunz.isObbligatoria()) {
-//                    testo += "<span style=\"color:red;\">";
-//                } else {
-//                    testo += "<span style=\"color:blue;\">";
-//                }// end of if/else cycle
-//
-//                testo += servFunz.getFunzione().getSigla();
-//
-//                if (k < lista.size() - 1) {
-//                    testo += ",&nbsp;";
-//                }// end of if cycle
-//
-//                testo += "</span>" + "</strong>";
-//                label = new Label(testo, ContentMode.HTML);
-//
-//                if (servFunz.isObbligatoria()) {
-//                    label.addStyleName("rosso");
-//                } else {
-//                    label.addStyleName("blue");
-//                }// end of if/else cycle
-//
-//                comp.addComponent(label);
-//
-//            }
-//
-//            return comp;
-//        }// end of method
-
 
         /**
          * Genera la cella delle funzioni.
@@ -246,19 +194,19 @@ public class ServizioTable extends WamTable {
             for (int k = 0; k < lista.size(); k++) {
                 ServizioFunzione sf = serv.getServizioFunzioniOrd().get(k);
                 int codePoint = sf.getFunzione().getIconCodepoint();
-                if (codePoint>0) {
+                if (codePoint > 0) {
                     FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
                     str += glyph.getHtml() + " ";
                 }// fine del blocco if
 
                 String sigla = sf.getFunzione().getCode();
-                str+="<strong>";
+                str += "<strong>";
                 if (sf.isObbligatoria()) {
                     str += "<font color=\"red\">" + sigla + "</font>";
                 } else {
                     str += "<font color=\"green\">" + sigla + "</font>";
                 }
-                str+="</strong>";
+                str += "</strong>";
 
                 if (k < lista.size() - 1) {
                     str += ", ";
@@ -267,7 +215,7 @@ public class ServizioTable extends WamTable {
             }
 
             return new Label(str, ContentMode.HTML);
-        }
+        }// end of inner method
 
     }// end of inner class
 
@@ -289,21 +237,24 @@ public class ServizioTable extends WamTable {
             picker.setWidth("45");
             picker.setColor(new Color(codColore));
             picker.setCaption("&#8203;"); //zero-width space
-            picker.addColorChangeListener(new ColorChangeListener() {
-                @Override
-                public void colorChanged(ColorChangeEvent colorChangeEvent) {
-                    BeanItem bi = LibBean.fromItem(item);
-                    Servizio serv = (Servizio) bi.getBean();
-                    int colorcode = colorChangeEvent.getColor().getRGB();
-                    serv.setColore(colorcode);
-                    serv.save();
-                }
-            });
+            picker.setReadOnly(true);
 
-            picker.setEnabled(LibSession.isAdmin());
+            if (Pref.getBool(WAMApp.CLICK_BOTTONI_IN_LISTA, false)) {
+                picker.addColorChangeListener(new ColorChangeListener() {
+                    @Override
+                    public void colorChanged(ColorChangeEvent colorChangeEvent) {
+                        BeanItem bi = LibBean.fromItem(item);
+                        Servizio serv = (Servizio) bi.getBean();
+                        int colorcode = colorChangeEvent.getColor().getRGB();
+                        serv.setColore(colorcode);
+                        serv.save();
+                    }// end of inner method
+                });// end of anonymous inner class
+                picker.setReadOnly(false);
+            }// end of if cycle
 
             return picker;
-        }
-    }
+        }// end of inner method
+    }// end of inner class
 
-}
+}// end of class

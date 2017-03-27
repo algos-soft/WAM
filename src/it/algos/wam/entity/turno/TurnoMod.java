@@ -23,6 +23,9 @@ public class TurnoMod extends WamMod {
     // icona (eventuale) del modulo
     public static Resource ICON = FontAwesome.TASKS;
 
+    //--titolo della table
+    private static String CAPTION = "Turni di servizio";
+
     /**
      * Costruttore senza parametri
      * <p/>
@@ -33,6 +36,7 @@ public class TurnoMod extends WamMod {
      */
     public TurnoMod() {
         super(Turno.class, MENU_ADDRESS, ICON);
+        this.getTable().setCaption(CAPTION);
     }// end of constructor
 
 

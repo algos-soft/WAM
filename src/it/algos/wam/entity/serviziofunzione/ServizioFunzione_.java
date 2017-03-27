@@ -11,4 +11,6 @@ import javax.persistence.metamodel.StaticMetamodel;
 public class ServizioFunzione_ extends BaseEntity_ {
 	public static volatile SingularAttribute<ServizioFunzione, Servizio> servizio;
 	public static volatile SingularAttribute<ServizioFunzione, Funzione> funzione;
+	public static volatile SingularAttribute<ServizioFunzione, Integer> ordine;
+	public static volatile SingularAttribute<ServizioFunzione, Boolean> obbligatoria;
 }// end of entity class

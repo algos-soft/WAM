@@ -18,12 +18,14 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
     private static final String KEY_TABELLONE_VISIBILE = "tabelloneVisibile";
     private static final String KEY_CREA_TURNI = "creaTurniNormali";
     private static final String KEY_CREA_EXTRA = "creaTurniExtra";
+    private static final String KEY_LABEL_HTML = "usaLabelHtml";
 
     private ArrayComboField comboOreAlert;
     private ArrayComboField comboOreWarning;
     private CheckBoxField checkTabellone;
     private CheckBoxField checkTurni;
     private CheckBoxField checkExtra;
+    private CheckBoxField checkLabelHTML;
 
 
     public TabelloneConfigComponent() {
@@ -57,6 +59,13 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
         hl.addComponent(new Label(CompanyPrefs.creazioneTurniExtra.getDescrizione()));
         hl.addComponent(checkExtra);
+        layout.addComponent(hl);
+
+        hl = new HorizontalLayout();
+        hl.setSpacing(true);
+        hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
+        hl.addComponent(new Label(CompanyPrefs.usaLabelServizioHtml.getDescrizione()));
+        hl.addComponent(checkLabelHTML);
         layout.addComponent(hl);
 
         layout.addComponent(new Label(""));
@@ -100,6 +109,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         checkTabellone = new CheckBoxField();
         checkTurni = new CheckBoxField();
         checkExtra = new CheckBoxField();
+        checkLabelHTML = new CheckBoxField();
 
         // bind fields to properties
         getGroup().bind(comboOreAlert, KEY_ORE_ALERT);
@@ -107,6 +117,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         getGroup().bind(checkTabellone, KEY_TABELLONE_VISIBILE);
         getGroup().bind(checkTurni, KEY_CREA_TURNI);
         getGroup().bind(checkExtra, KEY_CREA_EXTRA);
+        getGroup().bind(checkLabelHTML, KEY_LABEL_HTML);
 
 
     }
@@ -148,7 +159,10 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
             boolean creaTurniExtra = CompanyPrefs.creazioneTurniExtra.getBool();
             addItemProperty(KEY_CREA_EXTRA, new ObjectProperty<>(creaTurniExtra));
 
-        }
+            boolean usaLabelServizioHtml = CompanyPrefs.usaLabelServizioHtml.getBool();
+            addItemProperty(KEY_LABEL_HTML, new ObjectProperty<>(usaLabelServizioHtml));
+
+        }// end of method
 
         public void persist() {
 
@@ -157,6 +171,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
             boolean tabelloneVisibile = (Boolean) getItemProperty(KEY_TABELLONE_VISIBILE).getValue();
             boolean creaTurni = (Boolean) getItemProperty(KEY_CREA_TURNI).getValue();
             boolean creaTurniExtra = (Boolean) getItemProperty(KEY_CREA_EXTRA).getValue();
+            boolean usaLabelServizioHtml = (Boolean) getItemProperty(KEY_LABEL_HTML).getValue();
 
             if (warningOrePrima > alertOrePrima) {
                 CompanyPrefs.turnoAlertOrePrima.put(alertOrePrima);
@@ -164,6 +179,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
                 CompanyPrefs.tabellonePubblico.put(tabelloneVisibile);
                 CompanyPrefs.creazioneTurniNormali.put(creaTurni);
                 CompanyPrefs.creazioneTurniExtra.put(creaTurniExtra);
+                CompanyPrefs.usaLabelServizioHtml.put(usaLabelServizioHtml);
 
                 Notification.show("Dati salvati");
 

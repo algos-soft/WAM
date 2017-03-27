@@ -3,7 +3,11 @@ package it.algos.wam.entity.serviziofunzione;
 
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.table.ATable;
+
+import javax.persistence.metamodel.Attribute;
 
 /**
  * Gestione (minimale) del modulo specifico
@@ -15,10 +19,11 @@ public class ServizioFunzioneMod extends ModulePop {
     private static final long serialVersionUID = 1L;
 
     // indirizzo interno del modulo - etichetta del menu
-    public static String MENU_ADDRESS = "ServizioFunzione";
+    private static String MENU_ADDRESS = "ServizioFunzione";
 
     // icona (eventuale) del modulo
-    public static Resource ICON = FontAwesome.USER;
+    private static Resource ICON = FontAwesome.USER;
+
 
     /**
      * Costruttore senza parametri
@@ -31,6 +36,17 @@ public class ServizioFunzioneMod extends ModulePop {
     public ServizioFunzioneMod() {
         super(ServizioFunzione.class, MENU_ADDRESS, ICON);
     }// end of constructor
+
+    /**
+     * Crea una Table già filtrata sulla company corrente
+     * The concrete subclass must override for a specific Table.
+     *
+     * @return the Table
+     */
+    @Override
+    public ATable createTable() {
+        return new ServizioFunzioneTable(this);
+    }// end of method
 
 }// end of class
 

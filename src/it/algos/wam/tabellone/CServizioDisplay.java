@@ -5,10 +5,13 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.web.lib.LibColor;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.login.Login;
 
 import java.util.Collections;
@@ -31,8 +34,8 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
     /**
      * Costruttore completo
      *
-     * @param tabellone   la grigia del tabellone
-     * @param servizio    il servizio
+     * @param tabellone la grigia del tabellone
+     * @param servizio  il servizio
      */
     public CServizioDisplay(GridTabellone tabellone, Servizio servizio) {
         super();
@@ -43,7 +46,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
         setSpacing(true);
         addStyleName("cservizio");
 
-        compServizio=new CompServizio();
+        compServizio = new CompServizio();
         addComponent(compServizio);
         addComponent(new CompFunzioni());
 
@@ -52,9 +55,10 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
     /**
      * Mostra o nasconde il bottone che consente di creare una nuova riga
      * (significativo solo per servizi a orario variabile)
+     *
      * @param crea true per mostrare il bottone, false per nasconderlo
      */
-    public void setCreaNuova(boolean crea){
+    public void setCreaNuova(boolean crea) {
         compServizio.setCreaNuova(crea);
     }
 
@@ -79,7 +83,6 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
     }
 
 
-
     /**
      * Componente con la descrizione del servizio
      */
@@ -91,10 +94,10 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
         private LayoutEvents.LayoutClickListener listener = new LayoutEvents.LayoutClickListener() {
             @Override
             public void layoutClick(LayoutEvents.LayoutClickEvent layoutClickEvent) {
-                if(Login.getLogin().isLogged()){
+                if (Login.getLogin().isLogged()) {
                     tabellone.cellClicked(CellType.SERVIZIO, x, y, servizio);
                     setCreaNuova(false);    // una volta che ho creato la nuova riga, questa riga perde la possibilità di crearne altre
-                }else{
+                } else {
                     Login.getLogin().showLoginForm();
                 }
             }
@@ -104,26 +107,39 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
             setWidth("7em");
             setSpacing(false);
 
-            layoutTitle=new TitleLayout();// layout con dentro la label, serve per poterci attaccare il clicklistener e regolare il css
+            layoutTitle = new TitleLayout();// layout con dentro la label, serve per poterci attaccare il clicklistener e regolare il css
             layoutTitle.setWidth("100%");
             labelTitolo = new Label();
             labelTitolo.addStyleName("cservizio-titolo");
             labelTitolo.setContentMode(ContentMode.HTML);
             if (servizio.isOrario()) {
                 labelTitolo.setValue(servizio.getStrOrario());
-            }else{
-                setCreaNuova(true);
-            }
+            } else {
+                if (LibSession.isAdmin()) {
+                    setCreaNuova(true);
+                } else {
+                    if (CompanyPrefs.creazioneTurniExtra.getBool()) {
+                        setCreaNuova(true);
+                    } else {
+                        labelTitolo.setValue(servizio.getStrOrario());
+                    }// end of if/else cycle
+                }// end of if/else cycle
+            }// end of if/else cycle
+
 
             layoutTitle.addComponent(labelTitolo);
             addComponent(layoutTitle);
 
 
+            String descrizione = servizio.getDescrizione();
+            if (CompanyPrefs.usaLabelServizioHtml.getBool()) {
+                descrizione = descrizione.replace(" ", "<br/>");
+            }// end of if cycle
 
-            String descrizione=servizio.getDescrizione();
             if (descrizione.equals("")) {
                 descrizione = "&nbsp;";// evita label con testo vuoto, danno problemi
-            }
+            }// end of if cycle
+
             Label labelNome = new Label(descrizione, ContentMode.HTML);
             labelNome.addStyleName("cservizio-nome");
 
@@ -132,28 +148,31 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
 
             setExpandRatio(labelNome, 1);
 
-
-        }
+        }// end of method
 
 
         /**
          * Mostra o nasconde il bottone che consente di creare una nuova riga
          * (significativo solo per servizi a orario variabile)
+         *
          * @param crea true per mostrare il bottone, false per nasconderlo
          */
-        public void setCreaNuova(boolean crea){
-            if(crea){
-                labelTitolo.setValue(FontAwesome.PLUS_CIRCLE.getHtml() + " crea nuovo");
-                layoutTitle.addLayoutClickListener(listener);
-                layoutTitle.addStyleName("cpointer");
-            }else{
+        public void setCreaNuova(boolean crea) {
+            if (crea) {
+                if (LibSession.isAdmin() || CompanyPrefs.creazioneTurniExtra.getBool()) {
+                    labelTitolo.setValue(FontAwesome.PLUS_CIRCLE.getHtml() + " crea nuovo");
+                    layoutTitle.addLayoutClickListener(listener);
+                    layoutTitle.addStyleName("cpointer");
+                } else {
+                    labelTitolo.setValue(servizio.getStrOrario());
+                }// end of if/else cycle
+            } else {
                 labelTitolo.setValue("&nbsp;");
                 layoutTitle.removeLayoutClickListener(listener);
                 layoutTitle.removeStyleName("cpointer");
-            }
-        }
-
-    }
+            }// end of if/else cycle
+        }// end of method
+    }// end of class
 
     /**
      * CSS Layout che contiene la label con il titolo
@@ -165,11 +184,11 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
         protected String getCss(Component c) {
 
             if (c instanceof Label) {
-                Color bg=new Color(servizio.getColore());
-                Color fg=LibColor.getForeground(bg);
+                Color bg = new Color(servizio.getColore());
+                Color fg = LibColor.getForeground(bg);
                 String bgHex = Integer.toHexString(bg.getRGB()).substring(2);
                 String fgHex = Integer.toHexString(fg.getRGB()).substring(2);
-                String css="background: #" + bgHex+"; color: #"+fgHex+";";
+                String css = "background: #" + bgHex + "; color: #" + fgHex + ";";
                 return css;
             }
             return null;
@@ -180,7 +199,7 @@ public class CServizioDisplay extends HorizontalLayout implements TabelloneCell 
     /**
      * Componente con l'elenco ordinato delle funzioni
      */
-    private class CompFunzioni extends VerticalLayout{
+    private class CompFunzioni extends VerticalLayout {
 
         /**
          * Costruttore completo

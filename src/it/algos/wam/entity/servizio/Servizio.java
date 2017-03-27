@@ -987,7 +987,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     @Override
     public String toString() {
-        return sigla;
+        return sigla + " - " + descrizione;
     }// end of method
 
     public String getSigla() {
@@ -1440,8 +1440,12 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Ritorna una stringa che rappresenta l'orario dalle... alle...
      */
     public String getStrOrario() {
-        return strHM(oraInizio) + ":" + strHM(minutiInizio) + " - " + strHM(oraFine) + ":" + strHM(minutiFine);
-    }
+        if (isOrario()) {
+            return strHM(oraInizio) + ":" + strHM(minutiInizio) + " - " + strHM(oraFine) + ":" + strHM(minutiFine);
+        } else {
+            return "Variabile";
+        }// end of if/else cycle
+    }// end of method
 
     /**
      * @return il numero di ore o minuti formattato su 2 caratteri fissi

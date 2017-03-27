@@ -6,7 +6,9 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.Index;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
+@DefaultSort({"company,rtue","servizio,true","ordine,true"})
 public class ServizioFunzione extends WamCompanyEntity implements Comparable<ServizioFunzione> {
 
     private static final long serialVersionUID = 1L;
@@ -108,7 +111,6 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
      * Recupera una istanza di ServizioFunzione usando la query standard della Primary Key
      *
      * @param id valore della Primary Key
-     *
      * @return istanza di ServizioFunzione, null se non trovata
      */
     public static ServizioFunzione find(long id) {
@@ -130,7 +132,6 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
      *
      * @param servizio di riferimento (obbligatorio)
      * @param funzione di riferimento (obbligatorio)
-     *
      * @return istanza di ServizioFunzione, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -156,7 +157,6 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
      * @param company  croce di appartenenza
      * @param servizio di riferimento (obbligatorio)
      * @param funzione di riferimento (obbligatorio)
-     *
      * @return istanza di ServizioFunzione, null se non trovata
      */
     @SuppressWarnings("unchecked")
@@ -205,7 +205,6 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
      * @param servizio     di riferimento (obbligatorio)
      * @param funzione     di riferimento (obbligatorio)
      * @param obbligatoria la funzione (facoltativo)
-     *
      * @return istanza di ServizioFunzione
      */
     public static ServizioFunzione crea(WamCompany company, EntityManager manager, Servizio servizio, Funzione funzione, boolean obbligatoria) {
@@ -296,6 +295,15 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
     public void setOrdine(int ordine) {
         this.ordine = ordine;
     }//end of setter method
+
+
+    /**
+     * Abbreviazione visibile nelle tabelle (interne, solo per developer)
+     */
+    @Override
+    public String toString() {
+        return servizio.toString() + " - " + funzione.toString();
+    }// end of method
 
     /**
      * Clone di questa istanza

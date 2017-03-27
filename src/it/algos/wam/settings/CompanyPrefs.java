@@ -25,6 +25,7 @@ public enum CompanyPrefs {
     usaPrimaCognome("usaPrimaCognome", PrefType.bool, true, "Se true visualizza Cognome+Nome(1), se false Nome+Cognome(1)"),
     usaGestioneCertificati("usaGestioneCertificati", PrefType.bool, false, "Gestione dei brevetti BLSD, PNT e BPHTP"),
     usaStatisticheSuddivise("usaStatisticheSuddivise", PrefType.bool, false, "Statistiche suddivise per funzioni"),
+    usaLabelServizioHtml("usaLabelServizioHtml", PrefType.bool, true, "Label dei servizi sul tabellone con ritorno a capo"),
 
     senderAddress("senderAddress", PrefType.email, "info@algos.it", "Indirizzo email del mittente"),
     sendMailToBackup("sendMailToBackup", PrefType.bool, false, "Se invia ogni mail anche a una casella di backup"),

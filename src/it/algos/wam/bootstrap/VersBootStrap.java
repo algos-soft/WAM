@@ -85,6 +85,11 @@ public class VersBootStrap implements ServletContextListener {
             LibPref.newVersBool(WAMApp.USA_MIGRATION_COMPLETA, false, "Importa tutti i turni da webambulanze (invece che solo l'ultima settimana)");
         }// fine del blocco if
 
+        //--crea una nuova preferenza, globale per tutte le company
+        if (LibVers.installa(++k)) {
+            LibPref.newVersBool(WAMApp.CLICK_BOTTONI_IN_LISTA, false, "Bottone per modificare i bottoni (icona e colore) direttamente da Funzioni e Servizi. Di default false.");
+        }// fine del blocco if
+
 
 //        //--creazione di una croce "test"
 //        if (LibVers.installa(++k)) {

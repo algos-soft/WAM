@@ -449,8 +449,9 @@ public class Migration {
         int oraFine = servizioOld.getOra_fine();
         int minutiFine = servizioOld.getMinuti_fine();
         boolean visibile = servizioOld.isVisibile();
+        boolean orario = servizioOld.isOrario();
 
-        return Servizio.crea(companyNew, sigla, visibile, descrizione, ordine, colore, true, oraInizio, minutiInizio, oraFine, minutiFine, manager, listaServizioFunzioni);
+        return Servizio.crea(companyNew, sigla, visibile, descrizione, ordine, colore, orario, oraInizio, minutiInizio, oraFine, minutiFine, manager, listaServizioFunzioni);
     }// end of method
 
     /**
@@ -1013,6 +1014,7 @@ public class Migration {
         CompanyPrefs.usaPrimaCognome.put(company, false);
         CompanyPrefs.usaGestioneCertificati.put(company, false);
         CompanyPrefs.usaStatisticheSuddivise.put(company, false);
+        CompanyPrefs.usaLabelServizioHtml.put(company, true);
 
         if (listaServizi.size() == 3) {
             servNew = listaServizi.get(0);
@@ -1094,7 +1096,7 @@ public class Migration {
                         servNew.setColore(new Color(100, 200, 100).getRGB());
                         break;
                     case 6:
-                        servNew.setColore(new Color(100, 100, 240).getRGB());
+                        servNew.setColore(new Color(100, 240, 240).getRGB());
                         break;
                     default: // caso non definito
                         break;
@@ -1140,7 +1142,7 @@ public class Migration {
                     case 6:
                     case 7:
                     case 8:
-                        servNew.setColore(new Color(100, 100, 240).getRGB());
+                        servNew.setColore(new Color(240, 100, 100).getRGB());
                         break;
                     default: // caso non definito
                         break;
@@ -1193,7 +1195,7 @@ public class Migration {
                     case 6:
                     case 7:
                     case 8:
-                        servNew.setColore(new Color(100, 200, 100).getRGB());
+                        servNew.setColore(new Color(100, 240, 240).getRGB());
                         break;
                     case 9:
                     case 10:

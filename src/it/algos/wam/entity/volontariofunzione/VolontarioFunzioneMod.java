@@ -19,6 +19,8 @@ public class VolontarioFunzioneMod extends ModulePop {
     // icona (eventuale) del modulo
     public static Resource ICON = FontAwesome.USER;
 
+    //--titolo della table
+    private static String CAPTION = "Volontari per ogni funzione";
 
     /**
      * Costruttore senza parametri
@@ -30,6 +32,7 @@ public class VolontarioFunzioneMod extends ModulePop {
      */
     public VolontarioFunzioneMod() {
         super(VolontarioFunzione.class, MENU_ADDRESS, ICON);
+        this.getTable().setCaption(CAPTION);
     }// end of constructor
 
 }// end of class

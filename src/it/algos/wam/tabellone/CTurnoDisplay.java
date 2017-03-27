@@ -98,13 +98,26 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         this.tabellone = tabellone;
         this.serv = serv;
         this.dataInizio = dataInizio;
-        boolean utentePuoCreareTurno = CompanyPrefs.creazioneTurniNormali.getBool();
+        boolean turnoCreabile = false;
 
         // inizializzazioni comuni turno e no-turno
         init();
 
         setHeight("100%");
 
+        //--il turno può essere creato:
+        //--se è un admin (sempre)
+        //--se è un turno ad orario e i volontari sono abilitati
+        //--se è un turno extra senza orario e i volontari sono abilitati
+        if (LibSession.isAdmin()) {
+            turnoCreabile = true;
+        }// end of if cycle
+        if (serv.isOrario() && CompanyPrefs.creazioneTurniNormali.getBool()) {
+            turnoCreabile = true;
+        }// end of if cycle
+        if (!serv.isOrario() && CompanyPrefs.creazioneTurniExtra.getBool()) {
+            turnoCreabile = true;
+        }// end of if cycle
 
         // componente blank visualizzato nell'area iscrizioni
         VerticalLayout blank = new VerticalLayout();
@@ -112,14 +125,10 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
         blank.setHeight("100%");
         blank.addStyleName("cnoturno");
 
-        // non solo admin :-) @todo gac 25-2-17
-        if (LibSession.isAdmin() || utentePuoCreareTurno) {
-            blank.addStyleName("cursor-pointer");
-        }
-
         // solo admin: listener quando viene cliccata l'area iscrizioni
         // non solo admin :-) @todo gac 25-2-17
-        if (LibSession.isAdmin() || utentePuoCreareTurno) {
+        if (turnoCreabile) {
+            blank.addStyleName("cursor-pointer");
             blank.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
                 @Override
                 public void layoutClick(LayoutEvents.LayoutClickEvent event) {

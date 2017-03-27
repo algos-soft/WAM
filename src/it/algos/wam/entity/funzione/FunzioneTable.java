@@ -10,8 +10,10 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
@@ -129,7 +131,7 @@ public class FunzioneTable extends WamTable {
 
         setColumnWidth(Funzione_.ordine, 50);
         setColumnWidth(COL_ICON, 80);
-        setColumnWidth(Funzione_.sigla, 110);
+        setColumnWidth(Funzione_.sigla, 120);
     }// end of method
 
 
@@ -139,49 +141,12 @@ public class FunzioneTable extends WamTable {
     private class IconColumnGenerator implements ColumnGenerator {
 
         public Component generateCell(Table source, Object itemId, Object columnId) {
-
-            final Item item = source.getItem(itemId);
             Button bIcon = new Button();
+            final Item item = source.getItem(itemId);
             bIcon.setHtmlContentAllowed(true);
             bIcon.setWidth("3em");
             bIcon.setCaption("...");
             bIcon.addStyleName("blue");
-
-            if (LibSession.isAdmin()) {
-                bIcon.addClickListener(new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent clickEvent) {
-                        SelectIconDialog dialog = new SelectIconDialog();
-                        dialog.addCloseListener(new SelectIconDialog.CloseListener() {
-                            @Override
-                            public void dialogClosed(SelectIconDialog.DialogEvent event) {
-                                int exitcode = event.getExitcode();
-                                BeanItem bi = LibBean.fromItem(item);
-                                Funzione funz = (Funzione) bi.getBean();
-
-                                switch (exitcode) {
-                                    case 0:   // close, no action
-                                        break;
-                                    case 1:   // icon selected
-                                        int codepoint = event.getCodepoint();
-                                        funz.setIconCodepoint(codepoint);
-                                        funz.save();
-                                        refresh();
-                                        break;
-                                    case 2:   // rebove icon
-                                        funz.setIconCodepoint(0);
-                                        funz.save();
-                                        refresh();
-                                        break;
-                                } // fine del blocco switch
-
-                            }// end of inner method
-                        });// end of anonymous inner class
-                        dialog.show();
-
-                    }// end of inner method
-                });// end of anonymous inner class
-            }// end of if cycle
 
             Property prop = item.getItemProperty(Funzione_.iconCodepoint.getName());
             if (prop != null) {
@@ -193,6 +158,44 @@ public class FunzioneTable extends WamTable {
                 } catch (Exception e) {
                     int a = 78;
                 }// fine del blocco try-catch
+            }// end of if cycle
+
+            if (Pref.getBool(WAMApp.CLICK_BOTTONI_IN_LISTA,false)) {
+                if (LibSession.isAdmin()) {
+                    bIcon.addClickListener(new Button.ClickListener() {
+                        @Override
+                        public void buttonClick(Button.ClickEvent clickEvent) {
+                            SelectIconDialog dialog = new SelectIconDialog();
+                            dialog.addCloseListener(new SelectIconDialog.CloseListener() {
+                                @Override
+                                public void dialogClosed(SelectIconDialog.DialogEvent event) {
+                                    int exitcode = event.getExitcode();
+                                    BeanItem bi = LibBean.fromItem(item);
+                                    Funzione funz = (Funzione) bi.getBean();
+
+                                    switch (exitcode) {
+                                        case 0:   // close, no action
+                                            break;
+                                        case 1:   // icon selected
+                                            int codepoint = event.getCodepoint();
+                                            funz.setIconCodepoint(codepoint);
+                                            funz.save();
+                                            refresh();
+                                            break;
+                                        case 2:   // rebove icon
+                                            funz.setIconCodepoint(0);
+                                            funz.save();
+                                            refresh();
+                                            break;
+                                    } // fine del blocco switch
+
+                                }// end of inner method
+                            });// end of anonymous inner class
+                            dialog.show();
+
+                        }// end of inner method
+                    });// end of anonymous inner class
+                }// end of if cycle
             }// end of if cycle
 
             return bIcon;
