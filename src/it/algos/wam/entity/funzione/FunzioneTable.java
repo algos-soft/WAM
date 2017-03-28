@@ -254,7 +254,7 @@ public class FunzioneTable extends WamTable {
          * riga funziona anche cliccando sulla colonna custom.
          */
         public Component generateCell(Table table, Object itemId, Object columnId) {
-            Funzione funzione= (Funzione)getBean(table,itemId);
+            Funzione funzione = (Funzione) getBean(table, itemId);
             return new Label(funzione.getSigla(), ContentMode.HTML);
         }// end of inner method
     }// end of inner class
@@ -283,9 +283,19 @@ public class FunzioneTable extends WamTable {
     }// end of inner method
 
     protected Object getPropValue(Table table, Object itemId, String propName) {
+        Object value = null;
         Item item = table.getItem(itemId);
-        Property prop = item.getItemProperty(propName);
-        return prop.getValue();
+        Property prop = null;
+
+        if (item != null) {
+            prop = item.getItemProperty(propName);
+        }// end of if cycle
+
+        if (prop != null) {
+            value = prop.getValue();
+        }// end of if cycle
+
+        return value;
     }// end of inner method
 
 }// end of class
