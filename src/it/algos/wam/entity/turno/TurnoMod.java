@@ -6,6 +6,8 @@ import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.volontario.Volontario_;
+import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneTable;
+import it.algos.webbase.web.table.ATable;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -23,9 +25,6 @@ public class TurnoMod extends WamMod {
     // icona (eventuale) del modulo
     public static Resource ICON = FontAwesome.TASKS;
 
-    //--titolo della table
-    private static String CAPTION = "Turni di servizio";
-
     /**
      * Costruttore senza parametri
      * <p/>
@@ -36,28 +35,20 @@ public class TurnoMod extends WamMod {
      */
     public TurnoMod() {
         super(Turno.class, MENU_ADDRESS, ICON);
-        this.getTable().setCaption(CAPTION);
     }// end of constructor
 
 
     /**
-     * Crea i campi visibili nella lista (table)
-     * <p/>
-     * Come default spazzola tutti i campi della Entity <br>
-     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-     * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
+     * Crea una Table già filtrata sulla company corrente
+     * The concrete subclass must override for a specific Table.
+     *
+     * @return the Table
      */
-    protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{
-                WamCompanyEntity_.company,
-                Turno_.chiave,
-                Turno_.servizio,
-                Turno_.inizio,
-                Turno_.fine,
-                Turno_.titoloExtra,
-                Turno_.localitaExtra,
-                Turno_.assegnato};
+    @Override
+    public ATable createTable() {
+        return new TurnoTable(this);
     }// end of method
+
 
 
     /**

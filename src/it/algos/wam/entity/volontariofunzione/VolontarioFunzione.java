@@ -5,6 +5,7 @@ import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.query.AQuery;
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -23,6 +24,7 @@ import java.util.List;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
+@DefaultSort({"company,true","funzione,true","volontario,true"})
 public class VolontarioFunzione extends WamCompanyEntity {
 
     // versione della classe per la serializzazione

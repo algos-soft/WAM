@@ -58,6 +58,8 @@ public class FunzioneTable extends WamTable {
     protected void createAdditionalColumns() {
         addGeneratedColumn(COL_ICON, new IconColumnGenerator());
         addGeneratedColumn(COL_FUNZIONI, new FunzColumnGenerator());
+        addGeneratedColumn("testdabuttare", new TestColumnGenerator());
+        addGeneratedColumn("testdabuttare2", new TestColumnGenerator2());
     }// end of method
 
 
@@ -88,6 +90,8 @@ public class FunzioneTable extends WamTable {
                     Funzione_.sigla,
                     Funzione_.descrizione,
                     COL_FUNZIONI,
+                    "testdabuttare",
+                    "testdabuttare2",
             };// end of array
         }// end of if/else cycle
     }// end of method
@@ -129,7 +133,7 @@ public class FunzioneTable extends WamTable {
         setColumnExpandRatio(Funzione_.descrizione, 2);
         setColumnExpandRatio(COL_FUNZIONI, 3);
 
-        setColumnWidth(Funzione_.ordine, 50);
+        setColumnWidth(Funzione_.ordine, 45);
         setColumnWidth(COL_ICON, 80);
         setColumnWidth(Funzione_.sigla, 120);
     }// end of method
@@ -160,7 +164,7 @@ public class FunzioneTable extends WamTable {
                 }// fine del blocco try-catch
             }// end of if cycle
 
-            if (Pref.getBool(WAMApp.CLICK_BOTTONI_IN_LISTA,false)) {
+            if (Pref.getBool(WAMApp.CLICK_BOTTONI_IN_LISTA, false)) {
                 if (LibSession.isAdmin()) {
                     bIcon.addClickListener(new Button.ClickListener() {
                         @Override
@@ -241,5 +245,47 @@ public class FunzioneTable extends WamTable {
             return new Label(str, ContentMode.HTML);
         }// end of inner method
     }// end of inner class
+
+
+    private class TestColumnGenerator implements ColumnGenerator {
+        /**
+         * Genera la cella delle funzioni.
+         * Usando una Label come componente, la selezione della
+         * riga funziona anche cliccando sulla colonna custom.
+         */
+        public Component generateCell(Table table, Object itemId, Object columnId) {
+            Funzione funzione= (Funzione)getBean(table,itemId);
+            return new Label(funzione.getSigla(), ContentMode.HTML);
+        }// end of inner method
+    }// end of inner class
+
+    private class TestColumnGenerator2 implements ColumnGenerator {
+        /**
+         * Genera la cella delle funzioni.
+         * Usando una Label come componente, la selezione della
+         * riga funziona anche cliccando sulla colonna custom.
+         */
+        public Component generateCell(Table table, Object itemId, Object columnId) {
+            String labelTxt = (String) getPropValue(table, itemId, Funzione_.sigla.getName());
+            return new Label(labelTxt, ContentMode.HTML);
+        }// end of inner method
+    }// end of inner class
+
+    protected Object getBean(Table table, Object itemId) {
+        Object obj = null;
+        BeanItem bean = null;
+        Item item = table.getItem(itemId);
+
+        bean = LibBean.fromItem(item);
+        obj = bean.getBean();
+
+        return obj;
+    }// end of inner method
+
+    protected Object getPropValue(Table table, Object itemId, String propName) {
+        Item item = table.getItem(itemId);
+        Property prop = item.getItemProperty(propName);
+        return prop.getValue();
+    }// end of inner method
 
 }// end of class

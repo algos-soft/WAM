@@ -4,6 +4,7 @@ package it.algos.wam.entity.volontariofunzione;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.table.ATable;
 
 /**
  * Gestione (minimale) del modulo specifico
@@ -19,8 +20,6 @@ public class VolontarioFunzioneMod extends ModulePop {
     // icona (eventuale) del modulo
     public static Resource ICON = FontAwesome.USER;
 
-    //--titolo della table
-    private static String CAPTION = "Volontari per ogni funzione";
 
     /**
      * Costruttore senza parametri
@@ -32,8 +31,18 @@ public class VolontarioFunzioneMod extends ModulePop {
      */
     public VolontarioFunzioneMod() {
         super(VolontarioFunzione.class, MENU_ADDRESS, ICON);
-        this.getTable().setCaption(CAPTION);
     }// end of constructor
+
+    /**
+     * Crea una Table già filtrata sulla company corrente
+     * The concrete subclass must override for a specific Table.
+     *
+     * @return the Table
+     */
+    @Override
+    public ATable createTable() {
+        return new VolontarioFunzioneTable(this);
+    }// end of method
 
 }// end of class
 

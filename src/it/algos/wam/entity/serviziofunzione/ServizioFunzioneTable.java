@@ -33,10 +33,10 @@ import java.awt.Button;
 public class ServizioFunzioneTable extends WamTable {
 
     // id della colonna generata "colore"
-    protected static final String COL_COLORE_SERVIZIO = "gruppo";
+    private static final String COL_COLORE_SERVIZIO = "gruppo";
 
     // id della colonna generata "icona"
-    protected static final String COL_ICONA_FUNZIONE = "icona";
+    private static final String COL_ICONA_FUNZIONE = "icona";
 
     //--titolo della table
     private static String CAPTION = "Funzioni per ogni servizio";
@@ -83,6 +83,7 @@ public class ServizioFunzioneTable extends WamTable {
     }// end of method
 
 
+    @Override
     protected void fixColumn() {
         setColumnHeader(ServizioFunzione_.ordine, "##");
 
@@ -146,7 +147,6 @@ public class ServizioFunzioneTable extends WamTable {
                     glyph = FontAwesome.fromCodepoint(codepoint);
                     bIcon.setCaption(glyph.getHtml());
                 } catch (Exception e) {
-                    int a = 78;
                 }// fine del blocco try-catch
             }// end of if cycle
 

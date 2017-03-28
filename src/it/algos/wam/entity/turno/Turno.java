@@ -12,6 +12,7 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.DateConvertUtils;
@@ -43,6 +44,7 @@ import java.util.List;
  * <p>
  */
 @Entity
+@DefaultSort({"company,true","chiave,true","servizio,true"})
 public class Turno extends WamCompanyEntity {
 
     //------------------------------------------------------------------------------------------------------------------------

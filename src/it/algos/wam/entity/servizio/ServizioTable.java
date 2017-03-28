@@ -16,7 +16,6 @@ import com.vaadin.ui.components.colorpicker.ColorChangeListener;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
-import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.multiazienda.CompanySessionLib;
@@ -32,8 +31,8 @@ import java.util.List;
  */
 public class ServizioTable extends WamTable {
 
-    // id della colonna generata "durata"
-    protected static final String COL_DURATA = "Durata";
+    // id della colonna generata "orario"
+    protected static final String COL_ORARIO = "Orario";
 
     // id della colonna generata "funzioni"
     protected static final String COL_FUNZIONI = "Funzioni previste";
@@ -61,7 +60,7 @@ public class ServizioTable extends WamTable {
      */
     @Override
     protected void createAdditionalColumns() {
-        addGeneratedColumn(COL_DURATA, new DurataColumnGenerator());
+        addGeneratedColumn(COL_ORARIO, new OrarioColumnGenerator());
         addGeneratedColumn(COL_FUNZIONI, new FunzioniColumnGenerator());
         addGeneratedColumn(COL_COLORE, new ColoreColumnGenerator());
     }// end of method
@@ -82,7 +81,7 @@ public class ServizioTable extends WamTable {
                     Servizio_.sigla,
                     Servizio_.visibile,
                     Servizio_.descrizione,
-                    COL_DURATA,
+                    COL_ORARIO,
                     COL_FUNZIONI,
                     COL_COLORE
             };// end of array
@@ -92,7 +91,7 @@ public class ServizioTable extends WamTable {
                     Servizio_.sigla,
                     Servizio_.visibile,
                     Servizio_.descrizione,
-                    COL_DURATA,
+                    COL_ORARIO,
                     COL_FUNZIONI,
                     COL_COLORE
             };// end of array
@@ -130,7 +129,7 @@ public class ServizioTable extends WamTable {
         setColumnHeader(Servizio_.descrizione, "Descrizione");
 
         setColumnAlignment(Servizio_.visibile, Align.CENTER);
-        setColumnAlignment(COL_DURATA, Align.LEFT);
+        setColumnAlignment(COL_ORARIO, Align.LEFT);
         setColumnAlignment(COL_COLORE, Align.CENTER);
 
         setColumnExpandRatio(COL_FUNZIONI, 2);
@@ -138,15 +137,15 @@ public class ServizioTable extends WamTable {
         setColumnExpandRatio(Servizio_.descrizione, 2);
 
         setColumnWidth(Servizio_.visibile, 50);
-        setColumnWidth(Servizio_.ordine, 50);
-        setColumnWidth(COL_DURATA, 140);
+        setColumnWidth(Servizio_.ordine, 45);
+        setColumnWidth(COL_ORARIO, 140);
         setColumnWidth(COL_COLORE, 100);
     }// end of method
 
     /**
-     * Colonna generata: durata.
+     * Colonna generata: orario.
      */
-    private class DurataColumnGenerator implements ColumnGenerator {
+    private class OrarioColumnGenerator implements ColumnGenerator {
 
         /**
          * Genera la cella della durata.

@@ -391,6 +391,10 @@ public class WamUI extends UI {
             MenuBar menuBarAdmin = new MenuBar();
 //            addMod(menuBarAdmin, new LogMod());
             addView(menuBarAdmin, ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
+            MenuBar.MenuItem menuTavole = menuBarAdmin.addItem("Tavole", null, null);
+            addMod(menuTavole, new ServizioFunzioneMod());
+            addMod(menuTavole, new VolontarioFunzioneMod());
+            addMod(menuTavole, new TurnoMod());
             navComp.addMenu(menuBarAdmin, "verde");
         }// end of if cycle
 
@@ -407,11 +411,11 @@ public class WamUI extends UI {
             addView(menuUtilities, MgrConfigScreen.class, "Settings", FontAwesome.WRENCH);
             addMod(menuBarDeveloper, new WamCompanyMod());
 
-            MenuBar.MenuItem menuTavole = menuBarDeveloper.addItem("Tavole", null, null);
-            addMod(menuTavole, new ServizioFunzioneMod());
-            addMod(menuTavole, new VolontarioFunzioneMod());
-            addMod(menuTavole, new TurnoMod());
-            addMod(menuTavole, new IscrizioneMod());
+            MenuBar.MenuItem menuTavoleDev = menuBarDeveloper.addItem("Tavole", null, null);
+//            addMod(menuTavoleDev, new ServizioFunzioneMod());
+//            addMod(menuTavoleDev, new VolontarioFunzioneMod());
+//            addMod(menuTavoleDev, new TurnoMod());
+            addMod(menuTavoleDev, new IscrizioneMod());
 
             navComp.addMenu(menuBarDeveloper, "rosso");
         }// end of if cycle
