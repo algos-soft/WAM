@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Gac on 02 nov 2016.
- * Scheda personalizzata per le entity Funzione, Servizio, Volonario
+ * Scheda personalizzata per le entity Funzione, Servizio, Volontario
  */
 public abstract class WanForm extends ModuleForm {
 

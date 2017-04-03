@@ -7,7 +7,9 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
 import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneTable;
+import it.algos.webbase.domain.log.LogTablePortal;
 import it.algos.webbase.web.table.ATable;
+import it.algos.webbase.web.table.TablePortal;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -50,7 +52,6 @@ public class TurnoMod extends WamMod {
     }// end of method
 
 
-
     /**
      * Crea i campi visibili nella scheda (form)
      * <p/>
@@ -61,7 +62,6 @@ public class TurnoMod extends WamMod {
     protected Attribute<?, ?>[] creaFieldsForm() {
         return new Attribute[]{
                 WamCompanyEntity_.company,
-//                Turno_.iscrizioni,
                 Turno_.servizio,
                 Turno_.inizio,
                 Turno_.fine,
@@ -72,6 +72,20 @@ public class TurnoMod extends WamMod {
     }// end of method
 
 
+    /**
+     * Crea i campi visibili nella scheda (search)
+     * <p>
+     * Come default spazzola tutti i campi della Entity <br>
+     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
+     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
+     */
+    protected Attribute<?, ?>[] creaFieldsSearch() {
+        return new Attribute[]{
+                WamCompanyEntity_.company,
+                Turno_.servizio,
+                Turno_.inizio,
+                Turno_.assegnato};
+    }// end of method
 
 }// end of class
 

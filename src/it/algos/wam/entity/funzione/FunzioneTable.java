@@ -4,6 +4,8 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.event.Action;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
@@ -17,6 +19,7 @@ import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.lib.LibTable;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.util.List;
@@ -29,7 +32,7 @@ public class FunzioneTable extends WamTable {
 
 
     //--id della colonna generata "Icona"
-    private static final String COL_ICON = "Icona";
+    private static final String COL_ICON = Funzione_.iconCodepoint.getName();
 
 
     //--id della colonna generata "Altre funzioni"
@@ -58,8 +61,6 @@ public class FunzioneTable extends WamTable {
     protected void createAdditionalColumns() {
         addGeneratedColumn(COL_ICON, new IconColumnGenerator());
         addGeneratedColumn(COL_FUNZIONI, new FunzColumnGenerator());
-        addGeneratedColumn("testdabuttare", new TestColumnGenerator());
-        addGeneratedColumn("testdabuttare2", new TestColumnGenerator2());
     }// end of method
 
 
@@ -90,8 +91,6 @@ public class FunzioneTable extends WamTable {
                     Funzione_.sigla,
                     Funzione_.descrizione,
                     COL_FUNZIONI,
-                    "testdabuttare",
-                    "testdabuttare2",
             };// end of array
         }// end of if/else cycle
     }// end of method
@@ -122,6 +121,7 @@ public class FunzioneTable extends WamTable {
     @Override
     protected void fixColumn() {
         setColumnHeader(Funzione_.ordine, "##"); // visibile solo per il developer
+        setColumnHeader(COL_ICON, "Icona");
         setColumnHeader(Funzione_.code, "Cod.");
         setColumnHeader(Funzione_.sigla, "Sigla");
         setColumnHeader(Funzione_.descrizione, "Descrizione");
@@ -146,60 +146,45 @@ public class FunzioneTable extends WamTable {
 
         public Component generateCell(Table source, Object itemId, Object columnId) {
             Button bIcon = new Button();
-            final Item item = source.getItem(itemId);
+            FontAwesome glyph = null;
+            int   codepoint =  LibTable.getInt(source, itemId, columnId);
+            Funzione funzione = (Funzione) LibBean.getEntity(source, itemId);
             bIcon.setHtmlContentAllowed(true);
             bIcon.setWidth("3em");
             bIcon.setCaption("...");
             bIcon.addStyleName("blue");
 
-            Property prop = item.getItemProperty(Funzione_.iconCodepoint.getName());
-            if (prop != null) {
-                FontAwesome glyph = null;
-                int codepoint = (int) prop.getValue();
-                try {
-                    glyph = FontAwesome.fromCodepoint(codepoint);
-                    bIcon.setCaption(glyph.getHtml());
-                } catch (Exception e) {
-                    int a = 78;
-                }// fine del blocco try-catch
-            }// end of if cycle
+            try {
+                glyph = FontAwesome.fromCodepoint(codepoint);
+                bIcon.setCaption(glyph.getHtml());
+            } catch (Exception e) {
+            }// fine del blocco try-catch
 
-            if (Pref.getBool(WAMApp.CLICK_BOTTONI_IN_LISTA, false)) {
-                if (LibSession.isAdmin()) {
-                    bIcon.addClickListener(new Button.ClickListener() {
-                        @Override
-                        public void buttonClick(Button.ClickEvent clickEvent) {
-                            SelectIconDialog dialog = new SelectIconDialog();
-                            dialog.addCloseListener(new SelectIconDialog.CloseListener() {
-                                @Override
-                                public void dialogClosed(SelectIconDialog.DialogEvent event) {
-                                    int exitcode = event.getExitcode();
-                                    BeanItem bi = LibBean.fromItem(item);
-                                    Funzione funz = (Funzione) bi.getBean();
-
-                                    switch (exitcode) {
-                                        case 0:   // close, no action
-                                            break;
-                                        case 1:   // icon selected
-                                            int codepoint = event.getCodepoint();
-                                            funz.setIconCodepoint(codepoint);
-                                            funz.save();
-                                            refresh();
-                                            break;
-                                        case 2:   // rebove icon
-                                            funz.setIconCodepoint(0);
-                                            funz.save();
-                                            refresh();
-                                            break;
-                                    } // fine del blocco switch
-
-                                }// end of inner method
-                            });// end of anonymous inner class
-                            dialog.show();
-
-                        }// end of inner method
-                    });// end of anonymous inner class
-                }// end of if cycle
+            if (LibSession.isAdmin() || Pref.getBool(WAMApp.CLICK_BOTTONI_IN_LISTA, false)) {
+                bIcon.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent clickEvent) {
+                        SelectIconDialog dialog = new SelectIconDialog();
+                        dialog.addCloseListener(new SelectIconDialog.CloseListener() {
+                            @Override
+                            public void dialogClosed(SelectIconDialog.DialogEvent event) {
+                                switch (event.getExitcode()) {
+                                    case 0:   // close, no action
+                                        break;
+                                    case 1:   // icon selected
+                                        funzione.setIconCodepoint(event.getCodepoint());
+                                        break;
+                                    case 2:   // remove icon
+                                        funzione.setIconCodepoint(0);
+                                        break;
+                                } // fine del blocco switch
+                                funzione.save();
+                                refresh();
+                            }// end of inner method
+                        });// end of anonymous inner class
+                        dialog.show();
+                    }// end of inner method
+                });// end of anonymous inner class
             }// end of if cycle
 
             return bIcon;
@@ -216,86 +201,33 @@ public class FunzioneTable extends WamTable {
          * Usando una Label come componente, la selezione della
          * riga funziona anche cliccando sulla colonna custom.
          */
-        public Component generateCell(Table table, Object itemId, Object columnId) {
-            String str = "";
-            Item item = table.getItem(itemId);
-            BeanItem bean = LibBean.fromItem(item);
-            Funzione funzione = (Funzione) bean.getBean();
+        public Component generateCell(Table source, Object itemId, Object columnId) {
+            String labelTxt = "";
+            Funzione funz;
+            Funzione funzione = (Funzione) LibBean.getEntity(source, itemId);
 
             List<Funzione> lista = funzione.getFunzioniDipendenti();
             for (int k = 0; k < lista.size(); k++) {
-                Funzione funz = lista.get(k);
+                funz = lista.get(k);
                 int codePoint = funz.getIconCodepoint();
                 if (codePoint > 0) {
                     FontAwesome glyph = FontAwesome.fromCodepoint(codePoint);
-                    str += glyph.getHtml() + " ";
+                    labelTxt += glyph.getHtml() + " ";
                 }// fine del blocco if
 
                 String sigla = funz.getCode();
-                str += "<strong>";
-                str += "<font color=\"blue\">" + sigla + "</font>";
-                str += "</strong>";
+                labelTxt += "<strong>";
+                labelTxt += "<font color=\"blue\">" + sigla + "</font>";
+                labelTxt += "</strong>";
 
                 if (k < lista.size() - 1) {
-                    str += ", ";
+                    labelTxt += ", ";
                 }
 
             }
 
-            return new Label(str, ContentMode.HTML);
-        }// end of inner method
-    }// end of inner class
-
-
-    private class TestColumnGenerator implements ColumnGenerator {
-        /**
-         * Genera la cella delle funzioni.
-         * Usando una Label come componente, la selezione della
-         * riga funziona anche cliccando sulla colonna custom.
-         */
-        public Component generateCell(Table table, Object itemId, Object columnId) {
-            Funzione funzione = (Funzione) getBean(table, itemId);
-            return new Label(funzione.getSigla(), ContentMode.HTML);
-        }// end of inner method
-    }// end of inner class
-
-    private class TestColumnGenerator2 implements ColumnGenerator {
-        /**
-         * Genera la cella delle funzioni.
-         * Usando una Label come componente, la selezione della
-         * riga funziona anche cliccando sulla colonna custom.
-         */
-        public Component generateCell(Table table, Object itemId, Object columnId) {
-            String labelTxt = (String) getPropValue(table, itemId, Funzione_.sigla.getName());
             return new Label(labelTxt, ContentMode.HTML);
         }// end of inner method
     }// end of inner class
-
-    protected Object getBean(Table table, Object itemId) {
-        Object obj = null;
-        BeanItem bean = null;
-        Item item = table.getItem(itemId);
-
-        bean = LibBean.fromItem(item);
-        obj = bean.getBean();
-
-        return obj;
-    }// end of inner method
-
-    protected Object getPropValue(Table table, Object itemId, String propName) {
-        Object value = null;
-        Item item = table.getItem(itemId);
-        Property prop = null;
-
-        if (item != null) {
-            prop = item.getItemProperty(propName);
-        }// end of if cycle
-
-        if (prop != null) {
-            value = prop.getValue();
-        }// end of if cycle
-
-        return value;
-    }// end of inner method
 
 }// end of class

@@ -21,6 +21,7 @@ import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.lib.LibTable;
 import it.algos.webbase.web.module.ModulePop;
 
 import java.util.List;
@@ -32,13 +33,13 @@ import java.util.List;
 public class ServizioTable extends WamTable {
 
     // id della colonna generata "orario"
-    protected static final String COL_ORARIO = "Orario";
+    protected static final String COL_ORARIO = Servizio_.orario.getName();
 
     // id della colonna generata "funzioni"
     protected static final String COL_FUNZIONI = "Funzioni previste";
 
     // id della colonna generata "colore"
-    protected static final String COL_COLORE = ServizioMod.LABEL_COLOR;
+    protected static final String COL_COLORE = Servizio_.colore.getName();
 
     //--titolo della table
     private static String CAPTION = "Servizi previsti. Ogni servizio ha una o più funzioni, di cui almeno una è obbligatoria (in rosso)";
@@ -127,6 +128,7 @@ public class ServizioTable extends WamTable {
         setColumnHeader(Servizio_.sigla, "Sigla");
         setColumnHeader(Servizio_.visibile, "Tab");
         setColumnHeader(Servizio_.descrizione, "Descrizione");
+        setColumnHeader(COL_COLORE, ServizioMod.LABEL_COLOR);
 
         setColumnAlignment(Servizio_.visibile, Align.CENTER);
         setColumnAlignment(COL_ORARIO, Align.LEFT);
@@ -151,23 +153,17 @@ public class ServizioTable extends WamTable {
          * Genera la cella della durata.
          */
         public Component generateCell(Table source, Object itemId, Object columnId) {
+            boolean isOrario =  LibTable.getBool(source, itemId, columnId);
+            String labelTxt;
 
-            Property prop;
-            Item item = source.getItem(itemId);
-
-            prop = item.getItemProperty(Servizio_.orario.getName());
-            boolean orario = (Boolean) prop.getValue();
-
-            String s;
-            if (orario) {
-                BeanItem bi = LibBean.fromItem(item);
-                Servizio serv = (Servizio) bi.getBean();
-                s = serv.getStrOrario();
+            if (isOrario) {
+                Servizio serv = (Servizio) LibBean.getEntity(source, itemId);
+                labelTxt = serv.getStrOrario();
             } else {
-                s = "variabile";
-            }
+                labelTxt = "variabile";
+            }// end of if/else cycle
 
-            return new Label(s);
+            return new Label(labelTxt);
         }// end of inner method
     }// end of inner class
 
@@ -182,11 +178,8 @@ public class ServizioTable extends WamTable {
          * Usando una Label come componente, la selezione della
          * riga funziona anche cliccando sulla colonna custom.
          */
-        public Component generateCell(Table table, Object itemId, Object columnId) {
-
-            Item item = table.getItem(itemId);
-            BeanItem bi = LibBean.fromItem(item);
-            Servizio serv = (Servizio) bi.getBean();
+        public Component generateCell(Table source, Object itemId, Object columnId) {
+            Servizio serv = (Servizio) LibBean.getEntity(source, itemId);
 
             List<ServizioFunzione> lista = serv.getServizioFunzioniOrd();
             String str = "";
@@ -228,10 +221,9 @@ public class ServizioTable extends WamTable {
          * Genera la cella del colore.
          */
         public Component generateCell(Table source, Object itemId, Object columnId) {
-            Property prop;
-            Item item = source.getItem(itemId);
-            prop = item.getItemProperty(Servizio_.colore.getName());
-            int codColore = (Integer) prop.getValue();
+            int   codColore =  LibTable.getInt(source, itemId, columnId);
+            final Servizio serv = (Servizio) LibBean.getEntity(source, itemId);
+
             ColorPicker picker = new ServizioColorPicker();
             picker.setWidth("45");
             picker.setColor(new Color(codColore));
@@ -242,8 +234,6 @@ public class ServizioTable extends WamTable {
                 picker.addColorChangeListener(new ColorChangeListener() {
                     @Override
                     public void colorChanged(ColorChangeEvent colorChangeEvent) {
-                        BeanItem bi = LibBean.fromItem(item);
-                        Servizio serv = (Servizio) bi.getBean();
                         int colorcode = colorChangeEvent.getColor().getRGB();
                         serv.setColore(colorcode);
                         serv.save();

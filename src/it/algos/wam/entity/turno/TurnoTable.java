@@ -7,6 +7,9 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
+import com.vaadin.ui.components.colorpicker.ColorChangeListener;
+import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.entity.funzione.Funzione;
@@ -19,9 +22,11 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzioneTable;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione_;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.lib.LibWam;
+import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibBean;
 import it.algos.webbase.web.lib.LibDate;
+import it.algos.webbase.web.lib.LibTable;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
 
@@ -41,7 +46,7 @@ import java.util.List;
 public class TurnoTable extends WamTable {
 
     // id della colonna generata "giorno"
-    private static final String COL_GIORNO = "giorno";
+    private static final String COL_GIORNO = Turno_.inizio.getName();
 
     // id della colonna generata "colore"
     private static final String COL_COLORE_SERVIZIO = "gruppo";
@@ -129,6 +134,7 @@ public class TurnoTable extends WamTable {
 
     @Override
     protected void fixColumn() {
+        setColumnHeader(COL_GIORNO, "Giorno");
         setColumnHeader(COL_ORDINE_SERVIZIO, "##");
 
         setColumnAlignment(COL_GIORNO, Align.CENTER);
@@ -145,6 +151,10 @@ public class TurnoTable extends WamTable {
         setColumnWidth(COL_STATO, 45);
     }// end of method
 
+    private Servizio getServizio(Table source, Object itemId) {
+        return (Servizio) LibTable.getPropValue(source, itemId, Turno_.servizio.getName());
+    }// end of method
+
 
     /**
      * Colonna generata: giorno.
@@ -152,26 +162,16 @@ public class TurnoTable extends WamTable {
     private class GiornoColumnGenerator implements ColumnGenerator {
 
         public Component generateCell(Table source, Object itemId, Object columnId) {
-            Label labelGiorno = null;
-            Date inizio = null;
+            Date inizio = (Date) LibTable.getPropValue(source, itemId, columnId);
+            DateTimeFormatter formatter;
             String giornoTxt = "";
-            final Item item = source.getItem(itemId);
-
-            Property prop = item.getItemProperty(Turno_.inizio.getName());
-            if (prop != null) {
-                inizio = (Date) prop.getValue();
-            }// end of if cycle
 
             if (inizio != null) {
-                giornoTxt = LibDate.toStringDMYY(inizio);
-                labelGiorno = new Label(giornoTxt);
+                formatter = DateTimeFormat.forPattern("EEE, d MMM");
+                giornoTxt = formatter.print(new DateTime(inizio));
             }// end of if cycle
 
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("EEE, d MMM");
-            giornoTxt = formatter.print(new DateTime(inizio));
-            labelGiorno = new Label(giornoTxt);
-
-            return labelGiorno;
+            return new Label(giornoTxt);
         }// end of inner method
     }// end of inner class
 
@@ -185,10 +185,7 @@ public class TurnoTable extends WamTable {
          * Genera la cella del colore.
          */
         public Component generateCell(Table source, Object itemId, Object columnId) {
-            Property prop;
-            Item item = source.getItem(itemId);
-            prop = item.getItemProperty(Turno_.servizio.getName());
-            Servizio serv = (Servizio) prop.getValue();
+            Servizio serv = getServizio(source, itemId);
             int codColore = serv.getColore();
             ColorPicker picker = new ServizioColorPicker();
             picker.setWidth("45");
@@ -200,20 +197,15 @@ public class TurnoTable extends WamTable {
         }// end of method
     }// end of class
 
+
     /**
      * Colonna generata: ordine.
      */
     private class OrdineColumnGenerator implements ColumnGenerator {
 
         public Component generateCell(Table source, Object itemId, Object columnId) {
+            Servizio serv = getServizio(source, itemId);
             Label ordine = null;
-            Servizio serv = null;
-            final Item item = source.getItem(itemId);
-
-            Property prop = item.getItemProperty(Turno_.servizio.getName());
-            if (prop != null) {
-                serv = (Servizio) prop.getValue();
-            }// end of if cycle
 
             if (serv != null) {
                 ordine = new Label("" + serv.getOrdine());
@@ -234,15 +226,15 @@ public class TurnoTable extends WamTable {
          * Usando una Label come componente, la selezione della
          * riga funziona anche cliccando sulla colonna custom.
          */
-        public Component generateCell(Table table, Object itemId, Object columnId) {
-            Item item = table.getItem(itemId);
-            BeanItem bi = LibBean.fromItem(item);
-            Turno turno = (Turno) bi.getBean();
+        public Component generateCell(Table source, Object itemId, Object columnId) {
+            Servizio serv = getServizio(source, itemId);
+            Label sigla = null;
 
-            Servizio serv = turno.getServizio();
-            String str = serv.getSigla();
+            if (serv != null) {
+                sigla = new Label(serv.getSigla(), ContentMode.HTML);
+            }// end of if cycle
 
-            return new Label(str, ContentMode.HTML);
+            return sigla;
         }// end of inner method
     }// end of inner class
 
@@ -256,19 +248,16 @@ public class TurnoTable extends WamTable {
          * Genera la cella della durata.
          */
         public Component generateCell(Table source, Object itemId, Object columnId) {
-            String s;
-            Item item = source.getItem(itemId);
-            BeanItem bi = LibBean.fromItem(item);
-            Turno turno = (Turno) bi.getBean();
-            Servizio serv = turno.getServizio();
+            Servizio serv = getServizio(source, itemId);
+            String labelText;
 
             if (serv.isOrario()) {
-                s = serv.getStrOrario();
+                labelText = serv.getStrOrario();
             } else {
-                s = "variabile";
-            }
+                labelText = "variabile";
+            }// end of if/else cycle
 
-            return new Label(s);
+            return new Label(labelText);
         }// end of inner method
     }// end of inner class
 
@@ -282,13 +271,11 @@ public class TurnoTable extends WamTable {
          * Usando una Label come componente, la selezione della
          * riga funziona anche cliccando sulla colonna custom.
          */
-        public Component generateCell(Table table, Object itemId, Object columnId) {
+        public Component generateCell(Table source, Object itemId, Object columnId) {
+            Turno turno = (Turno) LibBean.getEntity(source, itemId);
+            Servizio servizio = getServizio(source, itemId);
             String str = "";
             String tag = ";&nbsp;&nbsp;";
-            Item item = table.getItem(itemId);
-            BeanItem bean = LibBean.fromItem(item);
-            Turno turno = (Turno) bean.getBean();
-            Servizio servizio = turno.getServizio();
             Servizio serv;
             Funzione funz;
             Volontario vol = null;
@@ -301,7 +288,6 @@ public class TurnoTable extends WamTable {
 
             for (ServizioFunzione servFunz : lista) {
                 vol = null;
-//                serv = servFunz.getServizio();
                 funz = servFunz.getFunzione();
                 codePoint = funz.getIconCodepoint();
 

@@ -1,6 +1,7 @@
 package it.algos.wam.entity.volontario;
 
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
@@ -153,7 +154,7 @@ public class VolontarioMod extends WamMod {
         tablePortal.table = this.createTable();
         tablePortal.table.refresh();
 
-//        return new VolontarioTable(this);
+        //        return new VolontarioTable(this);
     }// end of method
 
 }// end of class

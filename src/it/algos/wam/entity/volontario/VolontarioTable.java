@@ -234,9 +234,8 @@ public class VolontarioTable extends WamTable {
                 label = new Label(FontAwesome.CHECK.getHtml(), ContentMode.HTML);
                 label.addStyleName("verde");
             } else {
-//                label = new Label(FontAwesome.REMOVE.getHtml(), ContentMode.HTML);
-//                label.addStyleName("rosso");
-
+               label = new Label(FontAwesome.CLOSE.getHtml(), ContentMode.HTML);
+                label.addStyleName("rosso");
             }// fine del blocco if-else
 
             return label;

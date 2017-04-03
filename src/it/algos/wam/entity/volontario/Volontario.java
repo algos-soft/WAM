@@ -26,6 +26,7 @@ import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.login.UserIF;
 import it.algos.webbase.web.query.AQuery;
 import it.algos.webbase.web.query.SortProperty;
+import it.algos.webbase.web.search.SearchManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
@@ -71,7 +72,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     @NotEmpty
     @Column(length = 30)
     @Index
-    @AIField(type = AFType.text, required = true, width = "12em", caption = "Nome", prompt = "Giovanni", help = "Inserire un nome. Obbligatorio")
+    @AIField(type = AFType.text, required = true, width = "12em", caption = "Nome", prompt = "Giovanni", help = "Inserire un nome. Obbligatorio", search = SearchManager.SearchType.STARTS_WITH)
     private String nome = "";
     /**
      * Cognome del volontario (obbligatorio, non unico)
@@ -79,7 +80,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     @NotEmpty
     @Column(length = 30)
     @Index
-    @AIField(type = AFType.text, required = true, width = "16em", caption = "Cognome", prompt = "Rossi", help = "Inserire un cognome. Obbligatorio")
+    @AIField(type = AFType.text, required = true, width = "16em", caption = "Cognome", prompt = "Rossi", help = "Inserire un cognome. Obbligatorio", search = SearchManager.SearchType.STARTS_WITH)
     private String cognome = "";
     /**
      * Sigla di codifica interna (obbligatoria, unica in generale indipendentemente dalla company)
