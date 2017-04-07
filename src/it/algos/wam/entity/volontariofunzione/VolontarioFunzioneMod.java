@@ -34,6 +34,13 @@ public class VolontarioFunzioneMod extends ModulePop {
     }// end of constructor
 
     /**
+     * Sovrascrive per DISABILITARE il doppio click nella lista
+     */
+    @Override
+    public void edit() {
+    }// end of method
+
+    /**
      * Crea una Table già filtrata sulla company corrente
      * The concrete subclass must override for a specific Table.
      *

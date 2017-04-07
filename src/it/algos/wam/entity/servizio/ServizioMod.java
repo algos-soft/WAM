@@ -16,6 +16,7 @@ import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.form.ModuleForm;
+import it.algos.webbase.web.query.AQuery;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
@@ -86,27 +87,33 @@ public class ServizioMod extends WamModSposta {
      */
     @Override
     public void delete() {
-        boolean cont = true;
-        final Object[] ids = getTable().getSelectedIds();
-        for (Object id : ids) {
-            BaseEntity entity = getEntityManager().find(getEntityClass(), id);
-            if (entity != null && entity instanceof Servizio) {
-                Servizio serv = (Servizio) entity;
-                List<ServizioFunzione> sfs = serv.getServizioFunzioniOrdine();
-                for (ServizioFunzione sf : sfs) {
-                    List iscrizioni = CompanyQuery.getList(Iscrizione.class, Iscrizione_.servizioFunzione, sf);
-                    if (iscrizioni.size() > 0) {
-                        cont = false;
+        boolean cancella = true;
+        Servizio serv = null;
+        List<ServizioFunzione> servFunzLista = null;
+        int num = 0;
+
+        for (Object id : getTable().getSelectedIds()) {
+            serv = getServ(id);
+            if (serv != null) {
+                servFunzLista = serv.getServizioFunzioniOrdine();
+                for (ServizioFunzione servFunz : servFunzLista) {
+                    num = AQuery.count(Iscrizione.class, Iscrizione_.servizioFunzione, servFunz);
+                    if (num > 0) {
+                        cancella = false;
                         break;
                     }// end of if cycle
                 }// end of for cycle
             }// end of if cycle
         }// end of for cycle
 
-        if (cont) {
+        if (cancella) {
             super.delete();
         } else {
-            Notification.show("Impossibile cancellare i servizi selezionati perché dei volontari si sono già iscritti.", Notification.Type.WARNING_MESSAGE);
+            if (getTable().getSelectedIds().length == 1) {
+                Notification.show("Impossibile cancellare il servizio selezionato perché alcuni volontari lo hanno già effettuato.", Notification.Type.WARNING_MESSAGE);
+            } else {
+                Notification.show("Impossibile cancellare i servizi selezionati perché alcuni volontari li hanno già effettuati.", Notification.Type.WARNING_MESSAGE);
+            }// end of if/else cycle
         }// end of if/else cycle
     }// end of method
 
@@ -154,6 +161,17 @@ public class ServizioMod extends WamModSposta {
         }// end of if cycle
 
         return tavola;
+    }// end of method
+
+    private Servizio getServ(Object id) {
+        Servizio servizio = null;
+        BaseEntity entity = getEntityManager().find(Servizio.class, id);
+
+        if (entity != null) {
+            servizio = (Servizio) entity;
+        }// end of if cycle
+
+        return servizio;
     }// end of method
 
 }// end of class

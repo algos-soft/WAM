@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
-@DefaultSort({"company,true","servizio,true","ordine,true"})
+@DefaultSort({"company,true", "servizio,true", "ordine,true"})
 public class ServizioFunzione extends WamCompanyEntity implements Comparable<ServizioFunzione> {
 
     private static final long serialVersionUID = 1L;
@@ -96,7 +96,7 @@ public class ServizioFunzione extends WamCompanyEntity implements Comparable<Ser
      * @param servizio     di riferimento (obbligatorio)
      * @param funzione     di riferimento (obbligatorio)
      * @param obbligatoria la funzione (facoltativo)
-     * @param ordine
+     * @param ordine       di presentazione nelle liste e nei popup
      */
     public ServizioFunzione(WamCompany company, Servizio servizio, Funzione funzione, boolean obbligatoria, int ordine) {
         super();

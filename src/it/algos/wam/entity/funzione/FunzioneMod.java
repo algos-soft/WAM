@@ -52,7 +52,6 @@ public class FunzioneMod extends WamModSposta {
      * The concrete subclass must override for a specific Form.
      *
      * @param item singola istanza della classe
-     *
      * @return the Form
      */
     @Override
@@ -99,28 +98,27 @@ public class FunzioneMod extends WamModSposta {
 
     /**
      * Override di delete per controllare che non ci siano
-     * servizi associate alle funzioni da cancellare
+     * servizi associati alla/e funzione/i da cancellare
      */
     @Override
     public void delete() {
-        boolean continua = true;
-        final Object[] ids = getTable().getSelectedIds();
+        boolean cancella = true;
 
-        for (Object id : ids) {
-            BaseEntity entity = getEntityManager().find(getEntityClass(), id);
-            if (entity != null && entity instanceof Funzione) {
-                Funzione funz = (Funzione) entity;
-                if (LibArray.isValido(funz.getServizioFunzioni())) {
-                    continua = false;
-                    break;
-                }// end of if cycle
+        for (Object id : getTable().getSelectedIds()) {
+            if (getFunz(id) != null && LibArray.isValido(getFunz(id).getServizioFunzioni())) {
+                cancella = false;
+                break;
             }// end of if cycle
         }// end of for cycle
 
-        if (continua) {
+        if (cancella) {
             super.delete();
         } else {
-            Notification.show("Impossibile cancellare le funzioni selezionate perché sono già utilizzate in alcuni servizi.", Notification.Type.WARNING_MESSAGE);
+            if (getTable().getSelectedIds().length == 1) {
+                Notification.show("Impossibile cancellare la funzione selezionata perché è già utilizzata in alcuni servizi.", Notification.Type.WARNING_MESSAGE);
+            } else {
+                Notification.show("Impossibile cancellare le funzioni selezionate perché sono già utilizzate in alcuni servizi.", Notification.Type.WARNING_MESSAGE);
+            }// end of if/else cycle
         }// end of if/else cycle
     }// end of method
 
@@ -155,6 +153,16 @@ public class FunzioneMod extends WamModSposta {
         getTable().refresh();
     }// end of method
 
+    private Funzione getFunz(Object id) {
+        Funzione funzione = null;
+        BaseEntity entity = getEntityManager().find(Funzione.class, id);
+
+        if (entity != null) {
+            funzione = (Funzione) entity;
+        }// end of if cycle
+
+        return funzione;
+    }// end of method
 
 }// end of class
 

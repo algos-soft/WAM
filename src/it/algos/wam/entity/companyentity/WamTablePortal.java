@@ -49,7 +49,6 @@ public class WamTablePortal extends TablePortal {
         boolean developer = LibSession.isDeveloper();
         boolean admin = LibSession.isAdmin();
         toolbar = super.createToolbar();
-        toolbar.setCreate(true);
         toolbar.setSelectButtonVisible(false);
 
         if (developer) {

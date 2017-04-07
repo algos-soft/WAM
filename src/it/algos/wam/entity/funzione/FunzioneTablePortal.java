@@ -19,18 +19,13 @@ public class FunzioneTablePortal extends WamTablePortalSposta {
     }// end of constructor
 
 
-    public TableToolbar createToolbar() {
-        TableToolbar toolbar = super.createToolbar();
-        return toolbar;
-    }// end of method
-
-        /**
-         * Spostamento effettivo, in su o in giu del singolo record.
-         * Sovrascritto
-         *
-         * @param sopra true per spostare in alto, false per spostare in basso
-         */
-        public void spostaRecord(boolean sopra) {
+    /**
+     * Spostamento effettivo, in su o in giu del singolo record.
+     * Sovrascritto
+     *
+     * @param sopra true per spostare in alto, false per spostare in basso
+     */
+    public void spostaRecord(boolean sopra) {
         Funzione funz = (Funzione) table.getSelectedEntity();
         Funzione adiacente = WamQuery.queryFunzioneAdiacente(table.getEntityManager(), funz, sopra);
 

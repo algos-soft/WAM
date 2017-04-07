@@ -3,6 +3,7 @@ package it.algos.wam.entity.serviziofunzione;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.colorpicker.*;
 import com.vaadin.shared.ui.colorpicker.Color;

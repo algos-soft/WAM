@@ -5,19 +5,29 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.wam.entity.iscrizione.Iscrizione;
+import it.algos.wam.entity.iscrizione.Iscrizione_;
+import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.servizio.ServizioTablePortal;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.form.ModuleForm;
+import it.algos.webbase.web.lib.LibArray;
+import it.algos.webbase.web.query.AQuery;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.metamodel.Attribute;
+import java.util.List;
 
 /**
  * Modulo del Volontario  (in alcuni casi detto Milite)
@@ -133,7 +143,40 @@ public class VolontarioMod extends WamMod {
                 Volontario_.cellulare,
                 Volontario_.email,
                 Volontario_.dipendente,
-                Volontario_.attivo};
+                Volontario_.attivo,
+                Volontario_.admin,
+                Volontario_.invioMail,
+        };
+    }// end of method
+
+    /**
+     * Override di delete per controllare che non ci siano
+     * volontari iscritti a qualche turno
+     */
+    @Override
+    public void delete() {
+        boolean cancella = true;
+        Volontario vol = null;
+        int num = 0;
+
+        for (Object id : getTable().getSelectedIds()) {
+            vol = getVol(id);
+            num = AQuery.count(Iscrizione.class, Iscrizione_.volontario, vol);
+            if (num > 0) {
+                cancella = false;
+                break;
+            }// end of if cycle
+        }// end of for cycle
+
+        if (cancella) {
+            super.delete();
+        } else {
+            if (getTable().getSelectedIds().length == 1) {
+                Notification.show("Impossibile cancellare il volontario selezionato perché è già iscritto ad alcuni turni.", Notification.Type.WARNING_MESSAGE);
+            } else {
+                Notification.show("Impossibile cancellare i volontari selezionati perché sono già iscritti ad alcuni turni.", Notification.Type.WARNING_MESSAGE);
+            }// end of if/else cycle
+        }// end of if/else cycle
     }// end of method
 
     @Override
@@ -153,8 +196,17 @@ public class VolontarioMod extends WamMod {
         tablePortal = createTablePortal();
         tablePortal.table = this.createTable();
         tablePortal.table.refresh();
+    }// end of method
 
-        //        return new VolontarioTable(this);
+    private Volontario getVol(Object id) {
+        Volontario volontario = null;
+        BaseEntity entity = getEntityManager().find(Volontario.class, id);
+
+        if (entity != null) {
+            volontario = (Volontario) entity;
+        }// end of if cycle
+
+        return volontario;
     }// end of method
 
 }// end of class

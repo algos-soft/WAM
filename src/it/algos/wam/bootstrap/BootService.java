@@ -122,6 +122,10 @@ public abstract class BootService {
         company.setContact("Mario Bianchi");
         company.save();
 
+        //--flag vari
+        CompanyPrefs.usaGestioneCertificati.put(company, true);
+        CompanyPrefs.usaStatisticheSuddivise.put(company, true);
+
         return company;
     }// end of static method
 
@@ -141,6 +145,10 @@ public abstract class BootService {
         company.setAddress1("20100 Milano");
         company.setContact("Giovanni Rossi");
         company.save();
+
+        //--flag vari
+        CompanyPrefs.usaGestioneCertificati.put(company, true);
+        CompanyPrefs.usaStatisticheSuddivise.put(company, true);
 
         return company;
     }// end of static method
