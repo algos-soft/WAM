@@ -2,11 +2,15 @@ package it.algos.wam.entity.companyentity;
 
 import com.vaadin.data.Container;
 import com.vaadin.event.Action;
+import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.servizio.Servizio_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.multiazienda.ETable;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
+
+import javax.persistence.metamodel.Attribute;
+import java.util.ArrayList;
 
 /**
  * Created by gac on 07 ago 2016.
@@ -54,6 +58,27 @@ public class WamTable extends ETable {
 
 
     protected void fixColumn() {
+    }// end of method
+
+    /**
+     * Aggiunge il campo company
+     * <p>
+     * In caso di developer, aggiunge (a sinistra) la colonna della company
+     * Aggiunge tutte le altre property, definite nella sottoclasse
+     * Chiamato dalla sottoclasse
+     */
+    protected String[] addCompanyField(String... elenco) {
+        ArrayList<Object> lista = new ArrayList<>();
+
+        if (LibSession.isDeveloper()) {
+            lista.add(WamCompanyEntity_.company);
+        }// end of if cycle
+
+        for (Object attr : elenco) {
+            lista.add(attr);
+        }// end of for cycle
+
+        return lista.toArray(new String[lista.size()]);
     }// end of method
 
     /**

@@ -5,6 +5,8 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.wam.entity.companyentity.WamModSenzaDoppioClick;
+import it.algos.wam.entity.companyentity.WamTablePortalSoloRicerca;
 import it.algos.wam.entity.servizio.ServizioTablePortal;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.search.SearchManager;
@@ -18,7 +20,7 @@ import javax.persistence.metamodel.Attribute;
  * Gestione (minimale) del modulo specifico
  */
 @SuppressWarnings("serial")
-public class ServizioFunzioneMod extends WamMod {
+public class ServizioFunzioneMod extends WamModSenzaDoppioClick {
 
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
@@ -27,7 +29,7 @@ public class ServizioFunzioneMod extends WamMod {
     private static String MENU_ADDRESS = "ServizioFunzione";
 
     // icona (eventuale) del modulo
-    private static Resource ICON = FontAwesome.USER;
+    private static Resource ICON = FontAwesome.TASKS;
 
 
     /**
@@ -41,13 +43,6 @@ public class ServizioFunzioneMod extends WamMod {
     public ServizioFunzioneMod() {
         super(ServizioFunzione.class, MENU_ADDRESS, ICON);
     }// end of constructor
-
-    /**
-     * Sovrascrive per DISABILITARE il doppio click nella lista
-     */
-    @Override
-    public void edit() {
-    }// end of method
 
     /**
      * Crea i campi visibili nella scheda (search)
@@ -69,7 +64,8 @@ public class ServizioFunzioneMod extends WamMod {
      *
      * @return the SearchManager
      */
-    public SearchManager createSearchManager() {
+    @Deprecated
+    public SearchManager createSearchManager2() {
         return new ServizioFunzioneSearch(this);
     }// end of method
 
@@ -82,11 +78,6 @@ public class ServizioFunzioneMod extends WamMod {
     @Override
     public ATable createTable() {
         return new ServizioFunzioneTable(this);
-    }// end of method
-
-    @Override
-    public TablePortal createTablePortal() {
-        return new ServizioFunzioneTablePortal(this);
     }// end of method
 
 }// end of class

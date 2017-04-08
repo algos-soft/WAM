@@ -1,21 +1,21 @@
-package it.algos.wam.entity.serviziofunzione;
+package it.algos.wam.entity.companyentity;
 
-import it.algos.wam.entity.companyentity.WamTablePortal;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 /**
- * Created by gac on 05/04/17.
- * .
+ * Created by gac on 07/04/17.
+ * Estende la superclasse per eliminare tutti i bottoni/menu salvo quelli della ricerca e selezione
  */
-public class ServizioFunzioneTablePortal extends WamTablePortal {
+public class WamTablePortalSoloRicerca extends WamTablePortal {
 
     /**
      * Costruttore base
      */
-    public ServizioFunzioneTablePortal(ModulePop modulo) {
+    public WamTablePortalSoloRicerca(ModulePop modulo) {
         super(modulo);
     }// end of constructor
+
 
     /**
      * Creates the toolbar
@@ -35,4 +35,4 @@ public class ServizioFunzioneTablePortal extends WamTablePortal {
         return toolbar;
     }// end of method
 
-}
+}// end of class

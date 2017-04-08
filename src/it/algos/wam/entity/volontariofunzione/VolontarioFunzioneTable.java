@@ -22,7 +22,7 @@ public class VolontarioFunzioneTable extends WamTable {
     protected static final String COL_ICONA_FUNZIONE = "icona";
 
     //--titolo della table
-    private static String CAPTION = "Volontari per ogni funzione";
+    private static String CAPTION = "Volontari abilitati per ogni funzione";
 
     /**
      * Costruttore

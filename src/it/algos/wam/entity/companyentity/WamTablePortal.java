@@ -17,7 +17,7 @@ import javax.persistence.EntityManager;
 
 /**
  * Created by gac on 07 mag 2016.
- * Sovrascrive la classe standard per aggiungere due bottoni/menu di spostamento dei records
+ * Estende la classe standard per aggiungere due bottoni/menu di spostamento dei records
  */
 public class WamTablePortal extends TablePortal {
 

@@ -32,7 +32,7 @@ public class ServizioFunzioneSearch extends SearchManager {
      * which returns an Integer. If not, null is returned.
      */
     protected Container.Filter createArrayFilter(ArrayComboField field, Attribute attr) {
-        return super.createArrayFilter(field,attr);
+        return super.createArrayFilter(field, attr);
     }// end of method
 
 }// end of class

@@ -12,6 +12,7 @@ import it.algos.wam.query.WamQuery;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibText;
@@ -27,6 +28,7 @@ import java.sql.Timestamp;
  * L'iscrizione è relativa a una certa funzione tra quelle previste nel servizio.
  */
 @Entity
+@DefaultSort({"company,true","turno.chiave,true","servizioFunzione.servizio,true"})
 public class Iscrizione extends WamCompanyEntity {
 
     // codici modalità di controllo cancIscrizione turno

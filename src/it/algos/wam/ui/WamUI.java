@@ -394,6 +394,7 @@ public class WamUI extends UI {
             MenuBar.MenuItem menuTavole = menuBarAdmin.addItem("Tavole", null, null);
             addMod(menuTavole, new ServizioFunzioneMod());
             addMod(menuTavole, new VolontarioFunzioneMod());
+            addMod(menuTavole, new IscrizioneMod());
             addMod(menuTavole, new TurnoMod());
             navComp.addMenu(menuBarAdmin, "verde");
         }// end of if cycle

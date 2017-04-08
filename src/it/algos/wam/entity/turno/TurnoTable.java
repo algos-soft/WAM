@@ -125,10 +125,6 @@ public class TurnoTable extends WamTable {
                 COL_SIGLA_SERVIZIO,
                 COL_ISCRIZIONI,
                 COL_STATO,
-                //              Turno_.inizio,
-                //               Turno_.fine,
-                //               Turno_.titoloExtra,
-                //               Turno_.localitaExtra,
         };// end of array
     }// end of method
 

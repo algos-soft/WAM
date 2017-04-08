@@ -17,7 +17,7 @@ public class Iscrizione_ extends BaseEntity_ {
 	public static volatile SingularAttribute<Iscrizione, Turno> turno;
 	public static volatile SingularAttribute<Iscrizione, Volontario> volontario;
 	public static volatile SingularAttribute<Iscrizione, ServizioFunzione> servizioFunzione;
-	public static volatile SingularAttribute<Iscrizione, Timestamp> lastModifica;
+	public static volatile SingularAttribute<Iscrizione, Timestamp> tsCreazione;
 	public static volatile SingularAttribute<Iscrizione, Integer> minutiEffettivi;
 	public static volatile SingularAttribute<Iscrizione, Boolean> esisteProblema;
 	public static volatile SingularAttribute<Iscrizione, String> nota;
