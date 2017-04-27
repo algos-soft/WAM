@@ -4,27 +4,27 @@ import java.util.ArrayList;
 
 /**
  * Created by Gac on 08 mar 2016.
- * .
+ * Ruoli specifici di questa applicazione
  */
 public enum WamRuoli {
 
-    developer("developer"),
-    custode("custode"),
-    admin("admin"),
-    user("user"),
-    guest("guest");
+    developer("ROLE_developer"),
+    custode("ROLE_custode"),
+    admin("ROLE_admin"),
+    user("ROLE_user"),
+    guest("ROLE_guest");
 
     private String nome;
 
     WamRuoli(String nome) {
         this.nome = nome;
-    }
+    }// end of basic constructor
 
     public static ArrayList<String> getAllNames() {
         ArrayList<String> lista = new ArrayList<String>();
 
         for (WamRuoli tipo : WamRuoli.values()) {
-            lista.add(tipo.toString());
+            lista.add(tipo.getNome());
         }// fine del ciclo for
 
         return lista;

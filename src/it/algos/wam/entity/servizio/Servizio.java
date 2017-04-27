@@ -108,8 +108,8 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     private int minutiFine = 0;
 
     // visibile nel tabellone (di default true)
-    @AIField(type = AFType.checkbox, width = "12em", caption = "Visibile nel tabellone", help = "Permette di modificare i servizi visibili nel tabellone")
-    private boolean visibile = true;
+    @AIField(type = AFType.checkbox, width = "12em", caption = "Visibile nel tabellone", help = "Permette di abilitare i servizi per renderli visibili nel tabellone")
+    private boolean abilitato = true;
 
     //--tavola di incrocio
     // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
@@ -556,40 +556,175 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         }// end of if/else cycle
     }// end of static method
 
-    public static ArrayList<Servizio> getListVisibiliConOrario(EntityManager manager) {
-        return getListVisibiliConOrario(WamCompany.getCurrent(), manager);
-    }// end of static method
-
-    public static ArrayList<Servizio> getListVisibiliConOrario(WamCompany company, EntityManager manager) {
-        return getListVisibili(company, manager, true);
-    }// end of static method
-
-    public static ArrayList<Servizio> getListVisibiliSenzaOrario(EntityManager manager) {
-        return getListVisibiliSenzaOrario(WamCompany.getCurrent(), manager);
-    }// end of static method
-
-    public static ArrayList<Servizio> getListVisibiliSenzaOrario(WamCompany company, EntityManager manager) {
-        return getListVisibili(company, manager, false);
+    /**
+     * Tutti i servizi abilitati (visibili)
+     */
+    public static ArrayList<Servizio> getListVisibili(EntityManager manager) {
+        return getListVisibili(WamCompany.getCurrent(), manager);
     }// end of static method
 
     /**
-     * Recupera una lista (array) di tutti i servizi visibili con e senza orario prestabilito
-     * Filtrato sulla company passata come parametro.
-     * Usa l'EntityManager passato come parametro
-     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
-     * Se il manager è valido, lo usa (must be close by caller method)
-     *
-     * @param company di appartenenza (property della superclasse)
-     * @param manager the EntityManager to use
-     * @return lista di tutte le entities
+     * Tutti i servizi abilitati (visibili) e con orario
+     */
+    public static ArrayList<Servizio> getListAbilitatiConOrario(EntityManager manager) {
+        return getList(WamCompany.getCurrent(), manager, true, true);
+    }// end of static method
+
+//    /**
+//     * Tutti i servizi abilitati (visibili) e con orario
+//     */
+//    public static ArrayList<Servizio> getListVisibiliConOrario(WamCompany company, EntityManager manager) {
+//        return getListVisibili(company, manager, true);
+//    }// end of static method
+
+    /**
+     * Tutti i servizi abilitati (visibili) e senza orario
+     */
+    public static ArrayList<Servizio> getListAbilitatiSenzaOrario(EntityManager manager) {
+        return getList(WamCompany.getCurrent(), manager, true, false);
+    }// end of static method
+
+//    /**
+//     * Tutti i servizi abilitati (visibili) e senza orario
+//     */
+//    public static ArrayList<Servizio> getListVisibiliSenzaOrario(WamCompany company, EntityManager manager) {
+//        return getListVisibili(company, manager, false);
+//    }// end of static method
+
+
+    /**
+     * Tutti i servizi non abilitati e con orario che hanno un turno nel periodo
+     * <p>
+     * Se il tabellone contiene giorni passati, recupera i servizi con orario
+     * non abilitati (non visibili) che hanno dei turni associati
+     * La lista deve essere ordinata secondo il campo servizio.ordine
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Servizio> getListVisibili(WamCompany company, EntityManager manager, boolean orario) {
-        SortProperty sort = new SortProperty(Servizio_.ordine);
-        Container.Filter filtroVisibile = new Compare.Equal(Servizio_.visibile.getName(), true);
-        Container.Filter filtroOrario = new Compare.Equal(Servizio_.orario.getName(), orario);
+    public static ArrayList<Servizio> getListPassatiConOrario(EntityManager manager, LocalDate inizioPeriodo, LocalDate finePeriodo) {
+        ArrayList<Servizio> lista = new ArrayList<>();
+        ArrayList<Servizio> listaTmp;
+        WamCompany company = WamCompany.getCurrent();
+        Servizio serv;
 
-        return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroVisibile, filtroOrario);
+        Date dataInizioPeriodo = DateConvertUtils.asUtilDate(inizioPeriodo);
+        Date dataFinePeriodo = DateConvertUtils.asUtilDate(finePeriodo);
+
+        Container.Filter filtroCompany = new Compare.Equal(CompanyEntity_.company.getName(), company);
+        Container.Filter filtroInizio = new Compare.GreaterOrEqual(Turno_.inizio.getName(), dataInizioPeriodo);
+        Container.Filter filtroFine = new Compare.LessOrEqual(Turno_.fine.getName(), dataFinePeriodo);
+
+        ArrayList<Turno> listaTurni = (ArrayList<Turno>) AQuery.getList(Turno.class, manager, filtroCompany, filtroInizio, filtroFine);
+        for (Turno turno : listaTurni) {
+            serv = turno.getServizio();
+            if (turno.isAssegnato() && !serv.isAbilitato() && serv.isOrario()) {
+                lista.add(serv);
+            }// end of if cycle
+        }// end of for cycle
+        lista = LibArray.valoriUnici(lista);
+        lista = LibArray.sort(lista);
+
+        return lista;
+    }// end of static method
+
+    /**
+     * Tutti i servizi non abilitati e senza orario che hanno un turno nel periodo
+     * <p>
+     * Se il tabellone contiene giorni passati, recupera i servizi senza orario
+     * non abilitati (non visibili) che hanno dei turni associati
+     * La lista deve essere ordinata secondo il campo servizio.ordine
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Servizio> getListPassatiSenzaOrario(EntityManager manager, LocalDate inizioPeriodo, LocalDate finePeriodo) {
+        ArrayList<Servizio> lista = new ArrayList<>();
+        ArrayList<Servizio> listaTmp;
+        WamCompany company = WamCompany.getCurrent();
+        Servizio serv;
+
+        Date dataInizioPeriodo = DateConvertUtils.asUtilDate(inizioPeriodo);
+        Date dataFinePeriodo = DateConvertUtils.asUtilDate(finePeriodo);
+
+        Container.Filter filtroCompany = new Compare.Equal(CompanyEntity_.company.getName(), company);
+        Container.Filter filtroInizio = new Compare.GreaterOrEqual(Turno_.inizio.getName(), dataInizioPeriodo);
+        Container.Filter filtroFine = new Compare.LessOrEqual(Turno_.inizio.getName(), dataFinePeriodo);
+
+        ArrayList<Turno> listaTurni = (ArrayList<Turno>) AQuery.getList(Turno.class, manager, filtroCompany, filtroInizio, filtroFine);
+        for (Turno turno : listaTurni) {
+            serv = turno.getServizio();
+            if (turno.isAssegnato() && !serv.isAbilitato() && !serv.isOrario()) {
+                lista.add(serv);
+            }// end of if cycle
+        }// end of for cycle
+        lista = LibArray.valoriUnici(lista);
+        lista = LibArray.sort(lista);
+
+        return lista;
+    }// end of static method
+
+
+//    /**
+//     * Recupera una lista (array) di tutti i servizi visibili con o senza orario prestabilito
+//     * Filtrato sulla company passata come parametro.
+//     * Usa l'EntityManager passato come parametro
+//     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+//     * Se il manager è valido, lo usa (must be close by caller method)
+//     *
+//     * @param company di appartenenza (property della superclasse)
+//     * @param manager the EntityManager to use
+//     * @return lista di tutte le entities
+//     */
+//    @SuppressWarnings("unchecked")
+//    public static ArrayList<Servizio> getListVisibili(WamCompany company, EntityManager manager, boolean orario) {
+//        SortProperty sort = new SortProperty(Servizio_.ordine);
+//        Container.Filter filtroVisibile = new Compare.Equal(Servizio_.visibile.getName(), true);
+//        Container.Filter filtroOrario = new Compare.Equal(Servizio_.orario.getName(), orario);
+//
+//        return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroVisibile, filtroOrario);
+//    }// end of static method
+
+
+    /**
+     * La lista dei servizi con orario fisso è composta:
+     * A) Servizi abilitati (visibili)
+     * B) Se il tabellone contiene giorni passati, aggiunge anche i servizi con orario
+     * non abilitati (non visibili) che hanno dei turni associati
+     * La lista deve essere ordinata secondo il campo servizio.ordine
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Servizio> getListConOrario(EntityManager manager, LocalDate inizioPeriodo, LocalDate finePeriodo) {
+        ArrayList<Servizio> lista;
+        ArrayList<Servizio> listaServiziAbilitati = null;
+        ArrayList<Servizio> listaServiziPassati = null;
+
+        listaServiziAbilitati = Servizio.getListAbilitatiConOrario(manager);
+        listaServiziPassati = Servizio.getListPassatiConOrario(manager, inizioPeriodo, finePeriodo);
+        lista = LibArray.somma(listaServiziAbilitati, listaServiziPassati);
+        lista = LibArray.valoriUnici(lista);
+        lista = LibArray.sort(lista);
+
+        return lista;
+    }// end of static method
+
+    /**
+     * Aggiunge una o più righe per ogni servizio con orario variabile (senza orario fisso)
+     * La lista dei servizi senza orario è composta:
+     * A) Servizi abilitati (visibili)
+     * B) Se il tabellone contiene giorni passati, aggiunge anche i servizi senza orario
+     *    non abilitati (non visibili) che hanno dei turni associati
+     * La lista deve essere ordinata secondo il campo servizio.ordine
+     */
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Servizio> getListSenzaOrario(EntityManager manager, LocalDate inizioPeriodo, LocalDate finePeriodo) {
+        ArrayList<Servizio> lista;
+        ArrayList<Servizio> listaServiziAbilitati = null;
+        ArrayList<Servizio> listaServiziPassati = null;
+
+        listaServiziAbilitati = Servizio.getListAbilitatiSenzaOrario(manager);
+        listaServiziPassati = Servizio.getListPassatiSenzaOrario(manager, inizioPeriodo, finePeriodo);
+        lista = LibArray.somma(listaServiziAbilitati, listaServiziPassati);
+        lista = LibArray.valoriUnici(lista);
+        lista = LibArray.sort(lista);
+
+        return lista;
     }// end of static method
 
     /**
@@ -606,51 +741,31 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     @SuppressWarnings("unchecked")
     public static ArrayList<Servizio> getListVisibili(WamCompany company, EntityManager manager) {
         SortProperty sort = new SortProperty(Servizio_.ordine);
-        Container.Filter filtroVisibile = new Compare.Equal(Servizio_.visibile.getName(), true);
+        Container.Filter filtroVisibile = new Compare.Equal(Servizio_.abilitato.getName(), true);
 
         return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroVisibile);
     }// end of static method
 
-
     /**
-     * Se il tabellone contiene giorni passati, recupera anche i servizi che hanno dei turni associati
+     * Recupera una lista (array) di tutti i servizi abilitati (visibili) o disabilitati con o senza orario prestabilito
+     * Filtrato sulla company passata come parametro.
+     * Usa l'EntityManager passato come parametro
+     * Se il manager è nullo, costruisce al volo un manager standard (and close it)
+     * Se il manager è valido, lo usa (must be close by caller method)
+     *
+     * @param company   di appartenenza (property della superclasse)
+     * @param manager   the EntityManager to use
+     * @param abilitati e visibili
+     * @param orario    prestabilito
+     * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Servizio> getListPassati(EntityManager manager, LocalDate inizioPeriodo, LocalDate finePeriodo) {
-        ArrayList<Servizio> lista;
-        WamCompany company = WamCompany.getCurrent();
+    public static ArrayList<Servizio> getList(WamCompany company, EntityManager manager, boolean abilitati, boolean orario) {
+        SortProperty sort = new SortProperty(Servizio_.ordine);
+        Container.Filter filtroAbilitati = new Compare.Equal(Servizio_.abilitato.getName(), abilitati);
+        Container.Filter filtroOrario = new Compare.Equal(Servizio_.orario.getName(), orario);
 
-        Date dataInizioPeriodo = DateConvertUtils.asUtilDate(inizioPeriodo);
-        Date dataFinePeriodo = DateConvertUtils.asUtilDate(finePeriodo);
-
-        Container.Filter filtroCompany = new Compare.Equal(CompanyEntity_.company.getName(), company);
-        Container.Filter filtroInizio = new Compare.GreaterOrEqual(Turno_.inizio.getName(), dataInizioPeriodo);
-        Container.Filter filtroFine = new Compare.LessOrEqual(Turno_.inizio.getName(), dataFinePeriodo);
-
-        lista = (ArrayList<Servizio>) AQuery.getListProperty(Turno.class, Turno_.servizio, manager, filtroCompany, filtroInizio, filtroFine);
-        lista = LibArray.valoriUnici(lista);
-
-        return lista;
-    }// end of static method
-
-    /**
-     * La lista dei servizi deve essere composta:
-     * Sempre, da tutti i servizi abilitati
-     * Se il tabellone contiene giorni passati, aggiunge anche i servizi che hanno dei turni associati
-     */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Servizio> getListVisibiliConOrarioAndPassati(EntityManager manager, LocalDate inizioPeriodo, LocalDate finePeriodo) {
-        ArrayList<Servizio> lista;
-        ArrayList<Servizio> listaServiziPrevisti;
-        ArrayList<Servizio> listaServiziPassati;
-
-        listaServiziPrevisti = Servizio.getListVisibiliConOrario(manager);
-        listaServiziPassati = Servizio.getListPassati(manager, inizioPeriodo, finePeriodo);
-        lista = LibArray.somma(listaServiziPrevisti, listaServiziPassati);
-        lista = LibArray.valoriUnici(lista);
-        lista = LibArray.sort(lista);
-
-        return lista;
+        return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroAbilitati, filtroOrario);
     }// end of static method
 
 
@@ -916,7 +1031,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
                 servizio = new Servizio(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine);
                 servizio.setMinutiInizio(minutiInizio);
                 servizio.setMinutiFine(minutiFine);
-                servizio.setVisibile(visibile);
+                servizio.setAbilitato(visibile);
 
                 if (servizioFunzioni != null) {
                     for (int k = 0; k < servizioFunzioni.size(); k++) {
@@ -1078,12 +1193,12 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         this.turni = turni;
     }//end of setter method
 
-    public boolean isVisibile() {
-        return visibile;
+    public boolean isAbilitato() {
+        return abilitato;
     }// end of getter method
 
-    public void setVisibile(boolean visibile) {
-        this.visibile = visibile;
+    public void setAbilitato(boolean visibile) {
+        this.abilitato = visibile;
     }//end of setter method
 
     //------------------------------------------------------------------------------------------------------------------------

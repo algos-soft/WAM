@@ -44,7 +44,7 @@ import java.util.List;
  * <p>
  */
 @Entity
-@DefaultSort({"company,true","chiave,true","servizio,true"})
+@DefaultSort({"company,true", "chiave,true", "servizio.ordine,true"})
 public class Turno extends WamCompanyEntity {
 
     //------------------------------------------------------------------------------------------------------------------------
@@ -96,9 +96,6 @@ public class Turno extends WamCompanyEntity {
     //--descrizione dei viaggi extra
     @AIField(type = AFType.area, width = "24em", caption = "Note", help = "Eventuali note aggiuntive.")
     private String note = "";
-
-    //--turno previsto (vuoto) oppure assegnato (militi inseriti)
-    private boolean assegnato = false;
 
     //------------------------------------------------------------------------------------------------------------------------
     // Constructors
@@ -495,7 +492,6 @@ public class Turno extends WamCompanyEntity {
 
             turno = new Turno(company, servizio, inizio, fine);
 //            turno.setFine(fine);
-            turno.setAssegnato(assegnato);
             turno = turno.save(company, manager);
         }// end of if cycle
 
@@ -955,12 +951,9 @@ public class Turno extends WamCompanyEntity {
     }//end of setter method
 
     public boolean isAssegnato() {
-        return assegnato;
+        return getIscrizioni().size() > 0;
     }// end of getter method
 
-    public void setAssegnato(boolean assegnato) {
-        this.assegnato = assegnato;
-    }//end of setter method
 
     /**
      * Controlla se questo turno ha le iscrizioni coperte per tutte le funzioni

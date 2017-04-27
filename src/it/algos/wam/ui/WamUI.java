@@ -59,7 +59,7 @@ import java.util.List;
 public class WamUI extends UI {
 
     //--backdoor password
-    public static final String BACKDOOR = "cervino63";
+    public static final String BACKDOOR = "fulvia";
     public static final String KEY_TABELLONE = "tabellone";
     public static final String KEY_MAIN_COMP = "maincomp";
     public static final String KEY_TABVISIBLE = "tabvisible";

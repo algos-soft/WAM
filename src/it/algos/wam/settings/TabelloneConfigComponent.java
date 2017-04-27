@@ -4,8 +4,12 @@ import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import it.algos.wam.tabellone.GroupField;
 import it.algos.webbase.web.field.ArrayComboField;
 import it.algos.webbase.web.field.CheckBoxField;
+
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("serial")
 /**
@@ -19,6 +23,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
     private static final String KEY_CREA_TURNI = "creaTurniNormali";
     private static final String KEY_CREA_EXTRA = "creaTurniExtra";
     private static final String KEY_LABEL_HTML = "usaLabelHtml";
+    private static final String KEY_GROUP = "groupPrimoGiorno";
 
     private ArrayComboField comboOreAlert;
     private ArrayComboField comboOreWarning;
@@ -26,6 +31,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
     private CheckBoxField checkTurni;
     private CheckBoxField checkExtra;
     private CheckBoxField checkLabelHTML;
+    private GroupField groupPrimoGiorno;
 
 
     public TabelloneConfigComponent() {
@@ -67,6 +73,13 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         hl.addComponent(new Label(CompanyPrefs.usaLabelServizioHtml.getDescrizione()));
         hl.addComponent(checkLabelHTML);
         layout.addComponent(hl);
+
+//        layout.addComponent(new Label(""));
+        hl = new HorizontalLayout();
+        hl.setSpacing(true);
+        hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
+        hl.addComponent(groupPrimoGiorno);
+ //       layout.addComponent(hl);
 
         layout.addComponent(new Label(""));
         layout.addComponent(new Label("Un turno si considera <strong>incompleto</strong> quando non tutte le funzioni obbligatorie sono coperte", ContentMode.HTML));
@@ -111,6 +124,11 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         checkExtra = new CheckBoxField();
         checkLabelHTML = new CheckBoxField();
 
+        String caption = "Giorno di partenza da visualizzare nel tabellone";
+        final List<String> options = Arrays.asList(new String[]{"hebele", "hubele"});
+        groupPrimoGiorno = new GroupField(caption, Arrays.asList(new String[]{"lunedì", "oggi"}));
+        groupPrimoGiorno.select("lunedì"); // select this by default
+
         // bind fields to properties
         getGroup().bind(comboOreAlert, KEY_ORE_ALERT);
         getGroup().bind(comboOreWarning, KEY_ORE_WARNING);
@@ -118,6 +136,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         getGroup().bind(checkTurni, KEY_CREA_TURNI);
         getGroup().bind(checkExtra, KEY_CREA_EXTRA);
         getGroup().bind(checkLabelHTML, KEY_LABEL_HTML);
+        //       getGroup().bind(groupPrimoGiorno, KEY_GROUP);
 
 
     }
@@ -154,7 +173,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
             addItemProperty(KEY_TABELLONE_VISIBILE, new ObjectProperty<>(tabelloneVisibile));
 
             boolean creaTurni = CompanyPrefs.creazioneTurniNormali.getBool();
-            addItemProperty(KEY_CREA_TURNI,new ObjectProperty<>(creaTurni));
+            addItemProperty(KEY_CREA_TURNI, new ObjectProperty<>(creaTurni));
 
             boolean creaTurniExtra = CompanyPrefs.creazioneTurniExtra.getBool();
             addItemProperty(KEY_CREA_EXTRA, new ObjectProperty<>(creaTurniExtra));

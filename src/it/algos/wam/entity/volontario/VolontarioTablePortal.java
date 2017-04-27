@@ -35,7 +35,10 @@ public class VolontarioTablePortal extends WamTablePortal {
     @Override
     public TableToolbar createToolbar() {
         toolbar = super.createToolbar();
-        toolbar.setSelectButtonVisible(true);
+
+        if (toolbar!=null) {
+            toolbar.setSelectButtonVisible(true);
+        }// end of if cycle
 
         return toolbar;
     }// end of method

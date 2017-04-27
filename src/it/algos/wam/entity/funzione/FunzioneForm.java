@@ -2,7 +2,6 @@ package it.algos.wam.entity.funzione;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -13,17 +12,12 @@ import it.algos.wam.entity.companyentity.*;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.settings.CompanyPrefs;
-import it.algos.wam.ui.NavComponent;
-import it.algos.wam.ui.WamUI;
-import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.pref.Pref;
 import it.algos.webbase.web.component.AHorizontalLayout;
 import it.algos.webbase.web.field.TextField;
-import it.algos.webbase.web.form.AFormLayout;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
-import it.algos.webbase.web.navigator.AlgosNavigator;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -153,7 +147,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
 
         // Add some data rows
         for (Servizio serv : servizi) {
-            grid.addRow(serv.getSigla(), serv.isVisibile(), serv.getDescrizione(), serv.getStrOrario());
+            grid.addRow(serv.getSigla(), serv.isAbilitato(), serv.getDescrizione(), serv.getStrOrario());
         }// end of for cycle
 
         layout.addComponent(label);

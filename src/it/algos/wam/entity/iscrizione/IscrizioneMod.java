@@ -60,10 +60,9 @@ public class IscrizioneMod extends WamModSenzaDoppioClick {
      * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
      * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
      */
-    @Override
-    protected Attribute<?, ?>[] creaFieldsSearch() {
+//    @Override
+    protected Attribute<?, ?>[] creaFieldsSearch2() {
         return super.addCompanyField(
-                Iscrizione_.turno,
                 Iscrizione_.volontario,
                 Iscrizione_.servizioFunzione);
     }// end of method

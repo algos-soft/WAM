@@ -83,19 +83,38 @@ public class IscrizioneTable extends WamTable {
      */
     @Override
     protected Object[] getDisplayColumns() {
-        return super.addCompanyField(
-                COL_GIORNO,
-                COL_COLORE_SERVIZIO,
-                COL_SIGLA_SERVIZIO,
-                COL_INIZIO,
-                COL_SIGLA_FUNZIONE,
-                Iscrizione_.volontario.getName(),
-                Iscrizione_.tsCreazione.getName(),
-                Iscrizione_.minutiEffettivi.getName(),
-                Iscrizione_.esisteProblema.getName(),
-                Iscrizione_.notificaInviata.getName()
-        );//end of return
+        if (LibSession.isDeveloper()) {
+            return new Object[]{
+                    WamCompanyEntity_.company,
+                    COL_GIORNO,
+                    COL_COLORE_SERVIZIO,
+                    COL_SIGLA_SERVIZIO,
+                    COL_INIZIO,
+                    COL_SIGLA_FUNZIONE,
+                    Iscrizione_.volontario.getName(),
+                    Iscrizione_.tsCreazione.getName(),
+                    Iscrizione_.minutiEffettivi.getName(),
+                    Iscrizione_.esisteProblema.getName(),
+                    Iscrizione_.notificaInviata.getName()
+            };// end of array
+        } else {
+            return new Object[]{
+                    COL_GIORNO,
+                    COL_COLORE_SERVIZIO,
+                    COL_SIGLA_SERVIZIO,
+                    COL_INIZIO,
+                    COL_SIGLA_FUNZIONE,
+                    Iscrizione_.volontario.getName(),
+                    Iscrizione_.tsCreazione.getName(),
+                    Iscrizione_.minutiEffettivi.getName(),
+                    Iscrizione_.esisteProblema.getName(),
+                    Iscrizione_.notificaInviata.getName()
+            };// end of array
+        }// end of if/else cycle
+
     }// end of method
+
+
 
     @Override
     protected void fixColumn() {

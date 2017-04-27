@@ -294,7 +294,9 @@ public abstract class BootService {
         switch (c.getCompanyCode()) {
             case WAMApp.DEMO_COMPANY_CODE:
                 l.add(servo(c, m, funz, "med-mat", "Automedica mattino", 8, 13, azzurro, 2, 0, 1, 2, 8));
+                l.add(servo(c, m, funz, "cent-mat", "Centralino&nbspm.", 8, 13, giallo, 0, 11));
                 l.add(servo(c, m, funz, "med-pom", "Automedica pomeriggio", 13, 18, azzurro, 2, 0, 1, 2, 8));
+                l.add(servnt(c, m, funz, "cent-pom", "Centralino&nbspp.", 13, 18, giallo, 0, 11));
                 l.add(servo(c, m, funz, "med-sera", "Automedica sera", 18, 22, azzurro, 2, 0, 1, 2));
 
                 l.add(servo(c, m, funz, "amb-mat", "Ambulanza mattino", 8, 14, verdino, 2, 3, 4, 5, 8));
@@ -305,8 +307,6 @@ public abstract class BootService {
                 l.add(servno(c, m, funz, "ext", "Extra", rosa, 2, 6, 7, 8, 9));
                 l.add(servno(c, m, funz, "avis", "Avis", rosa, 1, 10, 9));
 
-                l.add(servo(c, m, funz, "cent-mat", "Centralino mattino", 8, 13, giallo, 0, 11));
-                l.add(servnt(c, m, funz, "cent-pom", "Centralino pomeriggio", 13, 18, giallo, 0, 11));
                 break;
             case WAMApp.TEST_COMPANY_CODE:
                 l.add(servo(c, m, funz, "amb-mat", "Ambulanza mattino", 8, 14, verdino, 2, 0, 1, 2, 3));
@@ -464,7 +464,7 @@ public abstract class BootService {
                 l.add(volub(c, m, funz, "Stefano", "Brambilla", "337 2453817", "stefano.brambilla@wamdemo.it", "bra", d2, null, null, 0, 3));
                 l.add(volu(c, m, funz, "Giovanna", "Durante", "338 7394672", "giovanna.durante@wamdemo.it", "dur", 1, 2, 4, 5, 6, 7));
                 l.add(volu(c, m, funz, "Roberto", "Marchetti", "345 673351", "roberto.marchetti@wamdemo.it", "mar", 7, 8));
-                l.add(vola(c, m, funz, "Edoardo", "Politi", "327 4233681", "edoardo.politi@wamdemo.it", "pol", 6));
+                l.add(vola(c, m, funz, "Edoardo", "Politi", "327 4233681", "edoardo.politi@wamdemo.it", "pol", 10, 11));
                 l.add(volub(c, m, funz, "Arturo", "Casaroli", "327 9931245", "arturo.casaroli@wamdemo.it", "cas", d3, d4, d1, 0, 1, 2, 3, 4, 5, 6));
                 l.add(volu(c, m, funz, "Flavia", "Robusti", "328 131476", "flavia.robusti@wamdemo.it", "rob", 2, 5));
                 l.add(volub(c, m, funz, "Marco", "Terzani", "339 397235", "marco.terzani@wamdemo.it", "ter", d1, d4, d5, 1, 2, 4, 5, 6));
@@ -636,13 +636,14 @@ public abstract class BootService {
         Servizio serv;
         Iscrizione isc;
         Turno turno;
-        ArrayList<Iscrizione> iscrizioni = new ArrayList<>();
+        ArrayList<Iscrizione> iscrizioni;
         ArrayList<Volontario> volGiorno = new ArrayList<>();
         ArrayList<ServizioFunzione> serviziFunzione;
         long chiave = 0;
 
         for (int k = 0; k < turni.size(); k = k + 2) {
             turno = turni.get(k);
+            iscrizioni = new ArrayList<>();
             if (chiave != turno.getChiave()) {
                 volGiorno = new ArrayList<>();
                 chiave = turno.getChiave();
@@ -662,7 +663,6 @@ public abstract class BootService {
                 } // fine del ciclo for-each
             } // fine del ciclo for-each
             turno.setIscrizioni(iscrizioni);
-            turno.setAssegnato(true);
             turno.save(manager);
         } // fine del ciclo for
 

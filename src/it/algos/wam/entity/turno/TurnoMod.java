@@ -5,9 +5,11 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.wam.entity.serviziofunzione.ServizioFunzioneSearch;
 import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneTable;
 import it.algos.webbase.domain.log.LogTablePortal;
+import it.algos.webbase.web.search.SearchManager;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 
@@ -41,6 +43,17 @@ public class TurnoMod extends WamMod {
 
 
     /**
+     * Create the Search Manager
+     *
+     * @return the SearchManager
+     */
+    @Override
+    public SearchManager createSearchManager() {
+        return new TurnoSearch(this);
+    }// end of method
+
+
+    /**
      * Crea una Table già filtrata sulla company corrente
      * The concrete subclass must override for a specific Table.
      *
@@ -67,8 +80,7 @@ public class TurnoMod extends WamMod {
                 Turno_.fine,
                 Turno_.titoloExtra,
                 Turno_.localitaExtra,
-                Turno_.note,
-                Turno_.assegnato};
+                Turno_.note};
     }// end of method
 
 
@@ -84,7 +96,7 @@ public class TurnoMod extends WamMod {
                 WamCompanyEntity_.company,
                 Turno_.servizio,
                 Turno_.inizio,
-                Turno_.assegnato};
+                Turno_.fine};
     }// end of method
 
 }// end of class

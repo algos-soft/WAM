@@ -6,6 +6,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.Volontario_;
@@ -61,6 +62,19 @@ public class WamLoginForm extends DefaultLoginForm {
 
         return userCombo;
     }
+
+    protected void onConfirm2() {
+        UserIF user = getSelectedUser();
+        if(user!=null){
+            String password = getPassField().getValue();
+            if(user.validatePassword(password)){
+                super.onConfirm();
+                utenteLoggato();
+            }else{
+                Notification.show("Login fallito", Notification.Type.WARNING_MESSAGE);
+            }
+        }
+    }// end of method
 
     @Override
     public void setUsername(String name) {

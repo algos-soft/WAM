@@ -59,15 +59,6 @@ public class ServizioFunzioneMod extends WamModSenzaDoppioClick {
                 ServizioFunzione_.obbligatoria);
     }// end of method
 
-    /**
-     * Create the Search Manager
-     *
-     * @return the SearchManager
-     */
-    @Deprecated
-    public SearchManager createSearchManager2() {
-        return new ServizioFunzioneSearch(this);
-    }// end of method
 
     /**
      * Crea una Table già filtrata sulla company corrente

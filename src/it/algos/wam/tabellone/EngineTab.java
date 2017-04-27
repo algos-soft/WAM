@@ -112,33 +112,45 @@ public class EngineTab {
      * Crea i wrapper per le righe di tabellone
      * Un wrapper per ogni servizio
      *
-     * @param d1            la data iniziale
+     * @param inizio        la data iniziale
      * @param quantiGiorni  il numero di giorni da visualizzare
      * @param entityManager l'entityManager da utilizzare per le operazioni di persistenza
      */
-    public static WTabellone creaRighe(LocalDate d1, int quantiGiorni, EntityManager entityManager) {
+    public static WTabellone creaRighe(LocalDate inizio, int quantiGiorni, EntityManager entityManager) {
         ArrayList<Servizio> listaServizi;
-        LocalDate d2 = d1.plusDays(quantiGiorni - 1);
-        WTabellone wtab = new WTabellone(d1, d2);
-        d2 = d2.plusDays(1); //Localdate non ha orario e altrimenti si perde il turno dell'ultimo giorno
+        LocalDate fine = inizio.plusDays(quantiGiorni - 1);
+        WTabellone wtab = new WTabellone(inizio, fine);
+        fine = fine.plusDays(1); //Localdate non ha orario; altrimenti si perde il turno dell'ultimo giorno
 
-        //--aggiunge una riga per ogni servizio con orario prestabilito
-        //--la lista dei servizi deve essere composta:
-        //--sempre, da tutti i servizi orari abilitati
-        //--se il tabellone contiene giorni passati, aggiunge anche i servizi che hanno dei turni associati
-        listaServizi = Servizio.getListVisibiliConOrarioAndPassati(entityManager, d1, d2);
+
+        /**
+         * Aggiunge una riga per ogni servizio con orario prestabilito
+         * La lista dei servizi con orario fisso è composta:
+         * A) Servizi abilitati (visibili)
+         * B) Se il tabellone contiene giorni passati, aggiunge anche i servizi con orario
+         *    non abilitati (non visibili) che hanno dei turni associati
+         * La lista deve essere ordinata secondo il campo servizio.ordine
+         */
+        listaServizi = Servizio.getListConOrario(entityManager, inizio, fine);
         if (listaServizi != null && listaServizi.size() > 0) {
             for (Servizio servizio : listaServizi) {
-                List<Turno> turni = WamQuery.queryTurni(entityManager, servizio, d1, d2);
+                List<Turno> turni = WamQuery.queryTurni(entityManager, servizio, inizio, fine);
                 wtab.add(new WRigaTab(servizio, turni.toArray(new Turno[0])));
             }// end of for cycle
         }// end of if cycle
 
-        // aggiunge una o più righe per ogni servizio con orario variabile
-        listaServizi = Servizio.getListVisibiliSenzaOrario(entityManager);
+        /**
+         * Aggiunge una o più righe per ogni servizio con orario variabile (senza orario fisso)
+         * La lista dei servizi senza orario è composta:
+         * A) Servizi abilitati (visibili)
+         * B) Se il tabellone contiene giorni passati, aggiunge anche i servizi senza orario
+         *    non abilitati (non visibili) che hanno dei turni associati
+         * La lista deve essere ordinata secondo il campo servizio.ordine
+         */
+        listaServizi = Servizio.getListSenzaOrario(entityManager,inizio,fine);
         if (listaServizi != null && listaServizi.size() > 0) {
             for (Servizio servizio : listaServizi) {
-                WRigaTab[] righe = creaRighe(entityManager, servizio, d1, d2);
+                WRigaTab[] righe = creaRighe(entityManager, servizio, inizio, fine);
                 for (WRigaTab riga : righe) {
                     wtab.add(riga);
                 }// end of for cycle

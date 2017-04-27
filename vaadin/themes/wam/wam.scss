@@ -350,4 +350,21 @@
     }
   }
 
+  .v-caption-wamTable {
+    color: red;
+    font-weight: bold;
+  }
+
+
+  .v-select-optiongroup-horizontal .v-select-option {
+    display: inline-block;
+  }
+
+  .v-select-optiongroup-horizontal {
+    white-space: nowrap;
+  }
+
+  .v-select-optiongroup-horizontal .v-select-option.v-radiobutton {
+    padding-right: 10px;
+  }
 }

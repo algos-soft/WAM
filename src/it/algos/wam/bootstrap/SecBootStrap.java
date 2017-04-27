@@ -59,10 +59,10 @@ public class SecBootStrap extends SecurityBootStrap {
      * Controllo esistenza dei ruoli specifici di questo progetto <br>
      * Se mancano, li crea <br>
      */
-    public  void creaRuoli() {
+    private void creaRuoli() {
         for (String nome : WamRuoli.getAllNames()) {
             super.creaRuolo(nome);
         }// fine del ciclo for
-    }// end of static method
+    }// end of private static method
 
 }// end of bootstrap class

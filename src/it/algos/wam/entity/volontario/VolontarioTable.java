@@ -104,7 +104,6 @@ public class VolontarioTable extends WamTable {
     }// end of method
 
 
-
     protected void fixSort() {
         Container cont = getContainerDataSource();
         if (cont instanceof Sortable) {
@@ -234,7 +233,7 @@ public class VolontarioTable extends WamTable {
                 label = new Label(FontAwesome.CHECK.getHtml(), ContentMode.HTML);
                 label.addStyleName("verde");
             } else {
-               label = new Label(FontAwesome.CLOSE.getHtml(), ContentMode.HTML);
+                label = new Label(FontAwesome.CLOSE.getHtml(), ContentMode.HTML);
                 label.addStyleName("rosso");
             }// fine del blocco if-else
 

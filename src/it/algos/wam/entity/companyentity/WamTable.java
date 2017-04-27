@@ -34,6 +34,7 @@ public class WamTable extends ETable {
      */
     public WamTable(ModulePop module, String caption) {
         super(module);
+        this.setStyleName("wamTable");
         this.setCaption(caption);
     }// end of constructor
 
