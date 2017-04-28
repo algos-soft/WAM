@@ -26,6 +26,7 @@ public enum CompanyPrefs {
     usaGestioneCertificati("usaGestioneCertificati", PrefType.bool, false, "Gestione dei brevetti BLSD, PNT e BPHTP"),
     usaStatisticheSuddivise("usaStatisticheSuddivise", PrefType.bool, false, "Statistiche suddivise per funzioni"),
     usaLabelServizioHtml("usaLabelServizioHtml", PrefType.bool, true, "Label dei servizi sul tabellone con ritorno a capo"),
+    primoGiornoLunedi("primoGiornoLunedi", PrefType.bool, false, "Il tabellone normale di 7 giorni inizia da lunedì, altrimenti dal giorno corrente"),
 
     senderAddress("senderAddress", PrefType.email, "info@algos.it", "Indirizzo email del mittente"),
     sendMailToBackup("sendMailToBackup", PrefType.bool, false, "Se invia ogni mail anche a una casella di backup"),

@@ -23,7 +23,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
     private static final String KEY_CREA_TURNI = "creaTurniNormali";
     private static final String KEY_CREA_EXTRA = "creaTurniExtra";
     private static final String KEY_LABEL_HTML = "usaLabelHtml";
-    private static final String KEY_GROUP = "groupPrimoGiorno";
+    private static final String KEY_LUNEDI = "iniziaLunedi";
 
     private ArrayComboField comboOreAlert;
     private ArrayComboField comboOreWarning;
@@ -31,7 +31,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
     private CheckBoxField checkTurni;
     private CheckBoxField checkExtra;
     private CheckBoxField checkLabelHTML;
-    private GroupField groupPrimoGiorno;
+    private CheckBoxField checkLunedi;
 
 
     public TabelloneConfigComponent() {
@@ -74,12 +74,12 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         hl.addComponent(checkLabelHTML);
         layout.addComponent(hl);
 
-//        layout.addComponent(new Label(""));
         hl = new HorizontalLayout();
         hl.setSpacing(true);
         hl.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
-        hl.addComponent(groupPrimoGiorno);
- //       layout.addComponent(hl);
+        hl.addComponent(new Label(CompanyPrefs.primoGiornoLunedi.getDescrizione()));
+        hl.addComponent(checkLunedi);
+        layout.addComponent(hl);
 
         layout.addComponent(new Label(""));
         layout.addComponent(new Label("Un turno si considera <strong>incompleto</strong> quando non tutte le funzioni obbligatorie sono coperte", ContentMode.HTML));
@@ -123,11 +123,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         checkTurni = new CheckBoxField();
         checkExtra = new CheckBoxField();
         checkLabelHTML = new CheckBoxField();
-
-        String caption = "Giorno di partenza da visualizzare nel tabellone";
-        final List<String> options = Arrays.asList(new String[]{"hebele", "hubele"});
-        groupPrimoGiorno = new GroupField(caption, Arrays.asList(new String[]{"lunedì", "oggi"}));
-        groupPrimoGiorno.select("lunedì"); // select this by default
+        checkLunedi= new CheckBoxField();
 
         // bind fields to properties
         getGroup().bind(comboOreAlert, KEY_ORE_ALERT);
@@ -136,9 +132,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
         getGroup().bind(checkTurni, KEY_CREA_TURNI);
         getGroup().bind(checkExtra, KEY_CREA_EXTRA);
         getGroup().bind(checkLabelHTML, KEY_LABEL_HTML);
-        //       getGroup().bind(groupPrimoGiorno, KEY_GROUP);
-
-
+        getGroup().bind(checkLunedi, KEY_LUNEDI);
     }
 
     @Override
@@ -181,6 +175,9 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
             boolean usaLabelServizioHtml = CompanyPrefs.usaLabelServizioHtml.getBool();
             addItemProperty(KEY_LABEL_HTML, new ObjectProperty<>(usaLabelServizioHtml));
 
+            boolean primoGiornoLunedi = CompanyPrefs.primoGiornoLunedi.getBool();
+            addItemProperty(KEY_LUNEDI, new ObjectProperty<>(primoGiornoLunedi));
+
         }// end of method
 
         public void persist() {
@@ -191,6 +188,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
             boolean creaTurni = (Boolean) getItemProperty(KEY_CREA_TURNI).getValue();
             boolean creaTurniExtra = (Boolean) getItemProperty(KEY_CREA_EXTRA).getValue();
             boolean usaLabelServizioHtml = (Boolean) getItemProperty(KEY_LABEL_HTML).getValue();
+            boolean primoGiornoLunedi = (Boolean) getItemProperty(KEY_LUNEDI).getValue();
 
             if (warningOrePrima > alertOrePrima) {
                 CompanyPrefs.turnoAlertOrePrima.put(alertOrePrima);
@@ -199,6 +197,7 @@ public class TabelloneConfigComponent extends BaseConfigPanel {
                 CompanyPrefs.creazioneTurniNormali.put(creaTurni);
                 CompanyPrefs.creazioneTurniExtra.put(creaTurniExtra);
                 CompanyPrefs.usaLabelServizioHtml.put(usaLabelServizioHtml);
+                CompanyPrefs.primoGiornoLunedi.put(primoGiornoLunedi);
 
                 Notification.show("Dati salvati");
 

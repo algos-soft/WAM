@@ -13,6 +13,7 @@ import it.algos.wam.WAMApp;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.login.MenuBarWithLogin;
+import it.algos.wam.settings.CompanyPrefs;
 import it.algos.wam.turnigenerator.CTurniGenerator;
 import it.algos.wam.ui.WamUI;
 import it.algos.webbase.domain.pref.Pref;
@@ -78,7 +79,8 @@ public class Tabellone extends VerticalLayout implements View {
 
         tabComponent = new TabComponent();
 
-        creaGrid(LocalDate.now());
+        //--crea una GridTabellone standard di partenza
+        creaGrid();
 
         // creo un Navigator e vi aggiungo i vari componenti che possono
         // essere presentati dal tabellone
@@ -168,6 +170,29 @@ public class Tabellone extends VerticalLayout implements View {
         });
 
     }
+
+    /**
+     * Crea una GridTabellone standard di partenza
+     * <p>
+     * Durata di 7 giorni
+     * Giorno di inizio selezionato in base al flag di preferenza della company
+     * che può essere lunedì oppure il giorno corrente
+     * Di default il giorno corrente
+     * <p>
+     * Mette la GridTabellone nel componente visibile
+     */
+    private void creaGrid() {
+        LocalDate inizio = LocalDate.now();
+        int numGiorni = 7;
+        int delta;
+
+        if (Pref.getBool(CompanyPrefs.primoGiornoLunedi.getCode(), false)) {
+            delta = inizio.getDayOfWeek().getValue();
+            inizio = inizio.minusDays(delta - 1);
+        }// end of if cycle
+
+        creaGrid(inizio, numGiorni);
+    }// end of method
 
     /**
      * Crea una GridTabellone a partire dalla data richiesta della durata di 7 giorni
