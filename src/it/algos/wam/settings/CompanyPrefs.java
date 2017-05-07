@@ -27,6 +27,8 @@ public enum CompanyPrefs {
     usaStatisticheSuddivise("usaStatisticheSuddivise", PrefType.bool, false, "Statistiche suddivise per funzioni"),
     usaLabelServizioHtml("usaLabelServizioHtml", PrefType.bool, true, "Label dei servizi sul tabellone con ritorno a capo"),
     primoGiornoLunedi("primoGiornoLunedi", PrefType.bool, false, "Il tabellone normale di 7 giorni inizia da lunedì, altrimenti dal giorno corrente"),
+    controllaFrequenza("controllaFrequenza", PrefType.bool, true, "Controlla la frequenza minima obbligatoria"),
+    turniMinimiMensili("turniMinimiMensili", PrefType.integer, 2, "Numero minimo di turni mensili, conteggiati da inizio anno"),
 
     senderAddress("senderAddress", PrefType.email, "info@algos.it", "Indirizzo email del mittente"),
     sendMailToBackup("sendMailToBackup", PrefType.bool, false, "Se invia ogni mail anche a una casella di backup"),

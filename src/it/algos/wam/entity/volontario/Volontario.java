@@ -119,9 +119,14 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     private boolean admin = false;
     @AIField(type = AFType.checkbox, caption = "Dipendente")
     private boolean dipendente = false;
+
+    //--attivo è un flag MANUALE per un volontario da eliminare (non opera più), ma senza cancellare il record
     @AIField(type = AFType.checkbox, caption = "Attivo")
     private boolean attivo = true;
 
+    //--esenteFrequenza è un flag MANUALE per un volontario che non ha l'obbligo di rispettare la frequenza minima
+    @AIField(type = AFType.checkbox, caption = "Esente frequenza minima")
+    private boolean esenteFrequenza=false;
 
     //--scadenza patente di guida (per autisti)
     //--data di scadenza della patente (normale o CRI)
@@ -993,6 +998,14 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         this.invioMail = invioMail;
     }
 
+    public boolean isEsenteFrequenza() {
+        return esenteFrequenza;
+    }
+
+    public void setEsenteFrequenza(boolean esenteFrequenza) {
+        this.esenteFrequenza = esenteFrequenza;
+    }
+
     //------------------------------------------------------------------------------------------------------------------------
     // Save
     //------------------------------------------------------------------------------------------------------------------------
@@ -1303,6 +1316,77 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         result = 31 * result + (dataNascita != null ? dataNascita.hashCode() : 0);
         return result;
     }
+
+    /**
+     * Controlla che la frequenza dei turni eseguita sia valida per i parametri della company
+     * <p>
+     * Se la company NON controlla la frequenza (), questa è sempre valida e i turni minimi richiesti sono pari a zero
+     * Recupera dalla company il valore di frequenza minima necessario
+     * Calcola i turni richiesti da inizio anno
+     * //     * Recupera le iscrizioni del volontario
+     * Calcola i turni effettivamente eseguiti da inizio anno
+     * Controlla che i turni effettivamente eseguiti siano uguali o superiori a quelli richiesti
+     *
+     * @return true se i turni eseguiti sono uguali o superiori a quelli richiesti
+     */
+    public boolean isFrequenzaValida() {
+        boolean valida = false;
+        int turniMinimiMensili;
+        int turniTeoriciDaInizioAnno;
+        int turniEffettivi;
+
+        //--Se la company NON controlla la frequenza (), questa è sempre valida e i turni minimi richiesti sono pari a zero
+        if (!Pref.getBool(CompanyPrefs.controllaFrequenza.getCode(), true)) {
+            return true;
+        }// end of if cycle
+
+        //--Recupera dalla company il valore di frequenza minima necessario
+        turniMinimiMensili = Pref.getInt(CompanyPrefs.turniMinimiMensili.getCode(), 2);
+
+        //--Calcola i turni richiesti da inizio anno
+        turniTeoriciDaInizioAnno = 19;//@todo da sviluppare
+
+        //--Calcola i turni effettivamente eseguiti da inizio anno
+        turniEffettivi = 17;//@todo da sviluppare
+
+        //--Controlla che i turni effettivamente eseguiti siano uguali o superiori a quelli richiesti
+        valida = (turniEffettivi >= turniTeoriciDaInizioAnno);
+
+        return valida;
+    }// end of method
+
+    /**
+     * Controlla che il login sia abilitato
+     * <p>
+     * Il volontario deve essere attivo
+     * Il volontario deve avere regolato a true il flag esenteFrequenza oppure
+     * la company non controlla la frequenza oppure
+     * deve avere una frequenza valida
+     *
+     * @return true se il login soddisfa le condizioni ed è abilitato
+     */
+    public boolean isLoginAbilitato() {
+        boolean abilitato = false;
+
+        //--Il volontario deve essere attivo
+        if (!this.isAttivo()) {
+            return false;
+        }// end of if cycle
+
+        if (this.isEsenteFrequenza()) {
+            return true;
+        }// end of if cycle
+
+        if (!Pref.getBool(CompanyPrefs.controllaFrequenza.getCode(), true)) {
+            return true;
+        }// end of if cycle
+
+        if (this.isFrequenzaValida()) {
+            return true;
+        }// end of if cycle
+
+        return abilitato;
+    }// end of method
 
     //------------------------------------------------------------------------------------------------------------------------
     // Clone
