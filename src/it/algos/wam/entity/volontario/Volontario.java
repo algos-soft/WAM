@@ -1,16 +1,23 @@
 package it.algos.wam.entity.volontario;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Property;
 import com.vaadin.data.util.filter.Compare;
+import com.vaadin.ui.Grid;
 import it.algos.wam.WAMApp;
 import it.algos.wam.entity.companyentity.WamCompanyEntity;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.iscrizione.Iscrizione;
+import it.algos.wam.entity.iscrizione.Iscrizione_;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione_;
+import it.algos.wam.entity.statistiche.StatisticheMod;
+import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzione_;
 import it.algos.wam.entity.wamcompany.WamCompany;
+import it.algos.wam.lib.LibWam;
 import it.algos.wam.settings.CompanyPrefs;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.log.Log;
@@ -22,6 +29,7 @@ import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.LibCrypto;
+import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.login.UserIF;
 import it.algos.webbase.web.query.AQuery;
@@ -126,7 +134,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
     //--esenteFrequenza è un flag MANUALE per un volontario che non ha l'obbligo di rispettare la frequenza minima
     @AIField(type = AFType.checkbox, caption = "Esente frequenza minima")
-    private boolean esenteFrequenza=false;
+    private boolean esenteFrequenza = false;
 
     //--scadenza patente di guida (per autisti)
     //--data di scadenza della patente (normale o CRI)
@@ -618,6 +626,42 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         }// end of if cycle
 
         return orderList(lista);
+    }// end of static method
+
+    /**
+     * Recupera una lista (array) di tutti i volontari attivi
+     * Filtrato sulla company corrente
+     *
+     * @return lista delle entities selezionate
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Volontario> getListIsAttivo() {
+        List<Volontario> lista = (List<Volontario>) CompanyQuery.getList(Volontario.class, Volontario_.attivo, true);
+        return orderList(lista);
+    }// end of static method
+
+
+    /**
+     * Recupera una lista (array) di tutti i volontari abilitati al login
+     * Filtrato sulla company corrente
+     *
+     * @return lista delle entities selezionate
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Volontario> getListIsAbilitato() {
+        List<Volontario> listaAbilitati = null;
+        List<Volontario> listaAttivi = getListIsAttivo();
+
+        if (listaAttivi != null && listaAttivi.size() > 0) {
+            listaAbilitati = new ArrayList<>();
+            for (Volontario vol : listaAttivi) {
+                if (vol.isLoginAbilitato()) {
+                    listaAbilitati.add(vol);
+                }// end of if cycle
+            }// end of for cycle
+        }// end of if cycle
+
+        return listaAbilitati;
     }// end of static method
 
     //------------------------------------------------------------------------------------------------------------------------
@@ -1344,15 +1388,55 @@ public class Volontario extends WamCompanyEntity implements UserIF {
         turniMinimiMensili = Pref.getInt(CompanyPrefs.turniMinimiMensili.getCode(), 2);
 
         //--Calcola i turni richiesti da inizio anno
-        turniTeoriciDaInizioAnno = 19;//@todo da sviluppare
+        turniTeoriciDaInizioAnno = turniDaInizioAnno(turniMinimiMensili);
 
         //--Calcola i turni effettivamente eseguiti da inizio anno
-        turniEffettivi = 17;//@todo da sviluppare
+        turniEffettivi = turniEffettivi();
 
         //--Controlla che i turni effettivamente eseguiti siano uguali o superiori a quelli richiesti
         valida = (turniEffettivi >= turniTeoriciDaInizioAnno);
 
         return valida;
+    }// end of method
+
+
+    /**
+     * Calcola i turni richiesti da inizio anno
+     */
+    private int turniDaInizioAnno(int turniMinimiMensili) {
+        int turniDaInizioAnno;
+        int giorniDaInizioAnno = LibDate.getDayYear();
+        int giorniTurno = 30 / turniMinimiMensili;
+
+        turniDaInizioAnno = giorniDaInizioAnno / giorniTurno;
+
+        return turniDaInizioAnno;
+    }// end of method
+
+    /**
+     * Calcola i turni effettivamente eseguiti da inizio anno
+     */
+    private int turniEffettivi() {
+        int turniEffettivi = 0;
+        int chiaveIni = LibWam.creaChiavePrimaGennaio();
+        int chiaveEnd = LibWam.creaChiaveOdierna();
+        int chiave;
+        Turno turno;
+        List<Iscrizione> listaIscrizioni = (List<Iscrizione>) CompanyQuery.getList(Iscrizione.class, Iscrizione_.volontario, this);
+        //       Container.Filter filtroVolontario = new Compare.Equal(Iscrizione_.volontario.getName(), this);
+        //       Container.Filter filtroOggi = new Compare.Equal(Iscrizione_.turno.getBindableJavaType().getName(), new Date());
+
+        for (Iscrizione isc : listaIscrizioni) {
+            turno = isc.getTurno();
+            if (turno != null) {
+                chiave = (int) turno.getChiave();
+                if (chiave >= chiaveIni && chiave <= chiaveEnd) {
+                    turniEffettivi++;
+                }// end of if cycle
+            }// end of if cycle
+        }// end of for cycle
+
+        return turniEffettivi;
     }// end of method
 
     /**
@@ -1387,6 +1471,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
         return abilitato;
     }// end of method
+
 
     //------------------------------------------------------------------------------------------------------------------------
     // Clone

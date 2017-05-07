@@ -273,7 +273,9 @@ public class StatisticheMod extends WamMod {
         int chiaveIni;
         int chiaveEnd;
 
-        chiaveIni = LibWam.creaChiave(LibDate.getPrimoGennaio(annoSelezionato));
+        boolean pippoz=vol.isFrequenzaValida();
+
+                chiaveIni = LibWam.creaChiave(LibDate.getPrimoGennaio(annoSelezionato));
         if (annoSelezionato == annoCorrente) {
             chiaveEnd = LibWam.creaChiave(oggi);
         } else {

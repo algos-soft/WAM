@@ -32,6 +32,24 @@ public abstract class LibWam {
     private static Locale LOCALE = new Locale("it");
 
     /**
+     * Costruisce una chiave per la data di oggi
+     * Usato per la indicizzazione dei Turni
+     */
+    public static int creaChiaveOdierna() {
+        Date oggi = LibDate.today();
+        return LibWam.creaChiave(oggi);
+    }// end of static method
+
+    /**
+     * Costruisce una chiave per il primo gennaio dell'anno corrente
+     * Usato per la indicizzazione dei Turni
+     */
+    public static int creaChiavePrimaGennaio() {
+        Date primoGennaio = LibDate.getPrimoGennaio();
+        return LibWam.creaChiave(primoGennaio);
+    }// end of static method
+
+    /**
      * Costruisce una chiave della data
      * Usato per la indicizzazione dei Turni
      */
