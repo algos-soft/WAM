@@ -614,9 +614,7 @@ public class Migration {
         boolean admin = false;
         boolean dipendente = volontarioOld.isDipendente();
         boolean attivo = volontarioOld.isAttivo();
-        int oreAnno = volontarioOld.getOre_anno();
-        int turniAnno = volontarioOld.getTurni_anno();
-        int oreExtra = volontarioOld.getOre_extra();
+        boolean esenteFrequenza = volontarioOld.getOre_extra() > 0;
         Date scadenzaBLSD = null;
         Date scadenzaPNT = null;
         Date scadenzaBPHTP = null;
@@ -644,9 +642,7 @@ public class Migration {
                     scadenzaBLSD,
                     scadenzaPNT,
                     scadenzaBPHTP,
-                    oreAnno,
-                    turniAnno,
-                    oreExtra,
+                    esenteFrequenza,
                     funzioni);
         } catch (Exception unErrore) { // intercetta l'errore
             int a = 87;
@@ -1077,8 +1073,11 @@ public class Migration {
 
         //--flag vari
         CompanyPrefs.usaPrimaCognome.put(company, true);
-        CompanyPrefs.usaGestioneCertificati.put(company, true);
+        CompanyPrefs.usaGestioneCertificati.put(company, false);
         CompanyPrefs.usaStatisticheSuddivise.put(company, true);
+        CompanyPrefs.controllaFrequenza.put(company, true);
+        CompanyPrefs.inviaNotificaInizioTurno.put(company, false);
+        CompanyPrefs.turniMinimiMensili.put(company, 2);
 
         if (listaServizi.size() > 6) {
             for (int k = 0; k < listaServizi.size(); k++) {

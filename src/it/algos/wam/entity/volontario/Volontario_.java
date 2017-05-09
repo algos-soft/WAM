@@ -29,8 +29,8 @@ public class Volontario_ extends CompanyEntity_ {
     public static volatile SingularAttribute<Volontario, Date> scadenzaTrauma;
     public static volatile SingularAttribute<Volontario, Date> scadenzaNonTrauma;
     public static volatile ListAttribute<Volontario, VolontarioFunzione> funzioni;
-    public static volatile SingularAttribute<Volontario, Integer> oreAnno;
-    public static volatile SingularAttribute<Volontario, Integer> turniAnno;
-    public static volatile SingularAttribute<Volontario, Integer> oreExtra;
+//    public static volatile SingularAttribute<Volontario, Integer> oreAnno;
+//    public static volatile SingularAttribute<Volontario, Integer> turniAnno;
+//    public static volatile SingularAttribute<Volontario, Integer> oreExtra;
 
 }// end of entity class
