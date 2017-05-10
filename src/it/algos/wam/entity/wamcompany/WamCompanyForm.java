@@ -46,23 +46,6 @@ public class WamCompanyForm extends ModuleForm {
         super(item, module);
     }// end of constructor
 
-    /**
-     * Populate the map to bind item properties to fields.
-     * Create and add a field for each property declared for this form
-     * <p>
-     * Implementazione di default nella superclasse.<br>
-     * I campi vengono recuperati dal Modello.<br>
-     * I campi vengono creati del tipo grafico previsto nella Entity.<br>
-     * Se si vuole aggiungere un campo (solo nel form e non nel Modello),<br>
-     * usare il metodo sovrascritto nella sottoclasse
-     * invocando prima (o dopo) il metodo della superclasse.
-     * Se si vuole un layout completamente diverso sovrascrivere
-     * senza invocare il metodo della superclasse
-     */
-    @Override
-    public void createFields() {
-        super.createFields();
-    }// end of method
 
     /**
      * Create the detail component (the upper part containing the fields).

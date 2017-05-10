@@ -56,7 +56,8 @@ public class ServizioFunzioneMod extends WamModSenzaDoppioClick {
         return super.addCompanyField(
                 ServizioFunzione_.servizio,
                 ServizioFunzione_.funzione,
-                ServizioFunzione_.obbligatoria);
+                ServizioFunzione_.obbligatoria
+        );//end of bracket
     }// end of method
 
 

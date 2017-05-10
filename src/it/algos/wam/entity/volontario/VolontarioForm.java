@@ -41,6 +41,7 @@ public class VolontarioForm extends WanForm {
 
     private CheckBoxField fAdmin;
     private CheckBoxField fDipendente;
+    private CheckBoxField fInfermiere;
     private CheckBoxField fAttivo;
     private CheckBoxField fEsenteFrequenza;
     private CheckBoxField fInvioMail;
@@ -86,6 +87,7 @@ public class VolontarioForm extends WanForm {
         fPassword = (PasswordField) getField(Volontario_.password);
         fAdmin = (CheckBoxField) getField(Volontario_.admin);
         fDipendente = (CheckBoxField) getField(Volontario_.dipendente);
+        fInfermiere = (CheckBoxField) getField(Volontario_.infermiere);
         fAttivo = (CheckBoxField) getField(Volontario_.attivo);
         fEsenteFrequenza = (CheckBoxField) getField(Volontario_.esenteFrequenza);
         fInvioMail = (CheckBoxField) getField(Volontario_.invioMail);
@@ -123,7 +125,8 @@ public class VolontarioForm extends WanForm {
             }// end of if/else cycle
         }// end of if/else cycle
 
-        layout.addComponent(new AHorizontalLayout(fAdmin, fDipendente, fAttivo, fEsenteFrequenza,fInvioMail));
+        layout.addComponent(new AHorizontalLayout(fAdmin, fDipendente, fInfermiere));
+        layout.addComponent(new AHorizontalLayout(fAttivo, fEsenteFrequenza, fInvioMail));
 
         if (usaGestioneCertificati) {
             layout.addComponent(new Label("&nbsp;", ContentMode.HTML)); // aggiunge un po di spazio

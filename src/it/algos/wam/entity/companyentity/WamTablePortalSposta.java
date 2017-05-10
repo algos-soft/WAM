@@ -11,9 +11,10 @@ import it.algos.webbase.web.toolbar.TableToolbar;
 public class WamTablePortalSposta extends WamTablePortal implements ATable.SelectionChangedListener {
 
 
+
     public WamTablePortalSposta(ModulePop modulo) {
         super(modulo);
-    }// end of constructor
+    }// end of basic constructor
 
 
     /**

@@ -8,6 +8,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamModSposta;
 import it.algos.wam.entity.funzione.Funzione;
+import it.algos.wam.entity.funzione.FunzioneSearch;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.iscrizione.Iscrizione_;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
@@ -17,6 +18,7 @@ import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.query.AQuery;
+import it.algos.webbase.web.search.SearchManager;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
@@ -59,6 +61,15 @@ public class ServizioMod extends WamModSposta {
         return new ServizioForm(item, this);
     }// end of method
 
+    /**
+     * Create the Search Manager
+     *
+     * @return the SearchManager
+     */
+    @Override
+    public SearchManager createSearchManager() {
+        return new ServizioSearch(this);
+    }// end of method
 
     @Override
     public ATable createTable() {
@@ -68,10 +79,7 @@ public class ServizioMod extends WamModSposta {
 
     @Override
     public TablePortal createTablePortal() {
-        TablePortal portaleServizio = new ServizioTablePortal(this);
-        portaleServizio.delCmd(TableToolbar.CMD_SEARCH);
-
-        return portaleServizio;
+        return new ServizioTablePortal(this);
     }// end of method
 
 

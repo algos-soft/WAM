@@ -11,6 +11,7 @@ import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibArray;
+import it.algos.webbase.web.search.SearchManager;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
@@ -61,6 +62,16 @@ public class FunzioneMod extends WamModSposta {
 
 
     /**
+     * Create the Search Manager
+     *
+     * @return the SearchManager
+     */
+    @Override
+    public SearchManager createSearchManager() {
+        return new FunzioneSearch(this);
+    }// end of method
+
+    /**
      * Crea una Table già filtrata sulla company corrente
      * The concrete subclass must override for a specific Table.
      *
@@ -74,26 +85,10 @@ public class FunzioneMod extends WamModSposta {
 
     @Override
     public TablePortal createTablePortal() {
-        TablePortal portaleFunzione = new FunzioneTablePortal(this);
-        portaleFunzione.delCmd(TableToolbar.CMD_SEARCH);
-
-        return portaleFunzione;
+        return new FunzioneTablePortal(this);
     }// end of method
 
 
-    /**
-     * Crea i campi visibili nella scheda (search)
-     * <p>
-     * Come default spazzola tutti i campi della Entity <br>
-     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
-     */
-    @Override
-    protected Attribute<?, ?>[] creaFieldsSearch() {
-        return super.addCompanyField(
-                Funzione_.sigla,
-                Funzione_.descrizione);
-    }// end of method
 
 
     /**

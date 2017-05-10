@@ -127,6 +127,8 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     private boolean admin = false;
     @AIField(type = AFType.checkbox, caption = "Dipendente")
     private boolean dipendente = false;
+    @AIField(type = AFType.checkbox, caption = "Infermiere")
+    private boolean infermiere = false;
 
     //--attivo è un flag MANUALE per un volontario da eliminare (non opera più), ma senza cancellare il record
     @AIField(type = AFType.checkbox, caption = "Attivo")
@@ -1019,6 +1021,14 @@ public class Volontario extends WamCompanyEntity implements UserIF {
 
     public void setEsenteFrequenza(boolean esenteFrequenza) {
         this.esenteFrequenza = esenteFrequenza;
+    }
+
+    public boolean isInfermiere() {
+        return infermiere;
+    }
+
+    public void setInfermiere(boolean infermiere) {
+        this.infermiere = infermiere;
     }
 
     //------------------------------------------------------------------------------------------------------------------------

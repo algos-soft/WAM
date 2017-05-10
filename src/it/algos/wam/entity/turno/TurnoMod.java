@@ -80,24 +80,10 @@ public class TurnoMod extends WamMod {
                 Turno_.fine,
                 Turno_.titoloExtra,
                 Turno_.localitaExtra,
-                Turno_.note};
+                Turno_.note
+        };//end of brace
     }// end of method
 
-
-    /**
-     * Crea i campi visibili nella scheda (search)
-     * <p>
-     * Come default spazzola tutti i campi della Entity <br>
-     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
-     */
-    protected Attribute<?, ?>[] creaFieldsSearch() {
-        return new Attribute[]{
-                WamCompanyEntity_.company,
-                Turno_.servizio,
-                Turno_.inizio,
-                Turno_.fine};
-    }// end of method
 
 }// end of class
 

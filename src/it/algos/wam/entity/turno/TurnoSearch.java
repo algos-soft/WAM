@@ -3,6 +3,8 @@ package it.algos.wam.entity.turno;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.ui.Field;
+import it.algos.wam.entity.companyentity.WamCompanyEntity_;
+import it.algos.wam.entity.companyentity.WamSearch;
 import it.algos.webbase.web.field.ArrayComboField;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.search.SearchManager;
@@ -14,7 +16,7 @@ import java.util.*;
  * Created by gac on 26/04/17
  * .
  */
-public class TurnoSearch extends SearchManager {
+public class TurnoSearch extends WamSearch {
 
     /**
      * Constructor
@@ -24,6 +26,22 @@ public class TurnoSearch extends SearchManager {
     public TurnoSearch(ModulePop module) {
         super(module);
     }// end of constructor
+
+    /**
+     * Attributes used in this search
+     * Di default prende dal modulo
+     * Può essere sovrascritto se c'è un Search specifico
+     *
+     * @return a list containing all the attributes used in this search
+     */
+    @Override
+    protected Attribute<?, ?>[] getAttributesList() {
+        return new Attribute[]{
+                Turno_.servizio,
+                Turno_.inizio,
+                Turno_.fine
+        };//end of brace
+    }// end of method
 
     /**
      * Creates and adds the filters for each search field. Invoked before performing the search.

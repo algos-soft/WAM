@@ -49,7 +49,15 @@ public class WamTablePortal extends TablePortal {
         boolean developer = LibSession.isDeveloper();
         boolean admin = LibSession.isAdmin();
         toolbar = super.createToolbar();
-        toolbar.setSelectButtonVisible(false);
+
+        //--selezione dei bottoni visibili in funzione del login
+        if (developer) {
+            toolbar.setSearchButtonVisible(true);
+            toolbar.setSelectButtonVisible(true);
+        } else {
+            toolbar.setSearchButtonVisible(false);
+            toolbar.setSelectButtonVisible(false);
+        }// end of if/else cycle
 
         if (developer) {
             if (CompanySessionLib.isCompanySet()) {

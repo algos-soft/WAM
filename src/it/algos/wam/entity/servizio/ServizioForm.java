@@ -211,9 +211,9 @@ public class ServizioForm extends WanForm implements ServFunzListener {
         ((VerticalLayout) placeholderFunz).setSpacing(true);
         placeholderFunz.addComponent(bNuova);
 
-        if (isNewRecord()) {
-            placeholderFunz.setVisible(false);
-        }// end of if cycle
+//        if (isNewRecord()) {
+//            placeholderFunz.setVisible(false);
+//        }// end of if cycle
 
         // aggiunge gli editor per le funzioni esistenti
         List<ServizioFunzione> listaSF = getServizio().getServizioFunzioniOrd();

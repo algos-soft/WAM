@@ -412,11 +412,11 @@ public class WamUI extends UI {
             addView(menuUtilities, MgrConfigScreen.class, "Settings", FontAwesome.WRENCH);
             addMod(menuBarDeveloper, new WamCompanyMod());
 
-            MenuBar.MenuItem menuTavoleDev = menuBarDeveloper.addItem("Tavole", null, null);
+//            MenuBar.MenuItem menuTavoleDev = menuBarDeveloper.addItem("Tavole", null, null);
 //            addMod(menuTavoleDev, new ServizioFunzioneMod());
 //            addMod(menuTavoleDev, new VolontarioFunzioneMod());
 //            addMod(menuTavoleDev, new TurnoMod());
-            addMod(menuTavoleDev, new IscrizioneMod());
+//            addMod(menuTavoleDev, new IscrizioneMod());
 
             navComp.addMenu(menuBarDeveloper, "rosso");
         }// end of if cycle

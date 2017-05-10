@@ -18,6 +18,24 @@ public class VolontarioTablePortal extends WamTablePortal {
     }// end of constructor
 
     /**
+     * Creates the toolbar
+     * Barra standard con 5 bottoni (nuovo, modifica, elimina, cerca, selezione)
+     * Sovrascrivibile, per aggiungere/modificare bottoni
+     */
+    @Override
+    public TableToolbar createToolbar() {
+        toolbar = super.createToolbar();
+
+        if (toolbar != null) {
+            toolbar.setSearchButtonVisible(true);
+            toolbar.setSelectButtonVisible(true);
+        }// end of if cycle
+
+        return toolbar;
+    }// end of method
+
+
+    /**
      * Shows in the table only the needed wamcompany
      * Creates a filter corresponding to the needed wamcompany in the table
      * I filtri sono comprensivi del livello sottostante (GreaterOrEqual)
@@ -27,20 +45,5 @@ public class VolontarioTablePortal extends WamTablePortal {
         getTable().refresh();
     }// end of method
 
-    /**
-     * Creates the toolbar
-     * Barra standard con 5 bottoni (nuovo, modifica, elimina, cerca, selezione)
-     * Sovrascrivibile, per aggiungere/modificare bottoni
-     */
-    @Override
-    public TableToolbar createToolbar() {
-        toolbar = super.createToolbar();
-
-        if (toolbar!=null) {
-            toolbar.setSelectButtonVisible(true);
-        }// end of if cycle
-
-        return toolbar;
-    }// end of method
 
 }// end of class
