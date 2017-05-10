@@ -32,7 +32,6 @@ public class WamSearch extends SearchManager {
     }// end of constructor
 
 
-
     /**
      * Aggiunge il campo company
      * <p>
