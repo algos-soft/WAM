@@ -2,9 +2,7 @@ package it.algos.wam.entity.iscrizione;
 
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
-import it.algos.wam.entity.companyentity.WamCompanyEntity_;
-import it.algos.wam.entity.companyentity.WamMod;
-import it.algos.wam.entity.companyentity.WamModSenzaDoppioClick;
+import it.algos.wam.entity.companyentity.*;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzioneSearch;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzioneTable;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione_;
@@ -12,6 +10,8 @@ import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.turno.Turno_;
 import it.algos.webbase.web.search.SearchManager;
 import it.algos.webbase.web.table.ATable;
+import it.algos.webbase.web.table.TablePortal;
+import it.algos.webbase.web.toolbar.TableToolbar;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -54,17 +54,24 @@ public class IscrizioneMod extends WamModSenzaDoppioClick {
     }// end of method
 
     /**
-     * Crea i campi visibili nella scheda (search)
+     * Create the Table Portal
      * <p>
-     * Come default spazzola tutti i campi della Entity <br>
-     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
+     * in caso di developer, portale specifico col menu di selezione della company
+     * in caso di admin e utente normale, portale standard
+     *
+     * @return the TablePortal
      */
-//    @Override
-    protected Attribute<?, ?>[] creaFieldsSearch2() {
-        return super.addCompanyField(
-                Iscrizione_.volontario,
-                Iscrizione_.servizioFunzione);
+    @Override
+    public TablePortal createTablePortal() {
+        WamTablePortal portal = new WamTablePortalSoloRicerca(this);
+
+        TableToolbar toolBar = portal.getToolbar();
+        if (toolBar != null) {
+            toolBar.setEditButtonVisible(true);
+        }// end of if cycle
+
+        return portal;
     }// end of method
+
 
 }// end of class

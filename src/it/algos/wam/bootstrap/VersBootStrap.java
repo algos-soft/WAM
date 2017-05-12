@@ -77,7 +77,7 @@ public class VersBootStrap implements ServletContextListener {
 
         //--crea una nuova preferenza, globale per tutte le company
         if (LibVers.installa(++k)) {
-            LibPref.newVersBool(WAMApp.ATTIVA_MIGRATION, false, "Importa periodicamente le croci da webambulanze");
+            LibPref.newVersBool(WAMApp.ATTIVA_MIGRATION, true, "Importa periodicamente le croci da webambulanze");
         }// fine del blocco if
 
         //--crea una nuova preferenza, globale per tutte le company

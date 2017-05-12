@@ -26,11 +26,13 @@ public class WamTablePortalSoloRicerca extends WamTablePortal {
     public TableToolbar createToolbar() {
         toolbar = super.createToolbar();
 
-        toolbar.setCreate(false);
-        toolbar.setCreateButtonVisible(false);
-        toolbar.setDeleteButtonVisible(false);
-        toolbar.setEditButtonVisible(false);
-        toolbar.setSelectButtonVisible(true);
+        if (toolbar != null) {
+            toolbar.setCreateButtonVisible(false);
+            toolbar.setEditButtonVisible(false);
+            toolbar.setDeleteButtonVisible(false);
+            toolbar.setSearchButtonVisible(true);
+            toolbar.setSelectButtonVisible(true);
+        }// end of if cycle
 
         return toolbar;
     }// end of method

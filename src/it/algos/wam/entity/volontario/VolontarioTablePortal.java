@@ -5,6 +5,7 @@ import it.algos.wam.entity.wamcompany.WamCompany;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 /**
@@ -27,6 +28,9 @@ public class VolontarioTablePortal extends WamTablePortal {
         toolbar = super.createToolbar();
 
         if (toolbar != null) {
+            toolbar.setCreateButtonVisible(false);
+            toolbar.setEditButtonVisible(false);
+            toolbar.setDeleteButtonVisible(false);
             toolbar.setSearchButtonVisible(true);
             toolbar.setSelectButtonVisible(true);
         }// end of if cycle
@@ -35,15 +39,15 @@ public class VolontarioTablePortal extends WamTablePortal {
     }// end of method
 
 
-    /**
-     * Shows in the table only the needed wamcompany
-     * Creates a filter corresponding to the needed wamcompany in the table
-     * I filtri sono comprensivi del livello sottostante (GreaterOrEqual)
-     */
-    protected void setFiltro(WamCompany company) {
-        super.setFiltro(company);
-        getTable().refresh();
-    }// end of method
+//    /**
+//     * Shows in the table only the needed wamcompany
+//     * Creates a filter corresponding to the needed wamcompany in the table
+//     * I filtri sono comprensivi del livello sottostante (GreaterOrEqual)
+//     */
+//    protected void setFiltro(WamCompany company) {
+//        super.setFiltro(company);
+//        getTable().refresh();
+//    }// end of method
 
 
 }// end of class

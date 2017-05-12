@@ -1010,7 +1010,9 @@ public class Migration {
         CompanyPrefs.usaPrimaCognome.put(company, false);
         CompanyPrefs.usaGestioneCertificati.put(company, false);
         CompanyPrefs.usaStatisticheSuddivise.put(company, false);
+        CompanyPrefs.controllaFrequenza.put(company, false);
         CompanyPrefs.usaLabelServizioHtml.put(company, true);
+        CompanyPrefs.inviaNotificaInizioTurno.put(company, true);
 
         if (listaServizi.size() == 3) {
             servNew = listaServizi.get(0);
@@ -1073,8 +1075,9 @@ public class Migration {
 
         //--flag vari
         CompanyPrefs.usaPrimaCognome.put(company, true);
-        CompanyPrefs.usaGestioneCertificati.put(company, false);
+        CompanyPrefs.usaGestioneCertificati.put(company, true);
         CompanyPrefs.usaStatisticheSuddivise.put(company, true);
+        CompanyPrefs.usaLabelServizioHtml.put(company, true);
         CompanyPrefs.controllaFrequenza.put(company, true);
         CompanyPrefs.inviaNotificaInizioTurno.put(company, false);
         CompanyPrefs.turniMinimiMensili.put(company, 2);

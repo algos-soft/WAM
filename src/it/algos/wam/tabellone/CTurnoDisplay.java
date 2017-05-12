@@ -177,15 +177,16 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
      * Aggiunge le iscrizioni
      */
     private void initTurno() {
+        String[] styles=null;
+        String bgStyle = null;
+        String fgStyle = null;
+        LocalDate dataTurno = turno.getData1();
 
         // Colora lo sfondo del turno
         // se è nel passato, non colora
         // se è oggi, colora di azzurro
         // se è un po' nel futuro, colora in base all'urgenza di completamento
         // se è molto nel futuro, non colora
-        String bgStyle = null;
-        String fgStyle = null;
-        LocalDate dataTurno = turno.getData1();
         if (dataTurno.equals(LocalDate.now())) {  // è oggi
             bgStyle = "cturno-today";
             fgStyle = "ciscrizione-light";
@@ -195,7 +196,7 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
                 LocalDateTime inizioTurno = turno.getStartTime();
                 long oreMancanti = ChronoUnit.HOURS.between(now, inizioTurno);
                 if (oreMancanti < CompanyPrefs.turnoWarningOrePrima.getInt()) {
-                    String[] styles = coloraTurnoUrgenza(turno);
+                     styles = coloraTurnoUrgenza(turno);
                     bgStyle = styles[0];
                     fgStyle = styles[1];
                 }
@@ -219,9 +220,9 @@ public class CTurnoDisplay extends VerticalLayout implements TabelloneCell {
                 if (iscr.hasNota()) {
                     fa = FontAwesome.EXCLAMATION_TRIANGLE;
                 }
-                ci = new CIscrizione(nome, icon, fa, iscr.getNota());
+                ci = new CIscrizione(nome, icon, fa, iscr.getNota(),styles);
             } else {
-                ci = new CIscrizione("", icon, null, null);
+                ci = new CIscrizione( icon);
             }
 
             // foreground dell'iscrizione

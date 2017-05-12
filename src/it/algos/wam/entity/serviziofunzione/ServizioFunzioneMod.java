@@ -3,10 +3,7 @@ package it.algos.wam.entity.serviziofunzione;
 
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
-import it.algos.wam.entity.companyentity.WamCompanyEntity_;
-import it.algos.wam.entity.companyentity.WamMod;
-import it.algos.wam.entity.companyentity.WamModSenzaDoppioClick;
-import it.algos.wam.entity.companyentity.WamTablePortalSoloRicerca;
+import it.algos.wam.entity.companyentity.*;
 import it.algos.wam.entity.servizio.ServizioTablePortal;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.search.SearchManager;
@@ -71,6 +68,19 @@ public class ServizioFunzioneMod extends WamModSenzaDoppioClick {
     public ATable createTable() {
         return new ServizioFunzioneTable(this);
     }// end of method
+
+//    @Override
+//    public TablePortal createTablePortal() {
+//        WamTablePortal tablePortal= new WamTablePortal(this);
+//
+//        tablePortal.getToolbar().setCreateButtonVisible(false);
+//        tablePortal.getToolbar().setEditButtonVisible(false);
+//        tablePortal.getToolbar().setDeleteButtonVisible(false);
+//        tablePortal.getToolbar().setSearchButtonVisible(true);
+//        tablePortal.getToolbar().setSelectButtonVisible(true);
+//
+//        return tablePortal;
+//    }// end of method
 
 }// end of class
 

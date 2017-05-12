@@ -34,7 +34,7 @@ public class WamScheduler extends Scheduler {
 
 	private WamScheduler() {
 		super();
-	}// end of constructor
+	}// end of basic constructor
 
 
 	class TaskCompany extends Task {
@@ -127,16 +127,16 @@ public class WamScheduler extends Scheduler {
 
 			logger.log(Level.INFO, "WAM daemon disattivato.");
 
-		}
-
-	}
+		}// end of if cycle
+	}// end of method
 
 
 	public static WamScheduler getInstance() {
 		if (instance == null) {
 			instance = new WamScheduler();
-		}
+		}// end of if cycle
+
 		return instance;
-	}
+	}// end of method
 
 }// end of scheduler class
