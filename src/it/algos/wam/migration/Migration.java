@@ -502,6 +502,7 @@ public class Migration {
      * @param companyNew company usata in wam
      */
     private List<WrapVolontario> importVolontari(WamCompany companyNew, EntityManager manager) {
+        String tagEliminato = "eliminato";
         List<WrapVolontario> listaWrapVolontari = new ArrayList<>();
         Volontario volontarioNew = null;
 
@@ -509,8 +510,12 @@ public class Migration {
             try { // prova ad eseguire il codice
                 if (listaVolontariOld != null && listaVolontariOld.size() > 0) {
                     for (VolontarioAmb volontarioOld : listaVolontariOld) {
-                        volontarioNew = creaSingoloVolontario(volontarioOld, companyNew, manager);
-                        listaWrapVolontari.add(new WrapVolontario(volontarioOld, volontarioNew));//todo forse non serve
+
+                        if (!volontarioOld.getCognome().equals(tagEliminato)) {
+                            volontarioNew = creaSingoloVolontario(volontarioOld, companyNew, manager);
+                            listaWrapVolontari.add(new WrapVolontario(volontarioOld, volontarioNew));//todo forse non serve
+                        }// end of if cycle
+
                     }// end of for cycle
                 }// end of if cycle
 
@@ -522,13 +527,15 @@ public class Migration {
             if (listaVolontariOld != null && listaVolontariOld.size() > 0) {
                 for (VolontarioAmb volontarioOld : listaVolontariOld) {
 
-                    volontarioNew = creaSingoloVolontario(volontarioOld, companyNew, manager);
-                    if (volontarioNew == null) {
-                        volontarioNew = recoveryVolontario(volontarioOld, companyNew, manager);
-                    }// end of if cycle
+                    if (!volontarioOld.getCognome().equals(tagEliminato)) {
+                        volontarioNew = creaSingoloVolontario(volontarioOld, companyNew, manager);
+                        if (volontarioNew == null) {
+                            volontarioNew = recoveryVolontario(volontarioOld, companyNew, manager);
+                        }// end of if cycle
 
-                    if (volontarioNew != null) {
-                        listaWrapVolontari.add(new WrapVolontario(volontarioOld, volontarioNew));//todo forse non serve
+                        if (volontarioNew != null) {
+                            listaWrapVolontari.add(new WrapVolontario(volontarioOld, volontarioNew));//todo forse non serve
+                        }// end of if cycle
                     }// end of if cycle
 
                 }// end of for cycle
