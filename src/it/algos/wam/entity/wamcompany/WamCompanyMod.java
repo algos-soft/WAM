@@ -7,6 +7,7 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
+import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.lib.LibWam;
 import it.algos.wam.migration.Migration;
 import it.algos.wam.ui.WamUI;
@@ -14,8 +15,10 @@ import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.EM;
 import it.algos.webbase.web.form.ModuleForm;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
@@ -33,7 +36,7 @@ public class WamCompanyMod extends ModulePop {
     private final static long serialVersionUID = 1L;
 
     // indirizzo interno del modulo - etichetta del menu
-    public static String MENU_ADDRESS = "Croci";
+    public static String MENU_ADDRESS = "Associazione";
 
     // icona (eventuale) del modulo
     public static Resource ICON = FontAwesome.AMBULANCE;
@@ -63,8 +66,10 @@ public class WamCompanyMod extends ModulePop {
      */
     @Override
     public void addSottoMenu(MenuBar.MenuItem menu) {
-        this.addMenuFiltro(menu);
-        this.addMenuImport(menu);
+        if (LibSession.isDeveloper()) {
+            this.addMenuFiltro(menu);
+            this.addMenuImport(menu);
+        }// end of if cycle
     }// end of method
 
     /**
@@ -102,7 +107,7 @@ public class WamCompanyMod extends ModulePop {
         menu.addItem("Importa 2017", null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 if (LibWam.isCompany()) {
-                    new Migration(LibWam.getCompanySigla(),2017);
+                    new Migration(LibWam.getCompanySigla(), 2017);
                 } else {
                     new Migration(2017);
                 }// end of if/else cycle
@@ -131,7 +136,7 @@ public class WamCompanyMod extends ModulePop {
      * @param menuItem del modulo a cui aggiungere i sottomenu
      */
     private void addCommandAllCroci(MenuBar.MenuItem menuItem) {
-        MenuBar.MenuItem sottoMenu =  menuItem.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
+        MenuBar.MenuItem sottoMenu = menuItem.addItem(ITEM_ALL_CROCI, null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 fireCompanyChanged(null);
             }// end of inner method
@@ -147,7 +152,7 @@ public class WamCompanyMod extends ModulePop {
      * @param company  croce da filtrare
      */
     private void addCommandSingolaCroce(MenuBar.MenuItem menuItem, WamCompany company) {
-        MenuBar.MenuItem sottoMenu =  menuItem.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
+        MenuBar.MenuItem sottoMenu = menuItem.addItem(LibText.primaMaiuscola(company.getCompanyCode()), null, new MenuBar.Command() {
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 fireCompanyChanged(company);
             }// end of inner method
@@ -161,6 +166,17 @@ public class WamCompanyMod extends ModulePop {
         return new WamCompanyForm(item, this);
     }// end of method
 
+    /**
+     * Crea una Table già filtrata sulla company corrente
+     * The concrete subclass must override for a specific Table.
+     *
+     * @return the Table
+     */
+    @Override
+    public ATable createTable() {
+        return new WamCompanyTable(this);
+    }// end of method
+
     @Override
     public TablePortal createTablePortal() {
         TablePortal portaleCroce = super.createTablePortal();
@@ -169,45 +185,6 @@ public class WamCompanyMod extends ModulePop {
         return portaleCroce;
     }// end of method
 
-
-    /**
-     * Crea i campi visibili nella lista (table)
-     * <p>
-     * Come default spazzola tutti i campi della Entity <br>
-     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-     * Serve anche per l'ordine con cui vengono presentati i campi nella lista <br>
-     */
-    @Override
-    protected Attribute<?, ?>[] creaFieldsList() {
-        return new Attribute[]{
-                BaseCompany_.companyCode,
-                WamCompany_.organizzazione,
-                BaseCompany_.name,
-                WamCompany_.presidente,
-                BaseCompany_.address1,
-                BaseCompany_.contact,
-                BaseCompany_.email
-        };
-    }// end of method
-
-
-    /**
-     * Crea i campi visibili nella scheda (form)
-     * <p>
-     * Come default spazzola tutti i campi della Entity <br>
-     * Può essere sovrascritto (facoltativo) nelle sottoclassi specifiche <br>
-     * Serve anche per l'ordine con cui vengono presentati i campi nella scheda <br>
-     */
-    @Override
-    protected Attribute<?, ?>[] creaFieldsForm() {
-        return new Attribute[]{
-                BaseCompany_.companyCode,
-                BaseCompany_.name,
-                BaseCompany_.contact,
-                BaseCompany_.email,
-                WamCompany_.tabellonePubblico
-        };
-    }// end of method
 
     public void delete(Object id) {
         WamCompany company = WamCompany.find((Long) id);

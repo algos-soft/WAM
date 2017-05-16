@@ -7,12 +7,20 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import it.algos.wam.bootstrap.BootService;
+import it.algos.wam.entity.turno.Turno_;
+import it.algos.wam.lib.LibWam;
 import it.algos.wam.ui.WamUI;
+import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
+import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.field.CheckBoxField;
 import it.algos.webbase.web.form.ModuleForm;
 import it.algos.webbase.web.lib.LibBean;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
+
+import javax.persistence.EntityManager;
+import javax.persistence.metamodel.Attribute;
 
 /**
  * Created by webbase templates.
@@ -45,6 +53,39 @@ public class WamCompanyForm extends ModuleForm {
     public WamCompanyForm(Item item, ModulePop module) {
         super(item, module);
     }// end of constructor
+
+
+    /**
+     * Attributes used in this form
+     * Di default prende dal modulo
+     * Può essere sovrascritto se c'è un Form specifico
+     *
+     * @return a list containing all the attributes used in this form
+     */
+    protected Attribute<?, ?>[] getAttributesList() {
+        if (LibSession.isDeveloper()) {
+            return new Attribute[]{
+                    WamCompany_.companyCode,
+                    WamCompany_.organizzazione,
+                    WamCompany_.presidente,
+                    BaseCompany_.name,
+                    BaseCompany_.contact,
+                    BaseCompany_.email,
+                    BaseCompany_.address1,
+                    BaseCompany_.note,
+            };//end of brace
+        } else {
+            return new Attribute[]{
+                    WamCompany_.organizzazione,
+                    WamCompany_.presidente,
+                    BaseCompany_.name,
+                    BaseCompany_.contact,
+                    BaseCompany_.email,
+                    BaseCompany_.address1,
+                    BaseCompany_.note,
+            };//end of brace
+        }// end of if/else cycle
+    }// end of method
 
 
     /**

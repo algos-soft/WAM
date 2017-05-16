@@ -392,6 +392,7 @@ public class WamUI extends UI {
 //            addMod(menuBarAdmin, new LogMod());
             addView(menuBarAdmin, ConfigScreen.class, "Impostazioni", FontAwesome.WRENCH);
             MenuBar.MenuItem menuTavole = menuBarAdmin.addItem("Tavole", null, null);
+            addMod(menuTavole, new WamCompanyMod());
             addMod(menuTavole, new ServizioFunzioneMod());
             addMod(menuTavole, new VolontarioFunzioneMod());
             addMod(menuTavole, new IscrizioneMod());

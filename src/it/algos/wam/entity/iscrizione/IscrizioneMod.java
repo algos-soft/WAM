@@ -8,6 +8,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzioneTable;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione_;
 import it.algos.wam.entity.turno.Turno;
 import it.algos.wam.entity.turno.Turno_;
+import it.algos.wam.entity.volontario.VolontarioTablePortal;
 import it.algos.webbase.web.search.SearchManager;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;
@@ -19,7 +20,7 @@ import javax.persistence.metamodel.Attribute;
  * Created by gac on 17/02/17.
  * Gestione (minimale) del modulo specifico
  */
-public class IscrizioneMod extends WamModSenzaDoppioClick {
+public class IscrizioneMod extends WamModEditDeveloper {
 
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;
@@ -53,25 +54,6 @@ public class IscrizioneMod extends WamModSenzaDoppioClick {
         return new IscrizioneTable(this);
     }// end of method
 
-    /**
-     * Create the Table Portal
-     * <p>
-     * in caso di developer, portale specifico col menu di selezione della company
-     * in caso di admin e utente normale, portale standard
-     *
-     * @return the TablePortal
-     */
-    @Override
-    public TablePortal createTablePortal() {
-        WamTablePortal portal = new WamTablePortalSoloRicerca(this);
-
-        TableToolbar toolBar = portal.getToolbar();
-        if (toolBar != null) {
-            toolBar.setEditButtonVisible(true);
-        }// end of if cycle
-
-        return portal;
-    }// end of method
 
 
 }// end of class

@@ -5,15 +5,15 @@ import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.toolbar.TableToolbar;
 
 /**
- * Created by gac on 07/04/17.
- * Estende la superclasse per eliminare tutti i bottoni/menu salvo quelli della ricerca e selezione
+ * Created by gac on 14/05/17.
+ * .
  */
-public class WamTablePortalSoloRicerca extends WamTablePortal {
+public class WamTablePortalEditDeveloper extends WamTablePortal{
 
     /**
      * Costruttore base
      */
-    public WamTablePortalSoloRicerca(ModulePop modulo) {
+    public WamTablePortalEditDeveloper(ModulePop modulo) {
         super(modulo);
     }// end of constructor
 
@@ -29,9 +29,15 @@ public class WamTablePortalSoloRicerca extends WamTablePortal {
         toolbar = super.createToolbar();
 
         if (toolbar != null) {
-            toolbar.setCreateButtonVisible(false);
-            toolbar.setEditButtonVisible(false);
-            toolbar.setDeleteButtonVisible(false);
+            if (developer) {
+                toolbar.setCreateButtonVisible(true);
+                toolbar.setEditButtonVisible(true);
+                toolbar.setDeleteButtonVisible(true);
+            } else {
+                toolbar.setCreateButtonVisible(false);
+                toolbar.setEditButtonVisible(false);
+                toolbar.setDeleteButtonVisible(false);
+            }// end of if/else cycle
             toolbar.setSearchButtonVisible(true);
             toolbar.setSelectButtonVisible(true);
         }// end of if cycle

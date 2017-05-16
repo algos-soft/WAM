@@ -1,8 +1,8 @@
 package it.algos.wam.entity.servizio;
 
-import it.algos.wam.entity.companyentity.WamSearch;
-import it.algos.wam.entity.funzione.Funzione_;
+import it.algos.wam.lib.LibWam;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.search.SearchManager;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -10,7 +10,7 @@ import javax.persistence.metamodel.Attribute;
  * Created by gac on 09/05/17.
  * .
  */
-public class ServizioSearch extends WamSearch {
+public class ServizioSearch extends SearchManager {
 
     /**
      * Constructor
@@ -30,7 +30,7 @@ public class ServizioSearch extends WamSearch {
      */
     @Override
     protected Attribute<?, ?>[] getAttributesList() {
-        return addCompanyField(
+        return LibWam.addCompanyField(
                 Servizio_.sigla,
                 Servizio_.descrizione,
                 Servizio_.abilitato,

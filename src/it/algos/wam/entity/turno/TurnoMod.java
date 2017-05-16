@@ -5,6 +5,8 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamMod;
+import it.algos.wam.entity.companyentity.WamModEditDeveloper;
+import it.algos.wam.entity.companyentity.WamModSenzaDoppioClick;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzioneSearch;
 import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneTable;
@@ -18,7 +20,7 @@ import javax.persistence.metamodel.Attribute;
 /**
  * Gestione (minimale) del modulo specifico
  */
-public class TurnoMod extends WamMod {
+public class TurnoMod extends WamModEditDeveloper {
 
     // versione della classe per la serializzazione
     private static final long serialVersionUID = 1L;

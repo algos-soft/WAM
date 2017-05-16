@@ -1,8 +1,8 @@
 package it.algos.wam.entity.volontario;
 
-import it.algos.wam.entity.companyentity.WamSearch;
-import it.algos.wam.entity.servizio.Servizio_;
+import it.algos.wam.lib.LibWam;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.search.SearchManager;
 
 import javax.persistence.metamodel.Attribute;
 
@@ -10,7 +10,7 @@ import javax.persistence.metamodel.Attribute;
  * Created by gac on 09/05/17.
  * .
  */
-public class VolontarioSearch extends WamSearch {
+public class VolontarioSearch extends SearchManager {
 
     /**
      * Constructor
@@ -30,7 +30,7 @@ public class VolontarioSearch extends WamSearch {
      */
     @Override
     protected Attribute<?, ?>[] getAttributesList() {
-        return addCompanyField(
+        return LibWam.addCompanyField(
                 Volontario_.nome,
                 Volontario_.cognome,
                 Volontario_.cellulare,

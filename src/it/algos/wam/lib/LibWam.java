@@ -5,6 +5,7 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import it.algos.wam.WAMApp;
+import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.funzione.Funzione;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione;
 import it.algos.wam.entity.volontario.Volontario;
@@ -18,7 +19,9 @@ import it.algos.webbase.web.lib.*;
 import org.apache.commons.lang.LocaleUtils;
 
 import javax.persistence.EntityManager;
+import javax.persistence.metamodel.Attribute;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -273,6 +276,28 @@ public abstract class LibWam {
      */
     public static String getCodiceUnico(String companyCode, String code) {
         return LibText.primaMaiuscola(companyCode) + LibText.primaMaiuscola(code);
+    }// end of method
+
+
+    /**
+     * Aggiunge il campo company
+     * <p>
+     * in caso di developer, aggiunge (a sinistra) la colonna della company
+     * aggiunge tutte le altre property, definite nella sottoclasse
+     * Chiamato dalla sottoclasse
+     */
+    public static Attribute<?, ?>[] addCompanyField(Attribute... elenco) {
+        ArrayList<Attribute> lista = new ArrayList<>();
+
+        if (LibSession.isDeveloper()) {
+            lista.add(WamCompanyEntity_.company);
+        }// end of if cycle
+
+        for (Attribute attr : elenco) {
+            lista.add(attr);
+        }// end of for cycle
+
+        return lista.toArray(new Attribute[lista.size()]);
     }// end of method
 
 }// end of abstract static class

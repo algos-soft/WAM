@@ -1,29 +1,21 @@
 package it.algos.wam.entity.funzione;
 
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.DefaultFieldFactory;
 import com.vaadin.ui.Field;
-import it.algos.wam.entity.companyentity.WamSearch;
-import it.algos.webbase.domain.company.BaseCompany;
+import it.algos.wam.lib.LibWam;
 import it.algos.webbase.multiazienda.CompanyQuery;
-import it.algos.webbase.web.entity.BaseEntity;
-import it.algos.webbase.web.field.*;
 import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.search.SearchManager;
 
 import javax.persistence.metamodel.Attribute;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by gac on 09/05/17.
  * .
  */
-public class FunzioneSearch extends WamSearch {
+public class FunzioneSearch extends SearchManager {
 
     /**
      * Constructor
@@ -43,7 +35,7 @@ public class FunzioneSearch extends WamSearch {
      */
     @Override
     protected Attribute<?, ?>[] getAttributesList() {
-        return addCompanyField(
+        return LibWam.addCompanyField(
                 Funzione_.code,
                 Funzione_.sigla,
                 Funzione_.descrizione

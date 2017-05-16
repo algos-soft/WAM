@@ -25,29 +25,32 @@ public class VolontarioTablePortal extends WamTablePortal {
      */
     @Override
     public TableToolbar createToolbar() {
+        boolean developer = LibSession.isDeveloper();
+        boolean admin = LibSession.isAdmin();
         toolbar = super.createToolbar();
 
         if (toolbar != null) {
-            toolbar.setCreateButtonVisible(false);
-            toolbar.setEditButtonVisible(false);
-            toolbar.setDeleteButtonVisible(false);
+            if (developer) {
+                toolbar.setCreateButtonVisible(true);
+                toolbar.setEditButtonVisible(true);
+                toolbar.setDeleteButtonVisible(true);
+            } else {
+                if (admin) {
+                    toolbar.setCreateButtonVisible(true);
+                    toolbar.setEditButtonVisible(true);
+                    toolbar.setDeleteButtonVisible(false);
+                } else {
+                    toolbar.setCreateButtonVisible(false);
+                    toolbar.setEditButtonVisible(false);
+                    toolbar.setDeleteButtonVisible(false);
+                }// end of if/else cycle
+            }// end of if/else cycle
             toolbar.setSearchButtonVisible(true);
             toolbar.setSelectButtonVisible(true);
         }// end of if cycle
 
         return toolbar;
     }// end of method
-
-
-//    /**
-//     * Shows in the table only the needed wamcompany
-//     * Creates a filter corresponding to the needed wamcompany in the table
-//     * I filtri sono comprensivi del livello sottostante (GreaterOrEqual)
-//     */
-//    protected void setFiltro(WamCompany company) {
-//        super.setFiltro(company);
-//        getTable().refresh();
-//    }// end of method
 
 
 }// end of class

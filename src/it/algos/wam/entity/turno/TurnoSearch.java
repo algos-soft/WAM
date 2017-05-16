@@ -3,9 +3,6 @@ package it.algos.wam.entity.turno;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.ui.Field;
-import it.algos.wam.entity.companyentity.WamCompanyEntity_;
-import it.algos.wam.entity.companyentity.WamSearch;
-import it.algos.webbase.web.field.ArrayComboField;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.search.SearchManager;
 
@@ -16,7 +13,7 @@ import java.util.*;
  * Created by gac on 26/04/17
  * .
  */
-public class TurnoSearch extends WamSearch {
+public class TurnoSearch extends SearchManager {
 
     /**
      * Constructor
