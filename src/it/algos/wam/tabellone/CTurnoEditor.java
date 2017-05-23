@@ -6,9 +6,6 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
 import it.algos.wam.LogType;
 import it.algos.wam.email.WamEmailService;
@@ -21,6 +18,7 @@ import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.lib.LibWam;
 import it.algos.wam.login.WamLogin;
 import it.algos.wam.settings.CompanyPrefs;
+import it.algos.webbase.domain.log.Log;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.web.component.HHMMComponent;
 import it.algos.webbase.web.dialog.ConfirmDialog;
@@ -28,6 +26,8 @@ import it.algos.webbase.web.field.TextField;
 import it.algos.webbase.web.lib.DateConvertUtils;
 import it.algos.webbase.web.lib.LibDate;
 import it.algos.webbase.web.lib.LibSession;
+import it.algos.webbase.web.login.Login;
+import org.apache.commons.beanutils.BeanUtils;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.InvocationTargetException;
@@ -39,11 +39,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import it.algos.webbase.domain.log.Log;
-import it.algos.webbase.web.login.Login;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.tools.ant.taskdefs.email.Mailer;
 
 /**
  * Componente per presentare e modificare un intero turno nel Tabellone.
