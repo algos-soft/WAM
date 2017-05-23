@@ -52,7 +52,7 @@ public class TurnoTable extends WamTable {
     private static final String COL_ORARIO = "orario";
 
     // id della colonna generata "segnato"
-    private static final String COL_SEGNATO = "segnato";
+    private static final String COL_SEGNATO = "assegnato";
 
     // id della colonna generata "valido"
     private static final String COL_VALIDO = "valido";

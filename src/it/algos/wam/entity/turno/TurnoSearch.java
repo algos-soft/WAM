@@ -12,6 +12,7 @@ import it.algos.wam.entity.companyentity.WamSearch;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.iscrizione.Iscrizione;
 import it.algos.wam.entity.iscrizione.Iscrizione_;
+import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.servizio.Servizio_;
 import it.algos.wam.entity.volontario.Volontario;
 import it.algos.wam.entity.volontario.Volontario_;
@@ -68,7 +69,7 @@ public class TurnoSearch extends WamSearch {
         addField(Volontario_.cognome, field);
         layout.addComponent(field);
 
-        field = new CheckBoxField("Minimo", false);
+        field = new CheckBoxField("Assegnato", false);
         addField(Iscrizione_.tsCreazione, field);
         layout.addComponent(field);
 
@@ -76,7 +77,7 @@ public class TurnoSearch extends WamSearch {
         addField(Iscrizione_.esisteProblema, field);
         layout.addComponent(field);
 
-        field = new CheckBoxField("Full", false);
+        field = new CheckBoxField("Completo", false);
         addField(Iscrizione_.nota, field);
         layout.addComponent(field);
     }// end of method
@@ -174,18 +175,18 @@ public class TurnoSearch extends WamSearch {
         }// end of if cycle
 
         // almeno una iscrizione
-        if (attr.getName().equals(Turno_.inizio.getName())) {
-            return null;
+        if (attr.getName().equals(Iscrizione_.tsCreazione.getName())) {
+            return createSingolaIscrizioneFilter(attr);
         }// end of if cycle
 
         // iscrizioni valide
-        if (attr.getName().equals(Turno_.inizio.getName())) {
-            return null;
+        if (attr.getName().equals(Iscrizione_.esisteProblema.getName())) {
+            return createIscrizioniValideFilter(attr);
         }// end of if cycle
 
         // tutte le iscrizioni possibili
-        if (attr.getName().equals(Turno_.inizio.getName())) {
-            return null;
+        if (attr.getName().equals(Iscrizione_.nota.getName())) {
+            return createIscrizioneFullFilter(attr);
         }// end of if cycle
 
         return super.createFilter(attr);
@@ -210,6 +211,78 @@ public class TurnoSearch extends WamSearch {
             turnoID = turno.getId();
             tmpFilter = new Compare.Equal(BaseEntity_.id.getName(), turnoID);
             lista.add(tmpFilter);
+        }// end of for cycle
+
+        Container.Filter[] aFilters = lista.toArray(new Container.Filter[0]);
+        outFilter = new Or(aFilters);
+
+        return outFilter;
+    }// end of method
+
+    /**
+     * @param attr the StaticMetamodel attribute
+     */
+    private Container.Filter createSingolaIscrizioneFilter(Attribute attr) {
+        Container.Filter outFilter = null;
+        List<Turno> listaTurni = (List<Turno>) CompanyQuery.getList(Turno.class);
+        ArrayList<Container.Filter> lista = new ArrayList<>();
+        Container.Filter tmpFilter = null;
+        Long turnoID;
+
+        for (Turno turno : listaTurni) {
+            if (turno.isAssegnato()) {
+                turnoID = turno.getId();
+                tmpFilter = new Compare.Equal(BaseEntity_.id.getName(), turnoID);
+                lista.add(tmpFilter);
+            }// end of if cycle
+        }// end of for cycle
+
+        Container.Filter[] aFilters = lista.toArray(new Container.Filter[0]);
+        outFilter = new Or(aFilters);
+
+        return outFilter;
+    }// end of method
+
+    /**
+     * @param attr the StaticMetamodel attribute
+     */
+    private Container.Filter createIscrizioniValideFilter(Attribute attr) {
+        Container.Filter outFilter = null;
+        List<Turno> listaTurni = (List<Turno>) CompanyQuery.getList(Turno.class);
+        ArrayList<Container.Filter> lista = new ArrayList<>();
+        Container.Filter tmpFilter = null;
+        Long turnoID;
+
+        for (Turno turno : listaTurni) {
+            if (turno.isValido()) {
+                turnoID = turno.getId();
+                tmpFilter = new Compare.Equal(BaseEntity_.id.getName(), turnoID);
+                lista.add(tmpFilter);
+            }// end of if cycle
+        }// end of for cycle
+
+        Container.Filter[] aFilters = lista.toArray(new Container.Filter[0]);
+        outFilter = new Or(aFilters);
+
+        return outFilter;
+    }// end of method
+
+    /**
+     * @param attr the StaticMetamodel attribute
+     */
+    private Container.Filter createIscrizioneFullFilter(Attribute attr) {
+        Container.Filter outFilter = null;
+        List<Turno> listaTurni = (List<Turno>) CompanyQuery.getList(Turno.class);
+        ArrayList<Container.Filter> lista = new ArrayList<>();
+        Container.Filter tmpFilter = null;
+        Long turnoID;
+
+        for (Turno turno : listaTurni) {
+            if (turno.isCompleto()) {
+                turnoID = turno.getId();
+                tmpFilter = new Compare.Equal(BaseEntity_.id.getName(), turnoID);
+                lista.add(tmpFilter);
+            }// end of if cycle
         }// end of for cycle
 
         Container.Filter[] aFilters = lista.toArray(new Container.Filter[0]);
