@@ -2,6 +2,7 @@ package it.algos.wam.entity.funzione;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -141,13 +142,11 @@ public class FunzioneForm extends WanForm implements FunzListener {
 
         // Define some columns
         grid.addColumn("sigla", String.class);
-        grid.addColumn("tab", Boolean.class);
         grid.addColumn("desc", String.class);
-        grid.addColumn("time", String.class);
 
         // Add some data rows
         for (Servizio serv : servizi) {
-            grid.addRow(serv.getSigla(), serv.isAbilitato(), serv.getDescrizione(), serv.getStrOrario());
+            grid.addRow(serv.getSigla(), serv.getDescrizione());
         }// end of for cycle
 
         layout.addComponent(label);
@@ -186,7 +185,6 @@ public class FunzioneForm extends WanForm implements FunzListener {
         // Define some columns
         grid.addColumn("nome", String.class);
         grid.addColumn("cognome", String.class);
-        grid.addColumn("cell", String.class);
 
         if (usaGestioneCertificati) {
             grid.addColumn("BLSD", Date.class);
@@ -197,9 +195,9 @@ public class FunzioneForm extends WanForm implements FunzListener {
         // Add some data rows
         for (Volontario vol : volontari) {
             if (usaGestioneCertificati) {
-                grid.addRow(vol.getNome(), vol.getCognome(), vol.getCellulare(), vol.getScadenzaBLSD(), vol.getScadenzaNonTrauma(), vol.getScadenzaTrauma());
+                grid.addRow(vol.getNome(), vol.getCognome(), vol.getScadenzaBLSD(), vol.getScadenzaNonTrauma(), vol.getScadenzaTrauma());
             } else {
-                grid.addRow(vol.getNome(), vol.getCognome(), vol.getCellulare());
+                grid.addRow(vol.getNome(), vol.getCognome());
             }// end of if/else cycle
         }// end of for cycle
 
@@ -381,7 +379,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
     @Override
     protected AbstractLayout creaPlacehorder() {
         placeholderFunz = new VerticalLayout();
-        placeholderFunz.setCaption("Funzioni dipendenti da questa");
+        placeholderFunz.setCaption("Funzioni abilitate automaticamente");
         ((VerticalLayout) placeholderFunz).setSpacing(true);
         placeholderFunz.addComponent(bNuova);
 
@@ -434,7 +432,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
             for (Funzione funz : funzione.getFunzioniDipendenti()) {
                 if (funz != null) {
                     if (funzione.getCode().equals(funz.getCode())) {
-                        return "Una funzione dipendente è uguale a se stessa";
+                        return "Una funzione abilitata è uguale a se stessa";
                     }// end of if cycle
                 }// end of if cycle
             }// end of for cycle
@@ -444,7 +442,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
         if (!isNewRecord()) {
             for (Funzione funz : funzione.getFunzioniDipendenti()) {
                 if (funz == null) {
-                    return "Una funzione dipendente è nulla";
+                    return "Una funzione abilitata è nulla";
                 }// end of for cycle
             }// end of if cycle
 
@@ -457,7 +455,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
                 }// end of if cycle
             }// end of for cycle
             if (lista.size() < funzione.getFunzioniDipendenti().size()) {
-                return "Due funzioni dipendenti sono uguali";
+                return "Due funzioni abilitate sono uguali";
             }// end of if cycle
         }// end of if cycle
 
@@ -475,6 +473,26 @@ public class FunzioneForm extends WanForm implements FunzListener {
 //        return super.save();
 //    }// end of method
 
+    /**
+     * Invoked just before saving the item.
+     * Chance for subclasses to override.
+     *
+     * @param fields the field group
+     * @return true to continue saving, false to stop saving
+     */
+    protected boolean onPreSave(FieldGroup fields) {
+        Funzione funzioneMadre = getFunzione();
+        Funzione funzFiglia;
+        List<Funzione> funzioniDipendenti = new ArrayList<>();
+
+        for (EditorFunz editor : fEditors) {
+            funzFiglia = editor.getFunzione();
+            funzioniDipendenti.add(funzFiglia);
+        }// end of for cycle
+
+        funzioneMadre.setFunzioniDipendenti(funzioniDipendenti);
+        return true;
+    }
 
     private void regolaEditorFunz() {
         Funzione funzioneMadre = getFunzione();

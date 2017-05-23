@@ -89,7 +89,6 @@ public class FunzioneMod extends WamModSposta {
     }// end of method
 
 
-
     /**
      * Override di delete per controllare che non ci siano
      * servizi associati alla/e funzione/i da cancellare

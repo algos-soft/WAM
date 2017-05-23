@@ -110,7 +110,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     private int minutiFine = 0;
 
     // visibile nel tabellone (di default true)
-    @AIField(type = AFType.checkbox, width = "12em", caption = "Visibile nel tabellone", help = "Permette di abilitare i servizi per renderli visibili nel tabellone")
+    @AIField(type = AFType.checkbox, width = "12em", caption = "Disabilitato", help = "Permette di disabilitare i servizi non più utilizzati")
     private boolean abilitato = true;
 
     //--tavola di incrocio

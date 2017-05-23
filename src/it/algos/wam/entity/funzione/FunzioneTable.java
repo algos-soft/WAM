@@ -36,7 +36,7 @@ public class FunzioneTable extends WamTable {
 
 
     //--id della colonna generata "Altre funzioni"
-    private static final String COL_FUNZIONI = "Funzioni dipendenti";
+    private static final String COL_FUNZIONI = "Funzioni automaticamente abilitate";
 
     //--titolo della table
     private static String CAPTION = "Funzioni previste. Ogni volontario può essere abilitato per una o più funzioni";
