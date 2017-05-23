@@ -197,7 +197,6 @@ public class Tabellone extends VerticalLayout implements View {
     }// end of method
 
 
-
     /**
      * Il numero di iorni da mostrare in base alla larghezza dello schermo
      */
