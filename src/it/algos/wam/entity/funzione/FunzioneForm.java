@@ -416,6 +416,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
      */
     @Override
     protected String checkRegistrabile() {
+        String err = "";
         Funzione funzione = getFunzione();
         ArrayList<String> lista = new ArrayList<>();
 
@@ -423,7 +424,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
         if (isNewRecord()) {
             String codeCompanyUnico = fCodeCompanyUnico.getValue();
             if (Funzione.isEntityByCodeCompanyUnico(codeCompanyUnico)) {
-                return "Esiste già una funzione con questo code";
+                err = "Esiste già una funzione con questo code";
             }// end of if cycle
         }// end of if cycle
 
@@ -432,7 +433,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
             for (Funzione funz : funzione.getFunzioniDipendenti()) {
                 if (funz != null) {
                     if (funzione.getCode().equals(funz.getCode())) {
-                        return "Una funzione abilitata è uguale a se stessa";
+                        err = "Una funzione abilitata è uguale a se stessa";
                     }// end of if cycle
                 }// end of if cycle
             }// end of for cycle
@@ -442,7 +443,7 @@ public class FunzioneForm extends WanForm implements FunzListener {
         if (!isNewRecord()) {
             for (Funzione funz : funzione.getFunzioniDipendenti()) {
                 if (funz == null) {
-                    return "Una funzione abilitata è nulla";
+                    err = "Una funzione abilitata è nulla";
                 }// end of for cycle
             }// end of if cycle
 
@@ -455,23 +456,13 @@ public class FunzioneForm extends WanForm implements FunzListener {
                 }// end of if cycle
             }// end of for cycle
             if (lista.size() < funzione.getFunzioniDipendenti().size()) {
-                return "Due funzioni abilitate sono uguali";
+                err = "Due funzioni abilitate sono uguali";
             }// end of if cycle
         }// end of if cycle
 
-        return "";
+        return err;
     }// end of method
 
-//    /**
-//     * Saves the current values to the storage.
-//     *
-//     * @return true if saved successfully
-//     */
-//    @Override
-//    protected boolean save() {
-//        regolaEditorFunz();
-//        return super.save();
-//    }// end of method
 
     /**
      * Invoked just before saving the item.
@@ -493,19 +484,6 @@ public class FunzioneForm extends WanForm implements FunzListener {
         funzioneMadre.setFunzioniDipendenti(funzioniDipendenti);
         return true;
     }
-
-    private void regolaEditorFunz() {
-        Funzione funzioneMadre = getFunzione();
-        Funzione funzFiglia;
-        List<Funzione> funzioniDipendenti = new ArrayList<>();
-
-        for (EditorFunz editor : fEditors) {
-            funzFiglia = editor.getFunzione();
-            funzioniDipendenti.add(funzFiglia);
-        }// end of for cycle
-
-        funzioneMadre.setFunzioniDipendenti(funzioniDipendenti);
-    }// end of method
 
 
     @Override

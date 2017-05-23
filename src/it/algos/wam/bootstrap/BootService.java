@@ -294,9 +294,9 @@ public abstract class BootService {
         switch (c.getCompanyCode()) {
             case WAMApp.DEMO_COMPANY_CODE:
                 l.add(servo(c, m, funz, "med-mat", "Automedica mattino", 8, 13, azzurro, 2, 0, 1, 2, 8));
-                l.add(servo(c, m, funz, "cent-mat", "Centralino&nbspm.", 8, 13, giallo, 0, 11));
+                l.add(servo(c, m, funz, "cent-mat", "Centralino", 8, 13, giallo, 0, 11));
                 l.add(servo(c, m, funz, "med-pom", "Automedica pomeriggio", 13, 18, azzurro, 2, 0, 1, 2, 8));
-                l.add(servnt(c, m, funz, "cent-pom", "Centralino&nbspp.", 13, 18, giallo, 0, 11));
+                l.add(servnt(c, m, funz, "cent-pom", "Centralino", 13, 18, giallo, 0, 11));
                 l.add(servo(c, m, funz, "med-sera", "Automedica sera", 18, 22, azzurro, 2, 0, 1, 2));
 
                 l.add(servo(c, m, funz, "amb-mat", "Ambulanza mattino", 8, 14, verdino, 2, 3, 4, 5, 8));

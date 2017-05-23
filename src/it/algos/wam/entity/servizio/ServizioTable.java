@@ -42,7 +42,7 @@ public class ServizioTable extends WamTable {
     protected static final String COL_COLORE = Servizio_.colore.getName();
 
     //--titolo della table
-    private static String CAPTION = "Servizi previsti. Ogni servizio ha una o più funzioni, di cui almeno una è obbligatoria (in rosso)";
+    private static String CAPTION = "Servizi previsti. Ogni servizio ha una o più funzioni, di cui almeno una è normalmente obbligatoria (in rosso)";
 
     /**
      * Costruttore

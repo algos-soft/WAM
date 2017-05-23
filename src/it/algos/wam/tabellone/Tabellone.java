@@ -482,6 +482,7 @@ public class Tabellone extends VerticalLayout implements View {
     private class TabMenuBar extends MenuBar {
 
         private MenuItem menuAltro;
+        private MenuItem menuPeriodo;
 
         public TabMenuBar() {
 
@@ -489,78 +490,73 @@ public class Tabellone extends VerticalLayout implements View {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     goHome();
-                }
-            });
+                }// end of inner method
+            });// end of anonymous inner class
 
-            addItem("indietro", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
+            menuPeriodo = addItem("Periodo", FontAwesome.BARS, null);
+            menuPeriodo.addItem("Indietro", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
                     creaGrid(tabComponent.getDataStart().minusDays(gg), gg);
-                }
-            });
-
-
-            addItem("oggi", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+                }// end of inner method
+            });// end of anonymous inner class
+            menuPeriodo.addItem("Oggi", FontAwesome.CALENDAR_O, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     creaGrid(LocalDate.now());
-                }
-            });
-
-            addItem("lunedì", FontAwesome.CALENDAR_O, new MenuBar.Command() {
+                }// end of inner method
+            });// end of anonymous inner class
+            menuPeriodo.addItem("Lunedì", FontAwesome.CALENDAR_O, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     LocalDate d1 = LocalDate.now();
                     int numDow = d1.getDayOfWeek().getValue();
                     LocalDate d2 = d1.minusDays(numDow - 1);
                     creaGrid(d2);
-                }
-            });
-
-
-            addItem("avanti", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
+                }// end of inner method
+            });// end of anonymous inner class
+            menuPeriodo.addItem("Avanti", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
                     creaGrid(tabComponent.getDataStart().plusDays(gg), gg);
-                }
-            });
+                }// end of inner method
+            });// end of anonymous inner class
 
-            menuAltro = addItem("altro", FontAwesome.BARS, null);
+            menuAltro = menuPeriodo.addItem("Altro", FontAwesome.BARS, null);
 
-            menuAltro.addItem("vai al giorno precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
+            menuAltro.addItem("Vai al giorno precedente", FontAwesome.ARROW_CIRCLE_LEFT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
                     creaGrid(tabComponent.getDataStart().minusDays(1), gg);
-                }
-            });
+                }// end of inner method
+            });// end of anonymous inner class
 
-            menuAltro.addItem("vai al giorno successivo", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
+            menuAltro.addItem("Vai al giorno successivo", FontAwesome.ARROW_CIRCLE_RIGHT, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     int gg = tabComponent.getNumGiorni();
                     creaGrid(tabComponent.getDataStart().plusDays(1), gg);
-                }
-            });
+                }// end of inner method
+            });// end of anonymous inner class
 
-            menuAltro.addItem("cerca periodo", FontAwesome.SEARCH, new MenuBar.Command() {
+            menuAltro.addItem("Cerca periodo", FontAwesome.SEARCH, new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     navigator.navigateTo(ADDR_SEARCH);
-                }
-            });
+                }// end of inner method
+            });// end of anonymous inner class
 
             if (LibSession.isAdmin()) {
-                menuAltro.addItem("genera turni", FontAwesome.CALENDAR, new MenuBar.Command() {
+                menuAltro.addItem("Genera turni", FontAwesome.CALENDAR, new MenuBar.Command() {
                     @Override
                     public void menuSelected(MenuBar.MenuItem selectedItem) {
                         navigator.navigateTo(ADDR_GENERATE);
-                    }
-                });
-            }
-
+                    }// end of inner method
+                });// end of anonymous inner class
+            }// end of if cycle
 
         }
 
