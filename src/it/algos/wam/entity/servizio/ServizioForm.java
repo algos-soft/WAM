@@ -248,6 +248,7 @@ public class ServizioForm extends WanForm implements ServFunzListener {
     @Override
     protected String checkRegistrabile() {
         String err = "";
+        ArrayList<String> lista = new ArrayList<>();
 
         //--codeCompanyUnico deve essere unico (per i nuovi record)
         if (isNewRecord()) {
@@ -273,7 +274,7 @@ public class ServizioForm extends WanForm implements ServFunzListener {
             }// end of if cycle
         }// end of for cycle
 
-        //--obbligatorio avere delle funzioni previste
+        //--obbligatorio avere almeno una funzione prevista
         if (sfEditors.size() == 0) {
             if (!err.isEmpty()) {
                 err += "\n";
@@ -291,6 +292,18 @@ public class ServizioForm extends WanForm implements ServFunzListener {
                 break;
             }// end of if cycle
         }// end of for cycle
+
+        //--due (o più) funzioni dipendenti sono uguali
+        for (EditorServ editor : sfEditors) {
+            if (editor.getFunzione() != null) {
+                if (!lista.contains(editor.getFunzione().getCodeCompanyUnico())) {
+                    lista.add(editor.getFunzione().getCodeCompanyUnico());
+                }// end of if cycle
+            }// end of if cycle
+        }// end of for cycle
+        if (lista.size() < sfEditors.size()) {
+            err = "Due funzioni abilitate sono uguali";
+        }// end of if cycle
 
         return err;
     }// end of method
@@ -339,6 +352,7 @@ public class ServizioForm extends WanForm implements ServFunzListener {
 
         servizio.setServizioFunzioni(servizioFunzioni);
     }// end of method
+
 
 
     @Override
