@@ -72,7 +72,7 @@ public class ServizioForm extends WanForm implements ServFunzListener {
         this.creaChekOrario();
         this.creaPlacehorderOrario();
 
-        fVisibileTabellone = (CheckBoxField) getField(Servizio_.abilitato);
+        fVisibileTabellone = (CheckBoxField) getField(Servizio_.disabilitato);
     }// end of method
 
 

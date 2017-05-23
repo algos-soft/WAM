@@ -451,10 +451,10 @@ public class Migration {
         int minutiInizio = servizioOld.getMinuti_inizio();
         int oraFine = servizioOld.getOra_fine();
         int minutiFine = servizioOld.getMinuti_fine();
-        boolean visibile = servizioOld.isVisibile();
+        boolean disabilitato = !servizioOld.isVisibile();
         boolean orario = servizioOld.isOrario();
 
-        return Servizio.crea(companyNew, sigla, visibile, descrizione, ordine, colore, orario, oraInizio, minutiInizio, oraFine, minutiFine, manager, listaServizioFunzioni);
+        return Servizio.crea(companyNew, sigla, disabilitato, descrizione, ordine, colore, orario, oraInizio, minutiInizio, oraFine, minutiFine, manager, listaServizioFunzioni);
     }// end of method
 
     /**

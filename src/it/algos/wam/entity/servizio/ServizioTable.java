@@ -80,7 +80,7 @@ public class ServizioTable extends WamTable {
                     Servizio_.codeCompanyUnico,
                     Servizio_.ordine,
                     Servizio_.sigla,
-                    Servizio_.abilitato,
+                    Servizio_.disabilitato,
                     Servizio_.descrizione,
                     COL_ORARIO,
                     COL_FUNZIONI,
@@ -90,7 +90,7 @@ public class ServizioTable extends WamTable {
             return new Object[]{
                     Servizio_.ordine,
                     Servizio_.sigla,
-                    Servizio_.abilitato,
+                    Servizio_.disabilitato,
                     Servizio_.descrizione,
                     COL_ORARIO,
                     COL_FUNZIONI,
@@ -126,11 +126,11 @@ public class ServizioTable extends WamTable {
     protected void fixColumn() {
         setColumnHeader(Servizio_.ordine, "##"); // visibile solo per il developer
         setColumnHeader(Servizio_.sigla, "Sigla");
-        setColumnHeader(Servizio_.abilitato, "Tab");
+        setColumnHeader(Servizio_.disabilitato, "Tab");
         setColumnHeader(Servizio_.descrizione, "Descrizione");
         setColumnHeader(COL_COLORE, ServizioMod.LABEL_COLOR);
 
-        setColumnAlignment(Servizio_.abilitato, Align.CENTER);
+        setColumnAlignment(Servizio_.disabilitato, Align.CENTER);
         setColumnAlignment(COL_ORARIO, Align.LEFT);
         setColumnAlignment(COL_COLORE, Align.CENTER);
 
@@ -138,7 +138,7 @@ public class ServizioTable extends WamTable {
         setColumnExpandRatio(Servizio_.sigla, 1);
         setColumnExpandRatio(Servizio_.descrizione, 2);
 
-        setColumnWidth(Servizio_.abilitato, 50);
+        setColumnWidth(Servizio_.disabilitato, 50);
         setColumnWidth(Servizio_.ordine, 45);
         setColumnWidth(COL_ORARIO, 140);
         setColumnWidth(COL_COLORE, 100);
