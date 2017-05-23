@@ -7,6 +7,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import it.algos.wam.WAMApp;
@@ -130,6 +131,7 @@ public class Tabellone extends VerticalLayout implements View {
 
         });
 
+
     }
 
     @Override
@@ -183,7 +185,7 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private void creaGrid() {
         LocalDate inizio = LocalDate.now();
-        int numGiorni = 7;
+        int numGiorni = getColumnCount();
         int delta;
 
         if (Pref.getBool(CompanyPrefs.primoGiornoLunedi.getCode(), false)) {
@@ -193,6 +195,23 @@ public class Tabellone extends VerticalLayout implements View {
 
         creaGrid(inizio, numGiorni);
     }// end of method
+
+
+
+    /**
+     * Il numero di iorni da mostrare in base alla larghezza dello schermo
+     */
+    private int getColumnCount(){
+
+        int wPage = Page.getCurrent().getBrowserWindowWidth();
+        int available=wPage-300;
+        int colWidth=200;
+
+        int columns = (int)available/colWidth;
+
+        return columns;
+    }
+
 
     /**
      * Crea una GridTabellone a partire dalla data richiesta della durata di 7 giorni
