@@ -203,13 +203,13 @@ public class Tabellone extends VerticalLayout implements View {
      */
     private int getColumnCount(){
 
-        int wPage = Page.getCurrent().getBrowserWindowWidth();
-        int available=wPage-300;
-        int colWidth=200;
+//        int wPage = Page.getCurrent().getBrowserWindowWidth();
+//        int available=wPage-300;
+//        int colWidth=200;
+//
+//        int columns = (int)available/colWidth;
 
-        int columns = (int)available/colWidth;
-
-        return columns;
+        return 7;
     }
 
 
