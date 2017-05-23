@@ -109,9 +109,11 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     //--nella GUI la scelta viene bloccata ai quarti d'ora
     private int minutiFine = 0;
 
-    // visibile nel tabellone (di default true)
+    // disabilitato dal tabellone, perchè non più utilizzato;
+    // sempre visibile nello storico per i periodi in cui è stato eventualmente utilizzato;
+    // (di default false)
     @AIField(type = AFType.checkbox, width = "12em", caption = "Disabilitato", help = "Permette di disabilitare i servizi non più utilizzati")
-    private boolean abilitato = true;
+    private boolean disabilitato = false;
 
     //--tavola di incrocio
     // CascadeType.ALL: quando chiamo persist sul padre, persiste automaticamente tutti i nuovi figli aggiunti
@@ -569,7 +571,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Tutti i servizi abilitati (visibili) e con orario
      */
     public static ArrayList<Servizio> getListAbilitatiConOrario(EntityManager manager) {
-        return getList(WamCompany.getCurrent(), manager, true, true);
+        return getList(WamCompany.getCurrent(), manager, false, true);
     }// end of static method
 
 //    /**
@@ -583,7 +585,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * Tutti i servizi abilitati (visibili) e senza orario
      */
     public static ArrayList<Servizio> getListAbilitatiSenzaOrario(EntityManager manager) {
-        return getList(WamCompany.getCurrent(), manager, true, false);
+        return getList(WamCompany.getCurrent(), manager, false, false);
     }// end of static method
 
 //    /**
@@ -618,7 +620,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         ArrayList<Turno> listaTurni = (ArrayList<Turno>) AQuery.getList(Turno.class, manager, filtroCompany, filtroInizio, filtroFine);
         for (Turno turno : listaTurni) {
             serv = turno.getServizio();
-            if (turno.isAssegnato() && !serv.isAbilitato() && serv.isOrario()) {
+            if (turno.isAssegnato() && serv.isDisabilitato() && serv.isOrario()) {
                 lista.add(serv);
             }// end of if cycle
         }// end of for cycle
@@ -652,7 +654,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         ArrayList<Turno> listaTurni = (ArrayList<Turno>) AQuery.getList(Turno.class, manager, filtroCompany, filtroInizio, filtroFine);
         for (Turno turno : listaTurni) {
             serv = turno.getServizio();
-            if (turno.isAssegnato() && !serv.isAbilitato() && !serv.isOrario()) {
+            if (turno.isAssegnato() && serv.isDisabilitato() && !serv.isOrario()) {
                 lista.add(serv);
             }// end of if cycle
         }// end of for cycle
@@ -743,7 +745,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     @SuppressWarnings("unchecked")
     public static ArrayList<Servizio> getListVisibili(WamCompany company, EntityManager manager) {
         SortProperty sort = new SortProperty(Servizio_.ordine);
-        Container.Filter filtroVisibile = new Compare.Equal(Servizio_.abilitato.getName(), true);
+        Container.Filter filtroVisibile = new Compare.Equal(Servizio_.disabilitato.getName(), false);
 
         return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroVisibile);
     }// end of static method
@@ -757,14 +759,14 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      *
      * @param company   di appartenenza (property della superclasse)
      * @param manager   the EntityManager to use
-     * @param abilitati e visibili
+     * @param disabilitati e non visibili
      * @param orario    prestabilito
      * @return lista di tutte le entities
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Servizio> getList(WamCompany company, EntityManager manager, boolean abilitati, boolean orario) {
+    public static ArrayList<Servizio> getList(WamCompany company, EntityManager manager, boolean disabilitati, boolean orario) {
         SortProperty sort = new SortProperty(Servizio_.ordine);
-        Container.Filter filtroAbilitati = new Compare.Equal(Servizio_.abilitato.getName(), abilitati);
+        Container.Filter filtroAbilitati = new Compare.Equal(Servizio_.disabilitato.getName(), disabilitati);
         Container.Filter filtroOrario = new Compare.Equal(Servizio_.orario.getName(), orario);
 
         return (ArrayList<Servizio>) CompanyQuery.getList(Servizio.class, sort, company, manager, filtroAbilitati, filtroOrario);
@@ -930,7 +932,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         }// fine del blocco if
 
 
-        return crea(company, sigla, true, descrizione, ordine, colore, orario, oraInizio, minutiInizio, oraFine, minutiFine, manager, servizioFunzioni);
+        return crea(company, sigla, false, descrizione, ordine, colore, orario, oraInizio, minutiInizio, oraFine, minutiFine, manager, servizioFunzioni);
     }// end of static method
 
     /**
@@ -958,7 +960,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
             int oraFine,
             EntityManager manager,
             List<ServizioFunzione> servizioFunzioni) {
-        return crea(company, sigla, true, descrizione, 0, colore, orario, oraInizio, 0, oraFine, 0, manager, servizioFunzioni);
+        return crea(company, sigla, false, descrizione, 0, colore, orario, oraInizio, 0, oraFine, 0, manager, servizioFunzioni);
     }// end of static method
 
     /**
@@ -968,7 +970,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      * @param company          di appartenenza (property della superclasse)
      * @param sigla            di riferimento interna (obbligatoria, unica all'interno della company)
      * @param descrizione      per il tabellone (obbligatoria)
-     * @param visibile         nel tabellone (di default true)
+     * @param disabilitato         nel tabellone (di default false)
      * @param colore           del gruppo (facoltativo)
      * @param orario           servizio ad orario prefissato e fisso ogni giorno (facoltativo)
      * @param oraInizio        del servizio (facoltativo, obbligatorio se orario è true)
@@ -980,7 +982,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     public static Servizio crea(
             WamCompany company,
             String sigla,
-            boolean visibile,
+            boolean disabilitato,
             String descrizione,
             int colore,
             boolean orario,
@@ -988,7 +990,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
             int oraFine,
             EntityManager manager,
             List<ServizioFunzione> servizioFunzioni) {
-        return crea(company, sigla, visibile, descrizione, 0, colore, orario, oraInizio, 0, oraFine, 0, manager, servizioFunzioni);
+        return crea(company, sigla, disabilitato, descrizione, 0, colore, orario, oraInizio, 0, oraFine, 0, manager, servizioFunzioni);
     }// end of static method
 
 
@@ -998,7 +1000,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
      *
      * @param company          di appartenenza (property della superclasse)
      * @param sigla            di riferimento interna (obbligatoria, unica all'interno della company)
-     * @param visibile         nel tabellone (di default true)
+     * @param disabilitato         nel tabellone (di default false)
      * @param descrizione      per il tabellone (obbligatoria)
      * @param ordine           di presentazione nel tabellone (obbligatorio, con controllo automatico prima del persist se è zero)
      * @param colore           del gruppo (facoltativo)
@@ -1014,7 +1016,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
     public static Servizio crea(
             WamCompany company,
             String sigla,
-            boolean visibile,
+            boolean disabilitato,
             String descrizione,
             int ordine,
             int colore,
@@ -1033,7 +1035,7 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
                 servizio = new Servizio(company, sigla, descrizione, ordine, colore, orario, oraInizio, oraFine);
                 servizio.setMinutiInizio(minutiInizio);
                 servizio.setMinutiFine(minutiFine);
-                servizio.setAbilitato(visibile);
+                servizio.setDisabilitato(disabilitato);
 
                 if (servizioFunzioni != null) {
                     for (int k = 0; k < servizioFunzioni.size(); k++) {
@@ -1195,15 +1197,15 @@ public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
         this.turni = turni;
     }//end of setter method
 
-    public boolean isAbilitato() {
-        return abilitato;
-    }// end of getter method
+    public boolean isDisabilitato() {
+        return disabilitato;
+    }
 
-    public void setAbilitato(boolean visibile) {
-        this.abilitato = visibile;
-    }//end of setter method
+    public void setDisabilitato(boolean disabilitato) {
+        this.disabilitato = disabilitato;
+    }
 
-    //------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
     // Save
     //------------------------------------------------------------------------------------------------------------------------
 

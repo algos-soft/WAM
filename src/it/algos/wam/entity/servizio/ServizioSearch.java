@@ -33,7 +33,7 @@ public class ServizioSearch extends SearchManager {
         return LibWam.addCompanyField(
                 Servizio_.sigla,
                 Servizio_.descrizione,
-                Servizio_.abilitato,
+                Servizio_.disabilitato,
                 Servizio_.orario
         );//end of bracket
     }// end of method
