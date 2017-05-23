@@ -142,6 +142,7 @@ public class TurnoTable extends WamTable {
     protected void fixColumn() {
         setColumnHeader(COL_INIZIO, "data");
         setColumnHeader(COL_ORDINE, "##");
+        setColumnHeader(COL_SIGLA, "servizio");
         setColumnHeader(COL_OROLOGIO, FontAwesome.CLOCK_O.getHtml());
         setColumnHeader(COL_SEGNATO, "isc");
         setColumnHeader(COL_COMPLETO, "full");

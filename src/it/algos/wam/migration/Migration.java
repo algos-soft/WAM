@@ -287,6 +287,8 @@ public class Migration {
             companyNew.setName(companyOld.getDescrizione());
             companyNew.setAddress1(companyOld.getIndirizzo());
             companyNew.setPresidente(companyOld.getPresidente());
+            companyNew.setContact(companyOld.getRiferimento());
+            companyNew.setEmail(companyOld.getEmail());
 
             companyNew = (WamCompany) companyNew.save(manager); //todo indispensabile il ritorno, altrimenti NON c'è l'ID
 
@@ -419,10 +421,12 @@ public class Migration {
      * @param companyNew company usata in wam
      */
     private void importServizi(WamCompany companyNew, EntityManager manager) {
+        int ordine = 0;
+
         try { // prova ad eseguire il codice
             if (listaServiziOld != null && listaServiziOld.size() > 0) {
                 for (ServizioAmb servizioOld : listaServiziOld) {
-                    creaSingoloServizio(servizioOld, companyNew, manager);
+                    creaSingoloServizio(servizioOld, companyNew, manager, ++ordine);
                 }// end of for cycle
             }// end of if cycle
         } catch (Exception unErrore) { // intercetta l'errore
@@ -437,8 +441,7 @@ public class Migration {
      * @return il nuovo servizio
      */
     @SuppressWarnings("all")
-    private Servizio creaSingoloServizio(ServizioAmb servizioOld, WamCompany companyNew, EntityManager manager) {
-        int ordine = servizioOld.getOrdine();
+    private Servizio creaSingoloServizio(ServizioAmb servizioOld, WamCompany companyNew, EntityManager manager, int ordine) {
         String sigla = servizioOld.getSigla();
         String descrizione = servizioOld.getDescrizione();
         int numObbligatorie = servizioOld.getFunzioni_obbligatorie();

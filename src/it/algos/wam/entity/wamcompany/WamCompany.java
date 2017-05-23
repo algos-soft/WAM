@@ -15,6 +15,8 @@ import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.entity.EM;
+import it.algos.webbase.web.field.AFType;
+import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.query.AQuery;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
@@ -49,8 +51,10 @@ public class WamCompany extends BaseCompany {
     private List<Volontario> volontari;
 
     // parametri aggiuntivi, specifici delle Company del settore
+    @AIField(type = AFType.text, width = "20em", caption = "Presidente", prompt = "presidente dell'associazione", help = "Nome e cognome del presidente pro-tempore.")
     private String presidente;
 
+    @AIField(type = AFType.enumeration, clazz = Organizzazione.class, width = "27em", caption = "Organizzazione", help = "Organizzazione di volontariato")
     private Organizzazione organizzazione;
 
     /**

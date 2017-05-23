@@ -4,6 +4,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.util.filter.Compare;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
+import it.algos.webbase.web.query.SortProperty;
 import org.eclipse.persistence.annotations.ReadOnly;
 
 import javax.persistence.*;
@@ -67,9 +68,10 @@ public class ServizioAmb extends BaseEntity {
     @SuppressWarnings("unchecked")
     public static List<ServizioAmb> findAll(CroceAmb company, EntityManager manager) {
         List<ServizioAmb> lista = null;
+        SortProperty sort = new SortProperty(ServizioAmb_.ordine);
 
         if (manager != null) {
-            lista = (List<ServizioAmb>) AQuery.getList(ServizioAmb.class, ServizioAmb_.croce, company, manager);
+            lista = (List<ServizioAmb>) AQuery.getList(ServizioAmb.class, ServizioAmb_.croce, company, sort, manager);
         }// end of if cycle
 
         return lista;

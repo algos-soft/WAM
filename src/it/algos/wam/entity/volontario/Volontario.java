@@ -26,6 +26,7 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.LibCrypto;
@@ -58,6 +59,7 @@ import java.util.*;
  * <p>
  */
 @Entity
+@DefaultSort({"cognome,true", "nome,true"})
 public class Volontario extends WamCompanyEntity implements UserIF {
 
     //------------------------------------------------------------------------------------------------------------------------
@@ -104,7 +106,7 @@ public class Volontario extends WamCompanyEntity implements UserIF {
     /**
      * Dati personali facoltativi
      */
-    @AIField(type = AFType.text, width = "12em", caption = "Cellulare", prompt = "337 451899", help = "Inserire un numero di cellulare, oppure lasciare vuoto")
+    @AIField(type = AFType.text, width = "12em", caption = "Cellulare", prompt = "000 111111", help = "Inserire un numero di cellulare, oppure lasciare vuoto")
     private String cellulare = "";
 
     private String telefono = "";

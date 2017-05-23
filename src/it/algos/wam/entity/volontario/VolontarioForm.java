@@ -100,7 +100,11 @@ public class VolontarioForm extends WanForm {
             this.creaPlacehorderBrevetti();
         }// end of if cycle
 
-        this.creaChekFunzioni();
+        if (isNewRecord()) {
+            this.creaChekFunzioni(false);
+        } else {
+            this.creaChekFunzioni(true);
+        }// end of if/else cycle
     }// end of method
 
     /**
@@ -138,6 +142,12 @@ public class VolontarioForm extends WanForm {
         layout.addComponent(new Label("&nbsp;", ContentMode.HTML)); // aggiunge un po di spazio
         layout.addComponent(mostraFunzioni);
         layout.addComponent(placeholderFunz);
+
+        if (isNewRecord()) {
+            placeholderFunz.setVisible(false);
+        } else {
+            placeholderFunz.setVisible(true);
+        }// end of if/else cycle
 
         return layout;
     }// end of method
@@ -207,8 +217,8 @@ public class VolontarioForm extends WanForm {
     /**
      * Crea il chekbox funzioni
      */
-    private void creaChekFunzioni() {
-        mostraFunzioni = new CheckBoxField("Controllo funzioni abilitate");
+    private void creaChekFunzioni(boolean status) {
+        mostraFunzioni = new CheckBoxField("Controllo funzioni abilitate", status);
 
         mostraFunzioni.addValueChangeListener(new Property.ValueChangeListener() {
             @Override

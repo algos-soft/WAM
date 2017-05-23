@@ -7,6 +7,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzioneSearch;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzioneTable;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione_;
 import it.algos.wam.entity.turno.Turno;
+import it.algos.wam.entity.turno.TurnoSearch;
 import it.algos.wam.entity.turno.Turno_;
 import it.algos.wam.entity.volontario.VolontarioTablePortal;
 import it.algos.webbase.web.search.SearchManager;
@@ -55,5 +56,26 @@ public class IscrizioneMod extends WamModEditDeveloper {
     }// end of method
 
 
+    /**
+     * Create the Search Manager
+     *
+     * @return the SearchManager
+     */
+    @Override
+    public SearchManager createSearchManager() {
+        return new IscrizioneSearch(this);
+    }// end of method
+
+
+//    @Override
+//    public Attribute[] getFieldsSearch() {
+//        return new Attribute[]{
+//               Iscrizione_.turno,
+//                Iscrizione_.volontario,
+//                Iscrizione_.servizioFunzione,
+//                Iscrizione_.esisteProblema,
+//                Iscrizione_.notificaInviata
+//        };//end of brace
+//    }// end of method
 
 }// end of class

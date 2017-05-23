@@ -12,6 +12,7 @@ import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.module.ModulePop;
 import it.algos.webbase.web.table.TablePortal;
 import it.algos.webbase.web.toolbar.TableToolbar;
+import it.algos.webbase.web.toolbar.Toolbar;
 
 import javax.persistence.EntityManager;
 

@@ -28,6 +28,8 @@ public class CroceAmb extends BaseEntity {
     private String presidente;
     private String indirizzo;
     private String organizzazione;
+    private String riferimento;
+    private String email;
 
 
     /**
@@ -119,4 +121,19 @@ public class CroceAmb extends BaseEntity {
         this.organizzazione = organizzazione;
     }//end of setter method
 
+    public String getRiferimento() {
+        return riferimento;
+    }
+
+    public void setRiferimento(String riferimento) {
+        this.riferimento = riferimento;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }// end of entity class

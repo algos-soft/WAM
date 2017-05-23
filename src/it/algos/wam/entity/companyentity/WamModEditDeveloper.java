@@ -1,6 +1,7 @@
 package it.algos.wam.entity.companyentity;
 
 import com.vaadin.server.Resource;
+import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.table.TablePortal;
 
 /**
@@ -25,6 +26,9 @@ public class WamModEditDeveloper extends WamMod {
      */
     @Override
     public void edit() {
+        if (LibSession.isDeveloper()) {
+            super.edit();
+        }// end of if cycle
     }// end of method
 
 

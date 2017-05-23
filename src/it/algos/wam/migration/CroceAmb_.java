@@ -13,5 +13,7 @@ public class CroceAmb_ {
     public static volatile SingularAttribute<CroceAmb, String> descrizione;
     public static volatile SingularAttribute<CroceAmb, String> presidente;
     public static volatile SingularAttribute<CroceAmb, String> indirizzo;
+    public static volatile SingularAttribute<CroceAmb, String> riferimento;
+    public static volatile SingularAttribute<CroceAmb, String> email;
     public static volatile SingularAttribute<CroceAmb, Organizzazione> organizzazione;
 }// end of entity class

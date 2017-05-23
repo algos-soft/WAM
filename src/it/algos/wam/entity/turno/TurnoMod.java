@@ -1,6 +1,8 @@
 package it.algos.wam.entity.turno;
 
 
+import com.vaadin.data.Item;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
@@ -11,6 +13,7 @@ import it.algos.wam.entity.serviziofunzione.ServizioFunzioneSearch;
 import it.algos.wam.entity.volontario.Volontario_;
 import it.algos.wam.entity.volontariofunzione.VolontarioFunzioneTable;
 import it.algos.webbase.domain.log.LogTablePortal;
+import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.search.SearchManager;
 import it.algos.webbase.web.table.ATable;
 import it.algos.webbase.web.table.TablePortal;

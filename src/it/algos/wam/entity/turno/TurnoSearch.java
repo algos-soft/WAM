@@ -1,19 +1,41 @@
 package it.algos.wam.entity.turno;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Property;
 import com.vaadin.data.util.filter.Compare;
+import com.vaadin.data.util.filter.Or;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.TextField;
+import it.algos.wam.entity.companyentity.WamSearch;
+import it.algos.wam.entity.funzione.Funzione_;
+import it.algos.wam.entity.iscrizione.Iscrizione;
+import it.algos.wam.entity.iscrizione.Iscrizione_;
+import it.algos.wam.entity.servizio.Servizio_;
+import it.algos.wam.entity.volontario.Volontario;
+import it.algos.wam.entity.volontario.Volontario_;
+import it.algos.webbase.multiazienda.CompanyQuery;
+import it.algos.webbase.multiazienda.ESearchManager;
+import it.algos.webbase.web.entity.BaseEntity_;
+import it.algos.webbase.web.field.ArrayComboField;
+import it.algos.webbase.web.field.CheckBoxField;
+import it.algos.webbase.web.lib.LibText;
 import it.algos.webbase.web.module.ModulePop;
+import it.algos.webbase.web.query.SortProperty;
 import it.algos.webbase.web.search.SearchManager;
 
 import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.SingularAttribute;
 import java.util.*;
+
+import static it.algos.wam.entity.iscrizione.Iscrizione_.turno;
 
 /**
  * Created by gac on 26/04/17
  * .
  */
-public class TurnoSearch extends SearchManager {
+public class TurnoSearch extends WamSearch {
 
     /**
      * Constructor
@@ -23,6 +45,92 @@ public class TurnoSearch extends SearchManager {
     public TurnoSearch(ModulePop module) {
         super(module);
     }// end of constructor
+
+    @Override
+    protected void init() {
+        super.init();
+
+        addDateListener(Turno_.inizio.getName(), Turno_.fine.getName());
+    }// end of method
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected void createFields(FormLayout layout) {
+        super.createFields(layout);
+
+        createFieldsAddizionali(layout);
+    }// end of method
+
+    private void createFieldsAddizionali(FormLayout layout) {
+        Field field;
+
+        field = creaPopVolontari();
+        addField(Volontario_.cognome, field);
+        layout.addComponent(field);
+
+        field = new CheckBoxField("Minimo", false);
+        addField(Iscrizione_.tsCreazione, field);
+        layout.addComponent(field);
+
+        field = new CheckBoxField("Valido", false);
+        addField(Iscrizione_.esisteProblema, field);
+        layout.addComponent(field);
+
+        field = new CheckBoxField("Full", false);
+        addField(Iscrizione_.nota, field);
+        layout.addComponent(field);
+    }// end of method
+
+
+    /**
+     * Crea un popup dei valori unici per la property 'code'.
+     */
+    @SuppressWarnings("rawtypes")
+    private Field creaPopVolontari() {
+        SortProperty sort = new SortProperty(Volontario_.cognome, true);
+        List<Volontario> options = (List<Volontario>) CompanyQuery.getList(Volontario.class, sort);
+        return new ArrayComboField(options, "Volontario");
+    }// end of method
+
+
+    protected void addDateListener(String nameFieldIniziale, String nameFieldFinale) {
+        Field fieldIniziale = getField(nameFieldIniziale);
+        Field fieldFinale = getField(nameFieldFinale);
+
+        if (fieldIniziale != null && fieldFinale != null) {
+            fieldIniziale.addValueChangeListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                    syncDateInizialeFinale(fieldIniziale, fieldFinale);
+                }// end of inner method
+            });// end of anonymous inner class
+
+            fieldFinale.addValueChangeListener(new Property.ValueChangeListener() {
+                @Override
+                public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
+                    syncDateInizialeFinale(fieldFinale, fieldIniziale);
+                }// end of inner method
+            });// end of anonymous inner class
+        }// end of if cycle
+
+    }// end of method
+
+
+    /**
+     * Sincronizza i due campi della data iniziale e finale
+     * Se entrambe sono vuote, non fa nulla
+     * Se entrambe sono valide, non fa nulla
+     * Se quella da cui arriva è valida e l'altra è vuota, duplica il valore (serve per filtrare un solo giorno)
+     */
+    protected void syncDateInizialeFinale(Field fieldIniziale, Field fieldFinale) {
+        Object valueIniziale = fieldIniziale.getValue();
+        Object valueFinale = fieldFinale.getValue();
+
+        if (valueIniziale != null && valueFinale == null) {
+            fieldFinale.setValue(valueIniziale);
+        }// end of if cycle
+
+    }// end of method
 
     /**
      * Attributes used in this search
@@ -36,54 +144,10 @@ public class TurnoSearch extends SearchManager {
         return new Attribute[]{
                 Turno_.servizio,
                 Turno_.inizio,
-                Turno_.fine
+                Turno_.fine,
+                Turno_.titoloExtra,
+                Turno_.localitaExtra
         };//end of brace
-    }// end of method
-
-    /**
-     * Creates and adds the filters for each search field. Invoked before performing the search.
-     *
-     * @return an array of filters which will be concatenated with the And clause
-     */
-    public ArrayList<Container.Filter> createFilters() {
-        ArrayList<Container.Filter> filters = new ArrayList<>();
-        Attribute attr;
-        Field field;
-        Container.Filter filter = null;
-        Field inizioField = getField("inizio");
-        Field fineField = getField("fine");
-        Object inizioValue = inizioField.getValue();
-        Object fineValue = fineField.getValue();
-
-        if (inizioValue != null && fineValue != null) {
-            LinkedHashMap<Attribute, Field> fieldMap = getFieldMap();
-            for (Map.Entry<Attribute, Field> entry : fieldMap.entrySet()) {
-                attr = entry.getKey();
-                field = entry.getValue();
-
-                if (!field.isEmpty()) {
-                    if (field.equals(inizioField) || field.equals(fineField)) {
-                        if (field.equals(inizioField)) {
-                            filter = new Compare.GreaterOrEqual(attr.getName(), inizioValue);
-                        }// end of if cycle
-                        if (field.equals(fineField)) {
-                            filter = new Compare.LessOrEqual(attr.getName(), fineValue);
-                        }// end of if cycle
-                    } else {
-                        filter = createFilter(attr);
-                    }// end of if/else cycle
-
-                    if (filter != null) {
-                        filters.add(filter);
-                    }// end of if cycle
-                }// end of if cycle
-            }// end of for cycle
-            return filters;
-        } else {
-            return super.createFilters();
-        }// end of if/else cycle
-
-
     }// end of method
 
 
@@ -94,48 +158,64 @@ public class TurnoSearch extends SearchManager {
      * @param attr l'attribute per recuperare il field dalla mappa
      * @return il filtro creato
      */
+    protected Container.Filter createFilter(Attribute attr) {
+        if (attr.getName().equals(Turno_.inizio.getName())) {
+            return createInizioFilter(attr);
+        }// end of if cycle
 
-//    protected Container.Filter createFilter(Attribute attr) {
-//        Container.Filter filter = null;
-//        Class clazz;
-//
-//        if (attr != null) {
-//            clazz = attr.getJavaType();
-//
-//            if (attr.isAssociation()) {
-//                filter = createBeanFilter(attr);
-//            }
-//
-//            if (clazz.equals(String.class)) {
-//                if (LibField.getAnnotation(attr) != null) {
-//                    filter = createStringFilter(attr, LibField.getAnnotation(attr).search());
-//                } else {
-//                    filter = createStringFilter(attr, SearchType.CONTAINS);
-//                }// end of if/else cycle
-//            }// end of if cycle
-//
-//            if (clazz.equals(Boolean.class) || clazz.equals(boolean.class)) {
-//                filter = createBoolFilter(attr);
-//            }
-//
-//            if (clazz.equals(Integer.class) || clazz.equals(int.class)) {
-//                filter = createIntegerFilter(attr);
-//            }
-//
-//            if (clazz.equals(Date.class)) {
-//                filter = createDateFilter(attr);
-//            }
-//
-//            // altre classi sono di difficile interpretazione a livello generale
-//            // e vanno gestite nelo specifico
-//            if (clazz.equals(BigDecimal.class)) {
-//            }
-//
-//
-//        }
-//
-//        return filter;
-//
-//    }
+        if (attr.getName().equals(Turno_.fine.getName())) {
+            Attribute attrFine = getAttr(Turno_.inizio.getName());
+            return createFineFilter(attrFine, (Date) getFieldValue(attr));
+        }// end of if cycle
+
+        // volontario
+        if (attr.getName().equals(Volontario_.cognome.getName())) {
+            return createVolontarioFilter(attr);
+        }// end of if cycle
+
+        // almeno una iscrizione
+        if (attr.getName().equals(Turno_.inizio.getName())) {
+            return null;
+        }// end of if cycle
+
+        // iscrizioni valide
+        if (attr.getName().equals(Turno_.inizio.getName())) {
+            return null;
+        }// end of if cycle
+
+        // tutte le iscrizioni possibili
+        if (attr.getName().equals(Turno_.inizio.getName())) {
+            return null;
+        }// end of if cycle
+
+        return super.createFilter(attr);
+    }// end of method
+
+
+    /**
+     * @param attr the StaticMetamodel attribute
+     */
+    private Container.Filter createVolontarioFilter(Attribute attr) {
+        Container.Filter outFilter = null;
+        Field field = getFieldMap().get(attr);
+        Volontario volontario = (Volontario) field.getValue();
+        List<Iscrizione> listaIscrizioni = (List<Iscrizione>) CompanyQuery.getList(Iscrizione.class, Iscrizione_.volontario, volontario);
+        ArrayList<Container.Filter> lista = new ArrayList<>();
+        Container.Filter tmpFilter = null;
+        Turno turno;
+        Long turnoID;
+
+        for (Iscrizione isc : listaIscrizioni) {
+            turno = isc.getTurno();
+            turnoID = turno.getId();
+            tmpFilter = new Compare.Equal(BaseEntity_.id.getName(), turnoID);
+            lista.add(tmpFilter);
+        }// end of for cycle
+
+        Container.Filter[] aFilters = lista.toArray(new Container.Filter[0]);
+        outFilter = new Or(aFilters);
+
+        return outFilter;
+    }// end of method
 
 }// end of class

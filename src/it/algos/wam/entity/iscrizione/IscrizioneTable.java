@@ -9,12 +9,10 @@ import com.vaadin.ui.Table;
 import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.entity.funzione.Funzione;
-import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.wam.entity.servizio.Servizio;
 import it.algos.wam.entity.servizio.ServizioColorPicker;
 import it.algos.wam.entity.serviziofunzione.ServizioFunzione_;
 import it.algos.wam.entity.turno.Turno;
-import it.algos.wam.entity.turno.TurnoTable;
 import it.algos.wam.entity.turno.Turno_;
 import it.algos.webbase.web.lib.LibSession;
 import it.algos.webbase.web.lib.LibTable;
@@ -44,7 +42,7 @@ public class IscrizioneTable extends WamTable {
     private static final String COL_SIGLA_SERVIZIO = "Servizio";
 
     // id della colonna generata "funzione"
-    private static final String COL_SIGLA_FUNZIONE = "Funzione";
+    private static final String COL_CODE_FUNZIONE = "Funzione";
 
     //--titolo della table
     private static String CAPTION = "Iscrizioni di ogni volontario per ogni servizio effettuato in ogni turno";
@@ -71,7 +69,7 @@ public class IscrizioneTable extends WamTable {
         addGeneratedColumn(COL_COLORE_SERVIZIO, new IscrizioneTable.ColoreColumnGenerator());
         addGeneratedColumn(COL_INIZIO, new IscrizioneTable.InizioColumnGenerator());
         addGeneratedColumn(COL_SIGLA_SERVIZIO, new IscrizioneTable.ServizioColumnGenerator());
-        addGeneratedColumn(COL_SIGLA_FUNZIONE, new IscrizioneTable.FunzioneColumnGenerator());
+        addGeneratedColumn(COL_CODE_FUNZIONE, new IscrizioneTable.FunzioneColumnGenerator());
     }// end of method
 
     /**
@@ -90,7 +88,7 @@ public class IscrizioneTable extends WamTable {
                     COL_COLORE_SERVIZIO,
                     COL_SIGLA_SERVIZIO,
                     COL_INIZIO,
-                    COL_SIGLA_FUNZIONE,
+                    COL_CODE_FUNZIONE,
                     Iscrizione_.volontario.getName(),
                     Iscrizione_.tsCreazione.getName(),
                     Iscrizione_.minutiEffettivi.getName(),
@@ -103,7 +101,7 @@ public class IscrizioneTable extends WamTable {
                     COL_COLORE_SERVIZIO,
                     COL_SIGLA_SERVIZIO,
                     COL_INIZIO,
-                    COL_SIGLA_FUNZIONE,
+                    COL_CODE_FUNZIONE,
                     Iscrizione_.volontario.getName(),
                     Iscrizione_.tsCreazione.getName(),
                     Iscrizione_.minutiEffettivi.getName(),
@@ -133,7 +131,7 @@ public class IscrizioneTable extends WamTable {
         setColumnWidth(COL_COLORE_SERVIZIO, 80);
         setColumnWidth(COL_INIZIO, 80);
         setColumnWidth(COL_SIGLA_SERVIZIO, 120);
-        setColumnWidth(COL_SIGLA_FUNZIONE, 120);
+        setColumnWidth(COL_CODE_FUNZIONE, 120);
         setColumnWidth(Iscrizione_.tsCreazione, 200);
         setColumnWidth(Iscrizione_.minutiEffettivi, 100);
         setColumnWidth(Iscrizione_.esisteProblema, 80);
@@ -228,7 +226,7 @@ public class IscrizioneTable extends WamTable {
          */
         public Component generateCell(Table source, Object itemId, Object columnId) {
             Funzione funz = getFunzione(source, itemId);
-            return new Label(funz.getSigla());
+            return new Label(funz.getCode());
         }// end of inner method
     }// end of inner class
 

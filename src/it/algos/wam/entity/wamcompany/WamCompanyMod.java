@@ -11,6 +11,7 @@ import it.algos.wam.entity.companyentity.WamTable;
 import it.algos.wam.lib.LibWam;
 import it.algos.wam.migration.Migration;
 import it.algos.wam.ui.WamUI;
+import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.company.BaseCompany_;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.EM;
@@ -182,6 +183,13 @@ public class WamCompanyMod extends ModulePop {
         TablePortal portaleCroce = super.createTablePortal();
         portaleCroce.delCmd(TableToolbar.CMD_SEARCH);
 
+        if (!LibSession.isDeveloper()) {
+            portaleCroce.getToolbar().setCreateButtonVisible(false);
+            portaleCroce.getToolbar().setDeleteButtonVisible(false);
+            portaleCroce.getToolbar().setSearchButtonVisible(false);
+            portaleCroce.getToolbar().setSelectButtonVisible(false);
+        }// end of if cycle
+
         return portaleCroce;
     }// end of method
 
@@ -237,6 +245,24 @@ public class WamCompanyMod extends ModulePop {
         if (ui instanceof WamUI) {
             wamUI = (WamUI) ui;
             wamUI.fireCompanyRemoved(company);
+        }// fine del blocco if
+
+    }// end of method
+
+    /**
+     * Invoked when table data changes
+     */
+    protected void tableDataChanged() {
+        super.tableDataChanged();
+
+        if (!LibSession.isDeveloper()) {
+            TablePortal tablePortal = getTablePortal();
+            if (tablePortal != null) {
+                TableToolbar tableToolbar = tablePortal.getToolbar();
+                if (tableToolbar != null) {
+                    tableToolbar.setInfoText("");
+                }// fine del blocco if
+            }// fine del blocco if
         }// fine del blocco if
 
     }// end of method

@@ -67,8 +67,8 @@ public class WamCompanyForm extends ModuleForm {
             return new Attribute[]{
                     WamCompany_.companyCode,
                     WamCompany_.organizzazione,
-                    WamCompany_.presidente,
                     BaseCompany_.name,
+                    WamCompany_.presidente,
                     BaseCompany_.contact,
                     BaseCompany_.email,
                     BaseCompany_.address1,
@@ -77,8 +77,8 @@ public class WamCompanyForm extends ModuleForm {
         } else {
             return new Attribute[]{
                     WamCompany_.organizzazione,
-                    WamCompany_.presidente,
                     BaseCompany_.name,
+                    WamCompany_.presidente,
                     BaseCompany_.contact,
                     BaseCompany_.email,
                     BaseCompany_.address1,

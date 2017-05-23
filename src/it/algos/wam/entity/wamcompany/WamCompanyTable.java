@@ -7,6 +7,7 @@ import it.algos.wam.entity.companyentity.WamCompanyEntity_;
 import it.algos.wam.entity.funzione.Funzione_;
 import it.algos.webbase.domain.company.BaseCompany;
 import it.algos.webbase.domain.company.BaseCompany_;
+import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.entity.BaseEntity_;
 import it.algos.webbase.web.lib.LibSession;
@@ -30,6 +31,16 @@ public class WamCompanyTable extends ModuleTable {
         super(module);
     }// end of constructor
 
+    /**
+     * Initializes the table.
+     * Must be called from the costructor in each subclass
+     * Chiamato dal costruttore di ModuleTable
+     */
+    @Override
+    protected void init() {
+        super.init();
+        fixColumn();
+    }// end of method
 
     /**
      * Creates the container
@@ -40,11 +51,12 @@ public class WamCompanyTable extends ModuleTable {
      */
     @Override
     public Container createContainer() {
-        String SiglaCompany=LibSession
+        String companyCode = CompanySessionLib.getCompanyCode();
+
         if (LibSession.isDeveloper()) {
             return super.createContainer();
         } else {
-            return super.createContainer(new Compare.Equal(BaseCompany_.companyCode.getName(), "crf"));
+            return super.createContainer(new Compare.Equal(BaseCompany_.companyCode.getName(), companyCode));
         }// end of if/else cycle
     }// end of method
 
@@ -75,6 +87,14 @@ public class WamCompanyTable extends ModuleTable {
                     BaseCompany_.address1,
             };// end of array
         }// end of if/else cycle
+    }// end of method
+
+    private void fixColumn() {
+        setColumnHeader(WamCompany_.organizzazione, "Organizzazione");
+        setColumnHeader(BaseCompany_.name, "Nome");
+        setColumnHeader(WamCompany_.presidente, "Presidente");
+        setColumnHeader(BaseCompany_.contact, "Contatto");
+        setColumnHeader(BaseCompany_.address1, "Indirizzo");
     }// end of method
 
 }// end of class

@@ -2,6 +2,7 @@ package it.algos.wam.migration;
 
 import it.algos.webbase.web.entity.BaseEntity;
 import it.algos.webbase.web.query.AQuery;
+import it.algos.webbase.web.query.SortProperty;
 import org.eclipse.persistence.annotations.ReadOnly;
 
 import javax.persistence.*;
@@ -80,9 +81,10 @@ public class FunzioneAmb extends BaseEntity {
     @SuppressWarnings("unchecked")
     public static List<FunzioneAmb> findAll(CroceAmb company, EntityManager manager) {
         List<FunzioneAmb> lista = null;
+        SortProperty sort = new SortProperty(FunzioneAmb_.ordine);
 
         if (manager != null) {
-            lista = (List<FunzioneAmb>) AQuery.getList(FunzioneAmb.class, FunzioneAmb_.croce, company, manager);
+            lista = (List<FunzioneAmb>) AQuery.getList(FunzioneAmb.class, FunzioneAmb_.croce, company, sort, manager);
         }// end of if cycle
 
         return lista;

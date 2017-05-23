@@ -15,6 +15,7 @@ import it.algos.webbase.multiazienda.CompanyEntity_;
 import it.algos.webbase.multiazienda.CompanyQuery;
 import it.algos.webbase.multiazienda.CompanySessionLib;
 import it.algos.webbase.web.entity.BaseEntity;
+import it.algos.webbase.web.entity.DefaultSort;
 import it.algos.webbase.web.field.AFType;
 import it.algos.webbase.web.field.AIField;
 import it.algos.webbase.web.lib.DateConvertUtils;
@@ -45,6 +46,7 @@ import java.util.*;
  * 4) la classe non deve contenere nessun metodo per la gestione degli eventi
  */
 @Entity
+@DefaultSort({"ordine,true"})
 public class Servizio extends WamCompanyEntity implements Comparable<Servizio> {
 
     //------------------------------------------------------------------------------------------------------------------------
